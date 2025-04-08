@@ -21,13 +21,11 @@ export const getResponsiveSrcSet = (
  * Generate a placeholder image URL
  */
 export const getPlaceholderImage = (
-  text: string,
   width = 400,
   height = 300,
-  bgColor = "EEEEEE",
-  textColor = "333333"
+  text = "Image"
 ): string => {
-  return `https://placehold.co/${width}x${height}/${bgColor}/${textColor}?text=${encodeURIComponent(text)}`;
+  return `https://placehold.co/${width}x${height}/EEEEEE/333333?text=${encodeURIComponent(text)}`;
 };
 
 /**
@@ -68,8 +66,8 @@ export const getMatchPhotos = (
       category: 'action',
     },
     {
-      src: getPlaceholderImage(`Fans at ${matchDate}`, 800, 600),
-      thumbnail: getPlaceholderImage(`Fans`, 300, 300),
+      src: getPlaceholderImage(800, 600, `Fans at ${matchDate}`),
+      thumbnail: getPlaceholderImage(300, 300, `Fans`),
       alt: "Fans cheering",
       caption: "Fans cheering at Spain Park",
       category: 'fans',
@@ -81,16 +79,33 @@ export const getMatchPhotos = (
  * Get news images with proper paths
  */
 export const getNewsImage = (
-  filename: string,
+  index: number | string = 0,
   size: 'thumbnail' | 'full' = 'full'
 ): string => {
-  // If filename is one of News1.jpg to News5.jpg, use it directly
-  if (/^News[1-5]\.jpg$/.test(filename)) {
-    return `/assets/images/news/${filename}`;
+  // Convert string to number if needed
+  const imageIndex = typeof index === 'string' ? parseInt(index, 10) : index;
+  
+  // Define available news images
+  const newsImages = [
+    '/assets/images/news/News1.jpg',
+    '/assets/images/news/News2.jpg',
+    '/assets/images/news/News3.jpg',
+    '/assets/images/news/News4.jpg',
+    '/assets/images/news/News5.jpg'
+  ];
+  
+  // If index is within range, return that image
+  if (imageIndex >= 0 && imageIndex < newsImages.length) {
+    return newsImages[imageIndex];
   }
   
-  // Otherwise return a default news image
-  return `/assets/images/news/News1.jpg`;
+  // If input is a filename that matches News1.jpg to News5.jpg, use it directly
+  if (typeof index === 'string' && /^News[1-5]\.jpg$/.test(index)) {
+    return `/assets/images/news/${index}`;
+  }
+  
+  // Otherwise return the first news image
+  return newsImages[0];
 };
 
 /**
@@ -108,11 +123,28 @@ export const getStadiumImage = (
  * Get team photo with proper path
  */
 export const getTeamImage = (
-  filename: string = "Squad1.jpg",
+  index: number | string = 0,
   category: 'squad' | 'training' | 'celebration' | 'other' = 'squad'
 ): string => {
-  // Map the category to actual available filenames
-  if (category === 'training') {
+  // Convert string to number if needed
+  const imageIndex = typeof index === 'string' ? parseInt(index, 10) : index;
+  
+  // Map of available team images
+  const teamImages = [
+    "/assets/images/team/Squad1.jpg",
+    "/assets/images/team/Training1_Square.jpg",
+    "/assets/images/team/Training2_Square.jpg",
+    "/assets/images/team/Training3_Square.jpg",
+    "/assets/images/team/Training4_Square.jpg"
+  ];
+  
+  // If index is within range, return that image
+  if (imageIndex >= 0 && imageIndex < teamImages.length) {
+    return teamImages[imageIndex];
+  }
+  
+  // If index is a specific filename
+  if (typeof index === 'string') {
     const trainingImages = [
       "Training1_Square.jpg",
       "Training2_Square.jpg",
@@ -120,24 +152,24 @@ export const getTeamImage = (
       "Training4_Square.jpg"
     ];
     
-    // If filename is specified and exists in training images, use it
-    if (filename !== "Squad1.jpg" && trainingImages.includes(filename)) {
-      return `/assets/images/team/${filename}`;
+    if (index === "Squad1.jpg") {
+      return `/assets/images/team/${index}`;
     }
     
-    // Otherwise pick the first training image
-    return `/assets/images/team/${trainingImages[0]}`;
+    if (trainingImages.includes(index)) {
+      return `/assets/images/team/${index}`;
+    }
   }
   
-  // Default to the squad image
-  return `/assets/images/team/Squad1.jpg`;
+  // Default to the first image (squad)
+  return teamImages[0];
 };
 
 /**
  * Get player image with proper path
  */
 export const getPlayerImage = (
-  playerId: string,
+  playerId: string | number,
   type: 'headshot' | 'action' | 'profile' = 'headshot'
 ): string => {
   // Available player headshots
@@ -153,9 +185,21 @@ export const getPlayerImage = (
   ];
   
   // If playerId is a number, try to map it to an available image
-  const playerIndex = parseInt(playerId) - 1;
-  if (!isNaN(playerIndex) && playerIndex >= 0 && playerIndex < playerImages.length) {
-    return `/assets/images/players/${playerImages[playerIndex]}`;
+  if (typeof playerId === 'number') {
+    const playerIndex = playerId - 1;
+    if (playerIndex >= 0 && playerIndex < playerImages.length) {
+      return `/assets/images/players/${playerImages[playerIndex]}`;
+    }
+  } else if (typeof playerId === 'string') {
+    // Try to match player name to filename
+    const playerName = playerId.toLowerCase();
+    const matchedImage = playerImages.find(img => 
+      img.toLowerCase().includes(playerName)
+    );
+    
+    if (matchedImage) {
+      return `/assets/images/players/${matchedImage}`;
+    }
   }
   
   // Fallback to the dummy headshot
@@ -170,7 +214,7 @@ export const getCompetitionImage = (
   type: 'trophy' | 'logo' | 'winners' | 'other' = 'logo'
 ): string => {
   // No competition images available yet, use placeholder
-  return getPlaceholderImage(`Competition: ${filename}`, 400, 400);
+  return getPlaceholderImage(400, 400, `Competition: ${filename}`);
 };
 
 /**
@@ -215,7 +259,7 @@ export const getCompetitorLogo = (
   }
   
   // Fallback to placeholder if no match is found
-  return getPlaceholderImage(teamName, 200, 200);
+  return getPlaceholderImage(200, 200, teamName);
 };
 
 /**
@@ -242,9 +286,9 @@ export const getSponsorLogo = (
   variant: 'default' | 'light' | 'dark' = 'default'
 ): string => {
   // Available sponsor images with exact filenames
-  const sponsorImages = {
+  const sponsorImages: Record<string, string> = {
     "AD23": "AD23.jpg",
-    "BJK Winton": "BJK Winton copy.jpg",
+    "BJK": "BJK Winton copy.jpg",
     "GDI": "GDI.jpeg",
     "Global": "Global.png",
     "Three60": "Three60 copy.jpg",
@@ -252,7 +296,7 @@ export const getSponsorLogo = (
   };
   
   // Find a matching sponsor image - exact match or partial match
-  const exactMatch = sponsorImages[sponsorName as keyof typeof sponsorImages];
+  const exactMatch = sponsorImages[sponsorName] || sponsorImages[sponsorName.toUpperCase()];
   if (exactMatch) {
     return `/assets/images/sponsors/${exactMatch}`;
   }
@@ -264,11 +308,11 @@ export const getSponsorLogo = (
   );
   
   if (sponsorKey) {
-    return `/assets/images/sponsors/${sponsorImages[sponsorKey as keyof typeof sponsorImages]}`;
+    return `/assets/images/sponsors/${sponsorImages[sponsorKey]}`;
   }
   
   // Fallback to placeholder
-  return getPlaceholderImage(`Sponsor: ${sponsorName}`, 400, 200);
+  return getPlaceholderImage(400, 200, `Sponsor: ${sponsorName}`);
 };
 
 /**
@@ -297,4 +341,11 @@ export const getPlayerHeadshot = (
   
   // Fallback to the dummy headshot
   return `/assets/images/players/headshot_dummy.jpg`;
+};
+
+/**
+ * Get matchday image path
+ */
+export const getMatchDayImage = (): string => {
+  return `/assets/images/matchday/MatchDay1.jpg`;
 };
