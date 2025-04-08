@@ -344,7 +344,7 @@ export const getPlayerHeadshot = (
 };
 
 /**
- * Get matchday image path
+ * Get matchday image with proper path
  */
 export const getMatchDayImage = (): string => {
   return `/assets/images/matchday/MatchDay1.jpg`;

@@ -11,6 +11,7 @@ import CompetitorsDemo from "./pages/demo/CompetitorsDemo";
 import ImageDemo from "./pages/ImageDemo";
 import ImagesDemo from "./pages/demo/ImagesDemo";
 import ImageUtilsDemo from "./pages/demo/ImageUtilsDemo";
+import AdvancedComponentsDemo from "./pages/demo/AdvancedComponentsDemo";
 
 function App() {
   return (
@@ -50,6 +51,10 @@ const routes = [
   {
     path: "/demo/image-utils",
     element: <ImageUtilsDemo />,
+  },
+  {
+    path: "/demo/advanced-components",
+    element: <AdvancedComponentsDemo />,
   },
 ];
 
