@@ -80,20 +80,22 @@ const Section = React.forwardRef<HTMLDivElement, SectionProps>(
         : "opacity-0"
       : "";
     
+    // Combine refs properly for TypeScript
+    const assignRefs = (element: HTMLDivElement | null) => {
+      // Forward the ref
+      if (typeof ref === 'function') {
+        ref(element);
+      } else if (ref) {
+        ref.current = element;
+      }
+      
+      // Assign to internal ref
+      sectionRef.current = element;
+    };
+    
     return (
       <section
-        ref={(node) => {
-          if (ref) {
-            if (typeof ref === "function") {
-              ref(node);
-            } else {
-              ref.current = node;
-            }
-          }
-          if (sectionRef) {
-            sectionRef.current = node;
-          }
-        }}
+        ref={assignRefs}
         className={cn(
           backgroundClasses[background],
           spacingClasses[spacing],

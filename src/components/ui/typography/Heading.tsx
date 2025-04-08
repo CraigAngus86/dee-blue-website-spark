@@ -62,9 +62,10 @@ const Heading = ({
     className
   );
   
-  const Tag = `h${headingLevel}` as keyof JSX.IntrinsicElements;
+  // Create the component based on heading level using the correct TypeScript approach
+  const Component = `h${headingLevel}` as keyof JSX.IntrinsicElements;
   
-  return <Tag className={classes} {...props}>{children}</Tag>;
+  return <Component className={classes} {...props}>{children}</Component>;
 };
 
 export default Heading;

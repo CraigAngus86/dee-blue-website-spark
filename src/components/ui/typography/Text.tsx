@@ -55,9 +55,10 @@ const Text = ({
     className
   );
   
-  const Tag = as as keyof JSX.IntrinsicElements;
+  // Use the correct TypeScript approach for dynamic element types
+  const Component = as as keyof JSX.IntrinsicElements;
   
-  return <Tag className={classes} {...props}>{children}</Tag>;
+  return <Component className={classes} {...props}>{children}</Component>;
 };
 
 export default Text;
