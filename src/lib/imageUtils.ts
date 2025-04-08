@@ -72,6 +72,39 @@ export const getNewsImage = (
 };
 
 /**
+ * Get stadium images
+ */
+export const getStadiumImage = (
+  filename: string,
+  view: 'aerial' | 'main' | 'pitch' | 'facilities' | 'other' = 'main'
+): string => {
+  // Return the path to the stadium image
+  return `/src/assets/images/stadium/${filename}`;
+};
+
+/**
+ * Get team photo with proper path
+ */
+export const getTeamImage = (
+  filename: string,
+  category: 'squad' | 'training' | 'celebration' | 'other' = 'squad'
+): string => {
+  // Return the path to the team image
+  return `/src/assets/images/team/${filename}`;
+};
+
+/**
+ * Get competition image with proper path
+ */
+export const getCompetitionImage = (
+  filename: string,
+  type: 'trophy' | 'logo' | 'winners' | 'other' = 'logo'
+): string => {
+  // Return the path to the competition image
+  return `/src/assets/images/competitions/${filename}`;
+};
+
+/**
  * Optimize image loading with quality and format options
  */
 export const optimizeImageUrl = (
@@ -87,4 +120,12 @@ export const optimizeImageUrl = (
   // this would construct the proper URL with transformation parameters
   // For now we'll just return the original URL
   return url;
+};
+
+/**
+ * Generate a Lovable uploads path for an image
+ * For images uploaded directly via Lovable's interface
+ */
+export const getLovableUploadPath = (uuid: string): string => {
+  return `/lovable-uploads/${uuid}`;
 };

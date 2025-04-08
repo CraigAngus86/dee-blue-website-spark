@@ -1,0 +1,53 @@
+
+import React from "react";
+import { cn } from "@/lib/utils";
+import ResponsiveImage from "./ResponsiveImage";
+
+interface StadiumImageProps {
+  filename: string;
+  alt: string;
+  view?: "aerial" | "main" | "pitch" | "facilities" | "other";
+  aspectRatio?: string; 
+  className?: string;
+  rounded?: boolean | "sm" | "md" | "lg" | "full";
+  shadow?: boolean | "sm" | "md" | "lg";
+  caption?: string;
+  credit?: string;
+}
+
+const StadiumImage: React.FC<StadiumImageProps> = ({
+  filename,
+  alt,
+  view = "main",
+  aspectRatio = "16/9",
+  className,
+  rounded = "md",
+  shadow = "md",
+  caption,
+  credit,
+}) => {
+  // Construct the image path
+  const imagePath = `/src/assets/images/stadium/${filename}`;
+
+  return (
+    <figure className={cn("my-4", className)}>
+      <ResponsiveImage
+        src={imagePath}
+        alt={alt}
+        aspectRatio={aspectRatio}
+        rounded={rounded}
+        shadow={shadow}
+        className="w-full"
+      />
+      {(caption || credit) && (
+        <figcaption className="mt-2 text-sm text-gray">
+          {caption && <span>{caption}</span>}
+          {caption && credit && <span> - </span>}
+          {credit && <span className="italic">Photo: {credit}</span>}
+        </figcaption>
+      )}
+    </figure>
+  );
+};
+
+export default StadiumImage;

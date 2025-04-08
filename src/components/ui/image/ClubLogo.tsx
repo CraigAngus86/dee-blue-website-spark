@@ -2,6 +2,7 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import ResponsiveImage from "./ResponsiveImage";
+import { getClubLogo } from "@/lib/imageUtils";
 
 interface ClubLogoProps {
   variant?: "rect" | "square" | "circle";
@@ -30,9 +31,7 @@ const ClubLogo: React.FC<ClubLogoProps> = ({
   };
 
   // Get logo path based on background (dark or light)
-  const logoPath = background === "dark" 
-    ? "/src/assets/images/logos/banks-o-dee-logo-dark.png"  // Dark logo (navy on transparent)
-    : "/src/assets/images/logos/banks-o-dee-logo-light.png";  // Light logo (white on transparent)
+  const logoPath = getClubLogo(variant, background);
   
   // The logo component
   const Logo = (
