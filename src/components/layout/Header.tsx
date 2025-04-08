@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import Container from "../ui/layout/Container";
 import { ButtonNew } from "../ui/ButtonNew";
 import Text from "../ui/typography/Text";
+import ClubLogo from "../ui/image/ClubLogo";
 
 interface HeaderProps {
   transparent?: boolean;
@@ -57,20 +58,14 @@ const Header: React.FC<HeaderProps> = ({ transparent = false, className }) => {
     <header className={headerClasses}>
       <Container>
         <div className="flex items-center justify-between h-full">
-          {/* Logo */}
+          {/* Logo - Now using the ClubLogo component */}
           <div className="flex items-center">
-            <a href="/" className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
-                <span className="text-white font-bold text-lg">BD</span>
-              </div>
-              <span 
-                className={cn(
-                  "font-montserrat font-bold text-xl transition-colors",
-                  transparent && !isScrolled ? "text-white" : "text-primary"
-                )}
-              >
-                Banks o' Dee FC
-              </span>
+            <a href="/" className="flex items-center gap-2">
+              <ClubLogo 
+                variant="rect"
+                background={transparent && !isScrolled ? "light" : "dark"}
+                size={isScrolled ? "sm" : "md"}
+              />
             </a>
           </div>
           
