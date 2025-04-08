@@ -12,6 +12,7 @@ import ImageDemo from "./pages/ImageDemo";
 import ImagesDemo from "./pages/demo/ImagesDemo";
 import ImageUtilsDemo from "./pages/demo/ImageUtilsDemo";
 import AdvancedComponentsDemo from "./pages/demo/AdvancedComponentsDemo";
+import ImageComponentsDemo from "./pages/demo/ImageComponentsDemo";
 
 function App() {
   return (
@@ -55,6 +56,10 @@ const routes = [
   {
     path: "/demo/advanced-components",
     element: <AdvancedComponentsDemo />,
+  },
+  {
+    path: "/demo/image-components",
+    element: <ImageComponentsDemo />,
   },
 ];
 

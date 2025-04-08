@@ -32,12 +32,27 @@ const CompetitorLogo: React.FC<CompetitorLogoProps> = ({
     xl: "w-24 h-24",
   };
 
-  // Use the provided logoSrc or get it from the utility function
-  // Extract just the team name without the "FC" suffix for better matching
-  const simpleName = name.replace(/\s+FC$|\s+Football\s+Club$/i, "").trim();
-  const formattedLogoSrc = logoSrc || getCompetitorLogo(simpleName);
+  // Check if this is Banks o' Dee
+  const isBOD = name.toLowerCase().includes("banks") || 
+                name.toLowerCase().includes("bod") || 
+                name.toLowerCase().includes("dee");
   
-  console.log(`Rendering competitor logo: ${name}, simplified to: ${simpleName}, path: ${formattedLogoSrc}`);
+  // Use the provided logoSrc or get it from the utility function
+  // For Banks o' Dee, use the club logo directly
+  let formattedLogoSrc = logoSrc;
+  
+  if (!formattedLogoSrc) {
+    if (isBOD) {
+      // Use the club logo for Banks o' Dee
+      formattedLogoSrc = "/assets/images/logos/BOD_Logo_Navy_square.png";
+    } else {
+      // Extract just the team name without the "FC" suffix for better matching
+      const simpleName = name.replace(/\s+FC$|\s+Football\s+Club$/i, "").trim();
+      formattedLogoSrc = getCompetitorLogo(simpleName);
+    }
+  }
+  
+  console.log(`Rendering competitor logo: ${name}, path: ${formattedLogoSrc}`);
 
   // Logo component with consistent styling
   const Logo = (
