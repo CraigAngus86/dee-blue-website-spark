@@ -1,18 +1,18 @@
 
 import { Sponsor } from "@/lib/types";
 
-// Use placeholder images to ensure we have something to display
+// Use Lovable uploads to ensure we have reliable images
 export const sponsors: Sponsor[] = [
   {
     name: "AD23",
-    logo: "https://placehold.co/400x200/FFFFFF/00105A?text=AD23",
-    logoLight: "https://placehold.co/400x200/00105A/FFFFFF?text=AD23",
+    logo: "/lovable-uploads/a5037c12-6941-420d-a1b7-a593e53a5e59.png",
+    logoLight: "/lovable-uploads/a5037c12-6941-420d-a1b7-a593e53a5e59.png",
     website: "https://ad23.com",
     tier: "main",
   },
   {
     name: "BJK Winton Properties",
-    logo: "https://placehold.co/400x200/FFFFFF/00105A?text=BJK+Winton",
+    logo: "/lovable-uploads/c1270e92-10b7-4250-b57a-915bb40a0e12.png",
     website: "https://bjkwinton.com",
     tier: "platinum",
   },

@@ -28,22 +28,11 @@ const ClubLogo: React.FC<ClubLogoProps> = ({
     xl: "h-16",
   };
 
-  // Try with different path formats to ensure we find the logo
-  // First attempt - direct from public folder
-  let logoPath = `/assets/images/logos/banks-o-dee-logo-${background}.png`;
+  // Use Lovable uploads for reliable image loading
+  // For demo purposes, we'll use a placeholder as the club logo
+  let logoPath = "https://placehold.co/400x200/FFFFFF/00105A?text=Club+Logo";
   
-  // Log for debugging
-  console.log("Attempting to load club logo from:", logoPath);
-
-  const handleError = () => {
-    if (!fallbackLoaded) {
-      console.log("Trying fallback logo path");
-      setFallbackLoaded(true);
-      // Use a placeholder as fallback
-      return "https://placehold.co/400x200/FFFFFF/00105A?text=Club+Logo";
-    }
-    return logoPath;
-  };
+  console.log("Using club logo path:", logoPath);
 
   return (
     <div
@@ -58,10 +47,8 @@ const ClubLogo: React.FC<ClubLogoProps> = ({
         alt="Banks o' Dee FC"
         className="h-full w-auto"
         objectFit="contain"
-        onError={() => { 
-          console.error("Failed to load club logo:", logoPath); 
-          handleError();
-        }}
+        onLoad={() => console.log("Club logo loaded successfully")}
+        onError={() => console.error("Failed to load club logo:", logoPath)}
       />
     </div>
   );

@@ -71,16 +71,8 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
 
   const handleError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     console.error(`Failed to load image: ${imgSrc}`);
-
-    // Try alternative path formats
-    if (imgSrc.startsWith('/assets') && !imgSrc.includes('public')) {
-      const newSrc = imgSrc.replace('/assets', '/public/assets');
-      console.log(`Trying alternative path: ${newSrc}`);
-      setImgSrc(newSrc);
-    } else {
-      setImgError(true);
-      if (onError) onError();
-    }
+    setImgError(true);
+    if (onError) onError();
   };
 
   const handleLoad = () => {
