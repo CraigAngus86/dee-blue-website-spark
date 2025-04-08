@@ -135,7 +135,7 @@ const Header: React.FC<HeaderProps> = ({ transparent = false, className }) => {
         </div>
       </Container>
       
-      {/* Mobile Navigation Menu */}
+      {/* Mobile Navigation Menu - Updated with proper text contrast */}
       {isMobileMenuOpen && (
         <div className="lg:hidden absolute top-full left-0 right-0 bg-white shadow-lg animate-slide-in-right">
           <Container>

@@ -129,9 +129,9 @@ const ColorDemo: React.FC = () => {
                 <Heading level={4} className="mb-4">Contrast & Accessibility</Heading>
                 <ul className="space-y-3 list-disc pl-5">
                   <li><Text>Use white text on navy backgrounds</Text></li>
+                  <li><Text>Use light blue for highlights on navy backgrounds</Text></li>
                   <li><Text>Use navy text on light backgrounds</Text></li>
                   <li><Text>Ensure all text meets WCAG AA contrast requirements</Text></li>
-                  <li><Text>Use light blue for highlights on navy backgrounds</Text></li>
                 </ul>
               </div>
             </div>
@@ -144,8 +144,8 @@ const ColorDemo: React.FC = () => {
               <Text color="white">Regular white text on navy background (Primary)</Text>
               <Text color="secondary" size="small">Light blue text for highlights on navy (Secondary)</Text>
               <div className="flex gap-4 mt-4">
-                <ButtonNew variant="accent">Gold Button</ButtonNew>
-                <ButtonNew variant="accent" className="bg-accent">Gold Button (Hover)</ButtonNew>
+                <ButtonNew variant="accent" className="bg-white text-primary border-accent">Gold Border Button</ButtonNew>
+                <ButtonNew variant="accent" className="bg-accent text-primary">Gold Fill Button (Hover)</ButtonNew>
               </div>
             </div>
           </div>
@@ -155,10 +155,11 @@ const ColorDemo: React.FC = () => {
             <div className="space-y-4">
               <Heading level={4} color="primary">Navy heading on white background</Heading>
               <Text color="default">Near black body text for readability</Text>
-              <Text color="secondary" size="small">Dark gray text for secondary information</Text>
-              <div className="flex gap-4 mt-4">
+              <Text color="muted" size="small">Gray text for secondary information</Text>
+              <div className="flex gap-4 mt-4 flex-wrap">
                 <ButtonNew variant="primary">Primary Button</ButtonNew>
                 <ButtonNew variant="secondary">Secondary Button</ButtonNew>
+                <ButtonNew variant="tertiary">Tertiary Button</ButtonNew>
                 <ButtonNew variant="accent">Accent Button</ButtonNew>
               </div>
             </div>
@@ -184,6 +185,42 @@ const ColorDemo: React.FC = () => {
                   <ButtonNew variant="accent" className="bg-accent">Hover</ButtonNew>
                   <ButtonNew variant="accent" className="bg-accent-dark">Active</ButtonNew>
                 </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            <Heading level={3}>Match Cards Example</Heading>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="p-6 border border-medium-gray rounded-lg bg-primary">
+                <Heading level={4} color="white" className="mb-4">Card Headers on Navy</Heading>
+                <div className="bg-white p-4 rounded-md">
+                  <Heading level={5} className="mb-2">Card Content</Heading>
+                  <Text size="small" className="mb-4">This demonstrates proper text contrast on card headers.</Text>
+                </div>
+                <div className="mt-4">
+                  <Text color="white" size="small">White text on navy background</Text>
+                  <Text color="secondary" size="small" className="mt-2">Light blue text for highlights</Text>
+                </div>
+              </div>
+              <div className="p-6 border border-medium-gray rounded-lg">
+                <Heading level={4} className="mb-4">Text Sizing</Heading>
+                <Text className="mb-2">Use smaller text sizes for longer team names to prevent wrapping:</Text>
+                <div className="bg-primary text-white p-3 rounded-md mb-4">
+                  <Text size="small" weight="semibold" color="white">Proper Text Sizing</Text>
+                </div>
+                <div className="flex justify-between items-center bg-white p-4 rounded-md mb-4 border border-medium-gray">
+                  <div className="text-center w-1/3">
+                    <Text weight="bold" size="small" className="mt-2">Inverness CT</Text>
+                  </div>
+                  <div className="text-center w-1/3">
+                    <Text size="small">VS</Text>
+                  </div>
+                  <div className="text-center w-1/3">
+                    <Text weight="bold" size="small" className="mt-2">Banks o' Dee</Text>
+                  </div>
+                </div>
+                <Text size="small" color="muted">Use width constraints and smaller text to prevent wrapping in tight spaces</Text>
               </div>
             </div>
           </div>

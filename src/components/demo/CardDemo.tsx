@@ -118,7 +118,7 @@ const CardDemo: React.FC = () => {
             </div>
           </div>
           
-          {/* Match Card Example - Updated with correct contrast and gold button styling */}
+          {/* Match Card Example - Updated to fix contrast and text wrapping issues */}
           <div className="space-y-6">
             <Heading level={2} className="pb-2 border-b border-medium-gray">Match Card Example</Heading>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -126,37 +126,37 @@ const CardDemo: React.FC = () => {
                 <CardNewHeader className="bg-primary text-white">
                   <div className="text-center">
                     <Text size="small" weight="semibold" color="white">Scottish Cup</Text>
-                    <Text size="xs" color="white">Quarter Final</Text>
+                    <Text size="xs" color="secondary">Quarter Final</Text>
                   </div>
                 </CardNewHeader>
                 <CardNewContent>
                   <div className="flex justify-between items-center">
-                    <div className="text-center">
+                    <div className="text-center w-1/3">
                       <div className="w-16 h-16 mx-auto bg-light-gray rounded-full flex items-center justify-center">
                         <span className="font-bold">BD</span>
                       </div>
-                      <Text weight="bold" className="mt-2">Banks o' Dee</Text>
+                      <Text weight="bold" size="small" className="mt-2">Banks o' Dee</Text>
                     </div>
                     
-                    <div className="text-center">
+                    <div className="text-center w-1/3">
                       <div className="bg-light-gray px-3 py-2 rounded-md">
                         <Heading level={3}>3 - 1</Heading>
                       </div>
                       <Text size="xs" color="muted" className="mt-1">Full Time</Text>
                     </div>
                     
-                    <div className="text-center">
+                    <div className="text-center w-1/3">
                       <div className="w-16 h-16 mx-auto bg-light-gray rounded-full flex items-center justify-center">
                         <span className="font-bold">FC</span>
                       </div>
-                      <Text weight="bold" className="mt-2">Formartine Utd</Text>
+                      <Text weight="bold" size="small" className="mt-2">Formartine Utd</Text>
                     </div>
                   </div>
                 </CardNewContent>
                 <CardNewFooter className="text-center">
                   <div className="flex items-center gap-2 justify-center">
                     <Calendar size={14} className="text-gray" />
-                    <Text size="small" color="muted">May 7, 2023 • Spain Park Stadium</Text>
+                    <Text size="xs" color="muted">May 7, 2023 • Spain Park Stadium</Text>
                   </div>
                   <ButtonNew variant="primary" size="sm" className="w-full mt-2">
                     Match Report
@@ -173,32 +173,33 @@ const CardDemo: React.FC = () => {
                 </CardNewHeader>
                 <CardNewContent>
                   <div className="flex justify-between items-center">
-                    <div className="text-center">
+                    <div className="text-center w-1/3">
                       <div className="w-16 h-16 mx-auto bg-light-gray rounded-full flex items-center justify-center">
                         <span className="font-bold">BD</span>
                       </div>
-                      <Text weight="bold" className="mt-2">Banks o' Dee</Text>
+                      <Text weight="bold" size="small" className="mt-2">Banks o' Dee</Text>
                     </div>
                     
-                    <div className="text-center">
+                    <div className="text-center w-1/3">
                       <div className="px-3 py-2">
                         <Heading level={5}>VS</Heading>
                       </div>
                       <Text size="xs" color="secondary" weight="bold" className="mt-1">UPCOMING</Text>
                     </div>
                     
-                    <div className="text-center">
+                    <div className="text-center w-1/3">
                       <div className="w-16 h-16 mx-auto bg-light-gray rounded-full flex items-center justify-center">
                         <span className="font-bold">BFC</span>
                       </div>
-                      <Text weight="bold" className="mt-2">Buckie FC</Text>
+                      <Text weight="bold" size="small" className="mt-2">Buckie FC</Text>
                     </div>
                   </div>
                 </CardNewContent>
                 <CardNewFooter className="text-center">
                   <div className="flex items-center gap-2 justify-center">
                     <Calendar size={14} className="text-gray" />
-                    <Text size="small" color="muted">May 21, 2023 • 15:00 • Spain Park Stadium</Text>
+                    <Text size="xs" color="muted">May 21, 2023 • 15:00</Text>
+                    <Text size="xs" color="muted">Spain Park</Text>
                   </div>
                   <ButtonNew variant="accent" size="sm" className="w-full mt-2">
                     Get Tickets
@@ -215,32 +216,35 @@ const CardDemo: React.FC = () => {
                 </CardNewHeader>
                 <CardNewContent>
                   <div className="flex justify-between items-center">
-                    <div className="text-center">
+                    <div className="text-center w-1/3">
                       <div className="w-16 h-16 mx-auto bg-light-gray rounded-full flex items-center justify-center">
                         <span className="font-bold">RFC</span>
                       </div>
-                      <Text weight="bold" className="mt-2">Rangers FC</Text>
+                      <Text weight="bold" size="small" className="mt-2">Rangers FC</Text>
                     </div>
                     
-                    <div className="text-center">
+                    <div className="text-center w-1/3">
                       <div className="px-3 py-2">
                         <Heading level={5}>VS</Heading>
                       </div>
                       <Text size="xs" color="secondary" weight="bold" className="mt-1">UPCOMING</Text>
                     </div>
                     
-                    <div className="text-center">
+                    <div className="text-center w-1/3">
                       <div className="w-16 h-16 mx-auto bg-light-gray rounded-full flex items-center justify-center">
                         <span className="font-bold">BD</span>
                       </div>
-                      <Text weight="bold" className="mt-2">Banks o' Dee</Text>
+                      <Text weight="bold" size="small" className="mt-2">Banks o' Dee</Text>
                     </div>
                   </div>
                 </CardNewContent>
                 <CardNewFooter className="text-center">
-                  <div className="flex items-center gap-2 justify-center">
-                    <Calendar size={14} className="text-gray" />
-                    <Text size="small" color="muted">June 5, 2023 • 19:45 • Hampden Park</Text>
+                  <div className="flex flex-col items-center gap-1">
+                    <div className="flex items-center gap-2">
+                      <Calendar size={14} className="text-gray" />
+                      <Text size="xs" color="muted">June 5, 2023 • 19:45</Text>
+                    </div>
+                    <Text size="xs" color="muted">Hampden Park</Text>
                   </div>
                   <ButtonNew variant="accent" size="sm" className="w-full mt-2">
                     Get Tickets

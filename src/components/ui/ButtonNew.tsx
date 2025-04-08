@@ -30,17 +30,17 @@ const ButtonNew = React.forwardRef<HTMLButtonElement, ButtonNewProps>(
   ) => {
     const Comp = asChild ? Slot : "button";
 
-    // Updated variant classes with refined color usage and proper contrast
+    // Updated variant classes to improve contrast and follow the new style guide
     const variantClasses = {
       primary:
         "bg-secondary text-primary hover:bg-secondary-dark active:bg-secondary-dark/90 focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none",
       secondary:
-        "bg-white text-primary border border-secondary hover:bg-light-gray active:bg-medium-gray focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none",
+        "bg-white text-primary border border-primary hover:bg-light-gray active:bg-medium-gray focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none",
       tertiary:
         "bg-transparent text-primary hover:text-primary-light active:text-primary-dark underline-offset-4 hover:underline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none",
       // Updated accent style to use white background with gold border by default, gold fill on hover
       accent:
-        "bg-white text-primary border-2 border-accent hover:bg-accent hover:border-accent active:bg-accent-dark focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none",
+        "bg-white text-primary border-2 border-accent hover:bg-accent hover:text-primary active:bg-accent-dark focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none",
     };
 
     // Map sizes to Tailwind classes
