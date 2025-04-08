@@ -2,27 +2,22 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import ResponsiveImage from "./ResponsiveImage";
-import { getClubLogo } from "@/lib/imageUtils";
 
 interface ClubLogoProps {
   variant?: "rect" | "square" | "circle";
   background?: "light" | "dark";
   size?: "xs" | "sm" | "md" | "lg" | "xl";
   className?: string;
-  href?: string;
-  onClick?: () => void;
 }
 
 const ClubLogo: React.FC<ClubLogoProps> = ({
-  variant = "circle",
+  variant = "rect",
   background = "dark",
   size = "md",
   className,
-  href,
-  onClick,
 }) => {
-  // Define size classes
-  const sizeClasses = {
+  // Map sizes to width/height values
+  const sizeMap = {
     xs: "h-6",
     sm: "h-8",
     md: "h-10",
@@ -30,45 +25,25 @@ const ClubLogo: React.FC<ClubLogoProps> = ({
     xl: "h-16",
   };
 
-  // Get logo path based on background (dark or light)
-  const logoPath = getClubLogo(variant, background);
-  
-  // The logo component
-  const Logo = (
-    <ResponsiveImage
-      src={logoPath}
-      alt="Banks o' Dee FC"
+  // Get the appropriate logo path
+  const logoPath = `/src/assets/images/logos/banks-o-dee-logo-${background}.png`;
+
+  return (
+    <div
       className={cn(
-        sizeClasses[size],
-        "w-auto",
-        variant === "square" ? "aspect-square" : (variant === "circle" ? "aspect-square rounded-full" : "max-h-full"),
+        "inline-flex items-center justify-center",
+        sizeMap[size],
         className
       )}
-      objectFit="contain"
-      priority={true}
-    />
+    >
+      <ResponsiveImage
+        src={logoPath}
+        alt="Banks o' Dee FC"
+        className="h-full w-auto"
+        objectFit="contain"
+      />
+    </div>
   );
-
-  // Wrap in link if href is provided
-  if (href) {
-    return (
-      <a href={href} className="inline-flex" onClick={onClick}>
-        {Logo}
-      </a>
-    );
-  }
-
-  // Return with click handler if provided
-  if (onClick) {
-    return (
-      <div className="inline-flex cursor-pointer" onClick={onClick}>
-        {Logo}
-      </div>
-    );
-  }
-
-  // Default return
-  return <div className="inline-flex">{Logo}</div>;
 };
 
 export default ClubLogo;

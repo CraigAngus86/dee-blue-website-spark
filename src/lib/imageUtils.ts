@@ -116,6 +116,22 @@ export const getCompetitionImage = (
 };
 
 /**
+ * Get competitor logo with proper path
+ */
+export const getCompetitorLogo = (
+  teamName: string,
+  variant?: 'default' | 'alternate'
+): string => {
+  // Convert team name to kebab-case for filename
+  const filename = teamName
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w-]+/g, '');
+    
+  return `/src/assets/images/competitors/${filename}${variant === 'alternate' ? '-alt' : ''}.png`;
+};
+
+/**
  * Optimize image loading with quality and format options
  */
 export const optimizeImageUrl = (

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   createBrowserRouter,
@@ -6,6 +7,8 @@ import {
 import './App.css';
 import ComponentsDemo from "./pages/demo/ComponentsDemo";
 import SponsorsDemo from "./pages/demo/SponsorsDemo";
+import CompetitorsDemo from "./pages/demo/CompetitorsDemo";
+import ImageDemo from "./pages/ImageDemo";
 
 function App() {
   return (
@@ -29,6 +32,14 @@ const routes = [
   {
     path: "/demo/sponsors",
     element: <SponsorsDemo />,
+  },
+  {
+    path: "/demo/competitors",
+    element: <CompetitorsDemo />,
+  },
+  {
+    path: "/image-demo",
+    element: <ImageDemo />,
   },
 ];
 
