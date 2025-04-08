@@ -13,6 +13,8 @@ import ImagesDemo from "./pages/demo/ImagesDemo";
 import ImageUtilsDemo from "./pages/demo/ImageUtilsDemo";
 import AdvancedComponentsDemo from "./pages/demo/AdvancedComponentsDemo";
 import ImageComponentsDemo from "./pages/demo/ImageComponentsDemo";
+import HomePage from "./pages/HomePage";
+import Index from "./pages/Index";
 
 function App() {
   return (
@@ -27,7 +29,11 @@ export default App;
 const routes = [
   {
     path: "/",
-    element: <ComponentsDemo />,
+    element: <HomePage />,
+  },
+  {
+    path: "/index",
+    element: <Index />,
   },
   {
     path: "/demo/components",
