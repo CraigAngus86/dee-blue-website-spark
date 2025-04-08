@@ -4,6 +4,7 @@ import Heading from "../ui/typography/Heading";
 import Text from "../ui/typography/Text";
 import Container from "../ui/layout/Container";
 import Section from "../ui/layout/Section";
+import { ButtonNew } from "../ui/ButtonNew";
 
 const ColorSwatchGroup: React.FC<{ title: string; colors: Array<{ name: string; hex: string; variable: string }> }> = ({ title, colors }) => {
   return (
