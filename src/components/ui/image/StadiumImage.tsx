@@ -26,8 +26,9 @@ const StadiumImage: React.FC<StadiumImageProps> = ({
   caption,
   credit,
 }) => {
-  // Construct the image path without /src prefix
+  // Construct the image path
   const imagePath = `/assets/images/stadium/${filename}`;
+  console.log("Stadium image path:", imagePath);
 
   return (
     <figure className={cn("my-4", className)}>

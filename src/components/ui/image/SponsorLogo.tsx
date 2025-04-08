@@ -35,6 +35,9 @@ const SponsorLogo: React.FC<SponsorLogoProps> = ({
     ? sponsor.logoLight 
     : sponsor.logo;
 
+  // Add console logs to debug the image path
+  console.log(`Rendering sponsor: ${sponsor.name}, logo path: ${logoSrc}`);
+
   // The logo component
   const Logo = (
     <ResponsiveImage

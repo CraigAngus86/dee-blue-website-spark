@@ -25,8 +25,10 @@ const ClubLogo: React.FC<ClubLogoProps> = ({
     xl: "h-16",
   };
 
-  // Get the appropriate logo path - removing the /src prefix
+  // Get the correct logo path
   const logoPath = `/assets/images/logos/banks-o-dee-logo-${background}.png`;
+  
+  console.log("Club logo path:", logoPath);
 
   return (
     <div

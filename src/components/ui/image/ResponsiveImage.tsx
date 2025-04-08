@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 
 interface ResponsiveImageProps {
@@ -41,6 +41,8 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
   onLoad,
   onError,
 }) => {
+  const [imgError, setImgError] = useState(false);
+
   // Calculate classes for rounded corners
   const roundedClasses = rounded
     ? typeof rounded === "string"
@@ -65,6 +67,38 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
     style.aspectRatio = aspectRatio;
   }
 
+  const handleError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    console.error(`Failed to load image: ${src}`);
+    setImgError(true);
+    if (onError) onError();
+  };
+
+  const handleLoad = () => {
+    console.log(`Successfully loaded image: ${src}`);
+    if (onLoad) onLoad();
+  };
+
+  // Show a fallback when image fails to load
+  if (imgError) {
+    return (
+      <div
+        className={cn(
+          "overflow-hidden bg-gray-200 flex items-center justify-center",
+          roundedClasses,
+          shadowClasses,
+          className
+        )}
+        style={{
+          width: width || "auto",
+          height: height || "auto",
+          ...style
+        }}
+      >
+        <span className="text-gray-400 text-sm">{alt}</span>
+      </div>
+    );
+  }
+
   return (
     <div
       className={cn(
@@ -86,8 +120,8 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
         loading={priority ? "eager" : loading}
         className="w-full h-full"
         style={style}
-        onLoad={onLoad}
-        onError={onError}
+        onLoad={handleLoad}
+        onError={handleError}
       />
     </div>
   );

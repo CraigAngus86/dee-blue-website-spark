@@ -32,6 +32,13 @@ const SponsorsShowcase: React.FC<SponsorsShowcaseProps> = ({
   const bronzeSponsors = sponsors.filter(s => s.tier === 'bronze');
   const partnerSponsors = sponsors.filter(s => s.tier === 'partner');
 
+  console.log("Sponsors showcase:", { 
+    mainCount: mainSponsors.length,
+    platinumCount: platinumSponsors.length,
+    goldCount: goldSponsors.length,
+    silverCount: silverSponsors.length
+  });
+
   // Featured layout with main sponsor highlighted
   if (layout === "featured" && mainSponsors.length > 0) {
     return (

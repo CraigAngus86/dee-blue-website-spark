@@ -5,7 +5,7 @@ export const sponsors: Sponsor[] = [
   {
     name: "AD23",
     logo: "/assets/images/sponsors/sponsor-ad23-dark.png",
-    logoLight: "/assets/images/sponsors/sponsor-ad23-light.png", // If we have a light variant
+    logoLight: "/assets/images/sponsors/sponsor-ad23-light.png",
     website: "https://ad23.com",
     tier: "main",
   },
