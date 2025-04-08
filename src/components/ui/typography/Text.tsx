@@ -55,10 +55,17 @@ const Text = ({
     className
   );
   
-  // Use the correct TypeScript approach for dynamic element types
-  const Component = as as keyof JSX.IntrinsicElements;
-  
-  return <Component className={classes} {...props}>{children}</Component>;
+  // Fix the dynamic component rendering with proper typing
+  switch (as) {
+    case 'p':
+      return <p className={classes} {...props}>{children}</p>;
+    case 'span':
+      return <span className={classes} {...props}>{children}</span>;
+    case 'div':
+      return <div className={classes} {...props}>{children}</div>;
+    default:
+      return <p className={classes} {...props}>{children}</p>;
+  }
 };
 
 export default Text;

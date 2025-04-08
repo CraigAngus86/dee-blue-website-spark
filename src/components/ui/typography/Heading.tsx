@@ -62,10 +62,23 @@ const Heading = ({
     className
   );
   
-  // Create the component based on heading level using the correct TypeScript approach
-  const Component = `h${headingLevel}` as keyof JSX.IntrinsicElements;
-  
-  return <Component className={classes} {...props}>{children}</Component>;
+  // Fix the dynamic component rendering with proper typing
+  switch (headingLevel) {
+    case 1:
+      return <h1 className={classes} {...props}>{children}</h1>;
+    case 2:
+      return <h2 className={classes} {...props}>{children}</h2>;
+    case 3:
+      return <h3 className={classes} {...props}>{children}</h3>;
+    case 4:
+      return <h4 className={classes} {...props}>{children}</h4>;
+    case 5:
+      return <h5 className={classes} {...props}>{children}</h5>;
+    case 6:
+      return <h6 className={classes} {...props}>{children}</h6>;
+    default:
+      return <h1 className={classes} {...props}>{children}</h1>;
+  }
 };
 
 export default Heading;
