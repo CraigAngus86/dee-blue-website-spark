@@ -34,8 +34,8 @@ const NewsImage: React.FC<NewsImageProps> = ({
     full: "w-full",
   };
 
-  // Construct the image path
-  const imagePath = `/src/assets/images/news/${filename}`;
+  // Construct the image path without /src prefix
+  const imagePath = `/assets/images/news/${filename}`;
 
   return (
     <figure className={cn("my-6", sizeMap[size], className)}>

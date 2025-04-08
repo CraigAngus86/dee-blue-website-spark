@@ -27,7 +27,7 @@ export const getAssetPath = (category: string, filename: string): string => {
     ? category.slice(0, -1) 
     : category;
     
-  return `/src/assets/images/${category}/${filename}`;
+  return `/assets/images/${category}/${filename}`;
 };
 
 /**
@@ -37,8 +37,8 @@ export const getClubLogo = (
   variant: 'rect' | 'square' | 'circle' = 'circle',
   background: 'light' | 'dark' = 'dark'
 ): string => {
-  // Return correct path to logo in the src/assets folder structure
-  return `/src/assets/images/logos/banks-o-dee-logo-${background}.png`;
+  // Fixed path without /src prefix
+  return `/assets/images/logos/banks-o-dee-logo-${background}.png`;
 };
 
 /**
@@ -50,11 +50,9 @@ export const getMatchPhotos = (
   category?: string
 ): MatchPhoto[] => {
   // This is a placeholder - in a real app, this would fetch from an API or import from a data file
-  // For now, we'll return an empty array
-  // In production, this would load photos from the file system or a database
   
   const formattedDate = matchDate.split('T')[0]; // Extract YYYY-MM-DD
-  const folderPath = `/src/assets/images/matchday/${formattedDate}-vs-${opponent.toLowerCase().replace(/\s+/g, '-')}`;
+  const folderPath = `/assets/images/matchday/${formattedDate}-vs-${opponent.toLowerCase().replace(/\s+/g, '-')}`;
   
   // Placeholder - this would be dynamically generated based on available files
   return [];
@@ -67,8 +65,8 @@ export const getNewsImage = (
   filename: string,
   size: 'thumbnail' | 'full' = 'full'
 ): string => {
-  // Return the path to the news image
-  return `/src/assets/images/news/${filename}${size === 'thumbnail' ? '-thumb' : ''}`;
+  // Return the path to the news image without /src prefix
+  return `/assets/images/news/${filename}${size === 'thumbnail' ? '-thumb' : ''}`;
 };
 
 /**
@@ -78,8 +76,8 @@ export const getStadiumImage = (
   filename: string,
   view: 'aerial' | 'main' | 'pitch' | 'facilities' | 'other' = 'main'
 ): string => {
-  // Return the path to the stadium image
-  return `/src/assets/images/stadium/${filename}`;
+  // Return the path to the stadium image without /src prefix
+  return `/assets/images/stadium/${filename}`;
 };
 
 /**
@@ -89,8 +87,8 @@ export const getTeamImage = (
   filename: string,
   category: 'squad' | 'training' | 'celebration' | 'other' = 'squad'
 ): string => {
-  // Return the path to the team image
-  return `/src/assets/images/team/${filename}`;
+  // Return the path to the team image without /src prefix
+  return `/assets/images/team/${filename}`;
 };
 
 /**
@@ -100,8 +98,8 @@ export const getPlayerImage = (
   playerId: string,
   type: 'headshot' | 'action' | 'profile' = 'headshot'
 ): string => {
-  // Return the path to the player image
-  return `/src/assets/images/players/player-${playerId}${type !== 'headshot' ? `-${type}` : ''}.jpg`;
+  // Return the path to the player image without /src prefix
+  return `/assets/images/players/player-${playerId}${type !== 'headshot' ? `-${type}` : ''}.jpg`;
 };
 
 /**
@@ -111,8 +109,8 @@ export const getCompetitionImage = (
   filename: string,
   type: 'trophy' | 'logo' | 'winners' | 'other' = 'logo'
 ): string => {
-  // Return the path to the competition image
-  return `/src/assets/images/competitions/${filename}`;
+  // Return the path to the competition image without /src prefix
+  return `/assets/images/competitions/${filename}`;
 };
 
 /**
@@ -128,7 +126,7 @@ export const getCompetitorLogo = (
     .replace(/\s+/g, '-')
     .replace(/[^\w-]+/g, '');
     
-  return `/src/assets/images/competitors/${filename}${variant === 'alternate' ? '-alt' : ''}.png`;
+  return `/assets/images/competitors/${filename}${variant === 'alternate' ? '-alt' : ''}.png`;
 };
 
 /**
@@ -164,5 +162,5 @@ export const getPlayerHeadshot = (
   playerNumber: number,
   name?: string
 ): string => {
-  return `/src/assets/images/players/player${playerNumber}${name ? `-${name}` : ''}.jpg`;
+  return `/assets/images/players/player${playerNumber}${name ? `-${name}` : ''}.jpg`;
 };

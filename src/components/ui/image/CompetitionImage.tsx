@@ -36,8 +36,8 @@ const CompetitionImage: React.FC<CompetitionImageProps> = ({
     full: "w-full",
   };
 
-  // Construct the image path
-  const imagePath = `/src/assets/images/competitions/${filename}`;
+  // Construct the image path without /src prefix
+  const imagePath = `/assets/images/competitions/${filename}`;
 
   // For logos, we want to use contain to preserve proper proportions
   const objectFit = type === "logo" ? "contain" : "cover";
