@@ -118,7 +118,7 @@ const CardDemo: React.FC = () => {
             </div>
           </div>
           
-          {/* Match Card Example - Updated with correct brand colors */}
+          {/* Match Card Example - Updated with correct contrast and gold button styling */}
           <div className="space-y-6">
             <Heading level={2} className="pb-2 border-b border-medium-gray">Match Card Example</Heading>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -165,10 +165,10 @@ const CardDemo: React.FC = () => {
               </CardNew>
               
               <CardNew elevation="md" hoverEffect>
-                <CardNewHeader className="bg-light-gray">
+                <CardNewHeader className="bg-primary text-white">
                   <div className="text-center">
-                    <Text size="small" weight="semibold">Highland League</Text>
-                    <Text size="xs" color="muted">Matchday 28</Text>
+                    <Text size="small" weight="semibold" color="white">Highland League</Text>
+                    <Text size="xs" color="secondary">Matchday 28</Text>
                   </div>
                 </CardNewHeader>
                 <CardNewContent>
@@ -207,10 +207,10 @@ const CardDemo: React.FC = () => {
               </CardNew>
               
               <CardNew elevation="md" hoverEffect>
-                <CardNewHeader className="bg-light-gray">
+                <CardNewHeader className="bg-primary text-white">
                   <div className="text-center">
-                    <Text size="small" weight="semibold">Scottish Cup</Text>
-                    <Text size="xs" color="muted">Semi Final</Text>
+                    <Text size="small" weight="semibold" color="white">Scottish Cup</Text>
+                    <Text size="xs" color="secondary">Semi Final</Text>
                   </div>
                 </CardNewHeader>
                 <CardNewContent>
@@ -250,7 +250,7 @@ const CardDemo: React.FC = () => {
             </div>
           </div>
           
-          {/* Player Card Example - Updated with correct brand colors */}
+          {/* Player Card Example - Fixed contrast issues on headers */}
           <div className="space-y-6">
             <Heading level={2} className="pb-2 border-b border-medium-gray">Player Card Example</Heading>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">

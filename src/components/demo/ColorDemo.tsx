@@ -143,8 +143,9 @@ const ColorDemo: React.FC = () => {
               <Text color="white" size="large">Large white text on navy background (Primary)</Text>
               <Text color="white">Regular white text on navy background (Primary)</Text>
               <Text color="secondary" size="small">Light blue text for highlights on navy (Secondary)</Text>
-              <div className="inline-block mt-4">
-                <ButtonNew variant="accent">Gold Button for CTA</ButtonNew>
+              <div className="flex gap-4 mt-4">
+                <ButtonNew variant="accent">Gold Button</ButtonNew>
+                <ButtonNew variant="accent" className="bg-accent">Gold Button (Hover)</ButtonNew>
               </div>
             </div>
           </div>
@@ -158,6 +159,31 @@ const ColorDemo: React.FC = () => {
               <div className="flex gap-4 mt-4">
                 <ButtonNew variant="primary">Primary Button</ButtonNew>
                 <ButtonNew variant="secondary">Secondary Button</ButtonNew>
+                <ButtonNew variant="accent">Accent Button</ButtonNew>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            <Heading level={3}>Button Color Guidelines</Heading>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="p-6 border border-medium-gray rounded-lg">
+                <Heading level={4} className="mb-4">Primary Button Usage</Heading>
+                <Text className="mb-4">Light blue buttons with navy text for most interactive elements.</Text>
+                <div className="flex gap-4">
+                  <ButtonNew variant="primary">Default</ButtonNew>
+                  <ButtonNew variant="primary" className="bg-secondary-dark">Hover</ButtonNew>
+                  <ButtonNew variant="primary" className="bg-secondary-dark/90">Active</ButtonNew>
+                </div>
+              </div>
+              <div className="p-6 border border-medium-gray rounded-lg">
+                <Heading level={4} className="mb-4">Accent Button Usage</Heading>
+                <Text className="mb-4">Gold accent buttons reserved for CTAs like "Buy Tickets" only.</Text>
+                <div className="flex gap-4">
+                  <ButtonNew variant="accent">Default</ButtonNew>
+                  <ButtonNew variant="accent" className="bg-accent">Hover</ButtonNew>
+                  <ButtonNew variant="accent" className="bg-accent-dark">Active</ButtonNew>
+                </div>
               </div>
             </div>
           </div>

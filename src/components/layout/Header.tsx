@@ -105,8 +105,9 @@ const Header: React.FC<HeaderProps> = ({ transparent = false, className }) => {
               <Search size={20} />
             </div>
             <ButtonNew 
-              variant="accent" // Changed to accent (gold) for "Buy Tickets" CTA
+              variant="accent" 
               size="sm"
+              className={transparent && !isScrolled ? "bg-accent text-primary border-transparent" : ""}
             >
               Buy Tickets
             </ButtonNew>
