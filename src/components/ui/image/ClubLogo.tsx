@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import ResponsiveImage from "./ResponsiveImage";
 
 interface ClubLogoProps {
-  variant?: "rect" | "square";
+  variant?: "rect" | "square" | "circle";
   background?: "light" | "dark";
   size?: "xs" | "sm" | "md" | "lg" | "xl";
   className?: string;
@@ -13,7 +13,7 @@ interface ClubLogoProps {
 }
 
 const ClubLogo: React.FC<ClubLogoProps> = ({
-  variant = "rect",
+  variant = "circle",
   background = "dark",
   size = "md",
   className,
@@ -29,8 +29,10 @@ const ClubLogo: React.FC<ClubLogoProps> = ({
     xl: "h-16",
   };
 
-  // Get logo path
-  const logoPath = `/src/assets/images/logos/banks-o-dee-logo-${variant}-${background}.png`;
+  // Get logo path based on background (dark or light)
+  const logoPath = background === "dark" 
+    ? "/lovable-uploads/c1270e92-10b7-4250-b57a-915bb40a0e12.png"  // Dark logo (navy on transparent)
+    : "/lovable-uploads/a5037c12-6941-420d-a1b7-a593e53a5e59.png";  // Light logo (white on transparent)
   
   // The logo component
   const Logo = (
@@ -40,7 +42,7 @@ const ClubLogo: React.FC<ClubLogoProps> = ({
       className={cn(
         sizeClasses[size],
         "w-auto",
-        variant === "square" ? "aspect-square" : "max-h-full",
+        variant === "square" ? "aspect-square" : (variant === "circle" ? "aspect-square rounded-full" : "max-h-full"),
         className
       )}
       objectFit="contain"

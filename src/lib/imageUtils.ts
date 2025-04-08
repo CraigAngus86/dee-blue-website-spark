@@ -34,10 +34,15 @@ export const getAssetPath = (category: string, filename: string): string => {
  * Get the path to club logo based on variant and background
  */
 export const getClubLogo = (
-  variant: 'rect' | 'square' = 'rect',
-  background: 'light' | 'dark' = 'light'
+  variant: 'rect' | 'square' | 'circle' = 'circle',
+  background: 'light' | 'dark' = 'dark'
 ): string => {
-  return `/src/assets/images/logos/banks-o-dee-logo-${variant}-${background}.png`;
+  // Use the uploaded club logos
+  if (background === 'dark') {
+    return "/lovable-uploads/c1270e92-10b7-4250-b57a-915bb40a0e12.png"; // Dark logo
+  } else {
+    return "/lovable-uploads/a5037c12-6941-420d-a1b7-a593e53a5e59.png"; // Light logo
+  }
 };
 
 /**

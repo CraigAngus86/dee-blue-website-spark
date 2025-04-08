@@ -25,6 +25,7 @@ export interface Competitor {
   logo: string;
   shortName?: string;
   website?: string;
+  logoVariant?: 'rect' | 'square' | 'circle';
 }
 
 export interface MatchPhoto {
