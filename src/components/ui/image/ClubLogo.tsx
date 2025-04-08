@@ -31,8 +31,8 @@ const ClubLogo: React.FC<ClubLogoProps> = ({
 
   // Get logo path based on background (dark or light)
   const logoPath = background === "dark" 
-    ? "/lovable-uploads/c1270e92-10b7-4250-b57a-915bb40a0e12.png"  // Dark logo (navy on transparent)
-    : "/lovable-uploads/a5037c12-6941-420d-a1b7-a593e53a5e59.png";  // Light logo (white on transparent)
+    ? "/src/assets/images/logos/banks-o-dee-logo-dark.png"  // Dark logo (navy on transparent)
+    : "/src/assets/images/logos/banks-o-dee-logo-light.png";  // Light logo (white on transparent)
   
   // The logo component
   const Logo = (
