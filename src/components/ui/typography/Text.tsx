@@ -37,11 +37,11 @@ const Text = ({
     bold: "font-bold",
   };
   
-  // Map color names to Tailwind classes
+  // Updated color mappings to match brand colors
   const colorClasses = {
     default: "text-near-black",
     primary: "text-primary",
-    secondary: "text-secondary",
+    secondary: "text-dark-gray", // Secondary text is dark gray, not light blue
     accent: "text-accent",
     muted: "text-gray",
     white: "text-white",

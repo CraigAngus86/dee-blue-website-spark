@@ -96,7 +96,7 @@ const CardDemo: React.FC = () => {
                       alt="News article thumbnail" 
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute top-4 left-4 bg-accent text-primary text-xs font-semibold px-2 py-1 rounded">
+                    <div className="absolute top-4 left-4 bg-secondary text-primary text-xs font-semibold px-2 py-1 rounded">
                       NEWS
                     </div>
                   </CardNewMedia>
@@ -118,7 +118,7 @@ const CardDemo: React.FC = () => {
             </div>
           </div>
           
-          {/* Match Card Example */}
+          {/* Match Card Example - Updated with correct brand colors */}
           <div className="space-y-6">
             <Heading level={2} className="pb-2 border-b border-medium-gray">Match Card Example</Heading>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -184,7 +184,7 @@ const CardDemo: React.FC = () => {
                       <div className="px-3 py-2">
                         <Heading level={5}>VS</Heading>
                       </div>
-                      <Text size="xs" color="accent" weight="bold" className="mt-1">UPCOMING</Text>
+                      <Text size="xs" color="secondary" weight="bold" className="mt-1">UPCOMING</Text>
                     </div>
                     
                     <div className="text-center">
@@ -226,7 +226,7 @@ const CardDemo: React.FC = () => {
                       <div className="px-3 py-2">
                         <Heading level={5}>VS</Heading>
                       </div>
-                      <Text size="xs" color="accent" weight="bold" className="mt-1">UPCOMING</Text>
+                      <Text size="xs" color="secondary" weight="bold" className="mt-1">UPCOMING</Text>
                     </div>
                     
                     <div className="text-center">
@@ -250,7 +250,7 @@ const CardDemo: React.FC = () => {
             </div>
           </div>
           
-          {/* Player Card Example */}
+          {/* Player Card Example - Updated with correct brand colors */}
           <div className="space-y-6">
             <Heading level={2} className="pb-2 border-b border-medium-gray">Player Card Example</Heading>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">

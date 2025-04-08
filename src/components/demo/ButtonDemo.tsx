@@ -14,7 +14,7 @@ const ButtonDemo: React.FC = () => {
         <Heading level={1} className="mb-12">Button System</Heading>
         
         <div className="space-y-16">
-          {/* Button Variants */}
+          {/* Button Variants - Updated with correct brand colors */}
           <div className="space-y-6">
             <Heading level={2} className="pb-2 border-b border-medium-gray">Button Variants</Heading>
             <div className="flex flex-wrap gap-4 items-center">
@@ -67,12 +67,12 @@ const ButtonDemo: React.FC = () => {
               </div>
               <div className="space-y-3">
                 <Text weight="medium">Hover (simulated)</Text>
-                <ButtonNew variant="primary" className="bg-primary-light">Primary Button</ButtonNew>
+                <ButtonNew variant="primary" className="bg-secondary-light">Primary Button</ButtonNew>
                 <Text size="small" color="muted">When user hovers over button</Text>
               </div>
               <div className="space-y-3">
                 <Text weight="medium">Focus (simulated)</Text>
-                <ButtonNew variant="primary" className="ring-2 ring-primary ring-offset-2">Primary Button</ButtonNew>
+                <ButtonNew variant="primary" className="ring-2 ring-secondary ring-offset-2">Primary Button</ButtonNew>
                 <Text size="small" color="muted">When button receives keyboard focus</Text>
               </div>
               <div className="space-y-3">
@@ -95,7 +95,7 @@ const ButtonDemo: React.FC = () => {
               </div>
               <div className="space-y-3">
                 <Text weight="medium">Focus (simulated)</Text>
-                <ButtonNew variant="secondary" className="ring-2 ring-primary ring-offset-2">Secondary Button</ButtonNew>
+                <ButtonNew variant="secondary" className="ring-2 ring-secondary ring-offset-2">Secondary Button</ButtonNew>
                 <Text size="small" color="muted">When button receives keyboard focus</Text>
               </div>
               <div className="space-y-3">
@@ -106,36 +106,36 @@ const ButtonDemo: React.FC = () => {
             </div>
           </div>
           
-          {/* Button Usage Guidelines */}
+          {/* Button Usage Guidelines - Updated with correct brand colors */}
           <div className="space-y-6">
             <Heading level={2} className="pb-2 border-b border-medium-gray">Button Usage Guidelines</Heading>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-4">
                 <Heading level={3}>Primary Buttons</Heading>
-                <Text>Use for the main action on a page or in a section. There should typically be only one primary action per view.</Text>
+                <Text>Primary buttons use light blue on navy text for standard actions and interactive elements.</Text>
                 <div className="mt-2">
                   <ButtonNew variant="primary">Main Action</ButtonNew>
                 </div>
               </div>
               <div className="space-y-4">
                 <Heading level={3}>Secondary Buttons</Heading>
-                <Text>Use for secondary actions that should be visible but not draw focus away from the primary action.</Text>
+                <Text>Secondary buttons use white background with navy text and light blue border for less emphasized actions.</Text>
                 <div className="mt-2">
                   <ButtonNew variant="secondary">Secondary Action</ButtonNew>
                 </div>
               </div>
               <div className="space-y-4">
                 <Heading level={3}>Tertiary Buttons</Heading>
-                <Text>Use for less important actions or when space is limited, such as in dense interfaces or cards.</Text>
+                <Text>Tertiary buttons are text-only with navy color for subtle actions, space saving, and dense interfaces.</Text>
                 <div className="mt-2">
                   <ButtonNew variant="tertiary">Subtle Action</ButtonNew>
                 </div>
               </div>
               <div className="space-y-4">
                 <Heading level={3}>Accent Buttons</Heading>
-                <Text>Use for promotional actions, calls-to-action, or to draw special attention to an important action.</Text>
+                <Text>Accent buttons use gold color reserved for the most important call-to-action buttons like "Buy Tickets".</Text>
                 <div className="mt-2">
-                  <ButtonNew variant="accent">Promotional Action</ButtonNew>
+                  <ButtonNew variant="accent">Buy Tickets</ButtonNew>
                 </div>
               </div>
             </div>

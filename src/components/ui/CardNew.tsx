@@ -14,16 +14,18 @@ const CardNew = React.forwardRef<HTMLDivElement, CardNewProps>(
     { elevation = "md", hoverEffect = false, className, children, ...props },
     ref
   ) => {
+    // Enhanced elevation classes with more pronounced differences
     const elevationClasses = {
       flat: "border border-medium-gray",
-      sm: "shadow-sm",
-      md: "shadow-md",
+      sm: "shadow-sm border border-medium-gray/50",
+      md: "shadow-md border-t border-medium-gray/20",
       lg: "shadow-lg",
       xl: "shadow-xl",
     };
 
+    // Improved hover effect with more noticeable elevation change
     const hoverClasses = hoverEffect
-      ? "transition-all duration-[var(--animation-standard)] ease-out hover:-translate-y-1 hover:shadow-lg"
+      ? "transition-all duration-[var(--animation-standard)] ease-out hover:-translate-y-1.5 hover:shadow-lg"
       : "";
 
     return (
@@ -112,7 +114,7 @@ const CardNewTitle = React.forwardRef<
   <h3
     ref={ref}
     className={cn(
-      "text-h4 font-montserrat font-bold tracking-tight text-black",
+      "text-h4 font-montserrat font-bold tracking-tight text-primary", // Changed to primary color
       className
     )}
     {...props}

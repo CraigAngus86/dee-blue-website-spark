@@ -90,17 +90,63 @@ const TypographyDemo: React.FC = () => {
             </div>
           </div>
           
-          {/* Text Colors */}
+          {/* Text Colors - Updated with correct brand color usage */}
           <div className="space-y-6">
             <Heading level={2} className="pb-2 border-b border-medium-gray">Text Colors</Heading>
             <div className="space-y-4">
-              <Text color="default">Default Text - Near Black (#1E293B)</Text>
-              <Text color="primary">Primary Text - Deep Navy (#00105A)</Text>
-              <Text color="secondary">Secondary Text - Light Blue (#C5E7FF)</Text>
-              <Text color="accent">Accent Text - Gold (#FFD700)</Text>
-              <Text color="muted">Muted Text - Gray (#94A3B8)</Text>
-              <div className="p-4 bg-primary rounded-md">
-                <Text color="white">White Text - On dark background (#FFFFFF)</Text>
+              <Text color="default">Default Text - Near Black (#1E293B) - For main content on light backgrounds</Text>
+              <Text color="primary">Primary Text - Deep Navy (#00105A) - For headings and important text on light backgrounds</Text>
+              <Text color="secondary">Secondary Text - Dark Gray (#475569) - For secondary information, captions</Text>
+              <Text color="muted">Muted Text - Medium Gray (#94A3B8) - For less important information, helper text</Text>
+            </div>
+            
+            <div className="mt-8 p-6 bg-primary rounded-lg">
+              <Heading level={3} color="white" className="mb-4">Text Colors on Dark Backgrounds</Heading>
+              <div className="space-y-3">
+                <Text color="white">White Text (#FFFFFF) - Primary text on dark backgrounds</Text>
+                <Text color="secondary">Light Blue Text (#C5E7FF) - For highlighting text on dark backgrounds</Text>
+                <Text color="accent">Gold Text (#FFD700) - For special emphasis or CTAs on dark backgrounds</Text>
+                <Text color="muted">Muted Light Gray (#94A3B8) - For secondary information on dark backgrounds</Text>
+              </div>
+            </div>
+            
+            <div className="mt-8 p-6 border border-medium-gray rounded-lg">
+              <Heading level={3} className="mb-4">Text Accessibility</Heading>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                  <Heading level={4} className="mb-3">Good Contrast Examples</Heading>
+                  <div className="space-y-3">
+                    <div className="p-3 bg-primary">
+                      <Text color="white">White text on navy background ✓</Text>
+                    </div>
+                    <div className="p-3 bg-white border border-medium-gray">
+                      <Text color="primary">Navy text on white background ✓</Text>
+                    </div>
+                    <div className="p-3 bg-primary">
+                      <Text color="secondary">Light blue on navy background ✓</Text>
+                    </div>
+                    <div className="p-3 bg-secondary border border-medium-gray">
+                      <Text color="primary">Navy on light blue background ✓</Text>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <Heading level={4} className="mb-3">Poor Contrast Examples (Avoid)</Heading>
+                  <div className="space-y-3">
+                    <div className="p-3 bg-primary">
+                      <Text color="primary" className="opacity-50">Navy text on navy background ✗</Text>
+                    </div>
+                    <div className="p-3 bg-secondary border border-medium-gray">
+                      <Text color="white">White text on light blue background ✗</Text>
+                    </div>
+                    <div className="p-3 bg-light-gray border border-medium-gray">
+                      <Text color="secondary" className="opacity-70">Light blue on light gray background ✗</Text>
+                    </div>
+                    <div className="p-3 bg-accent border border-medium-gray">
+                      <Text color="white">White on gold background ✗</Text>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

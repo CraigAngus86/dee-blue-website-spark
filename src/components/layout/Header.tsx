@@ -41,7 +41,7 @@ const Header: React.FC<HeaderProps> = ({ transparent = false, className }) => {
     { label: "Tickets", href: "/tickets" },
   ];
   
-  // Determine header classes based on scroll state and transparency setting
+  // Updated header classes based on scroll state and transparency setting
   const headerClasses = cn(
     "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
     {
@@ -81,10 +81,10 @@ const Header: React.FC<HeaderProps> = ({ transparent = false, className }) => {
                 key={item.label}
                 href={item.href}
                 className={cn(
-                  "font-montserrat font-semibold text-sm tracking-wide hover:text-accent transition-colors duration-200",
+                  "font-montserrat font-semibold text-sm tracking-wide hover:text-secondary transition-colors duration-200",
                   transparent && !isScrolled 
                     ? "text-white" 
-                    : "text-near-black"
+                    : "text-primary"
                 )}
               >
                 {item.label}
@@ -105,7 +105,7 @@ const Header: React.FC<HeaderProps> = ({ transparent = false, className }) => {
               <Search size={20} />
             </div>
             <ButtonNew 
-              variant={transparent && !isScrolled ? "secondary" : "primary"} 
+              variant="accent" // Changed to accent (gold) for "Buy Tickets" CTA
               size="sm"
             >
               Buy Tickets
@@ -143,14 +143,14 @@ const Header: React.FC<HeaderProps> = ({ transparent = false, className }) => {
                 <a
                   key={item.label}
                   href={item.href}
-                  className="font-montserrat font-semibold text-base text-near-black hover:text-primary px-2 py-2"
+                  className="font-montserrat font-semibold text-base text-primary hover:text-secondary px-2 py-2"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {item.label}
                 </a>
               ))}
               <div className="pt-4 border-t border-medium-gray">
-                <ButtonNew variant="primary" size="md" className="w-full">
+                <ButtonNew variant="accent" size="md" className="w-full">
                   Buy Tickets
                 </ButtonNew>
               </div>
