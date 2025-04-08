@@ -36,6 +36,11 @@ const SponsorLogo: React.FC<SponsorLogoProps> = ({
     ? sponsor.logoLight 
     : sponsor.logo;
   
+  // If no logo is provided, use the imageUtils function to get a logo by name
+  if (!logoSrc) {
+    logoSrc = getSponsorLogo(sponsor.name);
+  }
+  
   // Log the original logo source for debugging
   console.log(`Original sponsor logo path for ${sponsor.name}:`, logoSrc);
   
