@@ -2,6 +2,7 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import ResponsiveImage from "./ResponsiveImage";
+import { getCompetitionImage } from "@/lib/imageUtils";
 
 interface CompetitionImageProps {
   filename: string;
@@ -36,8 +37,8 @@ const CompetitionImage: React.FC<CompetitionImageProps> = ({
     full: "w-full",
   };
 
-  // Construct the image path using lovable-uploads
-  const imagePath = `/lovable-uploads/competitions/${filename}`;
+  // Get the competition image path using imageUtils
+  const imagePath = getCompetitionImage(filename, type);
   console.log("Competition image path:", imagePath);
 
   // For logos, we want to use contain to preserve proper proportions

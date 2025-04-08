@@ -2,6 +2,7 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import ResponsiveImage from "./ResponsiveImage";
+import { getNewsImage } from "@/lib/imageUtils";
 
 interface NewsImageProps {
   filename: string;
@@ -34,8 +35,8 @@ const NewsImage: React.FC<NewsImageProps> = ({
     full: "w-full",
   };
 
-  // Construct the image path using lovable-uploads
-  const imagePath = `/lovable-uploads/news/${filename}`;
+  // Get the image path using imageUtils
+  const imagePath = getNewsImage(filename);
   console.log("News image path:", imagePath);
 
   return (

@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import ResponsiveImage from "./ResponsiveImage";
+import { getStadiumImage } from "@/lib/imageUtils";
 
 interface StadiumImageProps {
   filename: string;
@@ -26,8 +27,8 @@ const StadiumImage: React.FC<StadiumImageProps> = ({
   caption,
   credit,
 }) => {
-  // Construct the image path using lovable-uploads
-  const imagePath = `/lovable-uploads/stadium/${filename}`;
+  // Get the stadium image path using imageUtils
+  const imagePath = getStadiumImage(filename, view);
   console.log("Stadium image path:", imagePath);
   
   // Fallback to a placeholder if the image fails to load

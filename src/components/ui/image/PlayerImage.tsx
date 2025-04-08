@@ -2,6 +2,7 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import ResponsiveImage from "./ResponsiveImage";
+import { getPlayerImage } from "@/lib/imageUtils";
 
 interface PlayerImageProps {
   playerId: string;
@@ -33,8 +34,8 @@ const PlayerImage: React.FC<PlayerImageProps> = ({
     xl: "w-64",
   };
   
-  // Get image path using lovable-uploads
-  const imagePath = `/lovable-uploads/players/player-${playerId}${type !== "headshot" ? `-${type}` : ""}.jpg`;
+  // Get image path using imageUtils
+  const imagePath = getPlayerImage(playerId, type);
   console.log("Player image path:", imagePath);
   
   // Handle click if provided

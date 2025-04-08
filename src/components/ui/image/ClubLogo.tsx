@@ -28,11 +28,10 @@ const ClubLogo: React.FC<ClubLogoProps> = ({
     xl: "h-16",
   };
 
-  // We currently only have sponsor logos in the lovable-uploads folder
-  // For club logo, we'll use a placeholder until actual assets are uploaded
-  let logoPath = background === "light"
-    ? "/src/assets/images/logos/banks-o-dee-logo-light.png"
-    : "/src/assets/images/logos/banks-o-dee-logo-dark.png";
+  // Use the actual logo file paths
+  const logoPath = background === "light"
+    ? "/assets/images/logos/BOD_Logo_White_square.png"
+    : "/assets/images/logos/BOD_Logo_Navy_square.png";
   
   console.log("Using club logo path:", logoPath);
 

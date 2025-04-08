@@ -1,22 +1,21 @@
 
 import { Sponsor } from "@/lib/types";
 
-// Only use confirmed uploaded files
+// Reference actual uploaded files where available
 export const sponsors: Sponsor[] = [
   {
     name: "AD23",
-    logo: "/lovable-uploads/a5037c12-6941-420d-a1b7-a593e53a5e59.png",
-    logoLight: "/lovable-uploads/a5037c12-6941-420d-a1b7-a593e53a5e59.png",
+    logo: "/assets/images/sponsors/AD23.jpg",
+    logoLight: "/assets/images/sponsors/AD23.jpg",
     website: "https://ad23.com",
     tier: "main",
   },
   {
     name: "BJK Winton Properties",
-    logo: "/lovable-uploads/c1270e92-10b7-4250-b57a-915bb40a0e12.png",
+    logo: "/assets/images/sponsors/BJK Winton copy.jpg",
     website: "https://bjkwinton.com",
     tier: "platinum",
   },
-  // For other sponsors, we'll use placeholders until actual assets are uploaded
   {
     name: "PCL Live AV",
     logo: "https://placehold.co/400x200/FFFFFF/00105A?text=PCL+Live+AV", 
@@ -31,7 +30,7 @@ export const sponsors: Sponsor[] = [
   },
   {
     name: "Saltire Energy",
-    logo: "https://placehold.co/400x200/FFFFFF/00105A?text=Saltire+Energy",
+    logo: "/assets/images/sponsors/saltire.jpg",
     website: "https://saltire-energy.com",
     tier: "silver",
   }

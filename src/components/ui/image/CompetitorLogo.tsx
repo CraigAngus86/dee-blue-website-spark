@@ -2,10 +2,11 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import ResponsiveImage from "./ResponsiveImage";
+import { getCompetitorLogo } from "@/lib/imageUtils";
 
 interface CompetitorLogoProps {
   name: string;
-  logoSrc: string;
+  logoSrc?: string;
   size?: "xs" | "sm" | "md" | "lg" | "xl";
   className?: string;
   containerClassName?: string;
@@ -31,11 +32,8 @@ const CompetitorLogo: React.FC<CompetitorLogoProps> = ({
     xl: "w-24 h-24",
   };
 
-  // Ensure path has the correct prefix
-  const formattedLogoSrc = logoSrc.startsWith('/') || logoSrc.startsWith('http') 
-    ? logoSrc 
-    : `/lovable-uploads/competitors/${logoSrc}`;
-    
+  // Use the provided logoSrc or get it from the utility function
+  const formattedLogoSrc = logoSrc || getCompetitorLogo(name);
   console.log(`Rendering competitor logo: ${name}, path: ${formattedLogoSrc}`);
 
   // Logo component with consistent styling

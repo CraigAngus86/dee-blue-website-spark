@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import ResponsiveImage from "./ResponsiveImage";
 import { Sponsor } from "@/lib/types";
+import { getSponsorLogo } from "@/lib/imageUtils";
 
 interface SponsorLogoProps {
   sponsor: Sponsor;
@@ -31,11 +32,15 @@ const SponsorLogo: React.FC<SponsorLogoProps> = ({
   };
 
   // Determine logo to use based on variant
-  const logoSrc = variant === "light" && sponsor.logoLight 
+  let logoSrc = variant === "light" && sponsor.logoLight 
     ? sponsor.logoLight 
     : sponsor.logo;
   
-  // Add console logs to debug the image path
+  // If the logo doesn't start with http or /, try to get it from the utility function
+  if (!(logoSrc.startsWith('http') || logoSrc.startsWith('/'))) {
+    logoSrc = getSponsorLogo(sponsor.name, variant === "light" ? "light" : "default");
+  }
+  
   console.log(`Rendering sponsor: ${sponsor.name}, logo path: ${logoSrc}`);
 
   // Create fallback URL for placeholder in case the image fails to load
