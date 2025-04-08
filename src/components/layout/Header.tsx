@@ -107,7 +107,7 @@ const Header: React.FC<HeaderProps> = ({ transparent = false, className }) => {
             <ButtonNew 
               variant="accent" 
               size="sm"
-              className={transparent && !isScrolled ? "bg-white text-primary border-accent" : ""}
+              className={transparent && !isScrolled ? "bg-white text-primary border-accent hover:bg-accent hover:text-primary" : ""}
             >
               Buy Tickets
             </ButtonNew>
@@ -135,7 +135,7 @@ const Header: React.FC<HeaderProps> = ({ transparent = false, className }) => {
         </div>
       </Container>
       
-      {/* Mobile Navigation Menu - Updated with proper text contrast */}
+      {/* Mobile Navigation Menu */}
       {isMobileMenuOpen && (
         <div className="lg:hidden absolute top-full left-0 right-0 bg-white shadow-lg animate-slide-in-right">
           <Container>
@@ -151,7 +151,7 @@ const Header: React.FC<HeaderProps> = ({ transparent = false, className }) => {
                 </a>
               ))}
               <div className="pt-4 border-t border-medium-gray">
-                <ButtonNew variant="accent" size="md" className="w-full bg-white text-primary border-accent hover:bg-accent hover:text-primary">
+                <ButtonNew variant="accent" size="md" className="w-full">
                   Buy Tickets
                 </ButtonNew>
               </div>

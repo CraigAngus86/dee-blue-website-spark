@@ -118,7 +118,7 @@ const CardDemo: React.FC = () => {
             </div>
           </div>
           
-          {/* Match Card Example - Updated to fix contrast and text wrapping issues */}
+          {/* Match Card Example - Fixed to ensure white text on navy background */}
           <div className="space-y-6">
             <Heading level={2} className="pb-2 border-b border-medium-gray">Match Card Example</Heading>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -184,7 +184,7 @@ const CardDemo: React.FC = () => {
                       <div className="px-3 py-2">
                         <Heading level={5}>VS</Heading>
                       </div>
-                      <Text size="xs" color="secondary" weight="bold" className="mt-1">UPCOMING</Text>
+                      <Text size="xs" color="accent" weight="bold" className="mt-1">UPCOMING</Text>
                     </div>
                     
                     <div className="text-center w-1/3">
@@ -201,7 +201,7 @@ const CardDemo: React.FC = () => {
                     <Text size="xs" color="muted">May 21, 2023 • 15:00</Text>
                     <Text size="xs" color="muted">Spain Park</Text>
                   </div>
-                  <ButtonNew variant="accent" size="sm" className="w-full mt-2 bg-white text-primary border-accent hover:bg-accent hover:text-primary">
+                  <ButtonNew variant="accent" size="sm" className="w-full mt-2">
                     Get Tickets
                   </ButtonNew>
                 </CardNewFooter>
@@ -246,7 +246,7 @@ const CardDemo: React.FC = () => {
                     </div>
                     <Text size="xs" color="muted">Hampden Park</Text>
                   </div>
-                  <ButtonNew variant="accent" size="sm" className="w-full mt-2 bg-white text-primary border-accent hover:bg-accent hover:text-primary">
+                  <ButtonNew variant="accent" size="sm" className="w-full mt-2">
                     Get Tickets
                   </ButtonNew>
                 </CardNewFooter>
@@ -254,7 +254,7 @@ const CardDemo: React.FC = () => {
             </div>
           </div>
           
-          {/* Player Card Example - Fixed contrast issues on headers */}
+          {/* Player Card Example - Fixed for proper text color contrast */}
           <div className="space-y-6">
             <Heading level={2} className="pb-2 border-b border-medium-gray">Player Card Example</Heading>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">

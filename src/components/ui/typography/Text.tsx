@@ -41,7 +41,7 @@ const Text = ({
   const colorClasses = {
     default: "text-near-black",
     primary: "text-primary",
-    secondary: "text-dark-gray", // Secondary text is dark gray, not light blue
+    secondary: "text-secondary", // This should be light blue for proper contrast on dark backgrounds
     accent: "text-accent",
     muted: "text-gray",
     white: "text-white",
@@ -55,7 +55,6 @@ const Text = ({
     className
   );
   
-  // Fix the dynamic component rendering with proper typing
   switch (as) {
     case 'p':
       return <p className={classes} {...props}>{children}</p>;

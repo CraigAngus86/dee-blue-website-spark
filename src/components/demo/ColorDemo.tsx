@@ -137,7 +137,7 @@ const ColorDemo: React.FC = () => {
             </div>
           </div>
 
-          {/* Updated Text on Dark Backgrounds section to match the screenshots */}
+          {/* Text on Dark Backgrounds section explicitly using white/light blue text */}
           <div className="p-8 bg-primary rounded-lg">
             <Heading level={3} color="white" className="mb-6">Text Colors on Dark Backgrounds</Heading>
             <div className="space-y-5">
@@ -149,12 +149,14 @@ const ColorDemo: React.FC = () => {
               <div className="flex gap-4 mt-6 flex-wrap">
                 <ButtonNew 
                   variant="accent" 
-                  className="bg-white text-primary border-accent">
+                  className="bg-white text-primary border-accent hover:bg-accent hover:text-primary"
+                >
                   Gold Border Button
                 </ButtonNew>
                 <ButtonNew 
                   variant="accent" 
-                  className="bg-accent text-primary">
+                  className="bg-accent text-primary"
+                >
                   Gold Fill Button (Hover)
                 </ButtonNew>
               </div>
@@ -198,7 +200,7 @@ const ColorDemo: React.FC = () => {
             </div>
           </div>
 
-          {/* Text on Dark Backgrounds Example - Updated to match screenshots */}
+          {/* Text on Dark Backgrounds Example - Explicitly using white/light colors */}
           <div className="p-8 bg-primary rounded-lg">
             <Heading level={3} color="white" className="mb-6">Text on Dark Backgrounds</Heading>
             <div className="space-y-4">
@@ -206,7 +208,7 @@ const ColorDemo: React.FC = () => {
               <Text color="white">Regular white text on navy background (Primary)</Text>
               <Text color="secondary" size="small">Light blue text for highlights on navy (Secondary)</Text>
               <div className="flex gap-4 mt-4">
-                <ButtonNew variant="accent" className="bg-white text-primary border-accent">Gold Border Button</ButtonNew>
+                <ButtonNew variant="accent" className="bg-white text-primary border-accent hover:bg-accent hover:text-primary">Gold Border Button</ButtonNew>
                 <ButtonNew variant="accent" className="bg-accent text-primary">Gold Fill Button (Hover)</ButtonNew>
               </div>
             </div>
@@ -243,9 +245,9 @@ const ColorDemo: React.FC = () => {
                 <Heading level={4} className="mb-4">Accent Button Usage</Heading>
                 <Text className="mb-4">Gold accent buttons reserved for CTAs like "Buy Tickets" only.</Text>
                 <div className="flex gap-4">
-                  <ButtonNew variant="accent">Default</ButtonNew>
-                  <ButtonNew variant="accent" className="bg-accent">Hover</ButtonNew>
-                  <ButtonNew variant="accent" className="bg-accent-dark">Active</ButtonNew>
+                  <ButtonNew variant="accent" className="bg-white text-primary border-accent">Default</ButtonNew>
+                  <ButtonNew variant="accent" className="bg-accent text-primary">Hover</ButtonNew>
+                  <ButtonNew variant="accent" className="bg-accent-dark text-primary">Active</ButtonNew>
                 </div>
               </div>
             </div>
