@@ -20,7 +20,7 @@ const ClubLogo: React.FC<ClubLogoProps> = ({
   const [fallbackLoaded, setFallbackLoaded] = useState(false);
 
   // Map sizes to width/height values
-  const sizeMap = {
+  const sizeClasses = {
     xs: "h-6",
     sm: "h-8",
     md: "h-10",
@@ -28,7 +28,7 @@ const ClubLogo: React.FC<ClubLogoProps> = ({
     xl: "h-16",
   };
 
-  // Use the actual logo file paths with the correct paths
+  // Use the correct logo file paths directly
   const logoPath = background === "light"
     ? "/assets/images/logos/BOD_Logo_White_square.png"
     : "/assets/images/logos/BOD_Logo_Navy_square.png";
@@ -39,7 +39,7 @@ const ClubLogo: React.FC<ClubLogoProps> = ({
     <div
       className={cn(
         "inline-flex items-center justify-center",
-        sizeMap[size],
+        sizeClasses[size],
         className
       )}
     >

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   createBrowserRouter,
@@ -9,6 +10,7 @@ import SponsorsDemo from "./pages/demo/SponsorsDemo";
 import CompetitorsDemo from "./pages/demo/CompetitorsDemo";
 import ImageDemo from "./pages/ImageDemo";
 import ImagesDemo from "./pages/demo/ImagesDemo";
+import ImageUtilsDemo from "./pages/demo/ImageUtilsDemo";
 
 function App() {
   return (
@@ -44,6 +46,10 @@ const routes = [
   {
     path: "/demo/images",
     element: <ImagesDemo />,
+  },
+  {
+    path: "/demo/image-utils",
+    element: <ImageUtilsDemo />,
   },
 ];
 
