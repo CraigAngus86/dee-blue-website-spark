@@ -28,8 +28,11 @@ const ClubLogo: React.FC<ClubLogoProps> = ({
     xl: "h-16",
   };
 
-  // Use the club logo from lovable-uploads
-  let logoPath = `/lovable-uploads/banks-o-dee-logo-${background}.png`;
+  // We currently only have sponsor logos in the lovable-uploads folder
+  // For club logo, we'll use a placeholder until actual assets are uploaded
+  let logoPath = background === "light"
+    ? "/src/assets/images/logos/banks-o-dee-logo-light.png"
+    : "/src/assets/images/logos/banks-o-dee-logo-dark.png";
   
   console.log("Using club logo path:", logoPath);
 
@@ -52,6 +55,8 @@ const ClubLogo: React.FC<ClubLogoProps> = ({
           // Fall back to placeholder if the logo fails to load
           if (!fallbackLoaded) {
             setFallbackLoaded(true);
+            
+            // Use a text-based fallback instead
             toast.error("Could not load club logo");
           }
         }}

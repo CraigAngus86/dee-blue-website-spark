@@ -1,7 +1,7 @@
 
 import { Sponsor } from "@/lib/types";
 
-// Use Lovable uploads to ensure we have reliable images
+// Only use confirmed uploaded files
 export const sponsors: Sponsor[] = [
   {
     name: "AD23",
@@ -16,21 +16,22 @@ export const sponsors: Sponsor[] = [
     website: "https://bjkwinton.com",
     tier: "platinum",
   },
+  // For other sponsors, we'll use placeholders until actual assets are uploaded
   {
     name: "PCL Live AV",
-    logo: "/lovable-uploads/pcl-live-av.png", 
+    logo: "https://placehold.co/400x200/FFFFFF/00105A?text=PCL+Live+AV", 
     website: "https://pcllive.com",
     tier: "gold",
   },
   {
     name: "ADX",
-    logo: "/lovable-uploads/adx.png",
+    logo: "https://placehold.co/400x200/FFFFFF/00105A?text=ADX",
     website: "https://adx.com",
     tier: "gold",
   },
   {
     name: "Saltire Energy",
-    logo: "/lovable-uploads/saltire-energy.png",
+    logo: "https://placehold.co/400x200/FFFFFF/00105A?text=Saltire+Energy",
     website: "https://saltire-energy.com",
     tier: "silver",
   }

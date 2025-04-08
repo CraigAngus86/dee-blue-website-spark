@@ -1,106 +1,111 @@
 
 import { Competitor } from "@/lib/types";
 
+// Create a function to generate placeholder logo URLs
+const getPlaceholderLogo = (teamName: string): string => {
+  return `https://placehold.co/200x200/FFFFFF/00105A?text=${encodeURIComponent(teamName)}`;
+};
+
 export const competitors: Competitor[] = [
   {
     name: "Brechin City FC",
-    logo: "/lovable-uploads/competitors/brechin-city-fc.png",
+    logo: getPlaceholderLogo("Brechin City"),
     shortName: "Brechin",
     website: "https://www.brechincity.com"
   },
   {
     name: "Brora Rangers FC",
-    logo: "/lovable-uploads/competitors/brora-rangers-fc.png",
+    logo: getPlaceholderLogo("Brora Rangers"),
     shortName: "Brora",
     website: "https://www.brorarangers.football"
   },
   {
     name: "Buckie Thistle FC",
-    logo: "/lovable-uploads/competitors/buckie-thistle-fc.png",
+    logo: getPlaceholderLogo("Buckie Thistle"),
     shortName: "Buckie",
     website: "https://www.buckiethistle.com"
   },
   {
     name: "Clachnacuddin FC",
-    logo: "/lovable-uploads/competitors/clachnacuddin-fc.png",
+    logo: getPlaceholderLogo("Clachnacuddin"),
     shortName: "Clach",
     website: "https://www.clachfc.com"
   },
   {
     name: "Deveronvale FC",
-    logo: "/lovable-uploads/competitors/deveronvale-fc.png",
+    logo: getPlaceholderLogo("Deveronvale"),
     shortName: "Vale",
     website: "https://www.deveronvale.co.uk"
   },
   {
     name: "Formartine United FC",
-    logo: "/lovable-uploads/competitors/formartine-united-fc.png",
+    logo: getPlaceholderLogo("Formartine"),
     shortName: "Formartine",
     website: "https://www.formartineunitedfc.co.uk"
   },
   {
     name: "Forres Mechanics FC",
-    logo: "/lovable-uploads/competitors/forres-mechanics-fc.png",
+    logo: getPlaceholderLogo("Forres"),
     shortName: "Forres",
     website: "https://www.forresmechanics.net"
   },
   {
     name: "Fraserburgh FC",
-    logo: "/lovable-uploads/competitors/fraserburgh-fc.png",
+    logo: getPlaceholderLogo("Fraserburgh"),
     shortName: "Broch",
     website: "https://www.fraserburghfc.co.uk"
   },
   {
     name: "Huntly FC",
-    logo: "/lovable-uploads/competitors/huntly-fc.png",
+    logo: getPlaceholderLogo("Huntly"),
     shortName: "Huntly",
     website: "https://www.huntlyfc.co.uk"
   },
   {
     name: "Keith FC",
-    logo: "/lovable-uploads/competitors/keith-fc.png",
+    logo: getPlaceholderLogo("Keith"),
     shortName: "Keith",
     website: "https://www.keithfc.com"
   },
   {
     name: "Inverurie Loco Works FC",
-    logo: "/lovable-uploads/competitors/inverurie-loco-works-fc.png",
+    logo: getPlaceholderLogo("Locos"),
     shortName: "Locos",
     website: "https://www.inverurielocoworks.co.uk"
   },
   {
     name: "Lossiemouth FC",
-    logo: "/lovable-uploads/competitors/lossiemouth-fc.png",
+    logo: getPlaceholderLogo("Lossie"),
     shortName: "Lossie",
     website: "https://www.lossiemouthfc.club"
   },
   {
     name: "Nairn County FC",
-    logo: "/lovable-uploads/competitors/nairn-county-fc.png",
+    logo: getPlaceholderLogo("Nairn"),
     shortName: "Nairn",
     website: "https://www.nairncountyfc.co.uk"
   },
   {
     name: "Rothes FC",
-    logo: "/lovable-uploads/competitors/rothes-fc.png",
+    logo: getPlaceholderLogo("Rothes"),
     shortName: "Rothes",
     website: "https://www.rothesfc.co.uk"
   },
   {
     name: "Strathspey Thistle FC",
-    logo: "/lovable-uploads/competitors/strathspey-thistle-fc.png",
+    logo: getPlaceholderLogo("Strathspey"),
     shortName: "Strathspey",
     website: "https://www.strathspeythistlefc.co.uk"
   },
   {
     name: "Turriff United FC",
-    logo: "/lovable-uploads/competitors/turriff-united-fc.png",
+    logo: getPlaceholderLogo("Turriff"),
     shortName: "Turriff",
     website: "https://www.turriffunitedfc.co.uk"
   },
   {
     name: "Wick Academy FC",
-    logo: "/lovable-uploads/competitors/wick-academy-fc.png",
+    logo: getPlaceholderLogo("Wick"),
     shortName: "Wick",
     website: "https://www.wickacademyfc.co.uk"
   }
