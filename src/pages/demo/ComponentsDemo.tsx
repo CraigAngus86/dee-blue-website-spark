@@ -43,12 +43,14 @@ const ComponentsDemo = () => {
                 variant="accent" 
                 size="lg" 
                 iconRight={<ChevronRight />}
+                className="bg-white text-primary border-accent hover:bg-accent hover:text-primary"
               >
                 Explore Components
               </ButtonNew>
               <ButtonNew 
                 variant="secondary" 
                 size="lg"
+                className="bg-white text-primary border-white hover:bg-light-gray"
               >
                 Design Guidelines
               </ButtonNew>

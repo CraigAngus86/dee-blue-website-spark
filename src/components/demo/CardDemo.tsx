@@ -123,7 +123,7 @@ const CardDemo: React.FC = () => {
             <Heading level={2} className="pb-2 border-b border-medium-gray">Match Card Example</Heading>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
               <CardNew elevation="md" hoverEffect>
-                <CardNewHeader className="bg-primary text-white">
+                <CardNewHeader className="bg-primary">
                   <div className="text-center">
                     <Text size="small" weight="semibold" color="white">Scottish Cup</Text>
                     <Text size="xs" color="secondary">Quarter Final</Text>
@@ -135,7 +135,7 @@ const CardDemo: React.FC = () => {
                       <div className="w-16 h-16 mx-auto bg-light-gray rounded-full flex items-center justify-center">
                         <span className="font-bold">BD</span>
                       </div>
-                      <Text weight="bold" size="small" className="mt-2">Banks o' Dee</Text>
+                      <Text weight="bold" size="small" className="mt-2 truncate px-1">Banks o' Dee</Text>
                     </div>
                     
                     <div className="text-center w-1/3">
@@ -149,7 +149,7 @@ const CardDemo: React.FC = () => {
                       <div className="w-16 h-16 mx-auto bg-light-gray rounded-full flex items-center justify-center">
                         <span className="font-bold">FC</span>
                       </div>
-                      <Text weight="bold" size="small" className="mt-2">Formartine Utd</Text>
+                      <Text weight="bold" size="small" className="mt-2 truncate px-1">Formartine Utd</Text>
                     </div>
                   </div>
                 </CardNewContent>
@@ -165,7 +165,7 @@ const CardDemo: React.FC = () => {
               </CardNew>
               
               <CardNew elevation="md" hoverEffect>
-                <CardNewHeader className="bg-primary text-white">
+                <CardNewHeader className="bg-primary">
                   <div className="text-center">
                     <Text size="small" weight="semibold" color="white">Highland League</Text>
                     <Text size="xs" color="secondary">Matchday 28</Text>
@@ -177,7 +177,7 @@ const CardDemo: React.FC = () => {
                       <div className="w-16 h-16 mx-auto bg-light-gray rounded-full flex items-center justify-center">
                         <span className="font-bold">BD</span>
                       </div>
-                      <Text weight="bold" size="small" className="mt-2">Banks o' Dee</Text>
+                      <Text weight="bold" size="small" className="mt-2 truncate px-1">Banks o' Dee</Text>
                     </div>
                     
                     <div className="text-center w-1/3">
@@ -191,7 +191,7 @@ const CardDemo: React.FC = () => {
                       <div className="w-16 h-16 mx-auto bg-light-gray rounded-full flex items-center justify-center">
                         <span className="font-bold">BFC</span>
                       </div>
-                      <Text weight="bold" size="small" className="mt-2">Buckie FC</Text>
+                      <Text weight="bold" size="small" className="mt-2 truncate px-1">Buckie FC</Text>
                     </div>
                   </div>
                 </CardNewContent>
@@ -201,14 +201,14 @@ const CardDemo: React.FC = () => {
                     <Text size="xs" color="muted">May 21, 2023 • 15:00</Text>
                     <Text size="xs" color="muted">Spain Park</Text>
                   </div>
-                  <ButtonNew variant="accent" size="sm" className="w-full mt-2">
+                  <ButtonNew variant="accent" size="sm" className="w-full mt-2 bg-white text-primary border-accent hover:bg-accent hover:text-primary">
                     Get Tickets
                   </ButtonNew>
                 </CardNewFooter>
               </CardNew>
               
               <CardNew elevation="md" hoverEffect>
-                <CardNewHeader className="bg-primary text-white">
+                <CardNewHeader className="bg-primary">
                   <div className="text-center">
                     <Text size="small" weight="semibold" color="white">Scottish Cup</Text>
                     <Text size="xs" color="secondary">Semi Final</Text>
@@ -220,21 +220,21 @@ const CardDemo: React.FC = () => {
                       <div className="w-16 h-16 mx-auto bg-light-gray rounded-full flex items-center justify-center">
                         <span className="font-bold">RFC</span>
                       </div>
-                      <Text weight="bold" size="small" className="mt-2">Rangers FC</Text>
+                      <Text weight="bold" size="small" className="mt-2 truncate px-1">Rangers FC</Text>
                     </div>
                     
                     <div className="text-center w-1/3">
                       <div className="px-3 py-2">
                         <Heading level={5}>VS</Heading>
                       </div>
-                      <Text size="xs" color="secondary" weight="bold" className="mt-1">UPCOMING</Text>
+                      <Text size="xs" color="accent" weight="bold" className="mt-1">UPCOMING</Text>
                     </div>
                     
                     <div className="text-center w-1/3">
                       <div className="w-16 h-16 mx-auto bg-light-gray rounded-full flex items-center justify-center">
                         <span className="font-bold">BD</span>
                       </div>
-                      <Text weight="bold" size="small" className="mt-2">Banks o' Dee</Text>
+                      <Text weight="bold" size="small" className="mt-2 truncate px-1">Banks o' Dee</Text>
                     </div>
                   </div>
                 </CardNewContent>
@@ -246,7 +246,7 @@ const CardDemo: React.FC = () => {
                     </div>
                     <Text size="xs" color="muted">Hampden Park</Text>
                   </div>
-                  <ButtonNew variant="accent" size="sm" className="w-full mt-2">
+                  <ButtonNew variant="accent" size="sm" className="w-full mt-2 bg-white text-primary border-accent hover:bg-accent hover:text-primary">
                     Get Tickets
                   </ButtonNew>
                 </CardNewFooter>

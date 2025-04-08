@@ -107,7 +107,7 @@ const Header: React.FC<HeaderProps> = ({ transparent = false, className }) => {
             <ButtonNew 
               variant="accent" 
               size="sm"
-              className={transparent && !isScrolled ? "bg-accent text-primary border-transparent" : ""}
+              className={transparent && !isScrolled ? "bg-white text-primary border-accent" : ""}
             >
               Buy Tickets
             </ButtonNew>
@@ -151,7 +151,7 @@ const Header: React.FC<HeaderProps> = ({ transparent = false, className }) => {
                 </a>
               ))}
               <div className="pt-4 border-t border-medium-gray">
-                <ButtonNew variant="accent" size="md" className="w-full">
+                <ButtonNew variant="accent" size="md" className="w-full bg-white text-primary border-accent hover:bg-accent hover:text-primary">
                   Buy Tickets
                 </ButtonNew>
               </div>
