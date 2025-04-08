@@ -37,7 +37,7 @@ export const getClubLogo = (
   variant: 'rect' | 'square' | 'circle' = 'circle',
   background: 'light' | 'dark' = 'dark'
 ): string => {
-  // Return appropriate logo path based on background
+  // Return correct path to logo in the src/assets folder structure
   return `/src/assets/images/logos/banks-o-dee-logo-${background}.png`;
 };
 
@@ -94,6 +94,17 @@ export const getTeamImage = (
 };
 
 /**
+ * Get player image with proper path
+ */
+export const getPlayerImage = (
+  playerId: string,
+  type: 'headshot' | 'action' | 'profile' = 'headshot'
+): string => {
+  // Return the path to the player image
+  return `/src/assets/images/players/player-${playerId}${type !== 'headshot' ? `-${type}` : ''}.jpg`;
+};
+
+/**
  * Get competition image with proper path
  */
 export const getCompetitionImage = (
@@ -128,4 +139,14 @@ export const optimizeImageUrl = (
  */
 export const getLovableUploadPath = (uuid: string): string => {
   return `/lovable-uploads/${uuid}`;
+};
+
+/**
+ * Get newly uploaded player headshots
+ */
+export const getPlayerHeadshot = (
+  playerNumber: number,
+  name?: string
+): string => {
+  return `/src/assets/images/players/player${playerNumber}${name ? `-${name}` : ''}.jpg`;
 };

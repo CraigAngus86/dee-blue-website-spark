@@ -18,11 +18,16 @@ This directory contains all official Banks o' Dee FC image assets organized in t
     - 2025-04-01-post-match-reaction.png
     - ...
   /players/
+    - player-lawson-paul.jpg  (Coach)
     - player1.jpg
     - player2.jpg
+    - player3.jpg
+    - player4.jpg
+    - player5.jpg
     - ...
   /team/
     - team-photo-2023.jpg
+    - team-training-session-1.jpg
     - ...
   /stadium/
     - spain-park-main.jpg
@@ -50,6 +55,7 @@ This directory contains all official Banks o' Dee FC image assets organized in t
   /competitions/
     - scottish-cup.png
     - highland-league.png
+    - highland-league-cup-winners-2023.jpg
     - ...
 ```
 
