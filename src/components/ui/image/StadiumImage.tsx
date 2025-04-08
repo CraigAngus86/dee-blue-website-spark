@@ -26,23 +26,29 @@ const StadiumImage: React.FC<StadiumImageProps> = ({
   caption,
   credit,
 }) => {
-  // Construct the image path
-  const imagePath = `/assets/images/stadium/${filename}`;
+  // Construct the image path using lovable-uploads
+  const imagePath = `/lovable-uploads/stadium/${filename}`;
   console.log("Stadium image path:", imagePath);
   
   // Fallback to a placeholder if the image fails to load
   const fallbackImage = "https://placehold.co/1200x800/CCCCCC/333333?text=Stadium+Image";
+  const [imageSrc, setImageSrc] = useState(imagePath);
+
+  const handleError = () => {
+    console.error(`Failed to load stadium image: ${imagePath}`);
+    setImageSrc(fallbackImage);
+  };
 
   return (
     <figure className={cn("my-4", className)}>
       <ResponsiveImage
-        src={imagePath}
+        src={imageSrc}
         alt={alt}
         aspectRatio={aspectRatio}
         rounded={rounded}
         shadow={shadow}
         className="w-full"
-        onError={() => console.error(`Failed to load stadium image: ${imagePath}`)}
+        onError={handleError}
       />
       {(caption || credit) && (
         <figcaption className="mt-2 text-sm text-gray">

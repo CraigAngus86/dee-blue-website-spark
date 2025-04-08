@@ -28,9 +28,8 @@ const ClubLogo: React.FC<ClubLogoProps> = ({
     xl: "h-16",
   };
 
-  // Use Lovable uploads for reliable image loading
-  // For demo purposes, we'll use a placeholder as the club logo
-  let logoPath = "https://placehold.co/400x200/FFFFFF/00105A?text=Club+Logo";
+  // Use the club logo from lovable-uploads
+  let logoPath = `/lovable-uploads/banks-o-dee-logo-${background}.png`;
   
   console.log("Using club logo path:", logoPath);
 
@@ -48,7 +47,14 @@ const ClubLogo: React.FC<ClubLogoProps> = ({
         className="h-full w-auto"
         objectFit="contain"
         onLoad={() => console.log("Club logo loaded successfully")}
-        onError={() => console.error("Failed to load club logo:", logoPath)}
+        onError={() => {
+          console.error("Failed to load club logo:", logoPath);
+          // Fall back to placeholder if the logo fails to load
+          if (!fallbackLoaded) {
+            setFallbackLoaded(true);
+            toast.error("Could not load club logo");
+          }
+        }}
       />
     </div>
   );

@@ -38,16 +38,23 @@ const SponsorLogo: React.FC<SponsorLogoProps> = ({
   // Add console logs to debug the image path
   console.log(`Rendering sponsor: ${sponsor.name}, logo path: ${logoSrc}`);
 
+  // Create fallback URL for placeholder in case the image fails to load
+  const [useFallback, setUseFallback] = useState(false);
+  const fallbackSrc = `https://placehold.co/400x200/FFFFFF/00105A?text=${encodeURIComponent(sponsor.name)}`;
+  
   // The logo component
   const Logo = (
     <ResponsiveImage
-      src={logoSrc}
+      src={useFallback ? fallbackSrc : logoSrc}
       alt={`${sponsor.name} logo`}
       className={cn(sizeClasses[size], "w-auto", className)}
       objectFit="contain"
       loading="lazy"
       onLoad={() => console.log(`Sponsor logo loaded: ${sponsor.name}`)}
-      onError={() => console.error(`Failed to load sponsor logo: ${sponsor.name}`)}
+      onError={() => {
+        console.error(`Failed to load sponsor logo: ${sponsor.name}`);
+        setUseFallback(true);
+      }}
     />
   );
 

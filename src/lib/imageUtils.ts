@@ -27,7 +27,7 @@ export const getAssetPath = (category: string, filename: string): string => {
     ? category.slice(0, -1) 
     : category;
     
-  return `/assets/images/${category}/${filename}`;
+  return `/lovable-uploads/${category}/${filename}`;
 };
 
 /**
@@ -37,8 +37,7 @@ export const getClubLogo = (
   variant: 'rect' | 'square' | 'circle' = 'circle',
   background: 'light' | 'dark' = 'dark'
 ): string => {
-  // Fixed path without /src prefix
-  return `/assets/images/logos/banks-o-dee-logo-${background}.png`;
+  return `/lovable-uploads/banks-o-dee-logo-${background}.png`;
 };
 
 /**
@@ -52,7 +51,7 @@ export const getMatchPhotos = (
   // This is a placeholder - in a real app, this would fetch from an API or import from a data file
   
   const formattedDate = matchDate.split('T')[0]; // Extract YYYY-MM-DD
-  const folderPath = `/assets/images/matchday/${formattedDate}-vs-${opponent.toLowerCase().replace(/\s+/g, '-')}`;
+  const folderPath = `/lovable-uploads/matchday/${formattedDate}-vs-${opponent.toLowerCase().replace(/\s+/g, '-')}`;
   
   // Placeholder - this would be dynamically generated based on available files
   return [];
@@ -65,8 +64,7 @@ export const getNewsImage = (
   filename: string,
   size: 'thumbnail' | 'full' = 'full'
 ): string => {
-  // Return the path to the news image without /src prefix
-  return `/assets/images/news/${filename}${size === 'thumbnail' ? '-thumb' : ''}`;
+  return `/lovable-uploads/news/${filename}${size === 'thumbnail' ? '-thumb' : ''}`;
 };
 
 /**
@@ -76,8 +74,7 @@ export const getStadiumImage = (
   filename: string,
   view: 'aerial' | 'main' | 'pitch' | 'facilities' | 'other' = 'main'
 ): string => {
-  // Return the path to the stadium image without /src prefix
-  return `/assets/images/stadium/${filename}`;
+  return `/lovable-uploads/stadium/${filename}`;
 };
 
 /**
@@ -87,8 +84,7 @@ export const getTeamImage = (
   filename: string,
   category: 'squad' | 'training' | 'celebration' | 'other' = 'squad'
 ): string => {
-  // Return the path to the team image without /src prefix
-  return `/assets/images/team/${filename}`;
+  return `/lovable-uploads/team/${filename}`;
 };
 
 /**
@@ -98,8 +94,7 @@ export const getPlayerImage = (
   playerId: string,
   type: 'headshot' | 'action' | 'profile' = 'headshot'
 ): string => {
-  // Return the path to the player image without /src prefix
-  return `/assets/images/players/player-${playerId}${type !== 'headshot' ? `-${type}` : ''}.jpg`;
+  return `/lovable-uploads/players/player-${playerId}${type !== 'headshot' ? `-${type}` : ''}.jpg`;
 };
 
 /**
@@ -109,8 +104,7 @@ export const getCompetitionImage = (
   filename: string,
   type: 'trophy' | 'logo' | 'winners' | 'other' = 'logo'
 ): string => {
-  // Return the path to the competition image without /src prefix
-  return `/assets/images/competitions/${filename}`;
+  return `/lovable-uploads/competitions/${filename}`;
 };
 
 /**
@@ -126,7 +120,7 @@ export const getCompetitorLogo = (
     .replace(/\s+/g, '-')
     .replace(/[^\w-]+/g, '');
     
-  return `/assets/images/competitors/${filename}${variant === 'alternate' ? '-alt' : ''}.png`;
+  return `/lovable-uploads/competitors/${filename}${variant === 'alternate' ? '-alt' : ''}.png`;
 };
 
 /**
@@ -162,5 +156,5 @@ export const getPlayerHeadshot = (
   playerNumber: number,
   name?: string
 ): string => {
-  return `/assets/images/players/player${playerNumber}${name ? `-${name}` : ''}.jpg`;
+  return `/lovable-uploads/players/player${playerNumber}${name ? `-${name}` : ''}.jpg`;
 };

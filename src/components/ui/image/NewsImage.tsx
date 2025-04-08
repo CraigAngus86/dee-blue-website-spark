@@ -34,8 +34,9 @@ const NewsImage: React.FC<NewsImageProps> = ({
     full: "w-full",
   };
 
-  // Construct the image path without /src prefix
-  const imagePath = `/assets/images/news/${filename}`;
+  // Construct the image path using lovable-uploads
+  const imagePath = `/lovable-uploads/news/${filename}`;
+  console.log("News image path:", imagePath);
 
   return (
     <figure className={cn("my-6", sizeMap[size], className)}>
@@ -46,6 +47,8 @@ const NewsImage: React.FC<NewsImageProps> = ({
         rounded={rounded}
         shadow={shadow}
         className="w-full"
+        onLoad={() => console.log(`News image loaded: ${filename}`)}
+        onError={() => console.error(`Failed to load news image: ${filename}`)}
       />
       {(caption || credit) && (
         <figcaption className="mt-2 text-sm text-gray">

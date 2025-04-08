@@ -36,8 +36,9 @@ const CompetitionImage: React.FC<CompetitionImageProps> = ({
     full: "w-full",
   };
 
-  // Construct the image path without /src prefix
-  const imagePath = `/assets/images/competitions/${filename}`;
+  // Construct the image path using lovable-uploads
+  const imagePath = `/lovable-uploads/competitions/${filename}`;
+  console.log("Competition image path:", imagePath);
 
   // For logos, we want to use contain to preserve proper proportions
   const objectFit = type === "logo" ? "contain" : "cover";
@@ -52,6 +53,8 @@ const CompetitionImage: React.FC<CompetitionImageProps> = ({
         shadow={shadow}
         objectFit={objectFit}
         className="w-full"
+        onLoad={() => console.log(`Competition image loaded: ${filename}`)}
+        onError={() => console.error(`Failed to load competition image: ${filename}`)}
       />
       {(caption || credit) && (
         <figcaption className="mt-2 text-sm text-gray">

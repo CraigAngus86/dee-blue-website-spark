@@ -2,7 +2,6 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import ResponsiveImage from "./ResponsiveImage";
-import { getPlayerImage } from "@/lib/imageUtils";
 
 interface PlayerImageProps {
   playerId: string;
@@ -34,8 +33,9 @@ const PlayerImage: React.FC<PlayerImageProps> = ({
     xl: "w-64",
   };
   
-  // Get image path
-  const imagePath = getPlayerImage(playerId, type);
+  // Get image path using lovable-uploads
+  const imagePath = `/lovable-uploads/players/player-${playerId}${type !== "headshot" ? `-${type}` : ""}.jpg`;
+  console.log("Player image path:", imagePath);
   
   // Handle click if provided
   const handleClick = onClick ? { onClick } : {};
@@ -52,6 +52,8 @@ const PlayerImage: React.FC<PlayerImageProps> = ({
         aspectRatio={aspectRatio}
         rounded={rounded}
         objectFit="cover"
+        onLoad={() => console.log(`Player image loaded: ${name}`)}
+        onError={() => console.error(`Failed to load player image: ${name}`)}
       />
     </div>
   );

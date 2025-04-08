@@ -19,6 +19,13 @@ const MatchDayImage: React.FC<MatchDayImageProps> = ({
 }) => {
   const imageSrc = size === "thumbnail" ? photo.thumbnail : photo.src;
   
+  // Ensure path has the correct lovable-uploads prefix
+  const formattedImageSrc = imageSrc.startsWith('/') || imageSrc.startsWith('http') 
+    ? imageSrc 
+    : `/lovable-uploads/matchday/${imageSrc}`;
+    
+  console.log(`Rendering matchday image: ${formattedImageSrc}`);
+  
   return (
     <div 
       className={cn(
@@ -29,12 +36,14 @@ const MatchDayImage: React.FC<MatchDayImageProps> = ({
       onClick={onClick}
     >
       <ResponsiveImage
-        src={imageSrc}
+        src={formattedImageSrc}
         alt={photo.alt || "Match day photo"}
         rounded="md"
         shadow="sm"
         className="w-full h-full object-cover"
         aspectRatio={size === "thumbnail" ? "1" : undefined}
+        onLoad={() => console.log(`Matchday image loaded: ${size}`)}
+        onError={() => console.error(`Failed to load matchday image: ${formattedImageSrc}`)}
       />
       {size === "full" && photo.caption && (
         <div className="mt-2 text-sm text-gray">

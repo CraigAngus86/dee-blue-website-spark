@@ -31,6 +31,13 @@ const CompetitorLogo: React.FC<CompetitorLogoProps> = ({
     xl: "w-24 h-24",
   };
 
+  // Ensure path has the correct prefix
+  const formattedLogoSrc = logoSrc.startsWith('/') || logoSrc.startsWith('http') 
+    ? logoSrc 
+    : `/lovable-uploads/competitors/${logoSrc}`;
+    
+  console.log(`Rendering competitor logo: ${name}, path: ${formattedLogoSrc}`);
+
   // Logo component with consistent styling
   const Logo = (
     <>
@@ -42,11 +49,13 @@ const CompetitorLogo: React.FC<CompetitorLogoProps> = ({
         )}
       >
         <ResponsiveImage
-          src={logoSrc}
+          src={formattedLogoSrc}
           alt={`${name} logo`}
           className={cn("max-w-full max-h-full", className)}
           objectFit="contain"
           loading="lazy"
+          onLoad={() => console.log(`Competitor logo loaded: ${name}`)}
+          onError={() => console.error(`Failed to load competitor logo: ${name}`)}
         />
       </div>
       
