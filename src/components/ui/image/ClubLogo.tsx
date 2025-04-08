@@ -28,7 +28,7 @@ const ClubLogo: React.FC<ClubLogoProps> = ({
     xl: "h-16",
   };
 
-  // Use the actual logo file paths
+  // Use the actual logo file paths with the correct paths
   const logoPath = background === "light"
     ? "/assets/images/logos/BOD_Logo_White_square.png"
     : "/assets/images/logos/BOD_Logo_Navy_square.png";

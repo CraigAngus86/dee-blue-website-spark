@@ -36,13 +36,9 @@ const SponsorLogo: React.FC<SponsorLogoProps> = ({
     ? sponsor.logoLight 
     : sponsor.logo;
   
-  // If the logo doesn't start with http or /, try to get it from the utility function
-  if (!(logoSrc.startsWith('http') || logoSrc.startsWith('/'))) {
-    logoSrc = getSponsorLogo(sponsor.name, variant === "light" ? "light" : "default");
-  }
+  // Log the original logo source for debugging
+  console.log(`Original sponsor logo path for ${sponsor.name}:`, logoSrc);
   
-  console.log(`Rendering sponsor: ${sponsor.name}, logo path: ${logoSrc}`);
-
   // Create fallback URL for placeholder in case the image fails to load
   const [useFallback, setUseFallback] = useState(false);
   const fallbackSrc = `https://placehold.co/400x200/FFFFFF/00105A?text=${encodeURIComponent(sponsor.name)}`;
@@ -57,7 +53,7 @@ const SponsorLogo: React.FC<SponsorLogoProps> = ({
       loading="lazy"
       onLoad={() => console.log(`Sponsor logo loaded: ${sponsor.name}`)}
       onError={() => {
-        console.error(`Failed to load sponsor logo: ${sponsor.name}`);
+        console.error(`Failed to load sponsor logo: ${sponsor.name} from ${logoSrc}`);
         setUseFallback(true);
       }}
     />

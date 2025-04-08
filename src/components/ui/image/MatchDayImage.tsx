@@ -17,11 +17,15 @@ const MatchDayImage: React.FC<MatchDayImageProps> = ({
   size = "full",
   className,
 }) => {
-  const imageSrc = size === "thumbnail" ? photo.thumbnail : photo.src;
+  // Use the src directly from the photo object
+  const imageSrc = size === "thumbnail" ? (photo.thumbnail || photo.src) : photo.src;
   
-  // Use the src directly since it should now already have the correct path
-  // from the matchPhotos util function
-  console.log(`Rendering matchday image: ${imageSrc}`);
+  // For URLs that don't start with http or /, make sure to add the correct path prefix
+  const formattedSrc = imageSrc.startsWith('http') || imageSrc.startsWith('/') 
+    ? imageSrc 
+    : `/assets/images/matchday/${imageSrc}`;
+  
+  console.log(`Rendering matchday image: ${formattedSrc}`);
   
   return (
     <div 
@@ -33,14 +37,14 @@ const MatchDayImage: React.FC<MatchDayImageProps> = ({
       onClick={onClick}
     >
       <ResponsiveImage
-        src={imageSrc}
+        src={formattedSrc}
         alt={photo.alt || "Match day photo"}
         rounded="md"
         shadow="sm"
         className="w-full h-full object-cover"
         aspectRatio={size === "thumbnail" ? "1" : undefined}
-        onLoad={() => console.log(`Matchday image loaded: ${size}`)}
-        onError={() => console.error(`Failed to load matchday image: ${imageSrc}`)}
+        onLoad={() => console.log(`Matchday image loaded: ${formattedSrc}`)}
+        onError={() => console.error(`Failed to load matchday image: ${formattedSrc}`)}
       />
       {size === "full" && photo.caption && (
         <div className="mt-2 text-sm text-gray">

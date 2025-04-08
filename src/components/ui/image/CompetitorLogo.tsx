@@ -33,8 +33,11 @@ const CompetitorLogo: React.FC<CompetitorLogoProps> = ({
   };
 
   // Use the provided logoSrc or get it from the utility function
-  const formattedLogoSrc = logoSrc || getCompetitorLogo(name);
-  console.log(`Rendering competitor logo: ${name}, path: ${formattedLogoSrc}`);
+  // Extract just the team name without the "FC" suffix for better matching
+  const simpleName = name.replace(/\s+FC$|\s+Football\s+Club$/i, "").trim();
+  const formattedLogoSrc = logoSrc || getCompetitorLogo(simpleName);
+  
+  console.log(`Rendering competitor logo: ${name}, simplified to: ${simpleName}, path: ${formattedLogoSrc}`);
 
   // Logo component with consistent styling
   const Logo = (

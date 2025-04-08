@@ -18,13 +18,13 @@ export const sponsors: Sponsor[] = [
   },
   {
     name: "PCL Live AV",
-    logo: "https://placehold.co/400x200/FFFFFF/00105A?text=PCL+Live+AV", 
+    logo: "/assets/images/sponsors/Global.png", // Using available image
     website: "https://pcllive.com",
     tier: "gold",
   },
   {
     name: "ADX",
-    logo: "https://placehold.co/400x200/FFFFFF/00105A?text=ADX",
+    logo: "/assets/images/sponsors/GDI.jpeg", // Using available image
     website: "https://adx.com",
     tier: "gold",
   },
@@ -33,6 +33,12 @@ export const sponsors: Sponsor[] = [
     logo: "/assets/images/sponsors/saltire.jpg",
     website: "https://saltire-energy.com",
     tier: "silver",
+  },
+  {
+    name: "Three60", 
+    logo: "/assets/images/sponsors/Three60 copy.jpg",
+    website: "https://three60energy.com",
+    tier: "bronze",
   }
 ];
 

@@ -35,12 +35,8 @@ export const getPlaceholderImage = (
  * With fallback to placeholder
  */
 export const getAssetPath = (category: string, filename: string, fallbackText?: string): string => {
-  // Check if image is available in assets/images
-  const path = `/assets/images/${category}/${filename}`;
-  
-  // If no fallback text is provided, return the path directly
-  // The ResponsiveImage component will handle fallbacks
-  return path;
+  // Return the path with the correct format
+  return `/assets/images/${category}/${filename}`;
 };
 
 /**
@@ -62,10 +58,7 @@ export const getMatchPhotos = (
   opponent: string,
   category?: string
 ): MatchPhoto[] => {
-  // This is a placeholder - in a real app, this would fetch from an API or import from a data file
-  const formattedDate = matchDate.split('T')[0]; // Extract YYYY-MM-DD
-  const opponentSlug = opponent.toLowerCase().replace(/\s+/g, '-');
-  
+  // Use the actual available matchday image
   return [
     {
       src: `/assets/images/matchday/MatchDay1.jpg`,
@@ -91,18 +84,13 @@ export const getNewsImage = (
   filename: string,
   size: 'thumbnail' | 'full' = 'full'
 ): string => {
-  // We'll use the News1-News5 images from the assets directory
-  // If filename explicitly references one of these, use it
-  const newsImages = ["News1.jpg", "News2.jpg", "News3.jpg", "News4.jpg", "News5.jpg"];
-  
-  if (newsImages.includes(filename)) {
+  // If filename is one of News1.jpg to News5.jpg, use it directly
+  if (/^News[1-5]\.jpg$/.test(filename)) {
     return `/assets/images/news/${filename}`;
   }
   
-  // Otherwise use the first image as default or a placeholder
-  return newsImages.length > 0 
-    ? `/assets/images/news/${newsImages[0]}`
-    : getPlaceholderImage(`News: ${filename}`, 800, 450);
+  // Otherwise return a default news image
+  return `/assets/images/news/News1.jpg`;
 };
 
 /**
@@ -181,8 +169,7 @@ export const getCompetitionImage = (
   filename: string,
   type: 'trophy' | 'logo' | 'winners' | 'other' = 'logo'
 ): string => {
-  // Check if image exists in competitions assets
-  // Currently no competition images are available, use placeholder
+  // No competition images available yet, use placeholder
   return getPlaceholderImage(`Competition: ${filename}`, 400, 400);
 };
 
@@ -193,9 +180,6 @@ export const getCompetitorLogo = (
   teamName: string,
   variant?: 'default' | 'alternate'
 ): string => {
-  // Convert team name to match the format of the competitor image files
-  // Available competitor images: Brechin.png, Brora.png, etc.
-  
   // Extract the first part of the team name (before any spaces)
   const teamKey = teamName.split(' ')[0];
   
@@ -257,7 +241,7 @@ export const getSponsorLogo = (
   sponsorName: string,
   variant: 'default' | 'light' | 'dark' = 'default'
 ): string => {
-  // Available sponsor images
+  // Available sponsor images with exact filenames
   const sponsorImages = {
     "AD23": "AD23.jpg",
     "BJK Winton": "BJK Winton copy.jpg",
