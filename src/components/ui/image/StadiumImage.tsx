@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import ResponsiveImage from "./ResponsiveImage";
 
@@ -29,6 +29,9 @@ const StadiumImage: React.FC<StadiumImageProps> = ({
   // Construct the image path
   const imagePath = `/assets/images/stadium/${filename}`;
   console.log("Stadium image path:", imagePath);
+  
+  // Fallback to a placeholder if the image fails to load
+  const fallbackImage = "https://placehold.co/1200x800/CCCCCC/333333?text=Stadium+Image";
 
   return (
     <figure className={cn("my-4", className)}>
@@ -39,6 +42,7 @@ const StadiumImage: React.FC<StadiumImageProps> = ({
         rounded={rounded}
         shadow={shadow}
         className="w-full"
+        onError={() => console.error(`Failed to load stadium image: ${imagePath}`)}
       />
       {(caption || credit) && (
         <figcaption className="mt-2 text-sm text-gray">

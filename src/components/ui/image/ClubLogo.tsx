@@ -1,7 +1,8 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import ResponsiveImage from "./ResponsiveImage";
+import { toast } from "sonner";
 
 interface ClubLogoProps {
   variant?: "rect" | "square" | "circle";
@@ -16,6 +17,8 @@ const ClubLogo: React.FC<ClubLogoProps> = ({
   size = "md",
   className,
 }) => {
+  const [fallbackLoaded, setFallbackLoaded] = useState(false);
+
   // Map sizes to width/height values
   const sizeMap = {
     xs: "h-6",
@@ -25,10 +28,22 @@ const ClubLogo: React.FC<ClubLogoProps> = ({
     xl: "h-16",
   };
 
-  // Get the correct logo path
-  const logoPath = `/assets/images/logos/banks-o-dee-logo-${background}.png`;
+  // Try with different path formats to ensure we find the logo
+  // First attempt - direct from public folder
+  let logoPath = `/assets/images/logos/banks-o-dee-logo-${background}.png`;
   
-  console.log("Club logo path:", logoPath);
+  // Log for debugging
+  console.log("Attempting to load club logo from:", logoPath);
+
+  const handleError = () => {
+    if (!fallbackLoaded) {
+      console.log("Trying fallback logo path");
+      setFallbackLoaded(true);
+      // Use a placeholder as fallback
+      return "https://placehold.co/400x200/FFFFFF/00105A?text=Club+Logo";
+    }
+    return logoPath;
+  };
 
   return (
     <div
@@ -43,6 +58,10 @@ const ClubLogo: React.FC<ClubLogoProps> = ({
         alt="Banks o' Dee FC"
         className="h-full w-auto"
         objectFit="contain"
+        onError={() => { 
+          console.error("Failed to load club logo:", logoPath); 
+          handleError();
+        }}
       />
     </div>
   );

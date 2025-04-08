@@ -1,6 +1,7 @@
 
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 interface ResponsiveImageProps {
   src: string;
@@ -42,6 +43,7 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
   onError,
 }) => {
   const [imgError, setImgError] = useState(false);
+  const [imgSrc, setImgSrc] = useState(src);
 
   // Calculate classes for rounded corners
   const roundedClasses = rounded
@@ -68,13 +70,21 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
   }
 
   const handleError = (e: React.SyntheticEvent<HTMLImageElement>) => {
-    console.error(`Failed to load image: ${src}`);
-    setImgError(true);
-    if (onError) onError();
+    console.error(`Failed to load image: ${imgSrc}`);
+
+    // Try alternative path formats
+    if (imgSrc.startsWith('/assets') && !imgSrc.includes('public')) {
+      const newSrc = imgSrc.replace('/assets', '/public/assets');
+      console.log(`Trying alternative path: ${newSrc}`);
+      setImgSrc(newSrc);
+    } else {
+      setImgError(true);
+      if (onError) onError();
+    }
   };
 
   const handleLoad = () => {
-    console.log(`Successfully loaded image: ${src}`);
+    console.log(`Successfully loaded image: ${imgSrc}`);
     if (onLoad) onLoad();
   };
 
@@ -113,7 +123,7 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
       }}
     >
       <img
-        src={src}
+        src={imgSrc}
         alt={alt}
         srcSet={srcSet}
         sizes={sizes}
