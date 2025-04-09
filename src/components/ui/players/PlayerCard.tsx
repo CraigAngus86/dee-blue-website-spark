@@ -1,10 +1,9 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
+import PlayerImage from "../image/PlayerImage";
+import Text from "../typography/Text";
 import { Player } from "@/lib/types";
-import { CardNewMedia } from "@/components/ui/CardNew";
-import OptimizedImage from "@/components/ui/image/OptimizedImage";
-import HoverEffect from "@/components/ui/animations/HoverEffect";
 
 interface PlayerCardProps {
   player: Player;
@@ -12,84 +11,53 @@ interface PlayerCardProps {
 }
 
 const PlayerCard: React.FC<PlayerCardProps> = ({ player, className }) => {
-  // Determine background gradient based on player position
-  const getGradient = (position: string) => {
-    switch (position.toLowerCase()) {
-      case "forward":
-        return "from-[#AB0534] to-[#8A0529]"; // Dark red gradient for forwards
-      case "midfielder":
-        return "from-[#00105A] to-[#000D42]"; // Dark blue gradient for midfielders
-      case "defender":
-        return "from-[#004F2D] to-[#003B22]"; // Dark green gradient for defenders
-      case "goalkeeper":
-        return "from-[#333333] to-[#1A1A1A]"; // Dark gray gradient for goalkeepers
-      default:
-        return "from-[#00105A] to-[#000D42]"; // Default navy blue gradient
-    }
-  };
+  const { id, name, position, isAcademy } = player;
 
   return (
-    <HoverEffect effect="scale" className="h-full">
-      <div 
-        className={cn(
-          "relative overflow-hidden rounded-lg h-full",
-          className
-        )}
-      >
-        <div className={`absolute inset-0 bg-gradient-to-b ${getGradient(player.position)} z-0`} />
+    <div
+      className={cn(
+        "bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300 hover:-translate-y-2 hover:shadow-lg",
+        className
+      )}
+    >
+      <div className="aspect-[3/4] w-full relative overflow-hidden">
+        {/* Background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-t from-secondary/20 to-secondary/5 z-0" />
         
         {/* Player image */}
-        <div className="relative z-10 h-full flex flex-col">
-          <div className="flex-grow flex items-end justify-center">
-            <OptimizedImage 
-              src={player.image} 
-              alt={player.name}
-              className="max-h-[400px] w-auto object-contain mix-blend-luminosity"
-            />
+        <PlayerImage
+          playerId={id}
+          name={name}
+          className="w-full h-full object-cover z-10"
+        />
+        
+        {/* Academy badge if applicable */}
+        {isAcademy && (
+          <div className="absolute top-3 right-3 bg-accent text-primary text-[10px] font-bold px-2 py-1 rounded-full z-20">
+            MADE IN OUR ACADEMY
           </div>
-          
-          {/* Player info overlay */}
-          <div className="p-4 text-white">
-            {player.isAcademy && (
-              <div className="absolute top-4 right-4 z-20">
-                <div className="rounded-full bg-secondary text-primary text-xs font-bold px-3 py-1.5 rotate-12 uppercase">
-                  Made in our academy
-                </div>
-              </div>
-            )}
-            
-            {/* Player name and position */}
-            <div className="mb-2">
-              {player.firstName && (
-                <p className="text-sm font-normal opacity-90">{player.firstName}</p>
-              )}
-              <h3 className="text-2xl font-montserrat font-extrabold uppercase tracking-wide">
-                {player.lastName || player.name}
-              </h3>
-              <p className="text-sm opacity-80">{player.position}</p>
-            </div>
-            
-            {/* Player stats */}
-            {player.stats && (
-              <div className="grid grid-cols-3 gap-2 mt-4 text-center">
-                <div className="flex flex-col">
-                  <span className="text-2xl font-bold">{player.stats.appearances}</span>
-                  <span className="text-xs uppercase opacity-80">Appearances</span>
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-2xl font-bold">{player.stats.goals}</span>
-                  <span className="text-xs uppercase opacity-80">Goals</span>
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-2xl font-bold">{player.stats.assists}</span>
-                  <span className="text-xs uppercase opacity-80">Assists</span>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
+        )}
       </div>
-    </HoverEffect>
+      
+      {/* Player info */}
+      <div className="p-4">
+        <Text
+          as="h3"
+          size="large"
+          weight="bold"
+          className="uppercase text-primary"
+        >
+          {name}
+        </Text>
+        <Text
+          size="small"
+          color="secondary"
+          className="uppercase tracking-wider"
+        >
+          {position}
+        </Text>
+      </div>
+    </div>
   );
 };
 
