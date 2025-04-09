@@ -14,6 +14,7 @@ import Header from "@/components/layout/Header";
 import Section from "@/components/ui/layout/Section";
 import FanZoneSection from "@/components/ui/sections/FanZoneSection";
 import SocialMediaSection from "@/components/ui/sections/SocialMediaSection";
+import SponsorsSection from "@/components/ui/sections/SponsorsSection";
 
 const HomePage: React.FC = () => {
   return (
@@ -67,6 +68,9 @@ const HomePage: React.FC = () => {
         
         {/* Social Media Section */}
         <SocialMediaSection />
+
+        {/* Sponsors Section */}
+        <SponsorsSection />
         
         {/* Latest News Section - with improved texture */}
         <Section 
