@@ -29,7 +29,7 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
   // Always using primary (navy) color with full opacity for sticky header
   const headerClasses = cn(
     "fixed top-0 left-0 right-0 z-50 bg-primary shadow-md",
-    "h-[80px]", // Increased from 72px to 80px for better spacing
+    "h-[80px]", // Height set to 80px
     className
   );
   
@@ -37,9 +37,9 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
     <header className={headerClasses}>
       <Container>
         <div className="flex items-center justify-between h-full">
-          {/* Logo with more spacing - added flex items-center to center vertically */}
-          <div className="flex items-center">
-            <a href="/" className="flex items-center mr-10">
+          {/* Logo with proper vertical alignment */}
+          <div className="flex items-center h-full">
+            <a href="/" className="flex items-center h-full mr-10">
               <ClubLogo 
                 variant="rect"
                 background="light"
@@ -48,9 +48,9 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
             </a>
           </div>
           
-          {/* Desktop Navigation - with improved typography and hover effect, centered vertically */}
-          <div className="hidden lg:flex items-center flex-grow justify-center h-full">
-            <nav className="flex space-x-10 h-full"> {/* Added h-full for vertical centering */}
+          {/* Desktop Navigation - with proper vertical centering */}
+          <div className="hidden lg:flex items-center justify-center h-full flex-grow">
+            <nav className="flex space-x-10 h-full"> 
               {navItems.map((item) => (
                 <div 
                   key={item.label} 
@@ -58,7 +58,7 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
                 >
                   <a
                     href={item.href}
-                    className="font-montserrat font-bold text-sm tracking-widest text-white hover:text-secondary transition-colors duration-200 whitespace-nowrap" 
+                    className="font-montserrat font-bold text-sm tracking-widest text-white hover:text-secondary transition-colors duration-200 whitespace-nowrap flex items-center h-full" 
                   >
                     {item.label}
                   </a>
@@ -69,22 +69,24 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
             </nav>
           </div>
           
-          {/* Desktop Actions - centered vertically */}
-          <div className="hidden lg:flex items-center space-x-4">
-            <div className="relative p-2 rounded-full text-white hover:bg-white/20 transition-colors cursor-pointer">
+          {/* Desktop Actions - properly centered vertically */}
+          <div className="hidden lg:flex items-center space-x-4 h-full">
+            <div className="relative p-2 rounded-full text-white hover:bg-white/20 transition-colors cursor-pointer flex items-center h-full">
               <Search size={20} />
             </div>
-            <ButtonNew 
-              variant="accent" 
-              size="sm"
-              className="bg-accent text-primary border-accent hover:bg-accent-light whitespace-nowrap filter hover:brightness-105 shadow-md" 
-            >
-              Buy Tickets
-            </ButtonNew>
+            <div className="flex items-center h-full">
+              <ButtonNew 
+                variant="accent" 
+                size="sm"
+                className="bg-accent text-primary border-accent hover:bg-accent-light whitespace-nowrap filter hover:brightness-105 shadow-md" 
+              >
+                Buy Tickets
+              </ButtonNew>
+            </div>
           </div>
           
-          {/* Mobile Menu Button */}
-          <div className="flex lg:hidden items-center">
+          {/* Mobile Menu Button - ensure vertical centering */}
+          <div className="flex lg:hidden items-center h-full">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="p-2 rounded-full text-white hover:bg-white/20 transition-colors"
