@@ -17,6 +17,7 @@ interface PhotoGalleryProps {
   gap?: "sm" | "md" | "lg";
   enableLightbox?: boolean;
   categoryFilter?: boolean;
+  aspectRatio?: string; // Added this prop
 }
 
 const PhotoGallery: React.FC<PhotoGalleryProps> = ({
@@ -26,6 +27,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({
   gap = "md",
   enableLightbox = true,
   categoryFilter = false,
+  aspectRatio = "1/1", // Added default value
 }) => {
   const [selectedPhoto, setSelectedPhoto] = useState<MatchPhoto | null>(null);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
@@ -113,7 +115,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({
             <ResponsiveImage
               src={photo.thumbnail || photo.src}
               alt={photo.alt || "Match photo"}
-              aspectRatio="1/1"
+              aspectRatio={aspectRatio} // Use the aspectRatio prop
               className="w-full h-full object-cover"
               rounded="lg"
               loading="lazy"
