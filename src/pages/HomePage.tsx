@@ -16,7 +16,7 @@ import Section from "@/components/ui/layout/Section";
 const HomePage: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col">
-      <Header transparent />
+      <Header />
       
       <main className="flex-grow">
         {/* Hero Section - Full width */}
@@ -30,19 +30,20 @@ const HomePage: React.FC = () => {
         {/* Overlapping News Cards */}
         <OverlappingNewsCards articles={newsArticles} count={3} />
         
-        {/* Featured Content Section - Added texture and gradient */}
+        {/* Featured Content Section - Improved gradient and texture */}
         <Section 
-          background="primary-gradient" 
           className="relative overflow-hidden"
           spacing="lg"
         >
-          {/* Texture overlay */}
-          <div 
-            className="absolute inset-0 opacity-10"
-            style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-            }}
-          />
+          {/* Rich texture overlay with dark navy gradient */}
+          <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/95 to-primary-dark">
+            <div 
+              className="absolute inset-0 opacity-10"
+              style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+              }}
+            />
+          </div>
           
           <div className="container mx-auto px-4 relative z-10">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -59,13 +60,12 @@ const HomePage: React.FC = () => {
           </div>
         </Section>
         
-        {/* Latest News Section - with texture */}
+        {/* Latest News Section - with improved texture */}
         <Section 
-          background="light" 
-          className="relative overflow-hidden"
+          className="relative overflow-hidden bg-light-gray"
           spacing="lg"
         >
-          {/* Subtle texture */}
+          {/* Subtle texture overlay */}
           <div 
             className="absolute inset-0 opacity-5"
             style={{
@@ -117,24 +117,23 @@ const HomePage: React.FC = () => {
           </div>
         </Section>
         
-        {/* Gallery Preview Section - with accent gradient */}
+        {/* Gallery Preview Section - with proper gradient (no bright yellow) */}
         <Section 
-          background="accent-gradient" 
-          className="relative overflow-hidden"
+          className="relative overflow-hidden bg-gradient-to-br from-primary-dark to-primary"
           spacing="lg"
         >
           {/* Texture overlay */}
           <div 
-            className="absolute inset-0 opacity-5"
+            className="absolute inset-0 opacity-10"
             style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg width='52' height='26' viewBox='0 0 52 26' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.1'%3E%3Cpath d='M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='52' height='26' viewBox='0 0 52 26' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
             }}
           />
           
           <div className="container mx-auto px-4 relative z-10">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-primary">Match Day Gallery</h2>
-              <a href="/gallery" className="text-primary font-semibold hover:underline flex items-center">
+              <h2 className="text-2xl font-bold text-white">Match Day Gallery</h2>
+              <a href="/gallery" className="text-white font-semibold hover:underline flex items-center">
                 View Full Gallery
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-1">
                   <path d="m9 18 6-6-6-6"></path>

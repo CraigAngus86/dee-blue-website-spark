@@ -14,7 +14,6 @@ interface PhotoGalleryProps {
     md?: number;
     lg?: number;
   };
-  aspectRatio?: string;
   gap?: "sm" | "md" | "lg";
   enableLightbox?: boolean;
   categoryFilter?: boolean;
@@ -24,7 +23,6 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({
   photos,
   className,
   columns = { default: 2, sm: 3, md: 4, lg: 5 },
-  aspectRatio = "1/1",
   gap = "md",
   enableLightbox = true,
   categoryFilter = false,
@@ -104,28 +102,22 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({
         </div>
       )}
 
-      {/* Photo grid */}
+      {/* Photo grid with consistent square aspect ratio */}
       <div className={cn("grid", columnClasses.join(" "), gapClasses)}>
         {filteredPhotos.map((photo, index) => (
           <div
             key={index}
-            className="overflow-hidden rounded-lg cursor-pointer transform transition-transform hover:scale-105"
+            className="aspect-square overflow-hidden rounded-lg cursor-pointer transform transition-transform hover:scale-105"
             onClick={() => openLightbox(photo)}
           >
             <ResponsiveImage
               src={photo.thumbnail || photo.src}
               alt={photo.alt || "Match photo"}
-              aspectRatio={aspectRatio}
-              className="w-full h-full"
+              aspectRatio="1/1"
+              className="w-full h-full object-cover"
               rounded="lg"
-              objectFit="cover"
               loading="lazy"
             />
-            {photo.caption && (
-              <div className="p-2 text-sm text-center text-dark-gray truncate">
-                {photo.caption}
-              </div>
-            )}
           </div>
         ))}
       </div>

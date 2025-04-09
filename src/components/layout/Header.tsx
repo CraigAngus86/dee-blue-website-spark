@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Menu, Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Container from "../ui/layout/Container";
@@ -11,27 +11,10 @@ interface HeaderProps {
   className?: string;
 }
 
-const Header: React.FC<HeaderProps> = ({ transparent = false, className }) => {
-  const [isScrolled, setIsScrolled] = useState(false);
+const Header: React.FC<HeaderProps> = ({ className }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
-  // Track scroll position for header styling
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 50) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
-    };
-    
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-  
-  // Simple navigation items without dropdowns
+  // Simple navigation items
   const navItems = [
     { label: "Home", href: "/" },
     { label: "News", href: "/news" },
@@ -42,16 +25,10 @@ const Header: React.FC<HeaderProps> = ({ transparent = false, className }) => {
     { label: "Tickets", href: "/tickets" },
   ];
   
-  // Updated header classes based on scroll state and transparency setting
-  // Always using primary (navy) color now, but with transparency when needed
+  // Always using primary (navy) color with full opacity for sticky header
   const headerClasses = cn(
-    "fixed top-0 left-0 right-0 z-50 transition-all duration-200",
-    {
-      "bg-primary/95 shadow-md": !transparent || isScrolled,
-      "bg-primary/50": transparent && !isScrolled,
-      "h-[72px]": !isScrolled,
-      "h-[64px]": isScrolled,
-    },
+    "fixed top-0 left-0 right-0 z-50 bg-primary shadow-md",
+    "h-[72px]",
     className
   );
   
@@ -59,28 +36,25 @@ const Header: React.FC<HeaderProps> = ({ transparent = false, className }) => {
     <header className={headerClasses}>
       <Container>
         <div className="flex items-center justify-between h-full">
-          {/* Logo with proper sizing - not exceeding navbar height */}
+          {/* Logo with proper sizing - on the left side */}
           <div className="flex items-center">
             <a href="/" className="flex items-center py-2">
               <ClubLogo 
                 variant="rect"
-                background="light" // Always use light (white) variant on navy background
-                className={cn(
-                  "transition-all duration-200 max-h-[72px]",
-                  isScrolled ? "w-[120px]" : "w-[140px]"
-                )}
+                background="light"
+                className="w-[140px] max-h-[56px]"
               />
             </a>
           </div>
           
-          {/* Desktop Navigation without dropdowns */}
-          <div className="hidden lg:flex items-center">
-            <nav className="flex space-x-7">
+          {/* Desktop Navigation - more spaced out */}
+          <div className="hidden lg:flex items-center flex-grow justify-center">
+            <nav className="flex space-x-8">
               {navItems.map((item) => (
                 <a
                   key={item.label}
                   href={item.href}
-                  className="font-montserrat font-bold text-sm tracking-wide text-white hover:text-secondary transition-colors duration-200 py-2"
+                  className="font-montserrat font-bold text-sm tracking-wide text-white hover:text-secondary transition-colors duration-200 py-2 px-1"
                 >
                   {item.label}
                 </a>

@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import { X } from "lucide-react";
@@ -80,7 +81,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
 
   return (
     <div className={className}>
-      {/* Thumbnail Grid - Enforcing square aspect ratio */}
+      {/* Thumbnail Grid - Enforcing perfect square aspect ratio */}
       <div className={cn("grid", columnClasses[columns], gapClasses[gap])}>
         {images.map((image, index) => (
           <div
@@ -103,6 +104,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
                   imageLoaded[index] ? "opacity-100" : "opacity-0"
                 )}
                 objectFit="cover"
+                aspectRatio="1/1"
                 onLoad={() => handleImageLoad(index)}
                 loading="lazy"
               />
