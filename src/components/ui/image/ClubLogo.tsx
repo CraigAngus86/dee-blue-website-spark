@@ -19,13 +19,13 @@ const ClubLogo: React.FC<ClubLogoProps> = ({
 }) => {
   const [fallbackLoaded, setFallbackLoaded] = useState(false);
 
-  // Map sizes to width/height values
+  // Map sizes to width/height values - adjusted for better proportions
   const sizeClasses = {
-    xs: "h-6",
-    sm: "h-8",
-    md: "h-10",
-    lg: "h-12",
-    xl: "h-16",
+    xs: "h-5",
+    sm: "h-6",
+    md: "h-8",
+    lg: "h-10",
+    xl: "h-12",
   };
 
   // Use the correct logo file paths directly
@@ -33,8 +33,6 @@ const ClubLogo: React.FC<ClubLogoProps> = ({
     ? "/assets/images/logos/BOD_Logo_White_square.png"
     : "/assets/images/logos/BOD_Logo_Navy_square.png";
   
-  console.log("Using club logo path:", logoPath);
-
   return (
     <div
       className={cn(

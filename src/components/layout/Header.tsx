@@ -38,12 +38,12 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
       <Container>
         <div className="flex items-center justify-between h-full">
           {/* Logo with further reduced size - on the left side with more spacing */}
-          <div className="flex items-center mr-8">
+          <div className="flex items-center">
             <a href="/" className="flex items-center py-2">
               <ClubLogo 
                 variant="rect"
                 background="light"
-                className="w-[80px] max-h-[32px]" // Further reduced size by 20%
+                className="w-[60px] h-auto max-h-[28px]" // Further reduced size for better fit
               />
             </a>
           </div>
