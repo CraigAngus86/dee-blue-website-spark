@@ -15,9 +15,9 @@ import Header from "@/components/layout/Header";
 const HomePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      <Header />
+      <Header transparent />
       
-      <main className="flex-grow pt-16">
+      <main className="flex-grow">
         {/* Hero Section */}
         <HeroSection 
           title="BANKS O' DEE AIMING FOR LEAGUE GLORY" 
@@ -48,14 +48,17 @@ const HomePage: React.FC = () => {
         <section className="container mx-auto px-4 mb-16">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-primary">Latest News</h2>
-            <a href="/news" className="text-primary font-semibold hover:underline">
-              View All News →
+            <a href="/news" className="text-primary font-semibold hover:underline flex items-center">
+              View All News
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-1">
+                <path d="m9 18 6-6-6-6"></path>
+              </svg>
             </a>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {newsArticles.slice(0, 3).map(article => (
-              <div key={article.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+              <div key={article.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                 <div className="aspect-[16/9] overflow-hidden">
                   <ResponsiveImage
                     src={article.image} 
@@ -72,8 +75,11 @@ const HomePage: React.FC = () => {
                   <p className="text-gray-600 text-sm mb-3 line-clamp-2">{article.excerpt}</p>
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-gray-500">{article.timestamp}</span>
-                    <a href={`/news/${article.id}`} className="text-primary font-medium hover:underline">
-                      Read More →
+                    <a href={`/news/${article.id}`} className="text-primary font-medium hover:underline flex items-center">
+                      Read More
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-1">
+                        <path d="m9 18 6-6-6-6"></path>
+                      </svg>
                     </a>
                   </div>
                 </div>
@@ -86,13 +92,19 @@ const HomePage: React.FC = () => {
         <section className="container mx-auto px-4 mb-16">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-primary">Match Day Gallery</h2>
-            <a href="/gallery" className="text-primary font-semibold hover:underline">
-              View Full Gallery →
+            <a href="/gallery" className="text-primary font-semibold hover:underline flex items-center">
+              View Full Gallery
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-1">
+                <path d="m9 18 6-6-6-6"></path>
+              </svg>
             </a>
           </div>
           
           <ImageGallery 
-            images={matchDayGallery.slice(0, 4)}
+            images={matchDayGallery.slice(0, 4).map(img => ({
+              ...img,
+              isVideo: img.src.includes('match2') // Just for demo purposes
+            }))}
             columns={4}
             gap="md"
             className="mb-8"

@@ -13,7 +13,7 @@ const FeaturedMatch: React.FC<FeaturedMatchProps> = ({
   className
 }) => {
   return (
-    <div className={`bg-white shadow-lg rounded-lg overflow-hidden border border-gray-100 ${className}`}>
+    <div className={`bg-white shadow-lg rounded-lg overflow-hidden border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 ${className}`}>
       <div className="bg-primary py-3 px-4">
         <h2 className="text-white font-bold text-xl">Next Match</h2>
       </div>
