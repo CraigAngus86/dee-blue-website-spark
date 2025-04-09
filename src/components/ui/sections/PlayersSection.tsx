@@ -13,15 +13,15 @@ const PlayersSection: React.FC = () => {
       className="relative overflow-hidden"
       spacing="lg"
     >
-      {/* Background with dark gradient and subtle pattern */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#00105A] via-[#00105A]/95 to-[#000D42]">
-        <PatternOverlay pattern="dots" opacity={0.1} />
+      {/* Background with light blue gradient instead of dark navy */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[#C5E7FF] via-[#E5F4FF] to-[#FFFFFF]">
+        <PatternOverlay pattern="dots" opacity={0.05} />
       </div>
       
       <Container className="relative z-10">
         <SectionHeader 
           title="Players" 
-          textColor="white"
+          textColor="primary"
           viewAllLink="/players"
           viewAllText="View Squad"
         />

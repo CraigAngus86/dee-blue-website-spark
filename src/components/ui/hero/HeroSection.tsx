@@ -45,6 +45,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({
     return () => clearInterval(interval);
   }, [heroSlides.length]);
   
+  // Log for debugging
+  console.log("Hero rendering with text color: white");
+  
   return (
     <div className="relative">
       {/* Background Images */}
@@ -89,8 +92,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                 level={1}
                 color="white" // Explicitly setting color to white
                 weight="extrabold"
-                className="text-[calc(1.15*2.25rem)] md:text-[calc(1.15*3rem)] mb-4 mx-auto max-w-4xl tracking-tight pb-2 inline-block"
-                style={{ textShadow: "0 2px 4px rgba(0,0,0,0.4)" }} // Enhanced text shadow for readability
+                className="text-[calc(1.15*2.25rem)] md:text-[calc(1.15*3rem)] mb-4 mx-auto max-w-4xl tracking-tight pb-2 inline-block text-white" // Added text-white class directly
+                style={{ textShadow: "0 2px 4px rgba(0,0,0,0.4)", color: "white" }} // Added inline style for color
               >
                 {slide.title}
               </Heading>
@@ -98,7 +101,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
               {/* Gold accent line below headline - thicker and more prominent */}
               <div className="w-32 h-[3px] bg-accent mx-auto mb-6"></div>
               
-              <Text size="medium" weight="medium" color="white" className="tracking-wide mt-4">
+              <Text size="medium" weight="medium" color="white" className="tracking-wide mt-4 text-white" style={{ color: "white" }}>
                 {slide.timestamp}
               </Text>
             </div>

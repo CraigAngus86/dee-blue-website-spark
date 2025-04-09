@@ -37,13 +37,13 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
     <header className={headerClasses}>
       <Container>
         <div className="flex items-center justify-between h-full">
-          {/* Logo with further reduced size - on the left side with more spacing */}
-          <div className="flex items-center">
-            <a href="/" className="flex items-center py-2">
+          {/* Logo with more spacing - added margin-right and padding-top */}
+          <div className="flex items-center pt-1.5">
+            <a href="/" className="flex items-center py-2 mr-10">
               <ClubLogo 
                 variant="rect"
                 background="light"
-                className="w-[60px] h-auto max-h-[28px]" // Further reduced size for better fit
+                className="w-[60px] h-auto max-h-[28px]" 
               />
             </a>
           </div>
@@ -59,7 +59,6 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
                   <a
                     href={item.href}
                     className="font-montserrat font-bold text-sm tracking-widest text-white hover:text-secondary transition-colors duration-200 whitespace-nowrap" 
-                    // Added wider tracking and whitespace-nowrap to prevent wrapping
                   >
                     {item.label}
                   </a>
@@ -79,7 +78,6 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
               variant="accent" 
               size="sm"
               className="bg-accent text-primary border-accent hover:bg-accent-light whitespace-nowrap filter hover:brightness-105 shadow-md" 
-              // Added shadow and brightness hover effect
             >
               Buy Tickets
             </ButtonNew>
