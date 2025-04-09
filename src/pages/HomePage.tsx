@@ -84,13 +84,13 @@ const HomePage: React.FC = () => {
         <SocialMediaSection />
         
         {/* Diagonal Separator after Social Media Section */}
-        <DiagonalSeparator color="light" position="top" />
+        <DiagonalSeparator color="white" position="top" />
 
         {/* Sponsors Section */}
         <SponsorsSection />
         
         {/* Wave Separator before Latest News Section */}
-        <WaveSeparator color="light" position="top" height="sm" />
+        <WaveSeparator color="secondary" position="top" height="sm" />
         
         {/* Latest News Section - with improved texture */}
         <Section 
