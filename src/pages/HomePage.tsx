@@ -21,12 +21,18 @@ import FadeIn from "@/components/ui/animations/FadeIn";
 import PatternOverlay from "@/components/ui/backgrounds/PatternOverlay";
 
 const HomePage: React.FC = () => {
+  // Adding CSS to ensure overlapping news cards have consistent shadow treatment and refined typography
+  const overlappingCardStyles = {
+    "--card-shadow": "0 10px 25px -5px rgba(0, 16, 90, 0.1), 0 8px 10px -6px rgba(0, 16, 90, 0.05)",
+    "--card-hover-shadow": "0 20px 25px -5px rgba(0, 16, 90, 0.15), 0 10px 10px -5px rgba(0, 16, 90, 0.1)"
+  } as React.CSSProperties;
+
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col" style={overlappingCardStyles}>
       <Header />
       
       <main className="flex-grow">
-        {/* Hero Section - Full width */}
+        {/* Hero Section - Full width with improved overlay */}
         <HeroSection 
           title="BANKS O' DEE AIMING FOR LEAGUE GLORY" 
           category="CLUB NEWS" 
@@ -34,7 +40,7 @@ const HomePage: React.FC = () => {
           backgroundImage={getNewsImage(0)}
         />
         
-        {/* Overlapping News Cards */}
+        {/* Overlapping News Cards - now with consistent shadow treatment */}
         <FadeIn>
           <OverlappingNewsCards articles={newsArticles} count={3} />
         </FadeIn>

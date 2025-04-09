@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import Container from "../ui/layout/Container";
 import { ButtonNew } from "../ui/ButtonNew";
 import ClubLogo from "../ui/image/ClubLogo";
+import HoverEffect from "../ui/animations/HoverEffect";
 
 interface HeaderProps {
   transparent?: boolean;
@@ -47,17 +48,23 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
             </a>
           </div>
           
-          {/* Desktop Navigation - more spaced out */}
+          {/* Desktop Navigation - improved spacing */}
           <div className="hidden lg:flex items-center flex-grow justify-center">
-            <nav className="flex space-x-8">
+            <nav className="flex space-x-10"> {/* Increased spacing between items */}
               {navItems.map((item) => (
-                <a
-                  key={item.label}
-                  href={item.href}
-                  className="font-montserrat font-bold text-sm tracking-wide text-white hover:text-secondary transition-colors duration-200 py-2 px-1"
+                <HoverEffect 
+                  key={item.label} 
+                  effect="underline" 
+                  className="py-2"
                 >
-                  {item.label}
-                </a>
+                  <a
+                    href={item.href}
+                    className="font-montserrat font-bold text-sm tracking-wide text-white hover:text-secondary transition-colors duration-200 whitespace-nowrap" 
+                    // Added whitespace-nowrap to prevent text wrapping
+                  >
+                    {item.label}
+                  </a>
+                </HoverEffect>
               ))}
             </nav>
           </div>
@@ -70,7 +77,8 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
             <ButtonNew 
               variant="accent" 
               size="sm"
-              className="bg-accent text-primary border-accent hover:bg-accent-light"
+              className="bg-accent text-primary border-accent hover:bg-accent-light whitespace-nowrap" 
+              // Added whitespace-nowrap to prevent text wrapping
             >
               Buy Tickets
             </ButtonNew>
@@ -102,7 +110,7 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
                 <div key={item.label}>
                   <a
                     href={item.href}
-                    className="font-montserrat font-semibold text-base text-white hover:text-secondary px-2 py-2 flex items-center justify-between"
+                    className="font-montserrat font-bold text-base text-white hover:text-secondary px-2 py-2 flex items-center justify-between"
                   >
                     {item.label}
                   </a>
