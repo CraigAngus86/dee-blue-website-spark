@@ -1,35 +1,48 @@
 
-import { getTeamImage, getMatchDayImage, getStadiumImage } from '@/lib/imageUtils';
+import { MatchPhoto } from "@/lib/types";
 
-export const matchDayGallery = [
+export const matchDayGallery: MatchPhoto[] = [
   {
-    src: getMatchDayImage(),
-    alt: 'Match action shot',
-    caption: "Banks o' Dee vs Formartine United - April 8, 2025"
+    src: "/assets/images/matchday/MatchDay1.jpg",
+    thumbnail: "/assets/images/matchday/MatchDay1.jpg", // Adding the required thumbnail property
+    alt: "Match day action shot",
+    caption: "Banks o' Dee vs Fraserburgh - Highland League Match",
+    category: "action",
+    featured: true,
   },
   {
-    src: getTeamImage(0),
-    alt: 'Squad photo',
-    caption: "Banks o' Dee squad 2024/25 season"
+    src: "/assets/images/team/Squad1.jpg",
+    thumbnail: "/assets/images/team/Squad1.jpg", 
+    alt: "Team photo before kickoff",
+    caption: "Team lineup before the match against Buckie Thistle",
+    category: "pre-match",
   },
   {
-    src: getTeamImage(1),
-    alt: 'Training session',
-    caption: 'Pre-match training session'
+    src: "/assets/images/team/Training1_Square.jpg",
+    thumbnail: "/assets/images/team/Training1_Square.jpg",
+    alt: "Training session photo",
+    caption: "Midweek training session at Spain Park",
+    category: "pre-match",
   },
   {
-    src: getTeamImage(2),
-    alt: 'Training drill',
-    caption: 'Players during a training drill'
+    src: "/assets/images/team/Training2_Square.jpg",
+    thumbnail: "/assets/images/team/Training2_Square.jpg",
+    alt: "Players during warm-up",
+    caption: "Players warming up before training",
+    category: "pre-match",
   },
   {
-    src: getTeamImage(3),
-    alt: 'Team warmup',
-    caption: 'Team warming up before the match'
+    src: "/assets/images/team/Training3_Square.jpg",
+    thumbnail: "/assets/images/team/Training3_Square.jpg",
+    alt: "Players practicing drills",
+    caption: "Tactical drills during Thursday practice",
+    category: "pre-match",
   },
   {
-    src: getStadiumImage(),
-    alt: 'Spain Park Stadium',
-    caption: "Spain Park Stadium - Home of Banks o' Dee FC"
-  }
+    src: "/assets/images/team/Training4_Square.jpg",
+    thumbnail: "/assets/images/team/Training4_Square.jpg",
+    alt: "Training match in progress",
+    caption: "Small-sided game during training session",
+    category: "pre-match",
+  },
 ];

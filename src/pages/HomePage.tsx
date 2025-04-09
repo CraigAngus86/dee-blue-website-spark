@@ -17,8 +17,8 @@ const HomePage: React.FC = () => {
   const heroConfig = {
     backgroundSrc: "/assets/images/stadium/Spain Park.jpg",
     backgroundAlt: "Spain Park Stadium",
-    overlayOpacity: "medium",
-    contentPosition: "center",
+    overlayOpacity: "medium" as "light" | "medium" | "heavy",
+    contentPosition: "center" as "center" | "left" | "right",
   };
 
   return (
