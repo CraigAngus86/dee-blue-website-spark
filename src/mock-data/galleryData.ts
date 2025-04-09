@@ -4,7 +4,7 @@ import { MatchPhoto } from "@/lib/types";
 export const matchDayGallery: MatchPhoto[] = [
   {
     src: "/assets/images/matchday/MatchDay1.jpg",
-    thumbnail: "/assets/images/matchday/MatchDay1.jpg", // Adding the required thumbnail property
+    thumbnail: "/assets/images/matchday/MatchDay1.jpg",
     alt: "Match day action shot",
     caption: "Banks o' Dee vs Fraserburgh - Highland League Match",
     category: "action",
