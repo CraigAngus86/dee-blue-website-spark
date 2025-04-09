@@ -48,7 +48,7 @@ const HomePage: React.FC = () => {
         {/* Diagonal Separator before Featured Content Section */}
         <DiagonalSeparator color="secondary" position="top" />
         
-        {/* Featured Content Section - Replace with MatchCenter */}
+        {/* Featured Content Section - MatchCenter */}
         <Section 
           className="relative overflow-hidden"
           spacing="lg"
@@ -79,13 +79,10 @@ const HomePage: React.FC = () => {
         {/* Social Media Section */}
         <SocialMediaSection />
         
-        {/* Diagonal Separator after Social Media Section */}
-        <DiagonalSeparator color="white" position="top" />
-
-        {/* Sponsors Section */}
-        <div className={sectionSpacing}>
-          <SponsorsSection />
-        </div>
+        {/* Diagonal Separator after Social Media Section - Removed to fix the strange gap */}
+        
+        {/* Sponsors Section - Directly after social media without additional separator */}
+        <SponsorsSection />
         
         {/* Diagonal Separator before Footer */}
         <DiagonalSeparator color="primary" position="bottom" />

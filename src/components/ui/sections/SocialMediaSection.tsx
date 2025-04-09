@@ -9,8 +9,8 @@ import SocialCTA from "@/components/ui/social/SocialCTA";
 const SocialMediaSection: React.FC = () => {
   return (
     <Section
-      className="relative overflow-hidden"
-      spacing="lg" // Changed from "md" to "lg" for consistent spacing
+      className="relative overflow-hidden pb-12" // Added specific bottom padding
+      spacing="lg" 
       background="white"
     >
       <Container className="relative z-10">

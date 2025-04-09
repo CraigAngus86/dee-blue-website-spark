@@ -91,25 +91,27 @@ const SocialPostCard: React.FC<SocialPostCardProps> = ({
     twitter: {
       icon: <Twitter size={16} />,
       color: "bg-blue-400",
-      hoverBorder: "hover:border-blue-400"
+      borderColor: "border-l-blue-400"
     },
     facebook: {
       icon: <Facebook size={16} />,
       color: "bg-blue-600",
-      hoverBorder: "hover:border-blue-600"
+      borderColor: "border-l-blue-600"
     },
     instagram: {
       icon: <Instagram size={16} />,
       color: "bg-pink-500",
-      hoverBorder: "hover:border-pink-500"
+      borderColor: "border-l-pink-500"
     }
   };
   
   const config = platformConfig[platform];
   
   return (
-    <div className={`bg-white rounded-lg shadow-sm hover:shadow-md transition-all border border-gray-100 ${config.hoverBorder}`}>
-      <div className="p-3">
+    <div 
+      className={`bg-white rounded-lg shadow-md hover:shadow-lg hover:scale-[1.02] transition-all border-l-4 ${config.borderColor} max-h-[320px]`}
+    >
+      <div className="p-4">
         {/* Platform and date - Reduced padding */}
         <div className="flex justify-between items-center mb-2">
           <div className="flex items-center">
@@ -123,12 +125,12 @@ const SocialPostCard: React.FC<SocialPostCardProps> = ({
           </span>
         </div>
         
-        {/* Content - Reduced line-clamp for shorter height */}
-        <p className="text-xs line-clamp-2 mb-2 text-near-black">
+        {/* Content - Better line clamping */}
+        <p className="text-sm line-clamp-3 mb-2 text-near-black">
           {content}
         </p>
         
-        {/* Image if present - Reduced aspect ratio height */}
+        {/* Image if present - Lower aspect ratio */}
         {image && (
           <div className="aspect-[4/3] mb-2 overflow-hidden rounded">
             <img 
@@ -139,8 +141,8 @@ const SocialPostCard: React.FC<SocialPostCardProps> = ({
           </div>
         )}
         
-        {/* Engagement metrics - More compact layout */}
-        <div className="flex justify-between text-xs text-gray-500 pt-1.5 border-t border-gray-100">
+        {/* Engagement metrics - With separator */}
+        <div className="flex justify-between text-xs text-gray-500 pt-2 border-t border-gray-100">
           <div className="flex items-center">
             <Heart size={12} className="mr-1" />
             <span>{likes}</span>

@@ -6,14 +6,12 @@ import FooterNewsletter from "./FooterNewsletter";
 
 const FooterInfo: React.FC = () => {
   return (
-    <div className="lg:col-span-5 space-y-6">
+    <div className="space-y-4">
       <FooterLogo />
       
       <Text color="white" size="small" className="max-w-md">
-        Scotland's premier football club based in Aberdeen. Established for excellence in football and community involvement since our foundation.
+        Scotland's premier football club based in Aberdeen, established for excellence in football and community involvement.
       </Text>
-      
-      <FooterNewsletter />
     </div>
   );
 };

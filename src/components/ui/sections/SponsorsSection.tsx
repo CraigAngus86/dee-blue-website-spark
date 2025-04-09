@@ -4,69 +4,63 @@ import Section from "@/components/ui/layout/Section";
 import SponsorLogo from "@/components/ui/image/SponsorLogo";
 import { Button } from "@/components/ui/button";
 import { getMainSponsor, getSponsorsByTier } from "@/data/SponsorsData";
-import { Sponsor } from "@/lib/types";
 import { ExternalLink } from "lucide-react";
-import { useEffect, useState, useRef } from "react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
-const SponsorCarousel: React.FC<{ sponsors: Sponsor[] }> = ({ sponsors }) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
-  const totalSponsors = sponsors.length;
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const itemsPerView = 4;
-  const maxIndex = Math.max(0, totalSponsors - itemsPerView);
-  
-  // Auto-scroll functionality
-  useEffect(() => {
-    if (isPaused || totalSponsors <= itemsPerView) return;
-    
-    timerRef.current = setInterval(() => {
-      setCurrentIndex(prev => (prev >= maxIndex) ? 0 : prev + 1);
-    }, 5000);
-    
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, [isPaused, totalSponsors, maxIndex]);
-
-  if (totalSponsors <= 0) return null;
-  
-  return (
-    <div 
-      className="relative overflow-hidden py-4"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
-    >
-      <div 
-        className="flex transition-transform duration-500 ease-in-out"
-        style={{ transform: `translateX(-${currentIndex * (100 / itemsPerView)}%)` }}
-      >
-        {sponsors.map((sponsor, index) => (
-          <div 
-            key={index} 
-            className="min-w-[25%] px-3"
-          >
-            <div className="bg-white shadow-sm rounded-md p-4 h-24 flex items-center justify-center">
-              <SponsorLogo 
-                sponsor={sponsor}
-                size="md"
-              />
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-const SponsorsSection: React.FC = () => {
-  // Get main sponsor and other sponsors
-  const mainSponsor = getMainSponsor();
+const SponsorsCarousel: React.FC = () => {
+  // Get secondary sponsors
   const secondarySponsors = [
     ...getSponsorsByTier("platinum"),
     ...getSponsorsByTier("gold"),
     ...getSponsorsByTier("silver")
   ];
+
+  return (
+    <div className="mb-10">
+      <h3 className="text-center text-lg font-semibold mb-4">Club Partners</h3>
+      
+      <Carousel
+        opts={{
+          align: "start",
+          loop: true,
+          autoplay: true,
+          delay: 5000
+        }}
+        className="w-full"
+      >
+        <CarouselContent>
+          {secondarySponsors.map((sponsor, index) => (
+            <CarouselItem 
+              key={index} 
+              className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 p-1"
+            >
+              <div className="bg-white shadow-sm rounded-md p-4 h-24 flex items-center justify-center">
+                <SponsorLogo 
+                  sponsor={sponsor}
+                  size="md"
+                />
+              </div>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <div className="flex justify-center mt-4 gap-2">
+          <CarouselPrevious className="relative static transform-none" />
+          <CarouselNext className="relative static transform-none" />
+        </div>
+      </Carousel>
+    </div>
+  );
+};
+
+const SponsorsSection: React.FC = () => {
+  // Get main sponsor
+  const mainSponsor = getMainSponsor();
   
   return (
     <Section 
@@ -84,23 +78,25 @@ const SponsorsSection: React.FC = () => {
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-8">
           <h2 className="text-2xl md:text-3xl font-bold text-primary mb-2">Club Partners & Sponsors</h2>
-          <p className="text-gray max-w-2xl mx-auto">
-            Banks o' Dee FC is supported by these outstanding local and regional businesses
-          </p>
         </div>
         
         {/* Main Sponsor - 30% smaller */}
         {mainSponsor && (
           <div className="mb-10">
-            <h3 className="text-center text-lg font-semibold mb-4">Official Main Partner</h3>
+            <h3 className="text-center text-lg font-semibold text-primary mb-2">
+              <span className="relative inline-block">
+                <span className="text-[#FFD700]">Official</span> Main Partner
+                <span className="absolute -bottom-1 left-1/2 w-16 h-0.5 bg-[#FFD700] transform -translate-x-1/2"></span>
+              </span>
+            </h3>
             <div className="flex justify-center">
               <div 
-                className="bg-white shadow-md rounded-md p-4 inline-flex items-center justify-center transition-transform duration-300 hover:scale-102"
-                style={{ maxWidth: "70%" }} // Reduced by 30%
+                className="bg-gradient-to-b from-white to-[#f8f9fa] shadow-md rounded-md p-4 inline-flex items-center justify-center transition-transform duration-300 hover:shadow-lg"
+                style={{ maxWidth: "50%" }} // Reduced by 30% from previous 70%
               >
                 <SponsorLogo 
                   sponsor={mainSponsor} 
-                  size="lg" // Reduced from xl to lg
+                  size="lg"
                 />
               </div>
             </div>
@@ -108,23 +104,15 @@ const SponsorsSection: React.FC = () => {
         )}
         
         {/* Secondary Sponsors Carousel */}
-        <div className="mb-10">
-          <h3 className="text-center text-lg font-semibold mb-4">Club Partners</h3>
-          <SponsorCarousel sponsors={secondarySponsors} />
-        </div>
+        <SponsorsCarousel />
         
-        {/* Partnership CTA */}
-        <div className="text-center bg-light-gray rounded-lg p-8 max-w-3xl mx-auto">
-          <h3 className="text-xl font-bold text-primary mb-3">Become a Club Partner</h3>
-          <p className="mb-6 text-gray-600">
-            Join our growing family of sponsors and gain visibility while supporting Banks o' Dee FC. 
-            Our partnership packages offer excellent exposure to our engaged fanbase.
-          </p>
+        {/* Partnership CTA - Simplified button */}
+        <div className="text-center mt-8 mb-4">
           <Button 
-            className="bg-secondary text-primary hover:bg-secondary-dark flex items-center gap-2"
+            className="bg-[#FFD700] text-primary hover:brightness-110 transition-all font-semibold text-base py-6 px-8 shadow-md"
           >
-            Contact Us About Partnerships
-            <ExternalLink size={16} />
+            Become Our Partner
+            <ExternalLink size={16} className="ml-2" />
           </Button>
         </div>
       </div>
