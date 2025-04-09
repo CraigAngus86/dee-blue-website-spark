@@ -108,29 +108,29 @@ const SocialPostCard: React.FC<SocialPostCardProps> = ({
   const config = platformConfig[platform];
   
   return (
-    <div className={`bg-white rounded-lg shadow-md overflow-hidden border border-gray-100 ${config.hoverBorder} transition-all hover:shadow-lg`}>
-      <div className="p-4">
-        {/* Platform and date */}
-        <div className="flex justify-between items-center mb-3">
+    <div className={`bg-white rounded-lg shadow-sm hover:shadow-md transition-all border border-gray-100 ${config.hoverBorder}`}>
+      <div className="p-3">
+        {/* Platform and date - Reduced padding */}
+        <div className="flex justify-between items-center mb-2">
           <div className="flex items-center">
-            <span className={`w-6 h-6 rounded-full ${config.color} flex items-center justify-center text-white mr-2`}>
+            <span className={`w-5 h-5 rounded-full ${config.color} flex items-center justify-center text-white mr-1.5`}>
               {config.icon}
             </span>
-            <span className="text-sm font-medium">{platform.charAt(0).toUpperCase() + platform.slice(1)}</span>
+            <span className="text-xs font-medium">{platform.charAt(0).toUpperCase() + platform.slice(1)}</span>
           </div>
           <span className="text-xs text-gray-500">
             {formatDistanceToNow(date, { addSuffix: true })}
           </span>
         </div>
         
-        {/* Content */}
-        <p className="text-sm line-clamp-3 mb-3 text-near-black">
+        {/* Content - Reduced line-clamp for shorter height */}
+        <p className="text-xs line-clamp-2 mb-2 text-near-black">
           {content}
         </p>
         
-        {/* Image if present */}
+        {/* Image if present - Reduced aspect ratio height */}
         {image && (
-          <div className="aspect-square mb-3 overflow-hidden rounded">
+          <div className="aspect-[4/3] mb-2 overflow-hidden rounded">
             <img 
               src={image} 
               alt="Social media post" 
@@ -139,18 +139,18 @@ const SocialPostCard: React.FC<SocialPostCardProps> = ({
           </div>
         )}
         
-        {/* Engagement metrics */}
-        <div className="flex justify-between text-xs text-gray-500 pt-2 border-t border-gray-100">
+        {/* Engagement metrics - More compact layout */}
+        <div className="flex justify-between text-xs text-gray-500 pt-1.5 border-t border-gray-100">
           <div className="flex items-center">
-            <Heart size={14} className="mr-1" />
+            <Heart size={12} className="mr-1" />
             <span>{likes}</span>
           </div>
           <div className="flex items-center">
-            <MessageSquare size={14} className="mr-1" />
+            <MessageSquare size={12} className="mr-1" />
             <span>{comments}</span>
           </div>
           <div className="flex items-center">
-            <Share2 size={14} className="mr-1" />
+            <Share2 size={12} className="mr-1" />
             <span>{shares}</span>
           </div>
         </div>
@@ -161,8 +161,8 @@ const SocialPostCard: React.FC<SocialPostCardProps> = ({
 
 const SocialFeedGrid: React.FC = () => {
   return (
-    <div className="mb-12">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {socialPosts.map(post => (
           <SocialPostCard 
             key={post.id}

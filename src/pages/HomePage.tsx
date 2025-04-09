@@ -4,11 +4,8 @@ import HeroSection from "@/components/ui/hero/HeroSection";
 import OverlappingNewsCards from "@/components/ui/sections/OverlappingNewsCards";
 import FeaturedMatch from "@/components/ui/sections/FeaturedMatch";
 import LeagueTableWidget from "@/components/ui/sections/LeagueTableWidget";
-import ImageGallery from "@/components/ui/image/ImageGallery";
-import ResponsiveImage from "@/components/ui/image/ResponsiveImage";
 import { getNewsImage } from "@/lib/imageUtils";
 import { newsArticles } from "@/mock-data/newsData";
-import { matchDayGallery } from "@/mock-data/galleryData";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
 import Section from "@/components/ui/layout/Section";
@@ -46,7 +43,7 @@ const HomePage: React.FC = () => {
         </FadeIn>
         
         {/* Wave Separator before Featured Content Section */}
-        <WaveSeparator color="primary" position="top" />
+        <WaveSeparator color="secondary" position="top" />
         
         {/* Featured Content Section - Improved gradient and texture */}
         <Section 
@@ -94,42 +91,6 @@ const HomePage: React.FC = () => {
 
         {/* Sponsors Section */}
         <SponsorsSection />
-        
-        {/* Wave Separator before Gallery Section */}
-        <WaveSeparator color="secondary" position="top" height="sm" />
-        
-        {/* Gallery Preview Section - with proper gradient */}
-        <Section 
-          className="relative overflow-hidden bg-gradient-to-br from-[#000D42] to-[#00105A]"
-          spacing="lg"
-        >
-          {/* Texture overlay */}
-          <PatternOverlay pattern="waves" opacity={0.1} />
-          
-          <div className="container mx-auto px-4 relative z-10">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-white">Match Day Gallery</h2>
-              <a href="/gallery" className="text-white font-semibold hover:underline flex items-center">
-                View Full Gallery
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-1">
-                  <path d="m9 18 6-6-6-6"></path>
-                </svg>
-              </a>
-            </div>
-            
-            <FadeIn direction="up" delay={0.2}>
-              <ImageGallery 
-                images={matchDayGallery.slice(0, 4).map(img => ({
-                  ...img,
-                  isVideo: img.src.includes('match2') // Just for demo purposes
-                }))}
-                columns={4}
-                gap="md"
-                className="mb-8"
-              />
-            </FadeIn>
-          </div>
-        </Section>
         
         {/* Wave Separator before Footer */}
         <WaveSeparator color="primary" position="bottom" />

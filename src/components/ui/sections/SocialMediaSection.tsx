@@ -10,7 +10,7 @@ const SocialMediaSection: React.FC = () => {
   return (
     <Section
       className="relative overflow-hidden"
-      spacing="lg"
+      spacing="md" // Reduced from "lg" to "md" for better spacing
       background="white"
     >
       <Container className="relative z-10">
