@@ -59,14 +59,20 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             className="w-full h-full"
             objectFit="cover"
           />
-          {/* Gradient Overlay for better text readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-primary/90 to-transparent" />
+          {/* Enhanced gradient overlay with texture for better text readability */}
+          <div 
+            className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/50 to-transparent"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23ffffff' fill-opacity='0.1' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E")`,
+              backgroundBlendMode: 'overlay',
+            }}
+          />
         </div>
       ))}
       
-      {/* Content */}
+      {/* Content - Centered text */}
       <div className="relative z-10 min-h-[70vh] md:min-h-[70vh] sm:min-h-[50vh] flex flex-col justify-end">
-        <div className="container mx-auto px-4 md:px-6 pb-24">
+        <div className="container mx-auto px-4 md:px-6 pb-24 text-center"> {/* Added text-center here */}
           {heroSlides.map((slide, index) => (
             <div 
               key={index}
@@ -74,20 +80,20 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                 index === currentSlide ? "opacity-100" : "opacity-0 absolute"
               }`}
             >
-              <h1 className="text-white text-4xl md:text-5xl lg:text-6xl font-bold mb-4 max-w-4xl">
+              <h1 className="text-white text-4xl md:text-5xl lg:text-6xl font-bold mb-4 mx-auto max-w-4xl"> {/* Added mx-auto for centering */}
                 <span className="inline-block border-b-4 border-accent pb-2">{slide.title}</span>
               </h1>
               
-              <div className="flex items-center text-white text-sm md:text-base">
+              <div className="flex items-center justify-center text-white text-sm md:text-base"> {/* Added justify-center */}
                 <span className="bg-primary px-2 py-1 mr-4 font-semibold">{slide.category}</span>
                 <span>{slide.timestamp}</span>
               </div>
             </div>
           ))}
           
-          {/* Slide Indicators */}
+          {/* Slide Indicators - Centered */}
           {heroSlides.length > 1 && (
-            <div className="flex space-x-2 mt-8">
+            <div className="flex justify-center space-x-2 mt-8"> {/* Centered indicators */}
               {heroSlides.map((_, index) => (
                 <button
                   key={index}

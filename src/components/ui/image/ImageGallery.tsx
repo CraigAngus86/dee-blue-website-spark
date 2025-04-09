@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import { X } from "lucide-react";
@@ -81,7 +80,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
 
   return (
     <div className={className}>
-      {/* Thumbnail Grid */}
+      {/* Thumbnail Grid - Enforcing square aspect ratio */}
       <div className={cn("grid", columnClasses[columns], gapClasses[gap])}>
         {images.map((image, index) => (
           <div
@@ -94,18 +93,20 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
               <div className="absolute inset-0 animate-pulse bg-gray-200" />
             )}
             
-            {/* Actual Image */}
-            <ResponsiveImage
-              src={image.src}
-              alt={image.alt}
-              className={cn(
-                "w-full h-full transition-opacity",
-                imageLoaded[index] ? "opacity-100" : "opacity-0"
-              )}
-              objectFit="cover"
-              onLoad={() => handleImageLoad(index)}
-              loading="lazy"
-            />
+            {/* Actual Image - Forced square aspect ratio */}
+            <div className="w-full h-full">
+              <ResponsiveImage
+                src={image.src}
+                alt={image.alt}
+                className={cn(
+                  "w-full h-full transition-opacity",
+                  imageLoaded[index] ? "opacity-100" : "opacity-0"
+                )}
+                objectFit="cover"
+                onLoad={() => handleImageLoad(index)}
+                loading="lazy"
+              />
+            </div>
             
             {/* Video Play Button Overlay */}
             {image.isVideo && (

@@ -75,7 +75,7 @@ const LeagueTableWidget: React.FC<LeagueTableWidgetProps> = ({ className }) => {
   };
   
   return (
-    <div className={`bg-white shadow-lg rounded-lg overflow-hidden border border-gray-100 ${className}`}>
+    <div className={`bg-white shadow-lg rounded-lg overflow-hidden border border-gray-100 h-full ${className}`}>
       <div className="bg-primary py-3 px-4">
         <h2 className="text-white font-bold text-xl">League Table</h2>
       </div>
