@@ -23,9 +23,12 @@ const FeaturedMatch: React.FC<FeaturedMatchProps> = ({
       </div>
       
       <div className="p-4 space-y-4">
-        {/* Show all matches in a list */}
+        {/* Show all matches in a list with improved spacing */}
         {displayMatches.map((match, index) => (
-          <div key={index} className="mb-4 last:mb-0">
+          <div 
+            key={index} 
+            className={`${index > 0 ? 'mt-5 pt-5 border-t border-white/10' : ''}`}
+          >
             <MatchCard
               homeTeam={match.homeTeam}
               awayTeam={match.awayTeam}

@@ -67,11 +67,11 @@ interface LeagueTableWidgetProps {
 }
 
 const LeagueTableWidget: React.FC<LeagueTableWidgetProps> = ({ className }) => {
-  // Map form results to colors
+  // Map form results to colors and styles
   const formColors: Record<string, string> = {
-    W: "bg-green-500",
-    D: "bg-yellow-500",
-    L: "bg-red-500"
+    W: "bg-green-500 border border-green-600",
+    D: "bg-amber-400 border border-amber-500",
+    L: "bg-red-500 border border-red-600"
   };
   
   return (
@@ -81,27 +81,29 @@ const LeagueTableWidget: React.FC<LeagueTableWidgetProps> = ({ className }) => {
       </div>
       
       <div className="p-4">
-        {/* Table Header */}
-        <div className="grid grid-cols-12 text-xs font-semibold text-gray mb-2 pb-2 border-b border-medium-gray">
-          <div className="col-span-1">Pos</div>
-          <div className="col-span-5">Team</div>
+        {/* Table Header - Improved styling */}
+        <div className="grid grid-cols-12 text-xs font-semibold text-gray-700 mb-2 pb-2 border-b border-medium-gray bg-gray-50 p-2 rounded">
+          <div className="col-span-1 text-center">Pos</div>
+          <div className="col-span-5 pl-1">Team</div>
           <div className="col-span-1 text-center">P</div>
           <div className="col-span-1 text-center">W</div>
           <div className="col-span-1 text-center">D</div>
           <div className="col-span-1 text-center">L</div>
-          <div className="col-span-2 text-right">Pts</div>
+          <div className="col-span-2 text-right pr-1">Pts</div>
         </div>
         
-        {/* Team Rows */}
-        {leagueTableData.map((team) => (
+        {/* Team Rows - With alternating backgrounds */}
+        {leagueTableData.map((team, idx) => (
           <div 
             key={team.position}
-            className={`grid grid-cols-12 py-2 text-sm items-center ${
-              team.isBOD ? "bg-light-gray font-semibold" : ""
+            className={`grid grid-cols-12 py-2.5 text-sm items-center ${
+              idx % 2 === 0 ? "bg-gray-50" : ""
+            } ${
+              team.isBOD ? "bg-primary/5 font-semibold rounded border-l-4 border-primary" : ""
             }`}
           >
-            <div className="col-span-1">{team.position}</div>
-            <div className="col-span-5 flex items-center gap-2">
+            <div className="col-span-1 text-center font-semibold">{team.position}</div>
+            <div className="col-span-5 flex items-center gap-2 pl-1">
               <CompetitorLogo name={team.team} size="xs" />
               <span className="truncate">{team.team}</span>
             </div>
@@ -109,22 +111,38 @@ const LeagueTableWidget: React.FC<LeagueTableWidgetProps> = ({ className }) => {
             <div className="col-span-1 text-center">{team.won}</div>
             <div className="col-span-1 text-center">{team.drawn}</div>
             <div className="col-span-1 text-center">{team.lost}</div>
-            <div className="col-span-2 text-right font-bold">{team.points}</div>
+            <div className="col-span-2 text-right font-bold pr-1">{team.points}</div>
           </div>
         ))}
         
-        {/* Form Guide */}
+        {/* Form Guide - Enhanced with better styling */}
         <div className="mt-6 pt-4 border-t border-medium-gray">
           <h3 className="text-sm font-semibold mb-3">Banks o' Dee Form</h3>
           <div className="flex space-x-2 mb-4">
             {leagueTableData[2].form.map((result, index) => (
               <div 
                 key={index} 
-                className={`${formColors[result]} w-8 h-8 rounded-full flex items-center justify-center`}
+                className={`${formColors[result]} w-8 h-8 rounded-full flex items-center justify-center shadow-md`}
               >
-                <span className="text-white font-bold">{result}</span>
+                <span className="text-white font-bold text-sm">{result}</span>
               </div>
             ))}
+          </div>
+          
+          {/* Form legend */}
+          <div className="flex items-center gap-4 text-xs text-gray-500">
+            <div className="flex items-center">
+              <div className="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
+              <span>Win</span>
+            </div>
+            <div className="flex items-center">
+              <div className="w-3 h-3 rounded-full bg-amber-400 mr-1"></div>
+              <span>Draw</span>
+            </div>
+            <div className="flex items-center">
+              <div className="w-3 h-3 rounded-full bg-red-500 mr-1"></div>
+              <span>Loss</span>
+            </div>
           </div>
         </div>
         

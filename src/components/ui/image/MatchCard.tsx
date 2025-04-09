@@ -56,28 +56,33 @@ const MatchCard: React.FC<MatchCardProps> = ({
       </div>
 
       {/* Match Content */}
-      <div className="p-4">
-        {/* Teams */}
-        <div className="flex items-center justify-between my-4">
+      <div className="p-5">
+        {/* Teams with improved logo presentation */}
+        <div className="flex items-center justify-between my-5">
           {/* Home Team */}
           <div className="flex flex-col items-center text-center w-1/3">
-            <CompetitorLogo
-              name={homeTeam}
-              size="md"
-            />
-            <span className="mt-2 font-medium text-primary text-sm">
+            <div className="bg-white p-2 rounded-full shadow-md inline-flex items-center justify-center">
+              <CompetitorLogo
+                name={homeTeam}
+                size="md"
+                className="w-16 h-16"
+              />
+            </div>
+            <span className="mt-3 font-medium text-primary text-sm">
               {homeTeam}
             </span>
           </div>
 
-          {/* Score or VS */}
-          <div className="text-center w-1/3">
+          {/* Score or VS - Enhanced presentation */}
+          <div className="text-center w-1/3 px-2">
             {status === "completed" && result ? (
               <div className="text-3xl font-bold">
                 {result.homeScore} - {result.awayScore}
               </div>
             ) : (
-              <div className="text-2xl font-bold">VS</div>
+              <div className="text-3xl font-black bg-gradient-to-r from-primary via-primary-dark to-primary bg-clip-text text-transparent">
+                VS
+              </div>
             )}
             {status === "completed" && <div className="text-sm text-gray-500 mt-1">Full Time</div>}
             {status === "live" && <div className="text-sm text-accent font-medium mt-1">In Progress</div>}
@@ -85,20 +90,23 @@ const MatchCard: React.FC<MatchCardProps> = ({
 
           {/* Away Team */}
           <div className="flex flex-col items-center text-center w-1/3">
-            <CompetitorLogo
-              name={awayTeam}
-              size="md"
-            />
-            <span className="mt-2 font-medium text-primary text-sm">
+            <div className="bg-white p-2 rounded-full shadow-md inline-flex items-center justify-center">
+              <CompetitorLogo
+                name={awayTeam}
+                size="md"
+                className="w-16 h-16"
+              />
+            </div>
+            <span className="mt-3 font-medium text-primary text-sm">
               {awayTeam}
             </span>
           </div>
         </div>
 
-        {/* Date, Time, Venue */}
-        <div className="flex flex-wrap items-center justify-center gap-2 text-gray-500 text-sm my-4">
+        {/* Date, Time, Venue with improved spacing and icons */}
+        <div className="flex flex-wrap items-center justify-center gap-3 text-gray-500 text-sm my-5 bg-gray-50 py-3 px-4 rounded-md">
           <span className="flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
             {date}
@@ -106,7 +114,7 @@ const MatchCard: React.FC<MatchCardProps> = ({
 
           {time && (
             <span className="flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               {time}
@@ -114,7 +122,7 @@ const MatchCard: React.FC<MatchCardProps> = ({
           )}
 
           <span className="flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
@@ -122,19 +130,19 @@ const MatchCard: React.FC<MatchCardProps> = ({
           </span>
         </div>
 
-        {/* Action Button */}
-        <div className="mt-4">
+        {/* Action Button with improved styling */}
+        <div className="mt-5">
           {status === "upcoming" ? (
             <a
               href={ticketLink}
-              className="block w-full py-2 px-4 bg-accent text-primary font-bold text-center rounded transition hover:bg-accent-dark"
+              className="block w-full py-2.5 px-4 bg-accent text-primary font-bold text-center rounded transition hover:bg-accent-dark shadow-md"
             >
               Get Tickets
             </a>
           ) : status === "completed" ? (
             <a
               href={matchReportLink}
-              className="block w-full py-2 px-4 bg-secondary text-primary font-bold text-center rounded transition hover:bg-secondary-dark"
+              className="block w-full py-2.5 px-4 bg-secondary text-primary font-bold text-center rounded transition hover:bg-secondary-dark shadow-md"
             >
               Match Report
             </a>

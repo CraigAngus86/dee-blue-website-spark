@@ -11,7 +11,7 @@ interface OverlappingNewsCardsProps {
 
 const OverlappingNewsCards: React.FC<OverlappingNewsCardsProps> = ({
   articles = newsArticles,
-  count = 3,
+  count = 6, // Updated default to 6 cards
   className
 }) => {
   // Take the specified number of articles
@@ -29,7 +29,7 @@ const OverlappingNewsCards: React.FC<OverlappingNewsCardsProps> = ({
             timestamp={article.timestamp}
             excerpt={article.excerpt}
             elevation="lg"
-            className="border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
+            className="border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
           />
         ))}
       </div>

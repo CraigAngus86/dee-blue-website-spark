@@ -40,9 +40,9 @@ const HomePage: React.FC = () => {
           backgroundImage={getNewsImage(0)}
         />
         
-        {/* Overlapping News Cards - now with consistent shadow treatment */}
+        {/* Expanded News Cards - Now showing 6 cards (3x2 grid) */}
         <FadeIn>
-          <OverlappingNewsCards articles={newsArticles} count={3} />
+          <OverlappingNewsCards articles={newsArticles} count={6} />
         </FadeIn>
         
         {/* Wave Separator before Featured Content Section */}
@@ -84,7 +84,7 @@ const HomePage: React.FC = () => {
         <FanZoneSection />
         
         {/* Wave Separator before Social Media Section */}
-        <WaveSeparator color="primary" position="top" height="sm" />
+        <WaveSeparator color="secondary" position="top" height="sm" />
         
         {/* Social Media Section */}
         <SocialMediaSection />
@@ -95,62 +95,8 @@ const HomePage: React.FC = () => {
         {/* Sponsors Section */}
         <SponsorsSection />
         
-        {/* Wave Separator before Latest News Section */}
+        {/* Wave Separator before Gallery Section */}
         <WaveSeparator color="secondary" position="top" height="sm" />
-        
-        {/* Latest News Section - with improved texture */}
-        <Section 
-          className="relative overflow-hidden bg-light-gray"
-          spacing="lg"
-        >
-          {/* Subtle texture overlay */}
-          <PatternOverlay pattern="dots" color="dark" opacity={0.05} />
-          
-          <div className="container mx-auto px-4 relative z-10">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-primary">Latest News</h2>
-              <a href="/news" className="text-primary font-semibold hover:underline flex items-center">
-                View All News
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-1">
-                  <path d="m9 18 6-6-6-6"></path>
-                </svg>
-              </a>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {newsArticles.slice(0, 3).map((article, index) => (
-                <FadeIn key={article.id} delay={0.1 * index}>
-                  <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                    <div className="aspect-[16/9] overflow-hidden">
-                      <ResponsiveImage
-                        src={article.image} 
-                        alt={article.title} 
-                        className="w-full h-full"
-                        objectFit="cover"
-                      />
-                    </div>
-                    <div className="p-4">
-                      <span className="inline-block bg-secondary text-primary text-xs font-semibold px-2 py-1 rounded mb-2">
-                        {article.category}
-                      </span>
-                      <h3 className="font-bold text-lg mb-2 line-clamp-2">{article.title}</h3>
-                      <p className="text-gray-600 text-sm mb-3 line-clamp-2">{article.excerpt}</p>
-                      <div className="flex justify-between items-center text-sm">
-                        <span className="text-gray-500">{article.timestamp}</span>
-                        <a href={`/news/${article.id}`} className="text-primary font-medium hover:underline flex items-center">
-                          Read More
-                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-1">
-                            <path d="m9 18 6-6-6-6"></path>
-                          </svg>
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </FadeIn>
-              ))}
-            </div>
-          </div>
-        </Section>
         
         {/* Gallery Preview Section - with proper gradient */}
         <Section 
