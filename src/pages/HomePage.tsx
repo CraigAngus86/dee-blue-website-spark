@@ -32,7 +32,7 @@ const HomePage: React.FC = () => {
       <Header />
       
       <main className="flex-grow pt-[72px]"> {/* Added padding to account for fixed header */}
-        {/* Hero Section */}
+        {/* Hero Section - ensuring text is white and gradient is applied */}
         <HeroSection 
           title="BANKS O' DEE AIMING FOR LEAGUE GLORY" 
           category="CLUB NEWS" 

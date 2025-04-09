@@ -61,7 +61,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             className="w-full h-full"
             objectFit="cover"
           />
-          {/* Enhanced gradient overlay with deep navy fade */}
+          {/* Proper gradient overlay with deep navy fade */}
           <div className="absolute inset-0 bg-gradient-to-top from-[rgba(0,16,90,0.8)] via-[rgba(0,16,90,0.4)] to-[rgba(0,16,90,0.1)]">
             {/* Subtle texture overlay for depth */}
             <div 
@@ -89,7 +89,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                 level={1}
                 color="white"
                 weight="extrabold"
-                className="text-[calc(1.15*2.25rem)] md:text-[calc(1.15*3rem)] mb-4 mx-auto max-w-4xl tracking-tight shadow-text pb-2 inline-block"
+                className="text-[calc(1.15*2.25rem)] md:text-[calc(1.15*3rem)] mb-4 mx-auto max-w-4xl tracking-tight pb-2 inline-block"
                 style={{ textShadow: "0 1px 2px rgba(0,0,0,0.3)" }}
               >
                 {slide.title}

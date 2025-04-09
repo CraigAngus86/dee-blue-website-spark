@@ -37,13 +37,13 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
     <header className={headerClasses}>
       <Container>
         <div className="flex items-center justify-between h-full">
-          {/* Logo with reduced size - on the left side */}
-          <div className="flex items-center">
+          {/* Logo with further reduced size - on the left side with more spacing */}
+          <div className="flex items-center mr-8">
             <a href="/" className="flex items-center py-2">
               <ClubLogo 
                 variant="rect"
                 background="light"
-                className="w-[100px] max-h-[40px]" // Reduced size by ~50%
+                className="w-[80px] max-h-[32px]" // Further reduced size by 20%
               />
             </a>
           </div>
@@ -54,7 +54,7 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
               {navItems.map((item) => (
                 <div 
                   key={item.label} 
-                  className="py-2 relative"
+                  className="py-2 relative group"
                 >
                   <a
                     href={item.href}
