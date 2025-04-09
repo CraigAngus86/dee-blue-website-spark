@@ -8,6 +8,7 @@ interface SectionHeaderProps {
   viewAllLink?: string;
   viewAllText?: string;
   className?: string;
+  textColor?: string; // Added textColor prop
 }
 
 const SectionHeader: React.FC<SectionHeaderProps> = ({
@@ -15,11 +16,12 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({
   viewAllLink,
   viewAllText = "View All",
   className,
+  textColor = "primary", // Default to primary color
 }) => {
   return (
     <div className={cn("flex flex-wrap justify-between items-center mb-8", className)}>
       <div className="flex flex-col">
-        <h2 className="text-2xl font-montserrat font-bold text-primary">
+        <h2 className={`text-2xl font-montserrat font-bold text-${textColor}`}>
           {title}
         </h2>
         <div className="h-0.5 w-10 bg-accent mt-2"></div>
@@ -28,7 +30,7 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({
       {viewAllLink && (
         <a
           href={viewAllLink}
-          className="text-primary font-semibold hover:text-primary-light flex items-center transition-colors group"
+          className={`text-${textColor} font-semibold hover:text-${textColor}-light flex items-center transition-colors group`}
         >
           {viewAllText}
           <ArrowRight
