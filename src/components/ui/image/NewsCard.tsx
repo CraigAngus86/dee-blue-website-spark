@@ -47,7 +47,7 @@ const NewsCard: React.FC<NewsCardProps> = ({
         boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)",
       }}
     >
-      {/* Image with square aspect ratio - removed space by removing padding */}
+      {/* Image with square aspect ratio - no padding */}
       <div className="aspect-square overflow-hidden">
         <ResponsiveImage
           src={image}
@@ -56,19 +56,19 @@ const NewsCard: React.FC<NewsCardProps> = ({
         />
       </div>
 
-      {/* Content with improved typography and spacing - reduced top padding */}
-      <div className="p-4 pt-2 flex flex-col flex-grow">
+      {/* Content section - removing excess padding */}
+      <div className="p-3 flex flex-col flex-grow">
         <div className="mb-auto">
-          <span className={`inline-block ${getCategoryBgColor(category)} text-white text-xs font-semibold px-2 py-1 rounded mb-2`}>
+          <span className={`inline-block ${getCategoryBgColor(category)} text-white text-xs font-semibold px-2 py-1 rounded mb-1.5`}>
             {category}
           </span>
 
-          <h3 className="font-montserrat font-bold text-[18px] leading-[22px] text-primary mb-3 line-clamp-2">
+          <h3 className="font-montserrat font-bold text-[18px] leading-[22px] text-primary mb-2 line-clamp-2">
             {title}
           </h3>
 
           {excerpt && (
-            <p className="text-gray-600 mb-3 text-sm leading-[20px] line-clamp-2 font-inter">
+            <p className="text-gray-600 mb-2 text-sm leading-[20px] line-clamp-2 font-inter">
               {excerpt}
             </p>
           )}

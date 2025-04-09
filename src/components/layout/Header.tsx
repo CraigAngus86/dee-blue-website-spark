@@ -37,9 +37,9 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
     <header className={headerClasses}>
       <Container>
         <div className="flex items-center justify-between h-full">
-          {/* Logo with more spacing - added margin-right and padding-top */}
-          <div className="flex items-center pt-1.5">
-            <a href="/" className="flex items-center py-2 mr-10">
+          {/* Logo with more spacing - added flex items-center to center vertically */}
+          <div className="flex items-center">
+            <a href="/" className="flex items-center mr-10">
               <ClubLogo 
                 variant="rect"
                 background="light"
@@ -48,13 +48,13 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
             </a>
           </div>
           
-          {/* Desktop Navigation - with improved typography and hover effect */}
-          <div className="hidden lg:flex items-center flex-grow justify-center">
-            <nav className="flex space-x-10"> {/* Increased spacing between items */}
+          {/* Desktop Navigation - with improved typography and hover effect, centered vertically */}
+          <div className="hidden lg:flex items-center flex-grow justify-center h-full">
+            <nav className="flex space-x-10 h-full"> {/* Added h-full for vertical centering */}
               {navItems.map((item) => (
                 <div 
                   key={item.label} 
-                  className="py-2 relative group"
+                  className="flex items-center h-full relative group"
                 >
                   <a
                     href={item.href}
@@ -69,7 +69,7 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
             </nav>
           </div>
           
-          {/* Desktop Actions */}
+          {/* Desktop Actions - centered vertically */}
           <div className="hidden lg:flex items-center space-x-4">
             <div className="relative p-2 rounded-full text-white hover:bg-white/20 transition-colors cursor-pointer">
               <Search size={20} />

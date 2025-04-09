@@ -11,7 +11,7 @@ interface OverlappingNewsCardsProps {
 
 const OverlappingNewsCards: React.FC<OverlappingNewsCardsProps> = ({
   articles = newsArticles,
-  count = 6, // Updated default to 6 cards
+  count = 6, // Default to 6 cards
   className
 }) => {
   // Take the specified number of articles
@@ -19,7 +19,7 @@ const OverlappingNewsCards: React.FC<OverlappingNewsCardsProps> = ({
   
   return (
     <div className={`container mx-auto px-4 relative -mt-20 mb-16 z-10 ${className}`}>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6">
         {displayArticles.map(article => (
           <NewsCard
             key={article.id}
