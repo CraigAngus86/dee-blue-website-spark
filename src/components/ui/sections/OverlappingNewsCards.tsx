@@ -28,8 +28,8 @@ const OverlappingNewsCards: React.FC<OverlappingNewsCardsProps> = ({
             category={article.category}
             timestamp={article.timestamp}
             excerpt={article.excerpt}
-            elevation="xl" // Increased elevation
-            className="border border-white/20 shadow-xl" // Added border and extra shadow
+            elevation="lg" // Changed from "xl" to "lg" to match allowed types
+            className="border border-white/20 shadow-xl" // Added border and shadow separately
           />
         ))}
       </div>
