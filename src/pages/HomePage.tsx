@@ -12,6 +12,7 @@ import { matchDayGallery } from "@/mock-data/galleryData";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
 import Section from "@/components/ui/layout/Section";
+import FanZoneSection from "@/components/ui/sections/FanZoneSection";
 
 const HomePage: React.FC = () => {
   return (
@@ -59,6 +60,9 @@ const HomePage: React.FC = () => {
             </div>
           </div>
         </Section>
+        
+        {/* Fan Zone Section */}
+        <FanZoneSection />
         
         {/* Latest News Section - with improved texture */}
         <Section 
