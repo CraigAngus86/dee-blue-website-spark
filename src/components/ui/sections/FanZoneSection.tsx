@@ -7,6 +7,7 @@ import SectionHeader from "@/components/ui/sections/SectionHeader";
 import FanOfTheMonth from "@/components/ui/fan/FanOfTheMonth";
 import InteractivePoll from "@/components/ui/fan/InteractivePoll";
 import UserContentShowcase from "@/components/ui/fan/UserContentShowcase";
+import SocialCTA from "@/components/ui/social/SocialCTA";
 
 const FanZoneSection: React.FC = () => {
   return (
@@ -40,6 +41,11 @@ const FanZoneSection: React.FC = () => {
         </div>
         
         <UserContentShowcase />
+        
+        {/* Social CTA moved from SocialMediaSection to here */}
+        <div className="mt-12">
+          <SocialCTA />
+        </div>
       </Container>
     </Section>
   );

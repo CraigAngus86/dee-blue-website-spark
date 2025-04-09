@@ -8,12 +8,12 @@ import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
 import Section from "@/components/ui/layout/Section";
 import FanZoneSection from "@/components/ui/sections/FanZoneSection";
-import SocialMediaSection from "@/components/ui/sections/SocialMediaSection";
 import SponsorsSection from "@/components/ui/sections/SponsorsSection";
 import DiagonalSeparator from "@/components/ui/separators/DiagonalSeparator";
 import FadeIn from "@/components/ui/animations/FadeIn";
 import PatternOverlay from "@/components/ui/backgrounds/PatternOverlay";
 import MatchCenter from "@/components/ui/sections/MatchCenter";
+import PlayersSection from "@/components/ui/sections/PlayersSection";
 
 const HomePage: React.FC = () => {
   // Consistent shadow treatment for all cards
@@ -73,15 +73,16 @@ const HomePage: React.FC = () => {
           <FanZoneSection />
         </div>
         
-        {/* Diagonal Separator before Social Media Section */}
+        {/* Diagonal Separator before Players Section */}
         <DiagonalSeparator color="secondary" position="top" height="sm" />
         
-        {/* Social Media Section */}
-        <SocialMediaSection />
+        {/* NEW: Players Section (replacing SocialMediaSection) */}
+        <PlayersSection />
         
-        {/* Diagonal Separator after Social Media Section - Removed to fix the strange gap */}
+        {/* Diagonal Separator after Players Section */}
+        <DiagonalSeparator color="white" position="top" height="sm" />
         
-        {/* Sponsors Section - Directly after social media without additional separator */}
+        {/* Sponsors Section */}
         <SponsorsSection />
         
         {/* Diagonal Separator before Footer */}

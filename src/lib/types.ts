@@ -1,4 +1,3 @@
-
 export interface ImageAsset {
   src: string;
   alt: string;
@@ -55,4 +54,21 @@ export interface Match {
   venue: string;
   status: 'scheduled' | 'live' | 'completed' | 'postponed';
   photos?: MatchPhoto[];
+}
+
+export interface PlayerStats {
+  appearances: number;
+  goals: number;
+  assists: number;
+}
+
+export interface Player {
+  id: string;
+  name: string;
+  firstName?: string;
+  lastName?: string;
+  position: string;
+  image: string;
+  isAcademy?: boolean;
+  stats?: PlayerStats;
 }
