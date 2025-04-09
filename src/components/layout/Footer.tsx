@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Youtube } from "lucide-react";
+import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Youtube, ArrowUp } from "lucide-react";
 import Container from "../ui/layout/Container";
 import Text from "../ui/typography/Text";
 import Heading from "../ui/typography/Heading";
@@ -40,10 +40,26 @@ const Footer: React.FC = () => {
         { label: "Community", href: "/community" },
       ],
     },
+    {
+      title: "Media",
+      links: [
+        { label: "News", href: "/news" },
+        { label: "Photo Gallery", href: "/gallery" },
+        { label: "Video Highlights", href: "/videos" },
+        { label: "Press Releases", href: "/press" },
+      ],
+    },
   ];
   
+  const handleScrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  };
+  
   return (
-    <footer className="bg-gradient-to-b from-primary to-primary-dark text-white relative">
+    <footer className="bg-[#00105A] text-white relative">
       {/* Upper wave decoration */}
       <div className="absolute top-0 left-0 right-0 transform -translate-y-full">
         <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -62,7 +78,7 @@ const Footer: React.FC = () => {
             <div className="lg:col-span-4 space-y-6">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
-                  <span className="text-primary font-bold text-xl">BD</span>
+                  <span className="text-[#00105A] font-bold text-xl">BD</span>
                 </div>
                 <span className="font-montserrat font-bold text-2xl text-white">
                   Banks o' Dee FC
@@ -84,7 +100,7 @@ const Footer: React.FC = () => {
                   <Input 
                     placeholder="Your email" 
                     type="email"
-                    className="bg-white/10 text-white border-white/20 placeholder:text-white/50 focus:border-accent"
+                    className="bg-white/10 text-white border-white/20 placeholder:text-white/50 focus:border-[#FFD700]"
                   />
                   <ButtonNew variant="accent">
                     Subscribe
@@ -94,7 +110,7 @@ const Footer: React.FC = () => {
             </div>
             
             {/* Navigation sections */}
-            <div className="lg:col-span-5 grid grid-cols-1 sm:grid-cols-3 gap-8">
+            <div className="lg:col-span-5 grid grid-cols-1 sm:grid-cols-4 gap-8">
               {footerNavigation.map((section) => (
                 <div key={section.title} className="space-y-4">
                   <Heading level={4} color="white">
@@ -105,7 +121,7 @@ const Footer: React.FC = () => {
                       <li key={link.label}>
                         <a 
                           href={link.href}
-                          className="text-white/80 hover:text-accent transition-colors text-sm"
+                          className="text-white/80 hover:text-[#C5E7FF] transition-colors text-sm"
                         >
                           {link.label}
                         </a>
@@ -129,13 +145,22 @@ const Footer: React.FC = () => {
                   </li>
                   <li className="flex items-center gap-3 text-white/80 text-sm">
                     <Phone size={16} />
-                    <span>+44 1234 567890</span>
+                    <a href="tel:+441234567890" className="hover:text-[#C5E7FF] transition-colors">
+                      +44 1234 567890
+                    </a>
                   </li>
                   <li className="flex items-center gap-3 text-white/80 text-sm">
                     <Mail size={16} />
-                    <span>info@banksofdeefc.com</span>
+                    <a href="mailto:info@banksofdeefc.com" className="hover:text-[#C5E7FF] transition-colors">
+                      info@banksofdeefc.com
+                    </a>
                   </li>
                 </ul>
+                <div className="mt-3 pl-7 text-white/80 text-sm">
+                  <p>Office Hours:</p>
+                  <p>Monday-Friday: 9:00 - 17:00</p>
+                  <p>Saturday: 10:00 - 14:00 (Match days)</p>
+                </div>
               </div>
               
               <div>
@@ -143,16 +168,16 @@ const Footer: React.FC = () => {
                   Follow Us
                 </Heading>
                 <div className="mt-4 flex gap-4">
-                  <a href="#" className="p-2 bg-white/10 hover:bg-accent/80 rounded-full transition-colors">
+                  <a href="#" className="p-2 bg-white/10 hover:bg-[#C5E7FF]/80 hover:text-[#00105A] rounded-full transition-colors">
                     <Facebook size={18} />
                   </a>
-                  <a href="#" className="p-2 bg-white/10 hover:bg-accent/80 rounded-full transition-colors">
+                  <a href="#" className="p-2 bg-white/10 hover:bg-[#C5E7FF]/80 hover:text-[#00105A] rounded-full transition-colors">
                     <Twitter size={18} />
                   </a>
-                  <a href="#" className="p-2 bg-white/10 hover:bg-accent/80 rounded-full transition-colors">
+                  <a href="#" className="p-2 bg-white/10 hover:bg-[#C5E7FF]/80 hover:text-[#00105A] rounded-full transition-colors">
                     <Instagram size={18} />
                   </a>
-                  <a href="#" className="p-2 bg-white/10 hover:bg-accent/80 rounded-full transition-colors">
+                  <a href="#" className="p-2 bg-white/10 hover:bg-[#C5E7FF]/80 hover:text-[#00105A] rounded-full transition-colors">
                     <Youtube size={18} />
                   </a>
                 </div>
@@ -162,9 +187,9 @@ const Footer: React.FC = () => {
         </Container>
       </div>
       
-      {/* Copyright section */}
+      {/* Copyright section with back to top button */}
       <Container>
-        <div className="py-6 text-center lg:text-left flex flex-col lg:flex-row justify-between items-center">
+        <div className="py-6 text-center lg:text-left flex flex-col lg:flex-row justify-between items-center relative">
           <Text color="white" size="xs">
             © {currentYear} Banks o' Dee Football Club. All rights reserved.
           </Text>
@@ -179,6 +204,13 @@ const Footer: React.FC = () => {
               Cookie Policy
             </a>
           </div>
+          <button 
+            onClick={handleScrollToTop}
+            className="lg:absolute lg:right-0 lg:top-1/2 lg:-translate-y-1/2 mt-4 lg:mt-0 p-2 bg-white/10 hover:bg-[#C5E7FF]/80 hover:text-[#00105A] rounded-full transition-colors"
+            aria-label="Back to top"
+          >
+            <ArrowUp size={18} />
+          </button>
         </div>
       </Container>
     </footer>
