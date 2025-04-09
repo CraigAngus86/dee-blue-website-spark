@@ -42,7 +42,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, className }) => {
       {/* Player info */}
       <div className="p-4">
         <Text
-          as="h3"
+          as="div"
           size="large"
           weight="bold"
           className="uppercase text-primary"
