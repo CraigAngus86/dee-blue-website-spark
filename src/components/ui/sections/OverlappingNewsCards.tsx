@@ -18,8 +18,8 @@ const OverlappingNewsCards: React.FC<OverlappingNewsCardsProps> = ({
   const displayArticles = articles.slice(0, count);
   
   return (
-    <div className={`container mx-auto px-4 relative -mt-20 mb-16 z-10 ${className}`}>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className={`container mx-auto px-4 relative -mt-16 mb-12 z-10 ${className}`}>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
         {displayArticles.map(article => (
           <NewsCard
             key={article.id}

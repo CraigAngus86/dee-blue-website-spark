@@ -29,7 +29,7 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
   // Always using primary (navy) color with full opacity for sticky header
   const headerClasses = cn(
     "fixed top-0 left-0 right-0 z-50 bg-primary shadow-md",
-    "h-[80px]", // Height set to 80px
+    "h-[90px]", // Increased height to 90px (from 80px)
     className
   );
   
@@ -54,11 +54,11 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
               {navItems.map((item) => (
                 <div 
                   key={item.label} 
-                  className="flex items-center h-full relative group"
+                  className="flex items-center justify-center h-full relative group"
                 >
                   <a
                     href={item.href}
-                    className="font-montserrat font-bold text-sm tracking-widest text-white hover:text-secondary transition-colors duration-200 whitespace-nowrap flex items-center h-full" 
+                    className="font-montserrat font-bold text-sm tracking-widest text-white hover:text-secondary transition-colors duration-200 whitespace-nowrap flex items-center justify-center h-full" 
                   >
                     {item.label}
                   </a>
@@ -71,10 +71,12 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
           
           {/* Desktop Actions - properly centered vertically */}
           <div className="hidden lg:flex items-center space-x-4 h-full">
-            <div className="relative p-2 rounded-full text-white hover:bg-white/20 transition-colors cursor-pointer flex items-center h-full">
-              <Search size={20} />
+            <div className="relative flex items-center justify-center h-full">
+              <div className="p-2 rounded-full text-white hover:bg-white/20 transition-colors cursor-pointer">
+                <Search size={20} />
+              </div>
             </div>
-            <div className="flex items-center h-full">
+            <div className="flex items-center justify-center h-full">
               <ButtonNew 
                 variant="accent" 
                 size="sm"
@@ -86,7 +88,7 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
           </div>
           
           {/* Mobile Menu Button - ensure vertical centering */}
-          <div className="flex lg:hidden items-center h-full">
+          <div className="flex lg:hidden items-center justify-center h-full">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="p-2 rounded-full text-white hover:bg-white/20 transition-colors"

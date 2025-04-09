@@ -48,7 +48,7 @@ const NewsCard: React.FC<NewsCardProps> = ({
       }}
     >
       {/* Image with square aspect ratio - absolutely no padding */}
-      <div className="aspect-square overflow-hidden m-0">
+      <div className="aspect-square overflow-hidden m-0 p-0">
         <ResponsiveImage
           src={image}
           alt={title}
@@ -57,24 +57,25 @@ const NewsCard: React.FC<NewsCardProps> = ({
       </div>
 
       {/* Content section with minimal padding */}
-      <div className="p-2 flex flex-col flex-grow">
-        <div className="mb-auto">
-          <span className={`inline-block ${getCategoryBgColor(category)} text-white text-xs font-semibold px-2 py-1 rounded mb-1`}>
-            {category}
-          </span>
+      <div className="p-3 flex flex-col flex-grow">
+        {/* Category tag directly below image with no gap */}
+        <span className={`inline-block ${getCategoryBgColor(category)} text-white text-xs font-semibold px-2 py-1 rounded mb-1`}>
+          {category}
+        </span>
 
-          <h3 className="font-montserrat font-bold text-[18px] leading-[21px] text-primary mb-1 line-clamp-2">
+        <div className="mt-1 mb-auto">
+          <h3 className="font-montserrat font-bold text-[18px] leading-tight text-primary mb-1 line-clamp-2">
             {title}
           </h3>
 
           {excerpt && (
-            <p className="text-gray-600 mb-1 text-sm leading-[19px] line-clamp-2 font-inter">
+            <p className="text-gray-600 text-sm leading-tight line-clamp-2 font-inter">
               {excerpt}
             </p>
           )}
         </div>
 
-        <div className="flex items-center justify-between text-sm mt-1 pt-1 border-t border-gray-100">
+        <div className="flex items-center justify-between text-sm mt-2 pt-1 border-t border-gray-100">
           <span className="text-gray-500 text-xs opacity-80 font-inter font-light">
             {timestamp}
           </span>
