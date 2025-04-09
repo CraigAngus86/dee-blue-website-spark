@@ -32,7 +32,7 @@ const SponsorsSection: React.FC = () => {
             </div>
             <div className="flex justify-center">
               <div 
-                className="bg-white p-6 rounded-lg shadow-md transition-transform hover:scale-102 duration-300 border border-gray-100"
+                className="bg-white p-6 rounded-lg shadow-md hover:scale-102 transition-all duration-300 border border-gray-100"
                 style={{ maxWidth: "400px" }}
               >
                 <SponsorLogo 
