@@ -23,6 +23,18 @@ export const upcomingFixtures = [
     venue: 'Hampden Park',
     status: 'upcoming',
     ticketLink: '/tickets/f2'
+  },
+  {
+    id: 'f3',
+    competition: 'Highland League',
+    round: 'Matchday 29',
+    date: 'April 29, 2025',
+    time: '15:00',
+    homeTeam: "Banks o' Dee",
+    awayTeam: 'Formartine United',
+    venue: 'Spain Park Stadium',
+    status: 'upcoming',
+    ticketLink: '/tickets/f3'
   }
 ];
 
@@ -32,6 +44,7 @@ export const recentResults = [
     competition: 'Highland League',
     round: 'Matchday 27',
     date: 'April 8, 2025',
+    time: '15:00',
     homeTeam: "Banks o' Dee",
     awayTeam: 'Formartine United',
     venue: 'Spain Park Stadium',
@@ -47,6 +60,7 @@ export const recentResults = [
     competition: 'Highland League',
     round: 'Matchday 26',
     date: 'April 1, 2025',
+    time: '15:00',
     homeTeam: 'Brora Rangers',
     awayTeam: "Banks o' Dee",
     venue: 'Dudgeon Park',

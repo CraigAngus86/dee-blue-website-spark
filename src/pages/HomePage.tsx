@@ -2,8 +2,6 @@
 import React from "react";
 import HeroSection from "@/components/ui/hero/HeroSection";
 import OverlappingNewsCards from "@/components/ui/sections/OverlappingNewsCards";
-import FeaturedMatch from "@/components/ui/sections/FeaturedMatch";
-import LeagueTableWidget from "@/components/ui/sections/LeagueTableWidget";
 import { getNewsImage } from "@/lib/imageUtils";
 import { newsArticles } from "@/mock-data/newsData";
 import Footer from "@/components/layout/Footer";
@@ -15,6 +13,7 @@ import SponsorsSection from "@/components/ui/sections/SponsorsSection";
 import DiagonalSeparator from "@/components/ui/separators/DiagonalSeparator";
 import FadeIn from "@/components/ui/animations/FadeIn";
 import PatternOverlay from "@/components/ui/backgrounds/PatternOverlay";
+import MatchCenter from "@/components/ui/sections/MatchCenter";
 
 const HomePage: React.FC = () => {
   // Consistent shadow treatment for all cards
@@ -49,7 +48,7 @@ const HomePage: React.FC = () => {
         {/* Diagonal Separator before Featured Content Section */}
         <DiagonalSeparator color="secondary" position="top" />
         
-        {/* Featured Content Section */}
+        {/* Featured Content Section - Replace with MatchCenter */}
         <Section 
           className="relative overflow-hidden"
           spacing="lg"
@@ -59,22 +58,10 @@ const HomePage: React.FC = () => {
             <PatternOverlay pattern="plus" opacity={0.1} />
           </div>
           
-          <div className="container mx-auto px-4 relative z-10">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-              {/* Featured Match */}
-              <div className="lg:col-span-8">
-                <FadeIn direction="left" delay={0.1}>
-                  <FeaturedMatch maxMatches={3} />
-                </FadeIn>
-              </div>
-              
-              {/* League Table */}
-              <div className="lg:col-span-4">
-                <FadeIn direction="right" delay={0.2}>
-                  <LeagueTableWidget />
-                </FadeIn>
-              </div>
-            </div>
+          <div className="relative z-10">
+            <FadeIn>
+              <MatchCenter />
+            </FadeIn>
           </div>
         </Section>
         
