@@ -43,8 +43,17 @@ export const newsArticles = [
     title: "Manager's preview: 'We're ready for the challenge'",
     excerpt: "Banks o' Dee manager Josh Winton shared his thoughts ahead of this weekend's crucial fixture...",
     image: getNewsImage(4),
-    category: "INTERVIEW",
+    category: "TEAM NEWS",
     date: "April 2, 2025",
     timestamp: "1 week ago"
+  },
+  {
+    id: 6,
+    title: "Supporters' Club announces new travel arrangements",
+    excerpt: "The Banks o' Dee Supporters' Club has arranged additional transport for the upcoming away fixtures...",
+    image: getNewsImage(0),
+    category: "CLUB NEWS",
+    date: "March 31, 2025",
+    timestamp: "10 days ago"
   }
 ];

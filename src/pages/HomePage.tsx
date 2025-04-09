@@ -12,7 +12,6 @@ import Section from "@/components/ui/layout/Section";
 import FanZoneSection from "@/components/ui/sections/FanZoneSection";
 import SocialMediaSection from "@/components/ui/sections/SocialMediaSection";
 import SponsorsSection from "@/components/ui/sections/SponsorsSection";
-import WaveSeparator from "@/components/ui/separators/WaveSeparator";
 import DiagonalSeparator from "@/components/ui/separators/DiagonalSeparator";
 import FadeIn from "@/components/ui/animations/FadeIn";
 import PatternOverlay from "@/components/ui/backgrounds/PatternOverlay";
@@ -47,8 +46,8 @@ const HomePage: React.FC = () => {
           </FadeIn>
         </div>
         
-        {/* Wave Separator before Featured Content Section */}
-        <WaveSeparator color="secondary" position="top" />
+        {/* Diagonal Separator before Featured Content Section */}
+        <DiagonalSeparator color="secondary" position="top" />
         
         {/* Featured Content Section */}
         <Section 
@@ -87,8 +86,8 @@ const HomePage: React.FC = () => {
           <FanZoneSection />
         </div>
         
-        {/* Wave Separator before Social Media Section */}
-        <WaveSeparator color="secondary" position="top" height="sm" />
+        {/* Diagonal Separator before Social Media Section */}
+        <DiagonalSeparator color="secondary" position="top" height="sm" />
         
         {/* Social Media Section */}
         <SocialMediaSection />
@@ -101,8 +100,8 @@ const HomePage: React.FC = () => {
           <SponsorsSection />
         </div>
         
-        {/* Wave Separator before Footer */}
-        <WaveSeparator color="primary" position="bottom" />
+        {/* Diagonal Separator before Footer */}
+        <DiagonalSeparator color="primary" position="bottom" />
       </main>
       
       <Footer />

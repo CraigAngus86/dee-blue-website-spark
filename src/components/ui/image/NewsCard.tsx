@@ -2,6 +2,7 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import ResponsiveImage from "./ResponsiveImage";
+import { ChevronRight } from "lucide-react";
 
 interface NewsCardProps {
   image: string;
@@ -24,56 +25,65 @@ const NewsCard: React.FC<NewsCardProps> = ({
   elevation = "md",
   className,
 }) => {
-  // Map elevation to shadow classes
-  const shadowClasses = {
-    sm: "shadow-sm",
-    md: "shadow-md",
-    lg: "shadow-lg",
+  // Determine category background color
+  const getCategoryBgColor = (category: string) => {
+    if (category.includes("MATCH")) return "bg-primary";
+    if (category.includes("TEAM")) return "bg-secondary";
+    if (category.includes("CLUB")) return "bg-secondary";
+    if (category.includes("YOUTH")) return "bg-primary-light";
+    return "bg-secondary";
   };
 
   return (
     <a
       href={url}
       className={cn(
-        "block bg-white rounded-lg overflow-hidden transition-transform duration-300 hover:scale-105",
-        "h-full flex flex-col", // Ensure consistent height
-        shadowClasses[elevation],
+        "block bg-white rounded-lg overflow-hidden transition-all duration-300 hover:-translate-y-2",
+        "h-full flex flex-col border-b-3 border-accent", // Added gold bottom border for definition
+        "shadow-md hover:shadow-lg", // Enhanced shadow with hover effect
         className
       )}
+      style={{
+        boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)",
+      }}
     >
-      {/* Image with consistent aspect ratio */}
-      <div className="aspect-[16/9] overflow-hidden">
+      {/* Image with square aspect ratio */}
+      <div className="aspect-square overflow-hidden">
         <ResponsiveImage
           src={image}
           alt={title}
-          className="w-full h-full transition-transform duration-500 hover:scale-105"
-          objectFit="cover"
+          className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
         />
       </div>
 
-      {/* Content with improved typography hierarchy */}
-      <div className="p-5 flex flex-col flex-grow">
+      {/* Content with improved typography and spacing */}
+      <div className="p-4 flex flex-col flex-grow">
         <div className="mb-auto">
-          <span className="inline-block bg-secondary text-primary text-xs font-semibold px-2 py-1 rounded mb-3">
+          <span className={`inline-block ${getCategoryBgColor(category)} text-white text-xs font-semibold px-2 py-1 rounded mb-3`}>
             {category}
           </span>
 
-          <h3 className="font-montserrat font-bold text-lg text-primary mb-3 line-clamp-2">
+          <h3 className="font-montserrat font-bold text-[18px] leading-[22px] text-primary mb-3 line-clamp-2">
             {title}
           </h3>
 
           {excerpt && (
-            <p className="text-gray-600 mb-4 line-clamp-2 text-sm">{excerpt}</p>
+            <p className="text-gray-600 mb-4 text-sm leading-[20px] line-clamp-2 font-inter">
+              {excerpt}
+            </p>
           )}
         </div>
 
         <div className="flex items-center justify-between text-sm mt-3 pt-3 border-t border-gray-100">
-          <span className="text-gray-500">{timestamp}</span>
-          <span className="text-primary font-medium flex items-center gap-1">
+          <span className="text-gray-500 text-xs opacity-80 font-inter font-light">
+            {timestamp}
+          </span>
+          <span className="text-primary font-medium flex items-center gap-1 group">
             Read More
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="m9 18 6-6-6-6"></path>
-            </svg>
+            <ChevronRight 
+              className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" 
+              strokeWidth={2} 
+            />
           </span>
         </div>
       </div>
