@@ -6,13 +6,67 @@ import { Button } from "@/components/ui/button";
 import { getMainSponsor, getSponsorsByTier } from "@/data/SponsorsData";
 import { Sponsor } from "@/lib/types";
 import { ExternalLink } from "lucide-react";
+import { useEffect, useState, useRef } from "react";
+
+const SponsorCarousel: React.FC<{ sponsors: Sponsor[] }> = ({ sponsors }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const totalSponsors = sponsors.length;
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const itemsPerView = 4;
+  const maxIndex = Math.max(0, totalSponsors - itemsPerView);
+  
+  // Auto-scroll functionality
+  useEffect(() => {
+    if (isPaused || totalSponsors <= itemsPerView) return;
+    
+    timerRef.current = setInterval(() => {
+      setCurrentIndex(prev => (prev >= maxIndex) ? 0 : prev + 1);
+    }, 5000);
+    
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [isPaused, totalSponsors, maxIndex]);
+
+  if (totalSponsors <= 0) return null;
+  
+  return (
+    <div 
+      className="relative overflow-hidden py-4"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
+      <div 
+        className="flex transition-transform duration-500 ease-in-out"
+        style={{ transform: `translateX(-${currentIndex * (100 / itemsPerView)}%)` }}
+      >
+        {sponsors.map((sponsor, index) => (
+          <div 
+            key={index} 
+            className="min-w-[25%] px-3"
+          >
+            <div className="bg-white shadow-sm rounded-md p-4 h-24 flex items-center justify-center">
+              <SponsorLogo 
+                sponsor={sponsor}
+                size="md"
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 const SponsorsSection: React.FC = () => {
   // Get main sponsor and other sponsors
   const mainSponsor = getMainSponsor();
-  const platinumSponsors = getSponsorsByTier("platinum");
-  const goldSponsors = getSponsorsByTier("gold");
-  const silverSponsors = getSponsorsByTier("silver");
+  const secondarySponsors = [
+    ...getSponsorsByTier("platinum"),
+    ...getSponsorsByTier("gold"),
+    ...getSponsorsByTier("silver")
+  ];
   
   return (
     <Section 
@@ -28,47 +82,35 @@ const SponsorsSection: React.FC = () => {
       />
       
       <div className="container mx-auto px-4 relative z-10">
-        <div className="text-center mb-10">
+        <div className="text-center mb-8">
           <h2 className="text-2xl md:text-3xl font-bold text-primary mb-2">Club Partners & Sponsors</h2>
           <p className="text-gray max-w-2xl mx-auto">
             Banks o' Dee FC is supported by these outstanding local and regional businesses
           </p>
         </div>
         
-        {/* Main Sponsor */}
+        {/* Main Sponsor - 30% smaller */}
         {mainSponsor && (
-          <div className="mb-12">
+          <div className="mb-10">
             <h3 className="text-center text-lg font-semibold mb-4">Official Main Partner</h3>
             <div className="flex justify-center">
               <div 
-                className="bg-white shadow-md rounded-md p-6 inline-flex items-center justify-center transition-transform duration-300 hover:scale-102"
+                className="bg-white shadow-md rounded-md p-4 inline-flex items-center justify-center transition-transform duration-300 hover:scale-102"
+                style={{ maxWidth: "70%" }} // Reduced by 30%
               >
                 <SponsorLogo 
                   sponsor={mainSponsor} 
-                  size="xl"
+                  size="lg" // Reduced from xl to lg
                 />
               </div>
             </div>
           </div>
         )}
         
-        {/* Secondary Sponsors */}
-        <div className="mb-12">
-          <h3 className="text-center text-lg font-semibold mb-6">Club Partners</h3>
-          
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
-            {[...platinumSponsors, ...goldSponsors, ...silverSponsors].map((sponsor: Sponsor, index) => (
-              <div 
-                key={index}
-                className="bg-white shadow-sm rounded-md p-4 flex items-center justify-center transition-transform duration-300 hover:scale-102"
-              >
-                <SponsorLogo 
-                  sponsor={sponsor} 
-                  size="lg"
-                />
-              </div>
-            ))}
-          </div>
+        {/* Secondary Sponsors Carousel */}
+        <div className="mb-10">
+          <h3 className="text-center text-lg font-semibold mb-4">Club Partners</h3>
+          <SponsorCarousel sponsors={secondarySponsors} />
         </div>
         
         {/* Partnership CTA */}

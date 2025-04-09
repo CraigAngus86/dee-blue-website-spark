@@ -10,43 +10,36 @@ import { Input } from "../ui/input";
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
   
-  // Footer navigation columns
+  // Simplified footer navigation to 3 columns
   const footerNavigation = [
     {
-      title: "Club",
+      title: "Club Information",
       links: [
         { label: "About Us", href: "/about" },
         { label: "History", href: "/history" },
         { label: "Stadium", href: "/stadium" },
-        { label: "Partners", href: "/partners" },
-        { label: "Contact", href: "/contact" },
-      ],
-    },
-    {
-      title: "Team",
-      links: [
         { label: "First Team", href: "/team" },
         { label: "Youth Academy", href: "/academy" },
-        { label: "Coaching Staff", href: "/staff" },
-        { label: "Join Our Team", href: "/careers" },
       ],
     },
     {
-      title: "Fans",
+      title: "Fans & Tickets",
       links: [
         { label: "Tickets", href: "/tickets" },
         { label: "Membership", href: "/membership" },
         { label: "Online Store", href: "/store" },
         { label: "Community", href: "/community" },
+        { label: "Photo Gallery", href: "/gallery" },
       ],
     },
     {
-      title: "Media",
+      title: "Contact & Social",
       links: [
-        { label: "News", href: "/news" },
-        { label: "Photo Gallery", href: "/gallery" },
-        { label: "Video Highlights", href: "/videos" },
-        { label: "Press Releases", href: "/press" },
+        { label: "Contact Us", href: "/contact" },
+        { label: "Partners", href: "/partners" },
+        { label: "Media Enquiries", href: "/media" },
+        { label: "Join Our Team", href: "/careers" },
+        { label: "Directions", href: "/visit" },
       ],
     },
   ];
@@ -75,7 +68,7 @@ const Footer: React.FC = () => {
         <Container>
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
             {/* Club info and newsletter */}
-            <div className="lg:col-span-4 space-y-6">
+            <div className="lg:col-span-5 space-y-6">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
                   <span className="text-[#00105A] font-bold text-xl">BD</span>
@@ -109,8 +102,8 @@ const Footer: React.FC = () => {
               </div>
             </div>
             
-            {/* Navigation sections */}
-            <div className="lg:col-span-5 grid grid-cols-1 sm:grid-cols-4 gap-8">
+            {/* Navigation sections - reduced to 3 columns */}
+            <div className="lg:col-span-4 grid grid-cols-1 sm:grid-cols-3 gap-8">
               {footerNavigation.map((section) => (
                 <div key={section.title} className="space-y-4">
                   <Heading level={4} color="white">
@@ -156,30 +149,25 @@ const Footer: React.FC = () => {
                     </a>
                   </li>
                 </ul>
-                <div className="mt-3 pl-7 text-white/80 text-sm">
-                  <p>Office Hours:</p>
-                  <p>Monday-Friday: 9:00 - 17:00</p>
-                  <p>Saturday: 10:00 - 14:00 (Match days)</p>
-                </div>
-              </div>
-              
-              <div>
-                <Heading level={4} color="white">
-                  Follow Us
-                </Heading>
-                <div className="mt-4 flex gap-4">
-                  <a href="#" className="p-2 bg-white/10 hover:bg-[#C5E7FF]/80 hover:text-[#00105A] rounded-full transition-colors">
-                    <Facebook size={18} />
-                  </a>
-                  <a href="#" className="p-2 bg-white/10 hover:bg-[#C5E7FF]/80 hover:text-[#00105A] rounded-full transition-colors">
-                    <Twitter size={18} />
-                  </a>
-                  <a href="#" className="p-2 bg-white/10 hover:bg-[#C5E7FF]/80 hover:text-[#00105A] rounded-full transition-colors">
-                    <Instagram size={18} />
-                  </a>
-                  <a href="#" className="p-2 bg-white/10 hover:bg-[#C5E7FF]/80 hover:text-[#00105A] rounded-full transition-colors">
-                    <Youtube size={18} />
-                  </a>
+                
+                <div className="mt-6">
+                  <Heading level={4} color="white" className="mb-3">
+                    Follow Us
+                  </Heading>
+                  <div className="flex gap-4">
+                    <a href="#" className="p-2 bg-white/10 hover:bg-[#C5E7FF]/80 hover:text-[#00105A] rounded-full transition-colors">
+                      <Facebook size={18} />
+                    </a>
+                    <a href="#" className="p-2 bg-white/10 hover:bg-[#C5E7FF]/80 hover:text-[#00105A] rounded-full transition-colors">
+                      <Twitter size={18} />
+                    </a>
+                    <a href="#" className="p-2 bg-white/10 hover:bg-[#C5E7FF]/80 hover:text-[#00105A] rounded-full transition-colors">
+                      <Instagram size={18} />
+                    </a>
+                    <a href="#" className="p-2 bg-white/10 hover:bg-[#C5E7FF]/80 hover:text-[#00105A] rounded-full transition-colors">
+                      <Youtube size={18} />
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>

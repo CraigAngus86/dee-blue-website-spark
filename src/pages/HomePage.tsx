@@ -18,18 +18,21 @@ import FadeIn from "@/components/ui/animations/FadeIn";
 import PatternOverlay from "@/components/ui/backgrounds/PatternOverlay";
 
 const HomePage: React.FC = () => {
-  // Adding CSS to ensure overlapping news cards have consistent shadow treatment and refined typography
-  const overlappingCardStyles = {
+  // Consistent shadow treatment for all cards
+  const cardShadowStyle = {
     "--card-shadow": "0 10px 25px -5px rgba(0, 16, 90, 0.1), 0 8px 10px -6px rgba(0, 16, 90, 0.05)",
     "--card-hover-shadow": "0 20px 25px -5px rgba(0, 16, 90, 0.15), 0 10px 10px -5px rgba(0, 16, 90, 0.1)"
   } as React.CSSProperties;
 
+  // Standard section spacing
+  const sectionSpacing = "py-12"; // 48px top and bottom
+
   return (
-    <div className="min-h-screen flex flex-col" style={overlappingCardStyles}>
+    <div className="min-h-screen flex flex-col" style={cardShadowStyle}>
       <Header />
       
       <main className="flex-grow">
-        {/* Hero Section - Full width with improved overlay */}
+        {/* Hero Section */}
         <HeroSection 
           title="BANKS O' DEE AIMING FOR LEAGUE GLORY" 
           category="CLUB NEWS" 
@@ -37,15 +40,17 @@ const HomePage: React.FC = () => {
           backgroundImage={getNewsImage(0)}
         />
         
-        {/* Expanded News Cards - Now showing 6 cards (3x2 grid) */}
-        <FadeIn>
-          <OverlappingNewsCards articles={newsArticles} count={6} />
-        </FadeIn>
+        {/* News Cards Section - 6 cards in 3x2 grid */}
+        <div className={sectionSpacing}>
+          <FadeIn>
+            <OverlappingNewsCards articles={newsArticles} count={6} />
+          </FadeIn>
+        </div>
         
         {/* Wave Separator before Featured Content Section */}
         <WaveSeparator color="secondary" position="top" />
         
-        {/* Featured Content Section - Improved gradient and texture */}
+        {/* Featured Content Section */}
         <Section 
           className="relative overflow-hidden"
           spacing="lg"
@@ -78,7 +83,9 @@ const HomePage: React.FC = () => {
         <DiagonalSeparator color="white" position="top" />
         
         {/* Fan Zone Section */}
-        <FanZoneSection />
+        <div className={sectionSpacing}>
+          <FanZoneSection />
+        </div>
         
         {/* Wave Separator before Social Media Section */}
         <WaveSeparator color="secondary" position="top" height="sm" />
@@ -90,7 +97,9 @@ const HomePage: React.FC = () => {
         <DiagonalSeparator color="white" position="top" />
 
         {/* Sponsors Section */}
-        <SponsorsSection />
+        <div className={sectionSpacing}>
+          <SponsorsSection />
+        </div>
         
         {/* Wave Separator before Footer */}
         <WaveSeparator color="primary" position="bottom" />
