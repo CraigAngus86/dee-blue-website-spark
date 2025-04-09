@@ -37,34 +37,35 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
     <header className={headerClasses}>
       <Container>
         <div className="flex items-center justify-between h-full">
-          {/* Logo with proper sizing - on the left side */}
+          {/* Logo with reduced size - on the left side */}
           <div className="flex items-center">
             <a href="/" className="flex items-center py-2">
               <ClubLogo 
                 variant="rect"
                 background="light"
-                className="w-[140px] max-h-[56px]"
+                className="w-[100px] max-h-[40px]" // Reduced size by ~50%
               />
             </a>
           </div>
           
-          {/* Desktop Navigation - improved spacing */}
+          {/* Desktop Navigation - with improved typography and hover effect */}
           <div className="hidden lg:flex items-center flex-grow justify-center">
             <nav className="flex space-x-10"> {/* Increased spacing between items */}
               {navItems.map((item) => (
-                <HoverEffect 
+                <div 
                   key={item.label} 
-                  effect="underline" 
-                  className="py-2"
+                  className="py-2 relative"
                 >
                   <a
                     href={item.href}
-                    className="font-montserrat font-bold text-sm tracking-wide text-white hover:text-secondary transition-colors duration-200 whitespace-nowrap" 
-                    // Added whitespace-nowrap to prevent text wrapping
+                    className="font-montserrat font-bold text-sm tracking-widest text-white hover:text-secondary transition-colors duration-200 whitespace-nowrap" 
+                    // Added wider tracking and whitespace-nowrap to prevent wrapping
                   >
                     {item.label}
                   </a>
-                </HoverEffect>
+                  {/* Custom hover effect with light blue bottom border */}
+                  <div className="absolute bottom-0 left-0 w-full h-[2px] bg-[#33C3F0] scale-x-0 transition-transform duration-200 origin-bottom-left group-hover:scale-x-100"></div>
+                </div>
               ))}
             </nav>
           </div>
@@ -77,8 +78,8 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
             <ButtonNew 
               variant="accent" 
               size="sm"
-              className="bg-accent text-primary border-accent hover:bg-accent-light whitespace-nowrap" 
-              // Added whitespace-nowrap to prevent text wrapping
+              className="bg-accent text-primary border-accent hover:bg-accent-light whitespace-nowrap filter hover:brightness-105 shadow-md" 
+              // Added shadow and brightness hover effect
             >
               Buy Tickets
             </ButtonNew>
@@ -110,14 +111,18 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
                 <div key={item.label}>
                   <a
                     href={item.href}
-                    className="font-montserrat font-bold text-base text-white hover:text-secondary px-2 py-2 flex items-center justify-between"
+                    className="font-montserrat font-bold text-base text-white hover:text-secondary px-2 py-2 flex items-center justify-between tracking-widest"
                   >
                     {item.label}
                   </a>
                 </div>
               ))}
               <div className="pt-4 border-t border-white/20">
-                <ButtonNew variant="accent" size="md" className="w-full">
+                <ButtonNew 
+                  variant="accent" 
+                  size="md" 
+                  className="w-full shadow-md filter hover:brightness-105"
+                >
                   Buy Tickets
                 </ButtonNew>
               </div>

@@ -61,8 +61,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             className="w-full h-full"
             objectFit="cover"
           />
-          {/* Enhanced gradient overlay with texture for better text readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-primary/95 via-primary/60 to-transparent">
+          {/* Enhanced gradient overlay with deep navy fade */}
+          <div className="absolute inset-0 bg-gradient-to-top from-[rgba(0,16,90,0.8)] via-[rgba(0,16,90,0.4)] to-[rgba(0,16,90,0.1)]">
             {/* Subtle texture overlay for depth */}
             <div 
               className="absolute inset-0 opacity-10"
@@ -77,7 +77,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
       
       {/* Content - Centered text with improved typography */}
       <div className="relative z-10 min-h-[70vh] md:min-h-[70vh] sm:min-h-[50vh] flex flex-col justify-end">
-        <div className="container mx-auto px-4 md:px-6 pb-24 text-center">
+        <div className="container mx-auto px-4 md:px-6 pb-24 pt-32 text-center">
           {heroSlides.map((slide, index) => (
             <div 
               key={index}
@@ -89,17 +89,18 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                 level={1}
                 color="white"
                 weight="extrabold"
-                className="mb-4 mx-auto max-w-4xl shadow-text border-b-4 border-accent pb-2 inline-block"
+                className="text-[calc(1.15*2.25rem)] md:text-[calc(1.15*3rem)] mb-4 mx-auto max-w-4xl tracking-tight shadow-text pb-2 inline-block"
+                style={{ textShadow: "0 1px 2px rgba(0,0,0,0.3)" }}
               >
                 {slide.title}
               </Heading>
               
-              <div className="flex items-center justify-center text-white text-sm md:text-base space-x-4">
-                <span className="bg-primary px-3 py-1.5 font-semibold shadow-md">{slide.category}</span>
-                <Text size="medium" weight="medium" color="white" className="tracking-wide">
-                  {slide.timestamp}
-                </Text>
-              </div>
+              {/* Gold accent line below headline */}
+              <div className="w-24 h-[2px] bg-accent mx-auto mb-6"></div>
+              
+              <Text size="medium" weight="medium" color="white" className="tracking-wide mt-2">
+                {slide.timestamp}
+              </Text>
             </div>
           ))}
           

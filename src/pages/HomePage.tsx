@@ -31,7 +31,7 @@ const HomePage: React.FC = () => {
     <div className="min-h-screen flex flex-col" style={cardShadowStyle}>
       <Header />
       
-      <main className="flex-grow">
+      <main className="flex-grow pt-[72px]"> {/* Added padding to account for fixed header */}
         {/* Hero Section */}
         <HeroSection 
           title="BANKS O' DEE AIMING FOR LEAGUE GLORY" 
