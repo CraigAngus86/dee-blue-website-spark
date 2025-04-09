@@ -62,7 +62,7 @@ const MatchCenter: React.FC<MatchCenterProps> = ({ className }) => {
   return (
     <Container>
       <div className={`bg-white rounded-lg shadow-md overflow-hidden ${className}`}>
-        {/* Section Title - Using site design principles */}
+        {/* Section Title */}
         <div className="px-8 pt-8 pb-4">
           <Heading level={2} className="text-primary">Matches & Stats</Heading>
           <div className="h-0.5 w-24 bg-accent mt-2"></div>
@@ -129,7 +129,7 @@ const MatchCenter: React.FC<MatchCenterProps> = ({ className }) => {
           </div>
         </div>
         
-        {/* League Stats Summary - Improved spacing and text size */}
+        {/* League Stats Summary */}
         <div className="px-8 py-6 bg-gray-50">
           <div className="flex justify-between items-center mb-4">
             <Heading level={3} className="text-primary text-lg">Highland League Table</Heading>
@@ -141,33 +141,7 @@ const MatchCenter: React.FC<MatchCenterProps> = ({ className }) => {
             </ButtonNew>
           </div>
           
-          {/* Updated LeaguePositionStrip with better spacing and text size */}
-          <div className="bg-white p-4 rounded-md shadow-sm">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center space-x-4">
-                <div className="text-2xl font-bold text-primary">2</div>
-                <div>
-                  <div className="font-semibold text-primary">Banks o' Dee FC</div>
-                  <div className="text-sm text-gray-500">42 points</div>
-                </div>
-              </div>
-              
-              <div className="flex space-x-2">
-                {['W', 'W', 'D', 'W', 'L'].map((result, index) => (
-                  <div 
-                    key={index}
-                    className={`w-7 h-7 flex items-center justify-center rounded-full text-white text-xs font-medium ${
-                      result === 'W' ? 'bg-secondary' : 
-                      result === 'D' ? 'bg-gray-400' : 
-                      'bg-red-400'
-                    }`}
-                  >
-                    {result}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+          <LeaguePositionStrip position={2} points={42} form={['W', 'W', 'D', 'W', 'L']} />
         </div>
       </div>
     </Container>

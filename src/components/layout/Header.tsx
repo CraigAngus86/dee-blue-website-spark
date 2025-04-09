@@ -37,13 +37,13 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
     <header className={headerClasses}>
       <Container>
         <div className="flex items-center justify-between h-full">
-          {/* Logo positioned far left with more spacing */}
+          {/* Logo with further reduced size - on the left side with more spacing */}
           <div className="flex items-center">
-            <a href="/" className="flex items-center py-2 mr-10">
+            <a href="/" className="flex items-center py-2">
               <ClubLogo 
                 variant="rect"
                 background="light"
-                className="w-[60px] h-auto max-h-[28px]"
+                className="w-[60px] h-auto max-h-[28px]" // Further reduced size for better fit
               />
             </a>
           </div>
