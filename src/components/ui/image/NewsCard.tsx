@@ -47,7 +47,7 @@ const NewsCard: React.FC<NewsCardProps> = ({
         boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)",
       }}
     >
-      {/* Image with square aspect ratio */}
+      {/* Image with square aspect ratio - removed space by removing padding */}
       <div className="aspect-square overflow-hidden">
         <ResponsiveImage
           src={image}
@@ -56,10 +56,10 @@ const NewsCard: React.FC<NewsCardProps> = ({
         />
       </div>
 
-      {/* Content with improved typography and spacing */}
-      <div className="p-4 flex flex-col flex-grow">
+      {/* Content with improved typography and spacing - reduced top padding */}
+      <div className="p-4 pt-2 flex flex-col flex-grow">
         <div className="mb-auto">
-          <span className={`inline-block ${getCategoryBgColor(category)} text-white text-xs font-semibold px-2 py-1 rounded mb-3`}>
+          <span className={`inline-block ${getCategoryBgColor(category)} text-white text-xs font-semibold px-2 py-1 rounded mb-2`}>
             {category}
           </span>
 
@@ -68,13 +68,13 @@ const NewsCard: React.FC<NewsCardProps> = ({
           </h3>
 
           {excerpt && (
-            <p className="text-gray-600 mb-4 text-sm leading-[20px] line-clamp-2 font-inter">
+            <p className="text-gray-600 mb-3 text-sm leading-[20px] line-clamp-2 font-inter">
               {excerpt}
             </p>
           )}
         </div>
 
-        <div className="flex items-center justify-between text-sm mt-3 pt-3 border-t border-gray-100">
+        <div className="flex items-center justify-between text-sm mt-2 pt-2 border-t border-gray-100">
           <span className="text-gray-500 text-xs opacity-80 font-inter font-light">
             {timestamp}
           </span>

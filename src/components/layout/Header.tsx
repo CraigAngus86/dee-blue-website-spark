@@ -29,7 +29,7 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
   // Always using primary (navy) color with full opacity for sticky header
   const headerClasses = cn(
     "fixed top-0 left-0 right-0 z-50 bg-primary shadow-md",
-    "h-[72px]",
+    "h-[80px]", // Increased from 72px to 80px for better spacing
     className
   );
   
