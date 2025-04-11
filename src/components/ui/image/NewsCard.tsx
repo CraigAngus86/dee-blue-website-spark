@@ -39,8 +39,8 @@ const NewsCard: React.FC<NewsCardProps> = ({
       href={url}
       className={cn(
         "block bg-white rounded-lg overflow-hidden transition-all duration-300 hover:-translate-y-2",
-        "h-full flex flex-col border-b-3 border-accent", // Added gold bottom border for definition
-        "shadow-md hover:shadow-lg", // Enhanced shadow with hover effect
+        "h-full flex flex-col border-b-3 border-accent", 
+        "shadow-md hover:shadow-lg", 
         className
       )}
       style={{
@@ -48,7 +48,7 @@ const NewsCard: React.FC<NewsCardProps> = ({
       }}
     >
       {/* Image with square aspect ratio - no padding */}
-      <div className="aspect-square overflow-hidden m-0 p-0">
+      <div className="aspect-[4/3] overflow-hidden m-0 p-0">
         <ResponsiveImage
           src={image}
           alt={title}
@@ -69,14 +69,14 @@ const NewsCard: React.FC<NewsCardProps> = ({
           </h3>
 
           {excerpt && (
-            <p className="text-gray-600 text-sm leading-tight line-clamp-2 font-inter">
+            <p className="text-gray-600 text-sm leading-relaxed line-clamp-2 font-inter">
               {excerpt}
             </p>
           )}
         </div>
 
         <div className="flex items-center justify-between text-sm mt-2 pt-1 border-t border-gray-100">
-          <span className="text-gray-500 text-xs opacity-80 font-inter font-light">
+          <span className="text-gray-400 text-xs font-light font-inter">
             {timestamp}
           </span>
           <span className="text-primary font-medium flex items-center gap-1 group">

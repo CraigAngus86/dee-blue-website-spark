@@ -2,7 +2,6 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import { Player } from "@/lib/types";
-import { CardNewMedia } from "@/components/ui/CardNew";
 import OptimizedImage from "@/components/ui/image/OptimizedImage";
 import HoverEffect from "@/components/ui/animations/HoverEffect";
 
@@ -40,7 +39,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, className }) => {
         
         {/* Player image */}
         <div className="relative z-10 h-full flex flex-col">
-          <div className="flex-grow flex items-end justify-center">
+          <div className="flex-grow flex items-end justify-center pt-4">
             <OptimizedImage 
               src={player.image} 
               alt={player.name}
@@ -52,7 +51,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, className }) => {
           <div className="p-4 text-white">
             {player.isAcademy && (
               <div className="absolute top-4 right-4 z-20">
-                <div className="rounded-full bg-secondary text-primary text-xs font-bold px-3 py-1.5 rotate-12 uppercase">
+                <div className="rounded-full bg-accent text-primary text-xs font-bold px-3 py-1.5 rotate-12 uppercase shadow-md">
                   Made in our academy
                 </div>
               </div>
@@ -68,24 +67,6 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, className }) => {
               </h3>
               <p className="text-sm opacity-80">{player.position}</p>
             </div>
-            
-            {/* Player stats */}
-            {player.stats && (
-              <div className="grid grid-cols-3 gap-2 mt-4 text-center">
-                <div className="flex flex-col">
-                  <span className="text-2xl font-bold">{player.stats.appearances}</span>
-                  <span className="text-xs uppercase opacity-80">Appearances</span>
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-2xl font-bold">{player.stats.goals}</span>
-                  <span className="text-xs uppercase opacity-80">Goals</span>
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-2xl font-bold">{player.stats.assists}</span>
-                  <span className="text-xs uppercase opacity-80">Assists</span>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>
