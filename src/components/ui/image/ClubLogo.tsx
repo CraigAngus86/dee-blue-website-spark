@@ -7,7 +7,7 @@ import { toast } from "sonner";
 interface ClubLogoProps {
   variant?: "rect" | "square" | "circle";
   background?: "light" | "dark";
-  size?: "xs" | "sm" | "md" | "lg" | "xl";
+  size?: "xs" | "sm" | "md" | "lg" | "xl" | number;
   className?: string;
 }
 
@@ -28,6 +28,11 @@ const ClubLogo: React.FC<ClubLogoProps> = ({
     xl: 48,
   };
 
+  // Determine the height based on size prop
+  const height = typeof size === "number" 
+    ? size 
+    : sizeValues[size];
+
   // Use the correct logo file paths directly
   const logoPath = background === "light"
     ? "/assets/images/logos/BOD_Logo_White_square.png"
@@ -36,24 +41,26 @@ const ClubLogo: React.FC<ClubLogoProps> = ({
   return (
     <div
       className={cn(
-        "inline-flex items-center justify-center p-0 m-0",
+        "inline-flex items-center justify-center overflow-hidden",
         className
       )}
-      style={{ height: "100%", width: "auto", padding: 0, margin: 0 }}
+      style={{ 
+        height: typeof height === 'number' ? `${height}px` : 'auto',
+        width: "auto" 
+      }}
     >
       <ResponsiveImage
         src={logoPath}
         alt="Banks o' Dee FC"
-        className="h-full w-auto m-0 p-0"
+        className="h-full w-auto"
         objectFit="contain"
+        height={height}
         onLoad={() => console.log("Club logo loaded successfully")}
         onError={() => {
           console.error("Failed to load club logo:", logoPath);
           // Fall back to placeholder if the logo fails to load
           if (!fallbackLoaded) {
             setFallbackLoaded(true);
-            
-            // Use a text-based fallback instead
             toast.error("Could not load club logo");
           }
         }}

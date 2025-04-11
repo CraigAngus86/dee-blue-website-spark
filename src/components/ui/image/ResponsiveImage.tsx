@@ -68,6 +68,15 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
     style.aspectRatio = aspectRatio;
   }
 
+  // Add explicit height or width if provided
+  if (height !== undefined) {
+    style.height = typeof height === 'number' ? `${height}px` : height;
+  }
+  
+  if (width !== undefined) {
+    style.width = typeof width === 'number' ? `${width}px` : width;
+  }
+
   const handleError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     console.error(`Failed to load image: ${imgSrc}`);
     setImgError(true);
