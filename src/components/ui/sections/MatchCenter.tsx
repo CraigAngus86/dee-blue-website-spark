@@ -7,6 +7,13 @@ import Text from "@/components/ui/typography/Text";
 import { ButtonNew } from "@/components/ui/ButtonNew";
 import { Calendar, Clock, Trophy, ChevronRight } from "lucide-react";
 import MatchCardNew from "@/components/ui/image/MatchCardNew";
+import { 
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious 
+} from "@/components/ui/carousel";
 import LeagueTableWidget from "@/components/ui/sections/LeagueTableWidget";
 import SectionHeader from "@/components/ui/sections/SectionHeader";
 
@@ -67,7 +74,7 @@ const MatchCenter: React.FC<MatchCenterProps> = ({ className }) => {
         {/* Section Header with new styling */}
         <div className="px-4 sm:px-6 pt-8 pb-4">
           <SectionHeader 
-            title="Matches & Stats" 
+            title="Match Centre" 
             textColor="primary"
           />
         </div>
@@ -113,40 +120,51 @@ const MatchCenter: React.FC<MatchCenterProps> = ({ className }) => {
           </div>
         </div>
         
-        {/* Match Cards Row - Restructured as a fixed row of 5 */}
+        {/* Match Cards Carousel */}
         <div className="p-4 md:p-6">
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-            {/* Past Matches (2) */}
-            {pastMatches.map((match) => (
-              <MatchCardNew
-                key={match.id}
-                match={match}
-                variant="past"
-                className="h-full"
-              />
-            ))}
-            
-            {/* Next Match (1) */}
-            <MatchCardNew
-              key={nextMatch.id}
-              match={nextMatch}
-              variant="next"
-              className="h-full md:transform md:scale-105 md:z-10"
-            />
-            
-            {/* Future Matches (2) */}
-            {futureMatches.map((match) => (
-              <MatchCardNew
-                key={match.id}
-                match={match}
-                variant="future"
-                className="h-full"
-              />
-            ))}
+          <div className="relative">
+            <Carousel className="w-full" opts={{ align: "center" }}>
+              <CarouselContent>
+                {/* Past Matches (2) */}
+                {pastMatches.map((match) => (
+                  <CarouselItem key={match.id} className="sm:basis-full md:basis-1/2 lg:basis-1/3 pl-4 pr-4">
+                    <MatchCardNew
+                      match={match}
+                      variant="past"
+                      className="h-full"
+                    />
+                  </CarouselItem>
+                ))}
+                
+                {/* Next Match (1) - Always in center */}
+                <CarouselItem key={nextMatch.id} className="sm:basis-full md:basis-1/2 lg:basis-1/3 pl-4 pr-4">
+                  <MatchCardNew
+                    match={nextMatch}
+                    variant="next"
+                    className="h-full transform scale-105 z-10"
+                  />
+                </CarouselItem>
+                
+                {/* Future Matches (2) */}
+                {futureMatches.map((match) => (
+                  <CarouselItem key={match.id} className="sm:basis-full md:basis-1/2 lg:basis-1/3 pl-4 pr-4">
+                    <MatchCardNew
+                      match={match}
+                      variant="future"
+                      className="h-full"
+                    />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <div className="hidden md:block">
+                <CarouselPrevious className="left-0" />
+                <CarouselNext className="right-0" />
+              </div>
+            </Carousel>
           </div>
         </div>
         
-        {/* League Table Widget */}
+        {/* Bank o' Dee League Position */}
         <div className="p-4 md:p-6 bg-gray-50">
           <div className="flex justify-between items-center mb-4">
             <Heading level={3} className="text-primary text-lg">Highland League Table</Heading>
@@ -160,7 +178,38 @@ const MatchCenter: React.FC<MatchCenterProps> = ({ className }) => {
             </ButtonNew>
           </div>
           
-          <LeagueTableWidget />
+          {/* Key Stats Only */}
+          <div className="bg-white shadow-sm rounded-lg p-4">
+            <div className="flex flex-wrap items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white font-bold text-xl">
+                  3
+                </div>
+                <div>
+                  <div className="font-semibold text-lg text-primary">Banks o' Dee FC</div>
+                  <div className="text-sm text-gray-500">Highland League</div>
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-8 mt-2 sm:mt-0">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-primary">60</div>
+                  <div className="text-xs text-gray-500 uppercase">Points</div>
+                </div>
+                
+                <div className="flex flex-col items-center">
+                  <div className="flex space-x-1 justify-center">
+                    <div className="bg-green-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold">W</div>
+                    <div className="bg-amber-400 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold">D</div>
+                    <div className="bg-green-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold">W</div>
+                    <div className="bg-green-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold">W</div>
+                    <div className="bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold">L</div>
+                  </div>
+                  <div className="text-xs text-gray-500 uppercase text-center mt-1">Form</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </Container>

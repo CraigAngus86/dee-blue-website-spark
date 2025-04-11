@@ -45,7 +45,7 @@ const HomePage: React.FC = () => {
         {/* New Gradient Separator before Featured Content Section */}
         <GradientSeparator />
         
-        {/* Featured Content Section - MatchCenter with updated styling */}
+        {/* Featured Content Section - Match Centre with updated styling */}
         <Section 
           background="light"
           spacing="lg"
