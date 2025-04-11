@@ -1,132 +1,113 @@
 
-import React, { useState } from "react";
-import { Menu, Search, X } from "lucide-react";
-import { cn } from "@/lib/utils";
-import Container from "../ui/layout/Container";
-import { ButtonNew } from "../ui/ButtonNew";
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Search, Menu } from 'lucide-react';
 import ClubLogo from "../ui/image/ClubLogo";
-import HoverEffect from "../ui/animations/HoverEffect";
+import Container from "../ui/layout/Container";
 
-interface HeaderProps {
-  transparent?: boolean;
-  className?: string;
-}
-
-const Header: React.FC<HeaderProps> = ({ className }) => {
+const Header: React.FC<{ className?: string; transparent?: boolean }> = ({ className }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
-  // Simple navigation items
-  const navItems = [
-    { label: "Home", href: "/" },
-    { label: "News", href: "/news" },
-    { label: "Team & Management", href: "/team" },
-    { label: "Fixtures", href: "/fixtures" },
-    { label: "League Table", href: "/table" },
-    { label: "Spain Park", href: "/stadium" },
-    { label: "Tickets", href: "/tickets" },
-  ];
-  
-  // Updated to use exactly 80px height as specified
-  const headerClasses = cn(
-    "fixed top-0 left-0 right-0 z-50 bg-primary shadow-md",
-    "h-[80px]", // Height set to exactly 80px
-    className
-  );
-  
   return (
-    <header className={headerClasses}>
+    <header className="fixed top-0 left-0 right-0 z-50 bg-[#00105A] shadow-md h-20">
       <Container>
-        <div className="flex items-center justify-between h-full">
-          {/* Logo with proper vertical alignment */}
-          <div className="flex items-center justify-start h-full">
-            <a href="/" className="flex items-center h-full">
+        <nav className="w-full h-full flex items-center justify-between">
+          {/* Logo container */}
+          <div className="flex items-center">
+            <Link to="/" className="flex items-center">
               <ClubLogo 
                 variant="rect"
                 background="light"
                 className="w-[60px] h-auto max-h-[28px]" 
               />
-            </a>
+            </Link>
           </div>
           
-          {/* Desktop Navigation - properly vertically centered */}
-          <div className="hidden lg:flex items-center justify-center h-full flex-grow">
-            <nav className="flex h-full"> 
-              {navItems.map((item) => (
-                <div 
-                  key={item.label} 
-                  className="flex items-center justify-center h-full relative group px-5"
-                >
-                  <a
-                    href={item.href}
-                    className="font-montserrat font-bold text-sm tracking-widest text-white hover:text-secondary transition-colors duration-200 whitespace-nowrap flex items-center justify-center h-full" 
+          {/* Navigation Links - centered vertically */}
+          <div className="hidden lg:flex items-center h-full">
+            <ul className="flex items-center h-full">
+              {[
+                { name: 'Home', path: '/' },
+                { name: 'News', path: '/news' },
+                { name: 'Team & Management', path: '/team' },
+                { name: 'Fixtures', path: '/fixtures' },
+                { name: 'League Table', path: '/table' },
+                { name: 'Spain Park', path: '/stadium' },
+                { name: 'Tickets', path: '/tickets' },
+              ].map((item) => (
+                <li key={item.name} className="h-full group">
+                  <Link
+                    to={item.path}
+                    className="flex items-center h-full px-5 text-white font-montserrat font-bold text-sm tracking-widest hover:text-secondary transition-colors"
                   >
-                    {item.label}
-                  </a>
+                    {item.name}
+                  </Link>
                   {/* Custom hover effect with light blue bottom border */}
                   <div className="absolute bottom-0 left-0 w-full h-[2px] bg-[#33C3F0] scale-x-0 transition-transform duration-200 origin-bottom-left group-hover:scale-x-100"></div>
-                </div>
+                </li>
               ))}
-            </nav>
+            </ul>
           </div>
           
-          {/* Desktop Actions - properly centered vertically */}
-          <div className="hidden lg:flex items-center space-x-4 h-full">
-            <div className="flex items-center justify-center h-full">
-              <div className="p-2 rounded-full text-white hover:bg-white/20 transition-colors cursor-pointer flex items-center justify-center">
-                <Search size={20} />
-              </div>
-            </div>
-            <div className="flex items-center justify-center h-full">
-              <ButtonNew 
-                variant="accent" 
-                size="sm"
-                className="bg-accent text-primary border-accent hover:bg-accent-light whitespace-nowrap filter hover:brightness-105 shadow-md" 
-              >
-                Buy Tickets
-              </ButtonNew>
-            </div>
+          {/* Search & Buy Tickets */}
+          <div className="hidden lg:flex items-center space-x-4">
+            {/* Search icon */}
+            <button className="flex items-center justify-center h-10 w-10 text-white hover:bg-white/20 transition-colors rounded-full p-2">
+              <Search size={20} />
+            </button>
+            
+            {/* Buy Tickets button */}
+            <Link
+              to="/tickets"
+              className="flex items-center justify-center h-10 bg-accent hover:brightness-105 text-primary font-montserrat font-bold py-2 px-4 rounded transition-colors whitespace-nowrap shadow-md"
+            >
+              Buy Tickets
+            </Link>
           </div>
           
-          {/* Mobile Menu Button - ensure vertical centering */}
-          <div className="flex lg:hidden items-center justify-center h-full">
-            <button
+          {/* Mobile menu button - visible only on mobile */}
+          <div className="lg:hidden flex items-center">
+            <button 
+              className="text-white hover:bg-white/20 transition-colors p-2 rounded-full"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-2 rounded-full text-white hover:bg-white/20 transition-colors flex items-center justify-center"
               aria-label="Toggle menu"
             >
-              {isMobileMenuOpen ? (
-                <X size={24} />
-              ) : (
-                <Menu size={24} />
-              )}
+              <Menu size={24} />
             </button>
           </div>
-        </div>
+        </nav>
       </Container>
       
       {/* Mobile Navigation Menu */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden absolute top-full left-0 right-0 bg-primary shadow-lg animate-slide-in-right">
+        <div className="lg:hidden absolute top-20 left-0 right-0 bg-primary shadow-lg animate-slide-in-right">
           <Container>
             <nav className="py-6 flex flex-col space-y-4">
-              {navItems.map((item) => (
-                <div key={item.label}>
-                  <a
-                    href={item.href}
+              {[
+                { name: 'Home', path: '/' },
+                { name: 'News', path: '/news' },
+                { name: 'Team & Management', path: '/team' },
+                { name: 'Fixtures', path: '/fixtures' },
+                { name: 'League Table', path: '/table' },
+                { name: 'Spain Park', path: '/stadium' },
+                { name: 'Tickets', path: '/tickets' },
+              ].map((item) => (
+                <div key={item.name}>
+                  <Link
+                    to={item.path}
                     className="font-montserrat font-bold text-base text-white hover:text-secondary px-2 py-2 flex items-center justify-between tracking-widest"
                   >
-                    {item.label}
-                  </a>
+                    {item.name}
+                  </Link>
                 </div>
               ))}
               <div className="pt-4 border-t border-white/20">
-                <ButtonNew 
-                  variant="accent" 
-                  size="md" 
-                  className="w-full shadow-md filter hover:brightness-105"
+                <Link
+                  to="/tickets"
+                  className="flex items-center justify-center h-10 bg-accent hover:brightness-105 text-primary font-montserrat font-bold py-2 px-4 rounded transition-colors w-full shadow-md"
                 >
                   Buy Tickets
-                </ButtonNew>
+                </Link>
               </div>
             </nav>
           </Container>
