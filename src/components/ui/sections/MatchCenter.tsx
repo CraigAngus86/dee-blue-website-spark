@@ -14,7 +14,6 @@ import {
   CarouselNext,
   CarouselPrevious 
 } from "@/components/ui/carousel";
-import LeagueTableWidget from "@/components/ui/sections/LeagueTableWidget";
 import SectionHeader from "@/components/ui/sections/SectionHeader";
 
 interface MatchCenterProps {
@@ -120,14 +119,21 @@ const MatchCenter: React.FC<MatchCenterProps> = ({ className }) => {
           </div>
         </div>
         
-        {/* Match Cards Carousel */}
+        {/* Match Cards Carousel - Updated for auto-scrolling */}
         <div className="p-4 md:p-6">
           <div className="relative">
-            <Carousel className="w-full" opts={{ align: "center" }}>
-              <CarouselContent>
+            <Carousel 
+              className="w-full" 
+              opts={{ 
+                align: "center",
+                loop: true,
+                dragFree: true
+              }}
+            >
+              <CarouselContent className="-ml-2 md:-ml-4">
                 {/* Past Matches (2) */}
                 {pastMatches.map((match) => (
-                  <CarouselItem key={match.id} className="sm:basis-full md:basis-1/2 lg:basis-1/3 pl-4 pr-4">
+                  <CarouselItem key={match.id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
                     <MatchCardNew
                       match={match}
                       variant="past"
@@ -137,7 +143,7 @@ const MatchCenter: React.FC<MatchCenterProps> = ({ className }) => {
                 ))}
                 
                 {/* Next Match (1) - Always in center */}
-                <CarouselItem key={nextMatch.id} className="sm:basis-full md:basis-1/2 lg:basis-1/3 pl-4 pr-4">
+                <CarouselItem key={nextMatch.id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
                   <MatchCardNew
                     match={nextMatch}
                     variant="next"
@@ -147,7 +153,7 @@ const MatchCenter: React.FC<MatchCenterProps> = ({ className }) => {
                 
                 {/* Future Matches (2) */}
                 {futureMatches.map((match) => (
-                  <CarouselItem key={match.id} className="sm:basis-full md:basis-1/2 lg:basis-1/3 pl-4 pr-4">
+                  <CarouselItem key={match.id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
                     <MatchCardNew
                       match={match}
                       variant="future"
@@ -164,7 +170,7 @@ const MatchCenter: React.FC<MatchCenterProps> = ({ className }) => {
           </div>
         </div>
         
-        {/* Bank o' Dee League Position */}
+        {/* Bank o' Dee League Position - Enhanced layout */}
         <div className="p-4 md:p-6 bg-gray-50">
           <div className="flex justify-between items-center mb-4">
             <Heading level={3} className="text-primary text-lg">Highland League Table</Heading>
@@ -178,25 +184,44 @@ const MatchCenter: React.FC<MatchCenterProps> = ({ className }) => {
             </ButtonNew>
           </div>
           
-          {/* Key Stats Only */}
+          {/* Enhanced Key Stats - More detailed layout */}
           <div className="bg-white shadow-sm rounded-lg p-4">
-            <div className="flex flex-wrap items-center justify-between">
-              <div className="flex items-center space-x-4">
+            <div className="flex flex-col md:flex-row items-center justify-between">
+              {/* Team and position */}
+              <div className="flex items-center space-x-4 mb-4 md:mb-0">
                 <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white font-bold text-xl">
                   3
                 </div>
                 <div>
                   <div className="font-semibold text-lg text-primary">Banks o' Dee FC</div>
-                  <div className="text-sm text-gray-500">Highland League</div>
                 </div>
               </div>
               
-              <div className="flex items-center space-x-8 mt-2 sm:mt-0">
+              {/* Stats in a more detailed layout */}
+              <div className="flex flex-wrap items-center justify-between gap-6">
+                {/* Points */}
                 <div className="text-center">
                   <div className="text-2xl font-bold text-primary">60</div>
                   <div className="text-xs text-gray-500 uppercase">Points</div>
                 </div>
                 
+                {/* Record */}
+                <div className="grid grid-cols-3 gap-2 items-center">
+                  <div className="text-center">
+                    <div className="text-xl font-semibold text-primary">18</div>
+                    <div className="text-xs text-gray-500 uppercase">Won</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-xl font-semibold text-primary">6</div>
+                    <div className="text-xs text-gray-500 uppercase">Drawn</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-xl font-semibold text-primary">4</div>
+                    <div className="text-xs text-gray-500 uppercase">Lost</div>
+                  </div>
+                </div>
+                
+                {/* Form */}
                 <div className="flex flex-col items-center">
                   <div className="flex space-x-1 justify-center">
                     <div className="bg-green-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold">W</div>
