@@ -26,10 +26,10 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
     { label: "Tickets", href: "/tickets" },
   ];
   
-  // Always using primary (navy) color with full opacity for sticky header
+  // Updated to use exactly 80px height as specified
   const headerClasses = cn(
     "fixed top-0 left-0 right-0 z-50 bg-primary shadow-md",
-    "h-[90px]", // Increased height to 90px
+    "h-[80px]", // Height set to exactly 80px
     className
   );
   
@@ -37,8 +37,8 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
     <header className={headerClasses}>
       <Container>
         <div className="flex items-center justify-between h-full">
-          {/* Logo with proper vertical alignment and shifted left */}
-          <div className="flex items-center justify-start h-full pl-0">
+          {/* Logo with proper vertical alignment */}
+          <div className="flex items-center justify-start h-full">
             <a href="/" className="flex items-center h-full">
               <ClubLogo 
                 variant="rect"

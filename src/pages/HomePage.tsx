@@ -27,7 +27,9 @@ const HomePage: React.FC = () => {
     <div className="min-h-screen flex flex-col" style={cardShadowStyle}>
       <Header />
       
-      <main className="flex-grow pt-[90px]">
+      <main className="flex-grow pt-[80px]">
+        {/* Updated padding-top to match the new header height of 80px */}
+        
         {/* Hero Section - ensuring text is white and gradient is applied */}
         <HeroSection 
           title="BANKS O' DEE AIMING FOR LEAGUE GLORY" 
