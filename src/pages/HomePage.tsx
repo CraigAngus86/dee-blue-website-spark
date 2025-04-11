@@ -14,6 +14,7 @@ import FadeIn from "@/components/ui/animations/FadeIn";
 import PatternOverlay from "@/components/ui/backgrounds/PatternOverlay";
 import MatchCenter from "@/components/ui/sections/MatchCenter";
 import PlayersSection from "@/components/ui/sections/PlayersSection";
+import SocialCTA from "@/components/ui/social/SocialCTA";
 
 const HomePage: React.FC = () => {
   // Consistent shadow treatment for all cards
@@ -35,17 +36,17 @@ const HomePage: React.FC = () => {
           backgroundImage={getNewsImage(0)}
         />
         
-        {/* News Cards Section - 6 cards in 3x2 grid */}
-        <div className="pb-8">
+        {/* News Cards Section with consistent spacing */}
+        <div className="py-12">
           <FadeIn>
             <OverlappingNewsCards articles={newsArticles} count={6} />
           </FadeIn>
         </div>
         
-        {/* New Gradient Separator before Featured Content Section */}
+        {/* Gradient Separator with consistent spacing */}
         <GradientSeparator />
         
-        {/* Featured Content Section - Match Centre with updated styling */}
+        {/* Match Center Section with improved spacing */}
         <Section 
           background="light"
           spacing="lg"
@@ -55,28 +56,30 @@ const HomePage: React.FC = () => {
           </FadeIn>
         </Section>
         
-        {/* New Gradient Separator after Featured Content */}
+        {/* Gradient Separator with consistent spacing */}
         <GradientSeparator />
         
-        {/* Fan Zone Section */}
+        {/* Fan Zone Section with improved spacing */}
         <div className="py-12">
           <FanZoneSection />
         </div>
         
-        {/* New Gradient Separator before Players Section */}
+        {/* Social CTA Section */}
+        <Section background="white" spacing="md">
+          <SocialCTA />
+        </Section>
+        
+        {/* Gradient Separator before Players Section */}
         <GradientSeparator />
         
-        {/* Players Section */}
+        {/* Players Section with improved spacing */}
         <PlayersSection />
         
-        {/* New Gradient Separator after Players Section */}
+        {/* Gradient Separator before Sponsors Section */}
         <GradientSeparator />
         
-        {/* Sponsors Section */}
+        {/* Sponsors Section with improved spacing */}
         <SponsorsSection />
-        
-        {/* New Gradient Separator before Footer */}
-        <GradientSeparator />
       </main>
       
       <Footer />
