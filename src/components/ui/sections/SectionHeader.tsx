@@ -8,7 +8,7 @@ interface SectionHeaderProps {
   viewAllLink?: string;
   viewAllText?: string;
   className?: string;
-  textColor?: string; // Added textColor prop
+  textColor?: string;
 }
 
 const SectionHeader: React.FC<SectionHeaderProps> = ({
@@ -20,7 +20,7 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({
 }) => {
   return (
     <div className={cn("flex flex-wrap justify-between items-center mb-8", className)}>
-      <div className="flex flex-col">
+      <div className="flex flex-col relative pl-4 before:content-[''] before:absolute before:left-0 before:top-1/2 before:transform before:-translate-y-1/2 before:h-[80%] before:w-1 before:bg-accent">
         <h2 className={`text-2xl font-montserrat font-bold text-${textColor}`}>
           {title}
         </h2>

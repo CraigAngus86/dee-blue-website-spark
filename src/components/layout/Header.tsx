@@ -29,7 +29,7 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
   // Always using primary (navy) color with full opacity for sticky header
   const headerClasses = cn(
     "fixed top-0 left-0 right-0 z-50 bg-primary shadow-md",
-    "h-[90px]", // Increased height to 90px (from 80px)
+    "h-[90px]", // Increased height to 90px
     className
   );
   
@@ -37,9 +37,9 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
     <header className={headerClasses}>
       <Container>
         <div className="flex items-center justify-between h-full">
-          {/* Logo with proper vertical alignment */}
-          <div className="flex items-center h-full">
-            <a href="/" className="flex items-center h-full mr-10">
+          {/* Logo with proper vertical alignment and shifted left */}
+          <div className="flex items-center justify-start h-full pl-0">
+            <a href="/" className="flex items-center h-full">
               <ClubLogo 
                 variant="rect"
                 background="light"
@@ -48,13 +48,13 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
             </a>
           </div>
           
-          {/* Desktop Navigation - with proper vertical centering */}
+          {/* Desktop Navigation - properly vertically centered */}
           <div className="hidden lg:flex items-center justify-center h-full flex-grow">
-            <nav className="flex space-x-10 h-full"> 
+            <nav className="flex h-full"> 
               {navItems.map((item) => (
                 <div 
                   key={item.label} 
-                  className="flex items-center justify-center h-full relative group"
+                  className="flex items-center justify-center h-full relative group px-5"
                 >
                   <a
                     href={item.href}
@@ -71,8 +71,8 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
           
           {/* Desktop Actions - properly centered vertically */}
           <div className="hidden lg:flex items-center space-x-4 h-full">
-            <div className="relative flex items-center justify-center h-full">
-              <div className="p-2 rounded-full text-white hover:bg-white/20 transition-colors cursor-pointer">
+            <div className="flex items-center justify-center h-full">
+              <div className="p-2 rounded-full text-white hover:bg-white/20 transition-colors cursor-pointer flex items-center justify-center">
                 <Search size={20} />
               </div>
             </div>
@@ -91,7 +91,7 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
           <div className="flex lg:hidden items-center justify-center h-full">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-2 rounded-full text-white hover:bg-white/20 transition-colors"
+              className="p-2 rounded-full text-white hover:bg-white/20 transition-colors flex items-center justify-center"
               aria-label="Toggle menu"
             >
               {isMobileMenuOpen ? (

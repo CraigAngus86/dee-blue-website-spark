@@ -1,3 +1,4 @@
+
 import React from "react";
 import HeroSection from "@/components/ui/hero/HeroSection";
 import OverlappingNewsCards from "@/components/ui/sections/OverlappingNewsCards";
@@ -8,7 +9,7 @@ import Header from "@/components/layout/Header";
 import Section from "@/components/ui/layout/Section";
 import FanZoneSection from "@/components/ui/sections/FanZoneSection";
 import SponsorsSection from "@/components/ui/sections/SponsorsSection";
-import DiagonalSeparator from "@/components/ui/separators/DiagonalSeparator";
+import GradientSeparator from "@/components/ui/separators/GradientSeparator";
 import FadeIn from "@/components/ui/animations/FadeIn";
 import PatternOverlay from "@/components/ui/backgrounds/PatternOverlay";
 import MatchCenter from "@/components/ui/sections/MatchCenter";
@@ -20,9 +21,6 @@ const HomePage: React.FC = () => {
     "--card-shadow": "0 10px 25px -5px rgba(0, 16, 90, 0.1), 0 8px 10px -6px rgba(0, 16, 90, 0.05)",
     "--card-hover-shadow": "0 20px 25px -5px rgba(0, 16, 90, 0.15), 0 10px 10px -5px rgba(0, 16, 90, 0.1)"
   } as React.CSSProperties;
-
-  // Standard section spacing
-  const sectionSpacing = "py-12"; // 48px top and bottom
 
   return (
     <div className="min-h-screen flex flex-col" style={cardShadowStyle}>
@@ -38,14 +36,14 @@ const HomePage: React.FC = () => {
         />
         
         {/* News Cards Section - 6 cards in 3x2 grid */}
-        <div className={sectionSpacing}>
+        <div className="pb-8">
           <FadeIn>
             <OverlappingNewsCards articles={newsArticles} count={6} />
           </FadeIn>
         </div>
         
-        {/* Diagonal Separator before Featured Content Section */}
-        <DiagonalSeparator color="secondary" position="top" />
+        {/* New Gradient Separator before Featured Content Section */}
+        <GradientSeparator />
         
         {/* Featured Content Section - MatchCenter */}
         <Section 
@@ -64,28 +62,28 @@ const HomePage: React.FC = () => {
           </div>
         </Section>
         
-        {/* Diagonal Separator after Featured Content */}
-        <DiagonalSeparator color="white" position="top" />
+        {/* New Gradient Separator after Featured Content */}
+        <GradientSeparator />
         
         {/* Fan Zone Section */}
-        <div className={sectionSpacing}>
+        <div className="py-12">
           <FanZoneSection />
         </div>
         
-        {/* Diagonal Separator before Players Section */}
-        <DiagonalSeparator color="secondary" position="top" height="sm" />
+        {/* New Gradient Separator before Players Section */}
+        <GradientSeparator />
         
-        {/* NEW: Players Section (replacing SocialMediaSection) */}
+        {/* Players Section */}
         <PlayersSection />
         
-        {/* Diagonal Separator after Players Section */}
-        <DiagonalSeparator color="white" position="top" height="sm" />
+        {/* New Gradient Separator after Players Section */}
+        <GradientSeparator />
         
         {/* Sponsors Section */}
         <SponsorsSection />
         
-        {/* Diagonal Separator before Footer */}
-        <DiagonalSeparator color="primary" position="bottom" />
+        {/* New Gradient Separator before Footer */}
+        <GradientSeparator />
       </main>
       
       <Footer />

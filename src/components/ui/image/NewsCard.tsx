@@ -47,7 +47,7 @@ const NewsCard: React.FC<NewsCardProps> = ({
         boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)",
       }}
     >
-      {/* Image with square aspect ratio - absolutely no padding */}
+      {/* Image with square aspect ratio - no padding */}
       <div className="aspect-square overflow-hidden m-0 p-0">
         <ResponsiveImage
           src={image}
@@ -57,7 +57,7 @@ const NewsCard: React.FC<NewsCardProps> = ({
       </div>
 
       {/* Content section with minimal padding */}
-      <div className="p-3 flex flex-col flex-grow">
+      <div className="p-2 flex flex-col flex-grow">
         {/* Category tag directly below image with no gap */}
         <span className={`inline-block ${getCategoryBgColor(category)} text-white text-xs font-semibold px-2 py-1 rounded mb-1`}>
           {category}
