@@ -18,7 +18,7 @@ const Header: React.FC<{ className?: string; transparent?: boolean }> = ({ class
               <ClubLogo 
                 variant="rect"
                 background="light"
-                className="w-[50px] h-[50px] force-vertical-center" 
+                className="w-[60px] h-[60px] force-vertical-center" 
               />
             </Link>
           </div>
