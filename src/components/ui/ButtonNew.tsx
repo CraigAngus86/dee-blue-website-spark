@@ -2,6 +2,7 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
+import { Link } from "react-router-dom";
 
 export interface ButtonNewProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -12,6 +13,7 @@ export interface ButtonNewProps
   asChild?: boolean;
   className?: string;
   children?: React.ReactNode;
+  href?: string;
 }
 
 const ButtonNew = React.forwardRef<HTMLButtonElement, ButtonNewProps>(
@@ -23,12 +25,14 @@ const ButtonNew = React.forwardRef<HTMLButtonElement, ButtonNewProps>(
       iconLeft,
       iconRight,
       asChild = false,
+      href,
       children,
       ...props
     },
     ref
   ) => {
-    const Comp = asChild ? Slot : "button";
+    // If href is provided, we'll render a Link component
+    const Comp = href ? Link : asChild ? Slot : "button";
 
     // Updated variant classes to improve contrast and follow the new style guide
     const variantClasses = {
@@ -54,6 +58,9 @@ const ButtonNew = React.forwardRef<HTMLButtonElement, ButtonNewProps>(
     const transitionClasses =
       "transition-all duration-[var(--animation-quick)] ease-in-out";
 
+    // Prepare props for the component
+    const componentProps = href ? { to: href, ...props } : props;
+
     return (
       <Comp
         className={cn(
@@ -63,8 +70,8 @@ const ButtonNew = React.forwardRef<HTMLButtonElement, ButtonNewProps>(
           transitionClasses,
           className
         )}
-        ref={ref}
-        {...props}
+        ref={href ? undefined : ref}
+        {...componentProps}
       >
         {iconLeft && <span className="inline-flex">{iconLeft}</span>}
         {children}
