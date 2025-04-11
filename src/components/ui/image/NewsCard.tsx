@@ -56,15 +56,15 @@ const NewsCard: React.FC<NewsCardProps> = ({
         />
       </div>
 
-      {/* Content section with minimal padding */}
-      <div className="p-2 flex flex-col flex-grow">
+      {/* Content section with minimal padding - reduced by 70% */}
+      <div className="p-0.5 flex flex-col flex-grow">
         {/* Category tag directly below image with no gap */}
-        <span className={`inline-block ${getCategoryBgColor(category)} text-white text-xs font-semibold px-2 py-1 rounded mb-1`}>
+        <span className={`inline-block ${getCategoryBgColor(category)} text-white text-xs font-semibold px-2 py-1 rounded mb-0.5`}>
           {category}
         </span>
 
-        <div className="mt-1 mb-auto">
-          <h3 className="font-montserrat font-bold text-[18px] leading-tight text-primary mb-1 line-clamp-2">
+        <div className="mt-0.5 mb-auto">
+          <h3 className="font-montserrat font-bold text-[18px] leading-tight text-primary mb-0.5 line-clamp-2">
             {title}
           </h3>
 
@@ -75,7 +75,7 @@ const NewsCard: React.FC<NewsCardProps> = ({
           )}
         </div>
 
-        <div className="flex items-center justify-between text-sm mt-2 pt-1 border-t border-gray-100">
+        <div className="flex items-center justify-between text-sm mt-1 pt-0.5 border-t border-gray-100">
           <span className="text-gray-400 text-xs font-light font-inter">
             {timestamp}
           </span>
