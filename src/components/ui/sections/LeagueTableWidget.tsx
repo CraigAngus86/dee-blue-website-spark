@@ -2,8 +2,6 @@
 import React from "react";
 import { ChevronRight } from "lucide-react";
 import CompetitorLogo from "../image/CompetitorLogo";
-import Text from "@/components/ui/typography/Text";
-import { cn } from "@/lib/utils";
 
 // A more detailed mock of the league table data
 const leagueTableData = [
@@ -20,25 +18,25 @@ const leagueTableData = [
   },
   {
     position: 2,
-    team: "Banks o' Dee",
+    team: "Buckie",
     played: 28,
     won: 19,
     drawn: 6,
     lost: 3,
-    points: 60,
-    form: ["W", "D", "W", "W", "L"],
-    isBOD: true
+    points: 63,
+    form: ["W", "D", "W", "D", "W"],
+    isBOD: false
   },
   {
     position: 3,
-    team: "Buckie",
+    team: "Banks o' Dee",
     played: 28,
     won: 18,
     drawn: 6,
     lost: 4,
-    points: 58,
-    form: ["W", "D", "W", "D", "W"],
-    isBOD: false
+    points: 60,
+    form: ["W", "D", "W", "W", "L"],
+    isBOD: true
   },
   {
     position: 4,
@@ -64,9 +62,6 @@ const leagueTableData = [
   }
 ];
 
-// Get Banks o' Dee's data
-const bodData = leagueTableData.find(team => team.isBOD);
-
 interface LeagueTableWidgetProps {
   className?: string;
 }
@@ -74,112 +69,67 @@ interface LeagueTableWidgetProps {
 const LeagueTableWidget: React.FC<LeagueTableWidgetProps> = ({ className }) => {
   // Map form results to colors and styles
   const formColors: Record<string, string> = {
-    W: "bg-green-500",
-    D: "bg-amber-400",
-    L: "bg-red-500"
+    W: "bg-green-500 border border-green-600",
+    D: "bg-amber-400 border border-amber-500",
+    L: "bg-red-500 border border-red-600"
   };
   
   return (
-    <div className={`w-full ${className}`}>
-      {/* Banks o' Dee Position Card */}
-      <div className="flex items-stretch w-full bg-white rounded-lg shadow-sm mb-4 p-4">
-        {/* Position and Team */}
-        <div className="flex items-center pr-8 border-r border-gray-100">
-          <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white font-bold mr-3 text-lg">
-            {bodData?.position}
-          </div>
-          <div>
-            <Text as="div" weight="bold" color="primary">Banks o' Dee FC</Text>
-            <Text as="div" size="small" color="muted">Highland League</Text>
-          </div>
-        </div>
-        
-        {/* Stats Grid */}
-        <div className="grid grid-cols-4 gap-4 flex-1 pl-8">
-          {/* Matches */}
-          <div className="text-center">
-            <Text as="div" size="small" weight="bold" color="primary">{bodData?.played}</Text>
-            <Text as="div" size="xs" color="muted">PLAYED</Text>
-          </div>
-          
-          {/* Record */}
-          <div className="text-center">
-            <Text as="div" size="small" weight="bold" color="primary">
-              {bodData?.won}W {bodData?.drawn}D {bodData?.lost}L
-            </Text>
-            <Text as="div" size="xs" color="muted">RECORD</Text>
-          </div>
-          
-          {/* Points */}
-          <div className="text-center">
-            <Text as="div" size="large" weight="bold" color="primary">{bodData?.points}</Text>
-            <Text as="div" size="xs" color="muted">POINTS</Text>
-          </div>
-          
-          {/* Form */}
-          <div className="flex flex-col items-center">
-            <div className="flex space-x-1">
-              {bodData?.form.map((result, index) => (
-                <div 
-                  key={index} 
-                  className={cn(
-                    "w-5 h-5 rounded-full text-white text-xs flex items-center justify-center font-semibold",
-                    formColors[result]
-                  )}
-                >
-                  {result}
-                </div>
-              ))}
-            </div>
-            <Text as="div" size="xs" color="muted" className="mt-1">FORM</Text>
-          </div>
-        </div>
+    <div className={`bg-white shadow-lg rounded-lg overflow-hidden border border-gray-100 h-full ${className}`}>
+      <div className="bg-primary py-3 px-4">
+        <h2 className="text-white font-bold text-xl">League Table</h2>
       </div>
       
-      {/* Mini League Table */}
-      <div className="bg-white rounded-lg shadow-sm p-4">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-gray-100">
-              <th className="text-left py-2 px-2 font-semibold text-gray-600 w-8">#</th>
-              <th className="text-left py-2 px-2 font-semibold text-gray-600">Team</th>
-              <th className="text-center py-2 px-2 font-semibold text-gray-600 w-12">P</th>
-              <th className="text-center py-2 px-2 font-semibold text-gray-600 w-12">W</th>
-              <th className="text-center py-2 px-2 font-semibold text-gray-600 w-12">D</th>
-              <th className="text-center py-2 px-2 font-semibold text-gray-600 w-12">L</th>
-              <th className="text-right py-2 px-2 font-semibold text-gray-600 w-16">PTS</th>
-            </tr>
-          </thead>
-          <tbody>
-            {leagueTableData.map((team) => (
-              <tr 
-                key={team.position}
-                className={cn(
-                  "border-b border-gray-50",
-                  team.isBOD ? "bg-primary/5 font-semibold" : ""
-                )}
-              >
-                <td className="py-2 px-2 text-center">
-                  {team.position}
-                </td>
-                <td className="py-2 px-2">
-                  <div className="flex items-center">
-                    <CompetitorLogo name={team.team} size="xs" className="mr-2" />
-                    <span>{team.team}</span>
-                  </div>
-                </td>
-                <td className="py-2 px-2 text-center">{team.played}</td>
-                <td className="py-2 px-2 text-center">{team.won}</td>
-                <td className="py-2 px-2 text-center">{team.drawn}</td>
-                <td className="py-2 px-2 text-center">{team.lost}</td>
-                <td className="py-2 px-2 text-right font-bold">{team.points}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="p-4">
+        {/* Table Header - Improved styling */}
+        <div className="grid grid-cols-12 text-xs font-semibold text-gray-700 mb-2 pb-2 border-b border-medium-gray bg-gray-50 p-2 rounded">
+          <div className="col-span-1 text-center">Pos</div>
+          <div className="col-span-5 pl-1">Team</div>
+          <div className="col-span-1 text-center">P</div>
+          <div className="col-span-1 text-center">W</div>
+          <div className="col-span-1 text-center">D</div>
+          <div className="col-span-1 text-center">L</div>
+          <div className="col-span-2 text-right pr-1">Pts</div>
+        </div>
         
-        {/* Form legend */}
-        <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-100">
+        {/* Team Rows - With alternating backgrounds */}
+        {leagueTableData.map((team, idx) => (
+          <div 
+            key={team.position}
+            className={`grid grid-cols-12 py-2.5 text-sm items-center ${
+              idx % 2 === 0 ? "bg-gray-50" : ""
+            } ${
+              team.isBOD ? "bg-primary/5 font-semibold rounded border-l-4 border-primary" : ""
+            }`}
+          >
+            <div className="col-span-1 text-center font-semibold">{team.position}</div>
+            <div className="col-span-5 flex items-center gap-2 pl-1">
+              <CompetitorLogo name={team.team} size="xs" />
+              <span className="truncate">{team.team}</span>
+            </div>
+            <div className="col-span-1 text-center">{team.played}</div>
+            <div className="col-span-1 text-center">{team.won}</div>
+            <div className="col-span-1 text-center">{team.drawn}</div>
+            <div className="col-span-1 text-center">{team.lost}</div>
+            <div className="col-span-2 text-right font-bold pr-1">{team.points}</div>
+          </div>
+        ))}
+        
+        {/* Form Guide - Enhanced with better styling */}
+        <div className="mt-6 pt-4 border-t border-medium-gray">
+          <h3 className="text-sm font-semibold mb-3">Banks o' Dee Form</h3>
+          <div className="flex space-x-2 mb-4">
+            {leagueTableData[2].form.map((result, index) => (
+              <div 
+                key={index} 
+                className={`${formColors[result]} w-8 h-8 rounded-full flex items-center justify-center shadow-md`}
+              >
+                <span className="text-white font-bold text-sm">{result}</span>
+              </div>
+            ))}
+          </div>
+          
+          {/* Form legend */}
           <div className="flex items-center gap-4 text-xs text-gray-500">
             <div className="flex items-center">
               <div className="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
@@ -194,15 +144,15 @@ const LeagueTableWidget: React.FC<LeagueTableWidgetProps> = ({ className }) => {
               <span>Loss</span>
             </div>
           </div>
-          
-          <a 
-            href="/table" 
-            className="flex items-center text-primary font-semibold hover:underline text-sm"
-          >
-            View Full Table 
-            <ChevronRight size={16} className="ml-1" />
-          </a>
         </div>
+        
+        <a 
+          href="/table" 
+          className="flex items-center justify-end mt-4 text-primary font-semibold hover:underline"
+        >
+          View Full Table 
+          <ChevronRight size={16} className="ml-1" />
+        </a>
       </div>
     </div>
   );
