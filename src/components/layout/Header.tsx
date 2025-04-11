@@ -12,7 +12,7 @@ const Header: React.FC<{ className?: string; transparent?: boolean }> = ({ class
     <header className="fixed top-0 left-0 right-0 z-50 bg-[#00105A] shadow-md h-20 flex items-center">
       <Container className="h-full flex items-center">
         <nav className="w-full h-full flex items-center justify-between">
-          {/* Logo container */}
+          {/* Logo container - positioned far left */}
           <div className="flex items-center h-full force-vertical-center">
             <Link to="/" className="flex items-center h-full force-vertical-center">
               <ClubLogo 
@@ -23,9 +23,9 @@ const Header: React.FC<{ className?: string; transparent?: boolean }> = ({ class
             </Link>
           </div>
           
-          {/* Navigation Links - centered vertically and spaced across width */}
-          <div className="hidden lg:flex items-center h-full flex-1 justify-center">
-            <ul className="flex items-center h-full w-full justify-between px-4">
+          {/* Navigation Links - positioned slightly to the right, off center */}
+          <div className="hidden lg:flex items-center h-full ml-auto mr-16">
+            <ul className="flex items-center h-full space-x-8">
               {[
                 { name: 'Home', path: '/' },
                 { name: 'News', path: '/news' },
@@ -48,8 +48,8 @@ const Header: React.FC<{ className?: string; transparent?: boolean }> = ({ class
             </ul>
           </div>
           
-          {/* Buy Tickets button - removed the search icon */}
-          <div className="hidden lg:flex items-center">
+          {/* Buy Tickets button - positioned far right */}
+          <div className="hidden lg:flex items-center ml-auto">
             <Link
               to="/tickets"
               className="flex items-center justify-center h-10 bg-accent hover:brightness-105 text-primary font-montserrat font-bold py-2 px-4 rounded transition-colors whitespace-nowrap shadow-md"
