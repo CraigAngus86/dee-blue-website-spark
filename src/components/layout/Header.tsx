@@ -33,7 +33,6 @@ const Header: React.FC<{ className?: string; transparent?: boolean }> = ({ class
                 { name: 'Fixtures', path: '/fixtures' },
                 { name: 'League Table', path: '/table' },
                 { name: 'Spain Park', path: '/stadium' },
-                { name: 'Tickets', path: '/tickets' },
               ].map((item) => (
                 <li key={item.name} className="h-full group">
                   <Link
@@ -90,7 +89,6 @@ const Header: React.FC<{ className?: string; transparent?: boolean }> = ({ class
                 { name: 'Fixtures', path: '/fixtures' },
                 { name: 'League Table', path: '/table' },
                 { name: 'Spain Park', path: '/stadium' },
-                { name: 'Tickets', path: '/tickets' },
               ].map((item) => (
                 <div key={item.name}>
                   <Link
