@@ -36,15 +36,16 @@ const ClubLogo: React.FC<ClubLogoProps> = ({
   return (
     <div
       className={cn(
-        "inline-flex items-center justify-center",
+        "inline-flex items-center justify-center p-0 m-0",
         sizeClasses[size],
         className
       )}
+      style={{ padding: 0, margin: 0 }}
     >
       <ResponsiveImage
         src={logoPath}
         alt="Banks o' Dee FC"
-        className="h-full w-auto"
+        className="h-full w-auto m-0 p-0"
         objectFit="contain"
         onLoad={() => console.log("Club logo loaded successfully")}
         onError={() => {

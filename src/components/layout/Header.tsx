@@ -9,16 +9,16 @@ const Header: React.FC<{ className?: string; transparent?: boolean }> = ({ class
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-[#00105A] shadow-md h-20">
-      <Container>
+    <header className="fixed top-0 left-0 right-0 z-50 bg-[#00105A] shadow-md h-20 flex items-center">
+      <Container className="h-full flex items-center">
         <nav className="w-full h-full flex items-center justify-between">
           {/* Logo container */}
-          <div className="flex items-center">
-            <Link to="/" className="flex items-center">
+          <div className="flex items-center h-full force-vertical-center">
+            <Link to="/" className="flex items-center h-full force-vertical-center">
               <ClubLogo 
                 variant="rect"
                 background="light"
-                className="w-[60px] h-auto max-h-[28px]" 
+                className="w-auto h-10 force-vertical-center" 
               />
             </Link>
           </div>
