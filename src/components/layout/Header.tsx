@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Menu } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import ClubLogo from "../ui/image/ClubLogo";
 import Container from "../ui/layout/Container";
 
@@ -18,14 +18,14 @@ const Header: React.FC<{ className?: string; transparent?: boolean }> = ({ class
               <ClubLogo 
                 variant="rect"
                 background="light"
-                className="w-auto h-10 force-vertical-center" 
+                className="w-[30px] h-[30px] force-vertical-center" 
               />
             </Link>
           </div>
           
-          {/* Navigation Links - centered vertically */}
-          <div className="hidden lg:flex items-center h-full">
-            <ul className="flex items-center h-full">
+          {/* Navigation Links - centered vertically and spaced across width */}
+          <div className="hidden lg:flex items-center h-full flex-1 justify-center">
+            <ul className="flex items-center h-full w-full justify-between px-4">
               {[
                 { name: 'Home', path: '/' },
                 { name: 'News', path: '/news' },
@@ -48,14 +48,8 @@ const Header: React.FC<{ className?: string; transparent?: boolean }> = ({ class
             </ul>
           </div>
           
-          {/* Search & Buy Tickets */}
-          <div className="hidden lg:flex items-center space-x-4">
-            {/* Search icon */}
-            <button className="flex items-center justify-center h-10 w-10 text-white hover:bg-white/20 transition-colors rounded-full p-2">
-              <Search size={20} />
-            </button>
-            
-            {/* Buy Tickets button */}
+          {/* Buy Tickets button - removed the search icon */}
+          <div className="hidden lg:flex items-center">
             <Link
               to="/tickets"
               className="flex items-center justify-center h-10 bg-accent hover:brightness-105 text-primary font-montserrat font-bold py-2 px-4 rounded transition-colors whitespace-nowrap shadow-md"
