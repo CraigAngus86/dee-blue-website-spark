@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu } from 'lucide-react';
@@ -9,21 +8,18 @@ const Header: React.FC<{ className?: string; transparent?: boolean }> = ({ class
   
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-[#00105A] shadow-md h-20 flex items-center">
-      {/* Replace the Container component with a full-width div */}
-      <div className="w-full px-8 md:px-12 lg:px-16 flex items-center justify-between">
-        {/* Logo container - aligned to far left */}
-        <div className="flex items-center h-full force-vertical-center">
-          <Link to="/" className="flex items-center h-full force-vertical-center">
+      <div className="w-full px-8 md:px-12 lg:px-16 flex items-center">
+        <div className="flex items-center">
+          <Link to="/" className="flex items-center">
             <ClubLogo 
               variant="rect"
               background="light"
-              className="w-auto h-[60px] force-vertical-center" 
+              className="w-auto h-[60px]" 
             />
           </Link>
         </div>
         
-        {/* Navigation Links - positioned more toward the right */}
-        <div className="hidden lg:flex items-center h-full ml-auto mr-8">
+        <div className="hidden lg:flex items-center mx-auto">
           <ul className="flex items-center h-full">
             {[
               { name: 'Home', path: '/' },
@@ -33,22 +29,20 @@ const Header: React.FC<{ className?: string; transparent?: boolean }> = ({ class
               { name: 'League Table', path: '/table' },
               { name: 'Spain Park', path: '/stadium' },
             ].map((item) => (
-              <li key={item.name} className="h-full group">
+              <li key={item.name} className="h-full group relative">
                 <Link
                   to={item.path}
                   className="flex items-center h-full px-5 text-white font-montserrat font-bold text-sm tracking-widest hover:text-secondary transition-colors"
                 >
                   {item.name}
                 </Link>
-                {/* Custom hover effect with light blue bottom border */}
                 <div className="absolute bottom-0 left-0 w-full h-[2px] bg-[#33C3F0] scale-x-0 transition-transform duration-200 origin-bottom-left group-hover:scale-x-100"></div>
               </li>
             ))}
           </ul>
         </div>
         
-        {/* Buy Tickets - aligned to far right */}
-        <div className="hidden lg:flex items-center">
+        <div className="hidden lg:flex items-center ml-auto">
           <Link
             to="/tickets"
             className="flex items-center justify-center h-10 bg-accent hover:brightness-105 text-primary font-montserrat font-bold py-2 px-5 rounded transition-colors whitespace-nowrap shadow-md"
@@ -57,8 +51,7 @@ const Header: React.FC<{ className?: string; transparent?: boolean }> = ({ class
           </Link>
         </div>
         
-        {/* Mobile menu button - visible only on mobile */}
-        <div className="lg:hidden flex items-center">
+        <div className="lg:hidden flex items-center ml-auto">
           <button 
             className="text-white hover:bg-white/20 transition-colors p-2 rounded-full"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -69,7 +62,6 @@ const Header: React.FC<{ className?: string; transparent?: boolean }> = ({ class
         </div>
       </div>
       
-      {/* Mobile Navigation Menu */}
       {isMobileMenuOpen && (
         <div className="lg:hidden absolute top-20 left-0 right-0 bg-primary shadow-lg animate-slide-in-right">
           <div className="w-full px-8">
