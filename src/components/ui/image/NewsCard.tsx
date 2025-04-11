@@ -47,35 +47,37 @@ const NewsCard: React.FC<NewsCardProps> = ({
         boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)",
       }}
     >
-      {/* Image with square aspect ratio - no padding */}
-      <div className="aspect-[4/3] overflow-hidden m-0 p-0">
-        <ResponsiveImage
-          src={image}
-          alt={title}
-          className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-        />
-      </div>
-
-      {/* Content section with minimal padding - reduced by 70% */}
-      <div className="p-0.5 flex flex-col flex-grow">
-        {/* Category tag directly below image with no gap */}
-        <span className={`inline-block ${getCategoryBgColor(category)} text-white text-xs font-semibold px-2 py-1 rounded mb-0.5`}>
+      <div className="relative">
+        {/* Image with square aspect ratio - no padding */}
+        <div className="aspect-[4/3] overflow-hidden m-0 p-0">
+          <ResponsiveImage
+            src={image}
+            alt={title}
+            className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+          />
+        </div>
+        
+        {/* Category tag overlapping slightly with the image - reduced space by 70% */}
+        <span className={`inline-block ${getCategoryBgColor(category)} text-white text-xs font-semibold px-2 py-1 rounded-sm mt-[-8px] ml-2 relative z-10`}>
           {category}
         </span>
+      </div>
 
-        <div className="mt-0.5 mb-auto">
-          <h3 className="font-montserrat font-bold text-[18px] leading-tight text-primary mb-0.5 line-clamp-2">
+      {/* Content section with appropriate padding for legibility */}
+      <div className="p-3 pt-2 flex flex-col flex-grow">
+        <div className="mb-auto">
+          <h3 className="font-montserrat font-bold text-[18px] leading-tight text-primary mb-2 line-clamp-2">
             {title}
           </h3>
 
           {excerpt && (
-            <p className="text-gray-600 text-sm leading-relaxed line-clamp-2 font-inter">
+            <p className="text-gray-600 text-sm leading-relaxed line-clamp-2 font-inter mb-3">
               {excerpt}
             </p>
           )}
         </div>
 
-        <div className="flex items-center justify-between text-sm mt-1 pt-0.5 border-t border-gray-100">
+        <div className="flex items-center justify-between text-sm pt-2 border-t border-gray-100">
           <span className="text-gray-400 text-xs font-light font-inter">
             {timestamp}
           </span>
