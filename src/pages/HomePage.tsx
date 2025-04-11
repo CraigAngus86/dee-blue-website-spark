@@ -1,3 +1,4 @@
+
 import React from "react";
 import HeroSection from "@/components/ui/hero/HeroSection";
 import OverlappingNewsCards from "@/components/ui/sections/OverlappingNewsCards";
@@ -26,7 +27,7 @@ const HomePage: React.FC = () => {
     <div className="min-h-screen flex flex-col" style={cardShadowStyle}>
       <Header />
       
-      <main className="flex-grow pt-20">
+      <main className="flex-grow pt-20 w-full">
         {/* Updated padding-top to match the new header height of 80px (h-20) */}
         
         {/* Hero Section - ensuring text is white and gradient is applied */}

@@ -3,78 +3,76 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu } from 'lucide-react';
 import ClubLogo from "../ui/image/ClubLogo";
-import Container from "../ui/layout/Container";
 
 const Header: React.FC<{ className?: string; transparent?: boolean }> = ({ className }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-[#00105A] shadow-md h-20 flex items-center">
-      <Container className="h-full flex items-center">
-        <nav className="w-full h-full flex items-center justify-between">
-          {/* Logo container - positioned far left */}
-          <div className="flex items-center h-full force-vertical-center">
-            <Link to="/" className="flex items-center h-full force-vertical-center">
-              <ClubLogo 
-                variant="rect"
-                background="light"
-                className="w-[60px] h-[60px] force-vertical-center" 
-              />
-            </Link>
-          </div>
-          
-          {/* Navigation Links - positioned slightly to the right, off center */}
-          <div className="hidden lg:flex items-center h-full ml-auto mr-16">
-            <ul className="flex items-center h-full space-x-8">
-              {[
-                { name: 'Home', path: '/' },
-                { name: 'News', path: '/news' },
-                { name: 'Team & Management', path: '/team' },
-                { name: 'Fixtures', path: '/fixtures' },
-                { name: 'League Table', path: '/table' },
-                { name: 'Spain Park', path: '/stadium' },
-              ].map((item) => (
-                <li key={item.name} className="h-full group">
-                  <Link
-                    to={item.path}
-                    className="flex items-center h-full px-5 text-white font-montserrat font-bold text-sm tracking-widest hover:text-secondary transition-colors"
-                  >
-                    {item.name}
-                  </Link>
-                  {/* Custom hover effect with light blue bottom border */}
-                  <div className="absolute bottom-0 left-0 w-full h-[2px] bg-[#33C3F0] scale-x-0 transition-transform duration-200 origin-bottom-left group-hover:scale-x-100"></div>
-                </li>
-              ))}
-            </ul>
-          </div>
-          
-          {/* Buy Tickets button - positioned far right */}
-          <div className="hidden lg:flex items-center ml-auto">
-            <Link
-              to="/tickets"
-              className="flex items-center justify-center h-10 bg-accent hover:brightness-105 text-primary font-montserrat font-bold py-2 px-4 rounded transition-colors whitespace-nowrap shadow-md"
-            >
-              Buy Tickets
-            </Link>
-          </div>
-          
-          {/* Mobile menu button - visible only on mobile */}
-          <div className="lg:hidden flex items-center">
-            <button 
-              className="text-white hover:bg-white/20 transition-colors p-2 rounded-full"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              aria-label="Toggle menu"
-            >
-              <Menu size={24} />
-            </button>
-          </div>
-        </nav>
-      </Container>
+      {/* Replace the Container component with a full-width div */}
+      <div className="w-full px-8 md:px-12 lg:px-16 flex items-center justify-between">
+        {/* Logo container - aligned to far left */}
+        <div className="flex items-center h-full force-vertical-center">
+          <Link to="/" className="flex items-center h-full force-vertical-center">
+            <ClubLogo 
+              variant="rect"
+              background="light"
+              className="w-auto h-[60px] force-vertical-center" 
+            />
+          </Link>
+        </div>
+        
+        {/* Navigation Links - positioned more toward the right */}
+        <div className="hidden lg:flex items-center h-full ml-auto mr-8">
+          <ul className="flex items-center h-full">
+            {[
+              { name: 'Home', path: '/' },
+              { name: 'News', path: '/news' },
+              { name: 'Team & Management', path: '/team' },
+              { name: 'Fixtures', path: '/fixtures' },
+              { name: 'League Table', path: '/table' },
+              { name: 'Spain Park', path: '/stadium' },
+            ].map((item) => (
+              <li key={item.name} className="h-full group">
+                <Link
+                  to={item.path}
+                  className="flex items-center h-full px-5 text-white font-montserrat font-bold text-sm tracking-widest hover:text-secondary transition-colors"
+                >
+                  {item.name}
+                </Link>
+                {/* Custom hover effect with light blue bottom border */}
+                <div className="absolute bottom-0 left-0 w-full h-[2px] bg-[#33C3F0] scale-x-0 transition-transform duration-200 origin-bottom-left group-hover:scale-x-100"></div>
+              </li>
+            ))}
+          </ul>
+        </div>
+        
+        {/* Buy Tickets - aligned to far right */}
+        <div className="hidden lg:flex items-center">
+          <Link
+            to="/tickets"
+            className="flex items-center justify-center h-10 bg-accent hover:brightness-105 text-primary font-montserrat font-bold py-2 px-5 rounded transition-colors whitespace-nowrap shadow-md"
+          >
+            Buy Tickets
+          </Link>
+        </div>
+        
+        {/* Mobile menu button - visible only on mobile */}
+        <div className="lg:hidden flex items-center">
+          <button 
+            className="text-white hover:bg-white/20 transition-colors p-2 rounded-full"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            <Menu size={24} />
+          </button>
+        </div>
+      </div>
       
       {/* Mobile Navigation Menu */}
       {isMobileMenuOpen && (
         <div className="lg:hidden absolute top-20 left-0 right-0 bg-primary shadow-lg animate-slide-in-right">
-          <Container>
+          <div className="w-full px-8">
             <nav className="py-6 flex flex-col space-y-4">
               {[
                 { name: 'Home', path: '/' },
@@ -102,7 +100,7 @@ const Header: React.FC<{ className?: string; transparent?: boolean }> = ({ class
                 </Link>
               </div>
             </nav>
-          </Container>
+          </div>
         </div>
       )}
     </header>
