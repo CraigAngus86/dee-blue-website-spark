@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu } from 'lucide-react';
@@ -9,12 +10,12 @@ const Header: React.FC<{ className?: string; transparent?: boolean }> = ({ class
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-[#00105A] shadow-md h-20 flex items-center">
       <div className="w-full px-8 md:px-12 lg:px-16 flex items-center">
-        <div className="flex items-center">
+        <div className="flex items-center justify-center">
           <Link to="/" className="flex items-center">
             <ClubLogo 
               variant="rect"
               background="light"
-              className="w-auto h-[60px]" 
+              className="h-[60px] w-auto" 
             />
           </Link>
         </div>
