@@ -21,7 +21,7 @@ const OverlappingNewsCards: React.FC<OverlappingNewsCardsProps> = ({
   return (
     <div className="bg-light-gray py-12 relative">
       <PatternOverlay pattern="dots" opacity={0.05} color="dark" />
-      <div className={`container mx-auto px-4 relative z-10 -mt-16 ${className}`}>
+      <div className={`container mx-auto px-4 relative z-10 -mt-32 ${className}`}>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {displayArticles.map(article => (
             <NewsCard

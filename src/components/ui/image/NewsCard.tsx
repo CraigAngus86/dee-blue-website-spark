@@ -63,8 +63,8 @@ const NewsCard: React.FC<NewsCardProps> = ({
         </span>
       </div>
 
-      {/* Content section with appropriate padding for legibility */}
-      <div className="p-3 pt-2 flex flex-col flex-grow">
+      {/* Content section with appropriate padding and reduced gap below image */}
+      <div className="p-3 pt-[5px] flex flex-col flex-grow">
         <div className="mb-auto">
           <h3 className="font-montserrat font-bold text-[18px] leading-tight text-primary mb-2 line-clamp-2">
             {title}
