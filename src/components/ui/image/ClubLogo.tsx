@@ -19,13 +19,13 @@ const ClubLogo: React.FC<ClubLogoProps> = ({
 }) => {
   const [fallbackLoaded, setFallbackLoaded] = useState(false);
 
-  // Map sizes to width/height values - adjusted for better proportions
-  const sizeClasses = {
-    xs: "h-5",
-    sm: "h-6",
-    md: "h-8",
-    lg: "h-10",
-    xl: "h-12",
+  // Map sizes to fixed height values
+  const sizeValues = {
+    xs: 20,
+    sm: 24,
+    md: 32,
+    lg: 40,
+    xl: 48,
   };
 
   // Use the correct logo file paths directly
@@ -37,10 +37,9 @@ const ClubLogo: React.FC<ClubLogoProps> = ({
     <div
       className={cn(
         "inline-flex items-center justify-center p-0 m-0",
-        sizeClasses[size],
         className
       )}
-      style={{ padding: 0, margin: 0 }}
+      style={{ height: "100%", width: "auto", padding: 0, margin: 0 }}
     >
       <ResponsiveImage
         src={logoPath}
