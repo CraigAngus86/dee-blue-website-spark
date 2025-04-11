@@ -1,7 +1,14 @@
 
 import React from "react";
-import { ChevronRight } from "lucide-react";
 import CompetitorLogo from "../image/CompetitorLogo";
+import { 
+  Table,
+  TableHeader,
+  TableBody,
+  TableHead,
+  TableRow,
+  TableCell
+} from "@/components/ui/table";
 
 // A more detailed mock of the league table data
 const leagueTableData = [
@@ -69,91 +76,107 @@ interface LeagueTableWidgetProps {
 const LeagueTableWidget: React.FC<LeagueTableWidgetProps> = ({ className }) => {
   // Map form results to colors and styles
   const formColors: Record<string, string> = {
-    W: "bg-green-500 border border-green-600",
-    D: "bg-amber-400 border border-amber-500",
-    L: "bg-red-500 border border-red-600"
+    W: "bg-green-500 text-white",
+    D: "bg-amber-400 text-white",
+    L: "bg-red-500 text-white"
   };
   
+  // Get Banks o' Dee data
+  const bodData = leagueTableData.find(team => team.isBOD);
+  
   return (
-    <div className={`bg-white shadow-lg rounded-lg overflow-hidden border border-gray-100 h-full ${className}`}>
-      <div className="bg-primary py-3 px-4">
-        <h2 className="text-white font-bold text-xl">League Table</h2>
+    <div className={`${className}`}>
+      {/* Modern table design */}
+      <div className="bg-white rounded-lg overflow-hidden shadow-sm mb-4">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[60px]">Pos</TableHead>
+              <TableHead>Team</TableHead>
+              <TableHead className="text-center">P</TableHead>
+              <TableHead className="text-center">W</TableHead>
+              <TableHead className="text-center">D</TableHead>
+              <TableHead className="text-center">L</TableHead>
+              <TableHead className="text-center">Pts</TableHead>
+              <TableHead className="text-right pr-4">Form</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {leagueTableData.map((team) => (
+              <TableRow 
+                key={team.position} 
+                className={team.isBOD ? 
+                  "bg-primary/5 font-medium" : 
+                  team.position % 2 === 0 ? "bg-gray-50" : ""
+                }
+              >
+                <TableCell className="font-semibold">{team.position}</TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    <CompetitorLogo name={team.team} size="xs" />
+                    <span className={team.isBOD ? "font-semibold" : ""}>{team.team}</span>
+                  </div>
+                </TableCell>
+                <TableCell className="text-center">{team.played}</TableCell>
+                <TableCell className="text-center">{team.won}</TableCell>
+                <TableCell className="text-center">{team.drawn}</TableCell>
+                <TableCell className="text-center">{team.lost}</TableCell>
+                <TableCell className="text-center font-bold">{team.points}</TableCell>
+                <TableCell className="text-right pr-4">
+                  <div className="flex justify-end space-x-1">
+                    {team.form.map((result, idx) => (
+                      <div 
+                        key={idx} 
+                        className={`${formColors[result]} w-5 h-5 rounded-full flex items-center justify-center text-xs font-medium`}
+                      >
+                        {result}
+                      </div>
+                    ))}
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
       
-      <div className="p-4">
-        {/* Table Header - Improved styling */}
-        <div className="grid grid-cols-12 text-xs font-semibold text-gray-700 mb-2 pb-2 border-b border-medium-gray bg-gray-50 p-2 rounded">
-          <div className="col-span-1 text-center">Pos</div>
-          <div className="col-span-5 pl-1">Team</div>
-          <div className="col-span-1 text-center">P</div>
-          <div className="col-span-1 text-center">W</div>
-          <div className="col-span-1 text-center">D</div>
-          <div className="col-span-1 text-center">L</div>
-          <div className="col-span-2 text-right pr-1">Pts</div>
-        </div>
-        
-        {/* Team Rows - With alternating backgrounds */}
-        {leagueTableData.map((team, idx) => (
-          <div 
-            key={team.position}
-            className={`grid grid-cols-12 py-2.5 text-sm items-center ${
-              idx % 2 === 0 ? "bg-gray-50" : ""
-            } ${
-              team.isBOD ? "bg-primary/5 font-semibold rounded border-l-4 border-primary" : ""
-            }`}
-          >
-            <div className="col-span-1 text-center font-semibold">{team.position}</div>
-            <div className="col-span-5 flex items-center gap-2 pl-1">
-              <CompetitorLogo name={team.team} size="xs" />
-              <span className="truncate">{team.team}</span>
-            </div>
-            <div className="col-span-1 text-center">{team.played}</div>
-            <div className="col-span-1 text-center">{team.won}</div>
-            <div className="col-span-1 text-center">{team.drawn}</div>
-            <div className="col-span-1 text-center">{team.lost}</div>
-            <div className="col-span-2 text-right font-bold pr-1">{team.points}</div>
-          </div>
-        ))}
-        
-        {/* Form Guide - Enhanced with better styling */}
-        <div className="mt-6 pt-4 border-t border-medium-gray">
-          <h3 className="text-sm font-semibold mb-3">Banks o' Dee Form</h3>
-          <div className="flex space-x-2 mb-4">
-            {leagueTableData[2].form.map((result, index) => (
-              <div 
-                key={index} 
-                className={`${formColors[result]} w-8 h-8 rounded-full flex items-center justify-center shadow-md`}
-              >
-                <span className="text-white font-bold text-sm">{result}</span>
+      {/* Banks o' Dee Focus Strip */}
+      {bodData && (
+        <div className="bg-white shadow-sm rounded-lg p-4">
+          <div className="flex flex-wrap items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white font-bold text-xl">
+                {bodData.position}
               </div>
-            ))}
-          </div>
-          
-          {/* Form legend */}
-          <div className="flex items-center gap-4 text-xs text-gray-500">
-            <div className="flex items-center">
-              <div className="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
-              <span>Win</span>
+              <div>
+                <div className="font-semibold text-lg text-primary">Banks o' Dee FC</div>
+                <div className="text-sm text-gray-500">Highland League</div>
+              </div>
             </div>
-            <div className="flex items-center">
-              <div className="w-3 h-3 rounded-full bg-amber-400 mr-1"></div>
-              <span>Draw</span>
-            </div>
-            <div className="flex items-center">
-              <div className="w-3 h-3 rounded-full bg-red-500 mr-1"></div>
-              <span>Loss</span>
+            
+            <div className="flex items-center space-x-8 mt-2 sm:mt-0">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-primary">{bodData.points}</div>
+                <div className="text-xs text-gray-500 uppercase">Points</div>
+              </div>
+              
+              <div>
+                <div className="flex space-x-1 justify-center">
+                  {bodData.form.map((result, idx) => (
+                    <div 
+                      key={idx} 
+                      className={`${formColors[result]} w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold`}
+                    >
+                      {result}
+                    </div>
+                  ))}
+                </div>
+                <div className="text-xs text-gray-500 uppercase text-center mt-1">Form</div>
+              </div>
             </div>
           </div>
         </div>
-        
-        <a 
-          href="/table" 
-          className="flex items-center justify-end mt-4 text-primary font-semibold hover:underline"
-        >
-          View Full Table 
-          <ChevronRight size={16} className="ml-1" />
-        </a>
-      </div>
+      )}
     </div>
   );
 };

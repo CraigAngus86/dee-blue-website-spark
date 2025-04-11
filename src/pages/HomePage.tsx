@@ -26,7 +26,7 @@ const HomePage: React.FC = () => {
     <div className="min-h-screen flex flex-col" style={cardShadowStyle}>
       <Header />
       
-      <main className="flex-grow pt-[90px]"> {/* Updated padding to account for new 90px navbar height */}
+      <main className="flex-grow pt-[90px]">
         {/* Hero Section - ensuring text is white and gradient is applied */}
         <HeroSection 
           title="BANKS O' DEE AIMING FOR LEAGUE GLORY" 
@@ -45,21 +45,14 @@ const HomePage: React.FC = () => {
         {/* New Gradient Separator before Featured Content Section */}
         <GradientSeparator />
         
-        {/* Featured Content Section - MatchCenter */}
+        {/* Featured Content Section - MatchCenter with updated styling */}
         <Section 
-          className="relative overflow-hidden"
+          background="light"
           spacing="lg"
         >
-          {/* Rich texture overlay with dark navy gradient */}
-          <div className="absolute inset-0 bg-gradient-to-br from-[#00105A] via-[#00105A]/95 to-[#000D42]">
-            <PatternOverlay pattern="plus" opacity={0.1} />
-          </div>
-          
-          <div className="relative z-10">
-            <FadeIn>
-              <MatchCenter />
-            </FadeIn>
-          </div>
+          <FadeIn>
+            <MatchCenter />
+          </FadeIn>
         </Section>
         
         {/* New Gradient Separator after Featured Content */}

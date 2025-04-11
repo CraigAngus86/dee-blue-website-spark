@@ -32,17 +32,6 @@ const MatchCardNew: React.FC<MatchCardNewProps> = ({ match, variant, className }
   const isPast = variant === "past";
   const isNext = variant === "next";
   
-  // Determine background color based on variant
-  const bgColor = {
-    past: "bg-gray-100",
-    next: "bg-primary",
-    future: "bg-white",
-  };
-  
-  // Determine text color based on variant
-  const textColor = isNext ? "text-white" : "text-primary";
-  const mutedTextColor = isNext ? "text-white/80" : "text-gray";
-  
   // Format date nicely
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -56,50 +45,65 @@ const MatchCardNew: React.FC<MatchCardNewProps> = ({ match, variant, className }
   return (
     <div 
       className={cn(
-        "rounded-lg overflow-hidden border border-gray-200 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md",
-        bgColor[variant],
+        "rounded-lg overflow-hidden border transition-all duration-300 hover:-translate-y-1 hover:shadow-md",
+        isNext ? 
+          "border-accent border-2" : 
+          "border-gray-200",
+        isNext ? "bg-primary" : "bg-white",
         className
       )}
     >
       {/* Match Status Badge */}
       <div className={cn(
-        "px-4 py-1.5 text-xs font-semibold uppercase",
-        isPast ? "bg-gray-200 text-gray-600" : 
+        "px-3 py-1 text-xs font-semibold uppercase",
+        isPast ? "bg-gray-100 text-gray-600" : 
         isNext ? "bg-accent text-primary" : 
-        "bg-gray-100 text-gray-600"
+        "bg-gray-50 text-gray-600"
       )}>
         {isPast ? "Final Result" : isNext ? "Next Match" : "Upcoming"}
       </div>
       
       {/* Match Content */}
-      <div className="p-4">
+      <div className="p-3">
         {/* Competition */}
         <Text 
           as="div" 
           size="xs" 
-          className={cn("uppercase font-medium mb-4", mutedTextColor)}
+          className={cn(
+            "uppercase font-medium mb-3", 
+            isNext ? "text-white/80" : "text-gray"
+          )}
         >
           {match.competition} {match.round ? `· ${match.round}` : ''}
         </Text>
         
         {/* Teams */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-4">
           {/* Home Team */}
           <div className="flex flex-col items-center text-center">
-            <CompetitorLogo name={match.homeTeam} size="md" />
-            <Text as="span" size="small" weight="medium" className={cn("mt-2 max-w-[80px]", textColor)}>
+            <CompetitorLogo name={match.homeTeam} size="sm" />
+            <Text 
+              as="span" 
+              size="xs" 
+              weight="medium" 
+              className={cn("mt-2 max-w-[70px] line-clamp-2", isNext ? "text-white" : "text-primary")}
+            >
               {match.homeTeam}
             </Text>
           </div>
           
           {/* Score or VS */}
-          <div className="flex items-center">
+          <div className="flex items-center px-2">
             {isPast && match.result ? (
-              <div className={cn("text-2xl font-bold px-4", textColor)}>
+              <div className={cn("text-xl font-bold", isNext ? "text-white" : "text-primary")}>
                 {match.result.homeScore} - {match.result.awayScore}
               </div>
             ) : (
-              <Text as="span" size="large" weight="bold" className={cn("px-4", textColor)}>
+              <Text 
+                as="span" 
+                weight="bold" 
+                className={cn(isNext ? "text-white" : "text-primary")}
+              >
                 VS
               </Text>
             )}
@@ -107,24 +111,37 @@ const MatchCardNew: React.FC<MatchCardNewProps> = ({ match, variant, className }
           
           {/* Away Team */}
           <div className="flex flex-col items-center text-center">
-            <CompetitorLogo name={match.awayTeam} size="md" />
-            <Text as="span" size="small" weight="medium" className={cn("mt-2 max-w-[80px]", textColor)}>
+            <CompetitorLogo name={match.awayTeam} size="sm" />
+            <Text 
+              as="span" 
+              size="xs" 
+              weight="medium" 
+              className={cn("mt-2 max-w-[70px] line-clamp-2", isNext ? "text-white" : "text-primary")}
+            >
               {match.awayTeam}
             </Text>
           </div>
         </div>
         
         {/* Date, Time, Venue */}
-        <div className="flex flex-col space-y-1 mb-4">
+        <div className="flex flex-col space-y-1 mb-3">
           <div className="flex items-center">
-            <Clock className={cn("h-3.5 w-3.5 mr-1.5", mutedTextColor)} />
-            <Text as="span" size="small" className={mutedTextColor}>
+            <Clock className={cn("h-3 w-3 mr-1", isNext ? "text-white/80" : "text-gray")} />
+            <Text 
+              as="span" 
+              size="xs" 
+              className={isNext ? "text-white/80" : "text-gray"}
+            >
               {formatDate(match.date)} {match.time ? `· ${match.time}` : ''}
             </Text>
           </div>
           <div className="flex items-center">
-            <MapPin className={cn("h-3.5 w-3.5 mr-1.5", mutedTextColor)} />
-            <Text as="span" size="small" className={mutedTextColor}>
+            <MapPin className={cn("h-3 w-3 mr-1", isNext ? "text-white/80" : "text-gray")} />
+            <Text 
+              as="span" 
+              size="xs" 
+              className={isNext ? "text-white/80" : "text-gray"}
+            >
               {match.venue}
             </Text>
           </div>
@@ -135,7 +152,8 @@ const MatchCardNew: React.FC<MatchCardNewProps> = ({ match, variant, className }
           <ButtonNew 
             variant={isNext ? "accent" : "primary"} 
             size="sm"
-            className="w-full mt-2"
+            className="w-full"
+            href={match.ticketLink}
           >
             {match.ticketLink ? "GET TICKETS" : "MATCH DETAILS"}
           </ButtonNew>
@@ -144,7 +162,8 @@ const MatchCardNew: React.FC<MatchCardNewProps> = ({ match, variant, className }
           <ButtonNew 
             variant="secondary" 
             size="sm"
-            className="w-full mt-2"
+            className="w-full"
+            href={match.matchReportLink}
           >
             MATCH REPORT
           </ButtonNew>
