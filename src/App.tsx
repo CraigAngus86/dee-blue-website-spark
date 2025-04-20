@@ -1,10 +1,10 @@
-
 import React from 'react';
 import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
 import './App.css';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ComponentsDemo from "./pages/demo/ComponentsDemo";
 import SponsorsDemo from "./pages/demo/SponsorsDemo";
 import CompetitorsDemo from "./pages/demo/CompetitorsDemo";
@@ -16,7 +16,7 @@ import ImageComponentsDemo from "./pages/demo/ImageComponentsDemo";
 import HomePage from "./pages/HomePage";
 import Index from "./pages/Index";
 import TeamAndManagement from "./pages/TeamAndManagement";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import MatchCentre from "./pages/MatchCentre";
 
 // Create a client
 const queryClient = new QueryClient();
@@ -77,6 +77,10 @@ const routes = [
   {
     path: "/team",
     element: <TeamAndManagement />,
+  },
+  {
+    path: "/matches",
+    element: <MatchCentre />,
   },
 ];
 
