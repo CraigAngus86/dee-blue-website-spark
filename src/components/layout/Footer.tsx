@@ -19,103 +19,129 @@ const Footer: React.FC = () => {
     { name: 'Stadium', path: '/stadium' },
   ];
 
+  const legalLinks = [
+    { name: 'Privacy Policy', path: '/privacy' },
+    { name: 'Terms of Use', path: '/terms' },
+    { name: 'Cookie Policy', path: '/cookies' },
+  ];
+
   const socialLinks = [
-    { icon: <Facebook size={24} />, href: "https://facebook.com/banksofdeefc", label: "Facebook" },
-    { icon: <Twitter size={24} />, href: "https://twitter.com/banksofdeefc", label: "Twitter" },
-    { icon: <Instagram size={24} />, href: "https://instagram.com/banksofdeefc", label: "Instagram" },
-    { icon: <Linkedin size={24} />, href: "https://linkedin.com/company/banksofdeefc", label: "LinkedIn" },
+    { icon: <Facebook size={20} />, href: "https://facebook.com/banksofdeefc", label: "Facebook" },
+    { icon: <Twitter size={20} />, href: "https://twitter.com/banksofdeefc", label: "Twitter" },
+    { icon: <Instagram size={20} />, href: "https://instagram.com/banksofdeefc", label: "Instagram" },
+    { icon: <Linkedin size={20} />, href: "https://linkedin.com/company/banksofdeefc", label: "LinkedIn" },
   ];
 
   return (
-    <footer className="bg-[#00105A] text-white py-16">
-      <Container>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
-          {/* Left Column - Club Info */}
-          <div className="flex flex-col items-start space-y-6">
-            <div className="flex items-center gap-4">
+    <footer className="bg-[#00105A] text-white">
+      <Container size="xl" className="py-12 md:py-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-10">
+          {/* Column 1 - Club Info */}
+          <div className="flex flex-col">
+            <div className="flex items-center md:items-start mb-6">
               <ClubLogo
                 variant="square"
                 background="light"
                 size={80}
               />
-              <div>
-                <Heading level={3} color="white" className="mb-0">
-                  Banks o' Dee FC
+              <div className="ml-4">
+                <Heading level={3} color="white" className="mb-1">
+                  Banks o' Dee
                 </Heading>
+                <Text color="white" size="small" className="opacity-75">
+                  Est. 1946
+                </Text>
               </div>
             </div>
-            <Text color="white" size="medium" className="opacity-75 max-w-xs text-left">
+            
+            <Text color="white" size="small" className="opacity-75 mb-6 leading-relaxed">
               Scotland's premier football club based in Aberdeen, focused on excellence and community engagement.
             </Text>
-            <Text size="xs" color="white" className="opacity-70 mt-auto">
+            
+            <Text size="xs" color="white" className="opacity-50 mt-auto">
               © {currentYear} Banks o' Dee Football Club. All rights reserved.
             </Text>
           </div>
 
-          {/* Middle Column - Quick Links */}
-          <div className="flex flex-col items-center">
-            <Heading level={3} color="white" className="mb-8">
+          {/* Column 2 - Quick Links */}
+          <div className="flex flex-col">
+            <Heading level={3} color="white" className="mb-6">
               Quick Links
             </Heading>
-            <nav className="flex flex-col items-center gap-4">
+            <nav className="flex flex-col space-y-4">
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
                   to={link.path}
-                  className="text-white hover:text-[#C5E7FF] transition-colors text-base font-medium tracking-wide"
+                  className="text-white/75 hover:text-[#C5E7FF] transition-colors"
                 >
                   {link.name}
                 </Link>
               ))}
             </nav>
+            
+            <div className="mt-8 pt-6 border-t border-white/10">
+              <nav className="flex flex-wrap gap-4">
+                {legalLinks.map((link) => (
+                  <Link
+                    key={link.name}
+                    to={link.path}
+                    className="text-white/50 hover:text-white/75 transition-colors text-xs"
+                  >
+                    {link.name}
+                  </Link>
+                ))}
+              </nav>
+            </div>
           </div>
 
-          {/* Right Column - Contact & Social */}
-          <div className="flex flex-col items-end space-y-6">
-            <Heading level={3} color="white" className="mb-8">
+          {/* Column 3 - Contact & Social */}
+          <div className="flex flex-col">
+            <Heading level={3} color="white" className="mb-6">
               Contact Us
             </Heading>
-            <div className="flex flex-col items-end gap-4">
-              <div className="flex items-center gap-3 justify-end">
-                <Text size="medium" color="white" className="opacity-75 text-right">
+            
+            <div className="space-y-4 mb-8">
+              <div className="flex items-start">
+                <MapPin className="text-[#C5E7FF] h-5 w-5 mt-1 flex-shrink-0" />
+                <Text color="white" size="small" className="ml-3 opacity-75">
                   Spain Park Stadium, Aberdeen, AB12 5XY
                 </Text>
-                <MapPin className="text-[#C5E7FF] h-6 w-6" />
               </div>
-              <div className="flex items-center gap-3 justify-end">
-                <a 
-                  href="tel:+441224869948" 
-                  className="text-white/75 hover:text-[#C5E7FF] transition-colors text-base"
-                >
+              
+              <div className="flex items-center">
+                <Phone className="text-[#C5E7FF] h-5 w-5 flex-shrink-0" />
+                <Text color="white" size="small" className="ml-3 opacity-75">
                   +44 1224 869 948
-                </a>
-                <Phone className="text-[#C5E7FF] h-6 w-6" />
+                </Text>
               </div>
-              <div className="flex items-center gap-3 justify-end">
-                <a 
-                  href="mailto:info@banksofdeefc.com" 
-                  className="text-white/75 hover:text-[#C5E7FF] transition-colors text-base"
-                >
+              
+              <div className="flex items-center">
+                <Mail className="text-[#C5E7FF] h-5 w-5 flex-shrink-0" />
+                <Text color="white" size="small" className="ml-3 opacity-75">
                   info@banksofdeefc.com
-                </a>
-                <Mail className="text-[#C5E7FF] h-6 w-6" />
+                </Text>
               </div>
             </div>
-
-            {/* Social Links */}
-            <div className="flex gap-4 mt-8">
-              {socialLinks.map((link) => (
-                <a 
-                  key={link.label}
-                  href={link.href} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  aria-label={link.label}
-                  className="bg-white/10 hover:bg-[#C5E7FF] hover:text-[#00105A] transition-colors duration-300 rounded-full p-2.5 flex items-center justify-center"
-                >
-                  {link.icon}
-                </a>
-              ))}
+            
+            <div>
+              <Text weight="medium" color="white" size="small" className="mb-4">
+                Connect With Us
+              </Text>
+              <div className="flex space-x-4">
+                {socialLinks.map((link) => (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-white/10 hover:bg-[#C5E7FF] hover:text-[#00105A] transition-colors duration-300 rounded-full p-2.5"
+                    aria-label={link.label}
+                  >
+                    {link.icon}
+                  </a>
+                ))}
+              </div>
             </div>
           </div>
         </div>
