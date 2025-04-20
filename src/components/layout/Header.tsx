@@ -23,12 +23,11 @@ const Header: React.FC<{ className?: string; transparent?: boolean }> = ({ class
         <div className="hidden lg:flex items-center justify-center flex-1 px-8">
           <ul className="flex items-center h-full justify-center w-full">
             {[
-              { name: 'Home', path: '/' },
               { name: 'News', path: '/news' },
-              { name: 'Team', path: '/team' },
-              { name: 'Fixtures', path: '/fixtures' },
-              { name: 'Table', path: '/table' },
+              { name: 'Team and Management', path: '/team' },
+              { name: 'Match Centre', path: '/match-centre' },
               { name: 'Stadium', path: '/stadium' },
+              { name: 'Commercial Opportunities', path: '/commercial' },
             ].map((item) => (
               <li key={item.name} className="h-full group relative mx-3">
                 <Link
@@ -68,12 +67,11 @@ const Header: React.FC<{ className?: string; transparent?: boolean }> = ({ class
           <div className="container mx-auto px-4">
             <nav className="py-6 flex flex-col space-y-4">
               {[
-                { name: 'Home', path: '/' },
                 { name: 'News', path: '/news' },
-                { name: 'Team', path: '/team' },
-                { name: 'Fixtures', path: '/fixtures' },
-                { name: 'Table', path: '/table' },
+                { name: 'Team and Management', path: '/team' },
+                { name: 'Match Centre', path: '/match-centre' },
                 { name: 'Stadium', path: '/stadium' },
+                { name: 'Commercial Opportunities', path: '/commercial' },
               ].map((item) => (
                 <div key={item.name}>
                   <Link

@@ -5,16 +5,17 @@ import Text from "../ui/typography/Text";
 import Heading from "../ui/typography/Heading";
 import Container from "../ui/layout/Container";
 import { Link } from "react-router-dom";
+import ClubLogo from "../ui/image/ClubLogo";
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
   
   const navLinks = [
     { name: 'News', path: '/news' },
-    { name: 'Team', path: '/team' },
-    { name: 'Fixtures', path: '/fixtures' },
-    { name: 'Table', path: '/table' },
+    { name: 'Team and Management', path: '/team' },
+    { name: 'Match Centre', path: '/match-centre' },
     { name: 'Stadium', path: '/stadium' },
+    { name: 'Commercial Opportunities', path: '/commercial' },
   ];
 
   const legalLinks = [
@@ -36,6 +37,14 @@ const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-10">
           {/* Column 1 - Club Info */}
           <div className="flex flex-col">
+            <div className="mb-6">
+              <ClubLogo 
+                variant="rect"
+                background="light"
+                size={120}
+                className="mb-6"
+              />
+            </div>
             <Text color="white" size="small" className="opacity-75 mb-6 leading-relaxed">
               Scotland's premier football club based in Aberdeen, focused on excellence and community engagement.
             </Text>
@@ -106,24 +115,19 @@ const Footer: React.FC = () => {
               </div>
             </div>
             
-            <div>
-              <Text weight="medium" color="white" size="small" className="mb-4">
-                Connect With Us
-              </Text>
-              <div className="flex space-x-4">
-                {socialLinks.map((link) => (
-                  <a
-                    key={link.label}
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="bg-white/10 hover:bg-[#C5E7FF] hover:text-[#00105A] transition-colors duration-300 rounded-full p-2.5"
-                    aria-label={link.label}
-                  >
-                    {link.icon}
-                  </a>
-                ))}
-              </div>
+            <div className="flex space-x-4">
+              {socialLinks.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-white/10 hover:bg-[#C5E7FF] hover:text-[#00105A] transition-colors duration-300 rounded-full p-2.5"
+                  aria-label={link.label}
+                >
+                  {link.icon}
+                </a>
+              ))}
             </div>
           </div>
         </div>
