@@ -3,6 +3,7 @@ import React from "react";
 import NewsCard from "@/components/ui/image/NewsCard";
 import { newsArticles } from "@/mock-data/newsData";
 import PatternOverlay from "@/components/ui/backgrounds/PatternOverlay";
+import { cn } from "@/lib/utils";
 
 interface OverlappingNewsCardsProps {
   articles?: typeof newsArticles;
