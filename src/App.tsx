@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   createBrowserRouter,
@@ -15,6 +14,7 @@ import AdvancedComponentsDemo from "./pages/demo/AdvancedComponentsDemo";
 import ImageComponentsDemo from "./pages/demo/ImageComponentsDemo";
 import HomePage from "./pages/HomePage";
 import Index from "./pages/Index";
+import TeamAndManagement from "./pages/TeamAndManagement";
 
 function App() {
   return (
@@ -66,6 +66,10 @@ const routes = [
   {
     path: "/demo/image-components",
     element: <ImageComponentsDemo />,
+  },
+  {
+    path: "/team",
+    element: <TeamAndManagement />,
   },
 ];
 
