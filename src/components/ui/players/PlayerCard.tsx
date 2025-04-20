@@ -1,4 +1,3 @@
-
 import React from "react";
 import { cn } from "@/lib/utils";
 import { Player } from "@/lib/types";
@@ -11,22 +10,6 @@ interface PlayerCardProps {
 }
 
 const PlayerCard: React.FC<PlayerCardProps> = ({ player, className }) => {
-  // Determine background gradient based on player position
-  const getGradient = (position: string) => {
-    switch (position.toLowerCase()) {
-      case "forward":
-        return "from-[#AB0534] to-[#8A0529]"; // Dark red gradient for forwards
-      case "midfielder":
-        return "from-[#00105A] to-[#000D42]"; // Dark blue gradient for midfielders
-      case "defender":
-        return "from-[#004F2D] to-[#003B22]"; // Dark green gradient for defenders
-      case "goalkeeper":
-        return "from-[#333333] to-[#1A1A1A]"; // Dark gray gradient for goalkeepers
-      default:
-        return "from-[#00105A] to-[#000D42]"; // Default navy blue gradient
-    }
-  };
-
   return (
     <HoverEffect effect="scale" className="h-full">
       <div 
@@ -35,7 +18,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, className }) => {
           className
         )}
       >
-        <div className={`absolute inset-0 bg-gradient-to-b ${getGradient(player.position)} z-0`} />
+        <div className="absolute inset-0 bg-[#00105A] z-0" />
         
         {/* Player image */}
         <div className="relative z-10 h-full flex flex-col">
