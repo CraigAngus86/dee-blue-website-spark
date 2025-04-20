@@ -9,7 +9,8 @@ export interface Match {
   venue?: string;
   homeScore?: number;
   awayScore?: number;
+  isCompleted?: boolean;
   ticketLink?: string;
   matchReportLink?: string;
-  isCompleted?: boolean;
 }
+

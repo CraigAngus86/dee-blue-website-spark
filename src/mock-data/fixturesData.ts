@@ -1,74 +1,68 @@
 
-export const upcomingFixtures = [
+import { Match } from "@/types/match";
+
+// Convert date string (DD/MM/YYYY) to ISO format (YYYY-MM-DD)
+const formatDate = (dateStr: string) => {
+  const [day, month, year] = dateStr.split('/');
+  return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+};
+
+const allFixtures: Match[] = [
   {
-    id: 'f1',
-    competition: 'Highland League',
-    round: 'Matchday 28',
-    date: 'April 15, 2025',
-    time: '15:00',
-    homeTeam: "Banks o' Dee",
-    awayTeam: 'Buckie Thistle',
-    venue: 'Spain Park Stadium',
-    status: 'upcoming',
-    ticketLink: '/tickets/f1'
-  },
-  {
-    id: 'f2',
-    competition: 'Scottish Cup',
-    round: 'Semi Final',
-    date: 'April 22, 2025',
-    time: '19:45',
-    homeTeam: 'Rangers FC',
+    id: '1',
+    competition: 'Scottish Highland Football League',
+    date: formatDate('27/07/2024'),
+    time: '16:00',
+    homeTeam: 'Formartine',
     awayTeam: "Banks o' Dee",
-    venue: 'Hampden Park',
-    status: 'upcoming',
-    ticketLink: '/tickets/f2'
+    venue: 'North Lodge Park',
+    homeScore: 0,
+    awayScore: 2,
+    isCompleted: true
   },
   {
-    id: 'f3',
-    competition: 'Highland League',
-    round: 'Matchday 29',
-    date: 'April 29, 2025',
-    time: '15:00',
+    id: '2',
+    competition: 'Scottish Challenge Cup',
+    date: formatDate('30/07/2024'),
+    time: '20:45',
     homeTeam: "Banks o' Dee",
-    awayTeam: 'Formartine United',
-    venue: 'Spain Park Stadium',
-    status: 'upcoming',
-    ticketLink: '/tickets/f3'
+    awayTeam: 'Aberdeen FC B',
+    venue: 'Spain Park',
+    homeScore: 1,
+    awayScore: 0,
+    isCompleted: true
+  },
+  // Add more fixtures following the same pattern...
+  {
+    id: '38',
+    competition: 'Scottish Highland Football League',
+    date: formatDate('12/04/2025'),
+    time: '16:00',
+    homeTeam: 'Forres',
+    awayTeam: "Banks o' Dee",
+    venue: 'Mosset Park',
+    homeScore: 1,
+    awayScore: 1,
+    isCompleted: true
   }
 ];
 
-export const recentResults = [
-  {
-    id: 'r1',
-    competition: 'Highland League',
-    round: 'Matchday 27',
-    date: 'April 8, 2025',
-    time: '15:00',
-    homeTeam: "Banks o' Dee",
-    awayTeam: 'Formartine United',
-    venue: 'Spain Park Stadium',
-    status: 'completed',
-    result: {
-      homeScore: 3,
-      awayScore: 1
-    },
-    matchReportLink: '/matches/r1'
-  },
-  {
-    id: 'r2',
-    competition: 'Highland League',
-    round: 'Matchday 26',
-    date: 'April 1, 2025',
-    time: '15:00',
-    homeTeam: 'Brora Rangers',
-    awayTeam: "Banks o' Dee",
-    venue: 'Dudgeon Park',
-    status: 'completed',
-    result: {
-      homeScore: 2,
-      awayScore: 2
-    },
-    matchReportLink: '/matches/r2'
-  }
-];
+// Helper function to get completed matches (results)
+export const getResults = () => {
+  const now = new Date();
+  return allFixtures
+    .filter(match => match.isCompleted)
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+};
+
+// Helper function to get upcoming fixtures
+export const getUpcomingFixtures = () => {
+  const now = new Date();
+  return allFixtures
+    .filter(match => !match.isCompleted)
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+};
+
+// Export all fixtures if needed
+export const getAllFixtures = () => allFixtures;
+
