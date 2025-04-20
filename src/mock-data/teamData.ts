@@ -22,6 +22,26 @@ export const staffMembers = [
     type: 'management'
   },
   {
+    id: 103,
+    name: 'Sarah McLeod',
+    position: 'Physiotherapist',
+    nationality: 'Scotland',
+    image: '/assets/images/team/Training3_Square.jpg',
+    bio: 'Qualified physiotherapist with extensive experience in sports medicine.',
+    email: 'sarah.mcleod@banksofdeefc.com',
+    type: 'management'
+  },
+  {
+    id: 104,
+    name: 'David Campbell',
+    position: 'Goalkeeping Coach',
+    nationality: 'Scotland',
+    image: '/assets/images/team/Training4_Square.jpg',
+    bio: 'Former professional goalkeeper now developing the next generation.',
+    email: 'david.campbell@banksofdeefc.com',
+    type: 'management'
+  },
+  {
     id: 201,
     name: 'Brian Winton',
     position: 'Club President',
@@ -39,6 +59,26 @@ export const staffMembers = [
     image: '/assets/images/team/Training4_Square.jpg',
     bio: 'Handles all administrative matters for the club with exceptional organizational skills.',
     email: 'margaret.fraser@banksofdeefc.com',
+    type: 'administration'
+  },
+  {
+    id: 203,
+    name: 'Robert Campbell',
+    position: 'Treasurer',
+    nationality: 'Scotland',
+    image: '/assets/images/team/Training1_Square.jpg',
+    bio: 'Managing the club\'s finances with precision and foresight.',
+    email: 'robert.campbell@banksofdeefc.com',
+    type: 'administration'
+  },
+  {
+    id: 204,
+    name: 'Thomas Wilson',
+    position: 'Commercial Director',
+    nationality: 'Scotland',
+    image: '/assets/images/team/Training2_Square.jpg',
+    bio: 'Developing partnerships and commercial opportunities for the club.',
+    email: 'thomas.wilson@banksofdeefc.com',
     type: 'administration'
   }
 ] as const;
@@ -74,5 +114,5 @@ export const players = [
     position: 'Midfielder',
     nationality: 'Scotland',
     image: '/assets/images/players/Lachie Test.jpg',
-  },
+  }
 ] as const;
