@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   createBrowserRouter,
@@ -15,12 +16,18 @@ import ImageComponentsDemo from "./pages/demo/ImageComponentsDemo";
 import HomePage from "./pages/HomePage";
 import Index from "./pages/Index";
 import TeamAndManagement from "./pages/TeamAndManagement";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+// Create a client
+const queryClient = new QueryClient();
 
 function App() {
   return (
-    <div className="App">
-       <RouterProvider router={router} />
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <div className="App">
+        <RouterProvider router={router} />
+      </div>
+    </QueryClientProvider>
   );
 }
 
