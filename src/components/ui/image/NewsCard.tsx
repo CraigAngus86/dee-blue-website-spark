@@ -1,4 +1,3 @@
-
 import React from "react";
 import { cn } from "@/lib/utils";
 import ResponsiveImage from "./ResponsiveImage";
@@ -25,7 +24,6 @@ const NewsCard: React.FC<NewsCardProps> = ({
   elevation = "md",
   className,
 }) => {
-  // Determine category background color
   const getCategoryBgColor = (category: string) => {
     if (category.includes("MATCH")) return "bg-primary";
     if (category.includes("TEAM")) return "bg-secondary";
@@ -44,7 +42,6 @@ const NewsCard: React.FC<NewsCardProps> = ({
       )}
     >
       <div className="relative">
-        {/* Image container with fixed aspect ratio */}
         <div className="aspect-[4/3] overflow-hidden">
           <ResponsiveImage
             src={image}
@@ -53,7 +50,6 @@ const NewsCard: React.FC<NewsCardProps> = ({
           />
         </div>
         
-        {/* Category tag positioned absolutely */}
         <span 
           className={cn(
             "absolute top-4 left-4 inline-block",
@@ -65,7 +61,6 @@ const NewsCard: React.FC<NewsCardProps> = ({
         </span>
       </div>
 
-      {/* Content section with improved spacing */}
       <div className="p-5 flex flex-col flex-grow">
         <div className="mb-auto">
           <h3 className="font-montserrat font-bold text-lg leading-tight text-primary mb-3 line-clamp-2">
