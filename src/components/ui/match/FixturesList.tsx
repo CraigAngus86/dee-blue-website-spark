@@ -6,48 +6,52 @@ import { getUpcomingFixtures, getMatchesByMonth } from '@/mock-data/fixturesData
 
 interface FixturesListProps {
   selectedCompetitions?: string[];
+  selectedMonth?: string;
+  selectedSeason?: string;
 }
 
-const FixturesList: React.FC<FixturesListProps> = ({ selectedCompetitions = [] }) => {
+const FixturesList: React.FC<FixturesListProps> = ({ 
+  selectedCompetitions = [],
+  selectedMonth = '',
+  selectedSeason = ''
+}) => {
   const allUpcomingFixtures = getUpcomingFixtures();
   
-  // Filter fixtures by selected competitions if any are selected
-  const upcomingFixtures = selectedCompetitions.length > 0
-    ? allUpcomingFixtures.filter(fixture => 
-        selectedCompetitions.some(comp => fixture.competition.includes(comp))
-      )
-    : allUpcomingFixtures;
+  // Apply filters
+  let filteredFixtures = allUpcomingFixtures;
   
-  const fixturesByMonth = getMatchesByMonth(upcomingFixtures);
+  if (selectedCompetitions.length > 0) {
+    filteredFixtures = filteredFixtures.filter(fixture => 
+      selectedCompetitions.some(comp => fixture.competition.includes(comp))
+    );
+  }
+  
+  if (selectedMonth) {
+    filteredFixtures = filteredFixtures.filter(fixture => {
+      const date = new Date(fixture.date);
+      const monthYear = date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+      return monthYear === selectedMonth;
+    });
+  }
+  
+  const fixturesByMonth = getMatchesByMonth(filteredFixtures);
 
   return (
-    <div>      
-      <div className="space-y-8">
-        {Object.entries(fixturesByMonth).map(([month, matches]) => (
-          <div key={month}>
-            <h3 className="text-lg font-semibold text-gray-600 mb-4">{month}</h3>
-            <div className="grid gap-4">
-              {matches.map((match) => (
-                <MatchCardNew
-                  key={match.id}
-                  match={{
-                    id: match.id,
-                    competition: match.competition,
-                    date: match.date,
-                    time: match.time,
-                    homeTeam: match.homeTeam,
-                    awayTeam: match.awayTeam,
-                    venue: match.venue || '',
-                    status: 'upcoming',
-                    ticketLink: match.ticketLink,
-                  }}
-                  variant="future"
-                />
-              ))}
-            </div>
+    <div className="space-y-8">
+      {Object.entries(fixturesByMonth).map(([month, matches]) => (
+        <div key={month}>
+          <h3 className="text-lg font-semibold text-gray-600 mb-4">{month}</h3>
+          <div className="grid gap-4">
+            {matches.map((match) => (
+              <MatchCardNew
+                key={match.id}
+                match={match}
+                variant="future"
+              />
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
   );
 };

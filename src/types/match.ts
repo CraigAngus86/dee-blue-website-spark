@@ -2,18 +2,19 @@
 export interface Match {
   id: string;
   competition: string;
-  round?: string; // Added round property
+  round?: string;
   date: string;
   time: string;
   homeTeam: string;
   awayTeam: string;
   venue?: string;
+  status?: string;
   homeScore?: number;
   awayScore?: number;
   isCompleted?: boolean;
   ticketLink?: string;
   matchReportLink?: string;
-  result?: { // Added result object
+  result?: {
     homeScore: number;
     awayScore: number;
   };

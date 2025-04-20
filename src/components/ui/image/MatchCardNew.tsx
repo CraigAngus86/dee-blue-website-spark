@@ -1,4 +1,3 @@
-
 import React from "react";
 import CompetitorLogo from "@/components/ui/image/CompetitorLogo";
 import { cn } from "@/lib/utils";
@@ -32,7 +31,6 @@ const MatchCardNew: React.FC<MatchCardNewProps> = ({ match, variant, className }
   const isPast = variant === "past";
   const isNext = variant === "next";
   
-  // Format date nicely
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
     return new Intl.DateTimeFormat('en-GB', { 
@@ -53,7 +51,6 @@ const MatchCardNew: React.FC<MatchCardNewProps> = ({ match, variant, className }
         className
       )}
     >
-      {/* Match Status Badge */}
       <div className={cn(
         "px-3 py-1 text-xs font-semibold uppercase",
         isPast ? "bg-gray-100 text-gray-600" : 
@@ -63,9 +60,7 @@ const MatchCardNew: React.FC<MatchCardNewProps> = ({ match, variant, className }
         {isPast ? "Final Result" : isNext ? "Next Match" : "Upcoming"}
       </div>
       
-      {/* Match Content */}
       <div className="p-4">
-        {/* Competition */}
         <Text 
           as="div" 
           size="xs" 
@@ -77,9 +72,7 @@ const MatchCardNew: React.FC<MatchCardNewProps> = ({ match, variant, className }
           {match.competition} {match.round ? `· ${match.round}` : ''}
         </Text>
         
-        {/* Teams */}
         <div className="flex items-center justify-between mb-6">
-          {/* Home Team */}
           <div className="flex flex-col items-center text-center">
             <CompetitorLogo name={match.homeTeam} size="md" />
             <Text 
@@ -92,7 +85,6 @@ const MatchCardNew: React.FC<MatchCardNewProps> = ({ match, variant, className }
             </Text>
           </div>
           
-          {/* Score or VS */}
           <div className="flex items-center px-2">
             {isPast && match.result ? (
               <div className={cn("text-2xl font-bold", isNext ? "text-white" : "text-primary")}>
@@ -110,7 +102,6 @@ const MatchCardNew: React.FC<MatchCardNewProps> = ({ match, variant, className }
             )}
           </div>
           
-          {/* Away Team */}
           <div className="flex flex-col items-center text-center">
             <CompetitorLogo name={match.awayTeam} size="md" />
             <Text 
@@ -124,7 +115,6 @@ const MatchCardNew: React.FC<MatchCardNewProps> = ({ match, variant, className }
           </div>
         </div>
         
-        {/* Date, Time, Venue */}
         <div className="flex flex-col space-y-2 mb-4">
           <div className="flex items-center">
             <Clock className={cn("h-4 w-4 mr-1", isNext ? "text-white/80" : "text-gray")} />
@@ -148,15 +138,23 @@ const MatchCardNew: React.FC<MatchCardNewProps> = ({ match, variant, className }
           </div>
         </div>
         
-        {/* Action Button */}
-        {!isPast && (
+        {!isPast && match.ticketLink && (
           <ButtonNew 
             variant={isNext ? "accent" : "primary"} 
             size="sm"
             className="w-full"
             href={match.ticketLink}
           >
-            {match.ticketLink ? "GET TICKETS" : "MATCH DETAILS"}
+            GET TICKETS
+          </ButtonNew>
+        )}
+        {!isPast && !match.ticketLink && (
+          <ButtonNew 
+            variant={isNext ? "accent" : "primary"} 
+            size="sm"
+            className="w-full"
+          >
+            MATCH DETAILS
           </ButtonNew>
         )}
         {isPast && match.matchReportLink && (

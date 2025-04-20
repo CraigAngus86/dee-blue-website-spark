@@ -1,6 +1,13 @@
 
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import FixturesList from '@/components/ui/match/FixturesList';
@@ -8,36 +15,19 @@ import ResultsList from '@/components/ui/match/ResultsList';
 import LeagueTable from '@/components/ui/match/LeagueTable';
 import Container from '@/components/ui/layout/Container';
 import { 
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { Check, X } from "lucide-react";
-import { ButtonNew } from '@/components/ui/ButtonNew';
+  getAvailableCompetitions,
+  getAvailableMonths,
+  getAvailableSeasons
+} from '@/mock-data/fixturesData';
 
 const MatchCentre = () => {
-  const [selectedCompetitions, setSelectedCompetitions] = useState<string[]>([
-    'Scottish Highland Football League',
-    'Highland League Cup',
-    'Scottish Challenge Cup'
-  ]);
+  const [selectedSeason, setSelectedSeason] = useState<string>('2024/25');
+  const [selectedMonth, setSelectedMonth] = useState<string>('');
+  const [selectedCompetitions, setSelectedCompetitions] = useState<string[]>([]);
 
-  const competitions = [
-    'Scottish Highland Football League',
-    'Highland League Cup',
-    'Scottish Challenge Cup'
-  ];
-
-  const handleCompetitionToggle = (competition: string) => {
-    setSelectedCompetitions(prev => 
-      prev.includes(competition)
-        ? prev.filter(c => c !== competition)
-        : [...prev, competition]
-    );
-  };
+  const seasons = getAvailableSeasons();
+  const months = getAvailableMonths();
+  const competitions = getAvailableCompetitions();
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -61,7 +51,7 @@ const MatchCentre = () => {
 
         <Container className="py-8">
           <Tabs defaultValue="fixtures" className="w-full">
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
               <TabsList className="bg-white border flex justify-start p-1">
                 <TabsTrigger 
                   value="fixtures"
@@ -83,49 +73,73 @@ const MatchCentre = () => {
                 </TabsTrigger>
               </TabsList>
 
-              <Sheet>
-                <SheetTrigger asChild>
-                  <ButtonNew 
-                    variant="secondary" 
-                    size="sm" 
-                    className="ml-4"
-                  >
-                    Filter Competitions
-                  </ButtonNew>
-                </SheetTrigger>
-                <SheetContent>
-                  <SheetHeader>
-                    <SheetTitle>Filter Competitions</SheetTitle>
-                    <SheetDescription>
-                      Select which competitions to display
-                    </SheetDescription>
-                  </SheetHeader>
-                  <div className="py-4">
-                    {competitions.map((competition) => (
-                      <div
-                        key={competition}
-                        className="flex items-center justify-between py-2"
-                        onClick={() => handleCompetitionToggle(competition)}
-                      >
-                        <span className="text-sm font-medium">{competition}</span>
-                        {selectedCompetitions.includes(competition) ? (
-                          <Check className="h-5 w-5 text-primary" />
-                        ) : (
-                          <X className="h-5 w-5 text-gray-400" />
-                        )}
-                      </div>
+              <div className="flex flex-wrap gap-2">
+                <Select
+                  value={selectedSeason}
+                  onValueChange={setSelectedSeason}
+                >
+                  <SelectTrigger className="w-[140px]">
+                    <SelectValue placeholder="Season" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {seasons.map(season => (
+                      <SelectItem key={season} value={season}>
+                        {season}
+                      </SelectItem>
                     ))}
-                  </div>
-                </SheetContent>
-              </Sheet>
+                  </SelectContent>
+                </Select>
+
+                <Select
+                  value={selectedMonth}
+                  onValueChange={setSelectedMonth}
+                >
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="All Months" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">All Months</SelectItem>
+                    {months.map(month => (
+                      <SelectItem key={month} value={month}>
+                        {month}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <Select
+                  value={selectedCompetitions[0] || ''}
+                  onValueChange={(value) => setSelectedCompetitions(value ? [value] : [])}
+                >
+                  <SelectTrigger className="w-[220px]">
+                    <SelectValue placeholder="All Competitions" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">All Competitions</SelectItem>
+                    {competitions.map(competition => (
+                      <SelectItem key={competition} value={competition}>
+                        {competition}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
             <TabsContent value="fixtures" className="mt-6">
-              <FixturesList selectedCompetitions={selectedCompetitions} />
+              <FixturesList 
+                selectedCompetitions={selectedCompetitions}
+                selectedMonth={selectedMonth}
+                selectedSeason={selectedSeason}
+              />
             </TabsContent>
 
             <TabsContent value="results" className="mt-6">
-              <ResultsList selectedCompetitions={selectedCompetitions} />
+              <ResultsList 
+                selectedCompetitions={selectedCompetitions}
+                selectedMonth={selectedMonth}
+                selectedSeason={selectedSeason}
+              />
             </TabsContent>
 
             <TabsContent value="table" className="mt-6">

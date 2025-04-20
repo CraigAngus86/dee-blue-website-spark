@@ -6,15 +6,6 @@ const formatDate = (dateStr: string) => {
   return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
 };
 
-// Extract round information from competition if available
-const extractRound = (competition: string): { competition: string, round: string | undefined } => {
-  const parts = competition.split(' - ');
-  if (parts.length > 1) {
-    return { competition: parts[0].trim(), round: parts[1].trim() };
-  }
-  return { competition, round: undefined };
-};
-
 const allFixtures: Match[] = [
   {
     id: '1',
@@ -167,7 +158,76 @@ const allFixtures: Match[] = [
   }
 ];
 
-// Add league table data
+// Helper function to get dates as options for filter
+export const getAvailableMonths = () => {
+  const months = new Set();
+  allFixtures.forEach(fixture => {
+    const date = new Date(fixture.date);
+    const monthYear = date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+    months.add(monthYear);
+  });
+  return Array.from(months);
+};
+
+// Helper function to get competitions as options for filter
+export const getAvailableCompetitions = () => {
+  const competitions = new Set();
+  allFixtures.forEach(fixture => {
+    competitions.add(fixture.competition.split(' - ')[0]); // Split to handle cases like "Cup - Final"
+  });
+  return Array.from(competitions);
+};
+
+// Helper function to get seasons as options for filter
+export const getAvailableSeasons = () => {
+  return ['2024/25'];
+};
+
+// Helper function to group matches by month
+export const getMatchesByMonth = (matches: Match[]) => {
+  return matches.reduce((acc, match) => {
+    const date = new Date(match.date);
+    const monthYear = date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+    
+    if (!acc[monthYear]) {
+      acc[monthYear] = [];
+    }
+    
+    acc[monthYear].push(match);
+    return acc;
+  }, {} as Record<string, Match[]>);
+};
+
+// Helper function to get completed matches (results)
+export const getResults = () => {
+  const now = new Date();
+  return allFixtures
+    .filter(match => match.isCompleted)
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+};
+
+// Helper function to get upcoming fixtures
+export const getUpcomingFixtures = () => {
+  const now = new Date();
+  return allFixtures
+    .filter(match => !match.isCompleted)
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+};
+
+// Helper to get matches for the match center carousel (2 past, 1 next, 2 future)
+export const getMatchCenterMatches = () => {
+  const pastMatches = getResults().slice(0, 2);
+  const futureMatches = getUpcomingFixtures();
+  const nextMatch = futureMatches[0];
+  const upcomingMatches = futureMatches.slice(1, 3);
+  
+  return [...pastMatches, nextMatch, ...upcomingMatches].filter(Boolean);
+};
+
+// Export all fixtures if needed
+export const getAllFixtures = () => allFixtures;
+
+// Export league table data
 export const leagueTableData = [
   {
     position: 1,
@@ -404,37 +464,3 @@ export const leagueTableData = [
     form: ["D", "L", "L", "L", "L", "L"]
   }
 ];
-
-// Helper function to group matches by month
-export const getMatchesByMonth = (matches: Match[]) => {
-  return matches.reduce((acc, match) => {
-    const date = new Date(match.date);
-    const monthYear = date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
-    
-    if (!acc[monthYear]) {
-      acc[monthYear] = [];
-    }
-    
-    acc[monthYear].push(match);
-    return acc;
-  }, {} as Record<string, Match[]>);
-};
-
-// Helper function to get completed matches (results)
-export const getResults = () => {
-  const now = new Date();
-  return allFixtures
-    .filter(match => match.isCompleted)
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-};
-
-// Helper function to get upcoming fixtures
-export const getUpcomingFixtures = () => {
-  const now = new Date();
-  return allFixtures
-    .filter(match => !match.isCompleted)
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-};
-
-// Export all fixtures if needed
-export const getAllFixtures = () => allFixtures;
