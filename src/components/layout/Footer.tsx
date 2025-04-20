@@ -1,10 +1,10 @@
 
 import React from "react";
-import Container from "../ui/layout/Container";
 import { Mail, MapPin, Phone, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 import Text from "../ui/typography/Text";
 import Heading from "../ui/typography/Heading";
 import ClubLogo from "../ui/image/ClubLogo";
+import Container from "../ui/layout/Container";
 import HoverEffect from "../ui/animations/HoverEffect";
 
 const Footer: React.FC = () => {
@@ -53,25 +53,25 @@ const Footer: React.FC = () => {
             </Heading>
             <ul className="space-y-5">
               <li className="flex items-start justify-center gap-3">
-                <MapPin size={20} className="text-[#33C3F0] mt-1 flex-shrink-0" />
+                <MapPin size={20} className="text-[#C5E7FF] mt-1 flex-shrink-0" />
                 <Text size="small" color="white" className="opacity-80 text-left">
                   Spain Park Stadium, Aberdeen, AB12 5XY
                 </Text>
               </li>
               <li className="flex items-center justify-center gap-3">
-                <Phone size={20} className="text-[#33C3F0] flex-shrink-0" />
+                <Phone size={20} className="text-[#C5E7FF] flex-shrink-0" />
                 <a 
                   href="tel:+441224869948" 
-                  className="text-white/80 hover:text-[#33C3F0] transition-colors text-sm"
+                  className="text-white/80 hover:text-[#C5E7FF] transition-colors text-sm"
                 >
                   +44 1224 869 948
                 </a>
               </li>
               <li className="flex items-center justify-center gap-3">
-                <Mail size={20} className="text-[#33C3F0] flex-shrink-0" />
+                <Mail size={20} className="text-[#C5E7FF] flex-shrink-0" />
                 <a 
                   href="mailto:info@banksofdeefc.com" 
-                  className="text-white/80 hover:text-[#33C3F0] transition-colors text-sm"
+                  className="text-white/80 hover:text-[#C5E7FF] transition-colors text-sm"
                 >
                   info@banksofdeefc.com
                 </a>
@@ -94,7 +94,7 @@ const Footer: React.FC = () => {
                     target="_blank" 
                     rel="noopener noreferrer" 
                     aria-label={link.label}
-                    className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-[#33C3F0] hover:text-[#00105A] transition-colors duration-200"
+                    className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-[#C5E7FF] hover:text-[#00105A] transition-colors duration-200"
                   >
                     {link.icon}
                   </a>
