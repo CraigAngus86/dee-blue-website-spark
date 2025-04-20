@@ -1,4 +1,3 @@
-
 import { management } from './management';
 import { goalkeepers } from './goalkeepers';
 import { defenders } from './defenders';
@@ -22,4 +21,7 @@ export type TeamMember = {
   nationality: string;
   image: string;
   number: number | null;
+  bio?: string;
+  joinedDate?: string;
+  didYouKnow?: string;
 };

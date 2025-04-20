@@ -2,11 +2,12 @@
 import React from 'react';
 import { X } from 'lucide-react';
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { type TeamMember } from "@/mock-data/team";
 
 interface PlayerProfileModalProps {
   isOpen: boolean;
   onClose: () => void;
-  player: any; // We'll type this properly later
+  player: TeamMember | null;
 }
 
 const PlayerProfileModal: React.FC<PlayerProfileModalProps> = ({
@@ -62,9 +63,17 @@ const PlayerProfileModal: React.FC<PlayerProfileModalProps> = ({
         
         {/* Player Details */}
         <div className="p-6 overflow-y-auto">
-          <div className="space-y-6">
+          <div className="space-y-8">
+            {/* Bio Section */}
+            {player.bio && (
+              <div>
+                <h3 className="text-lg font-bold text-[#00105A] mb-2">Bio</h3>
+                <p className="text-gray-700">{player.bio}</p>
+              </div>
+            )}
+            
             {/* Details Section */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <h3 className="text-lg font-bold text-[#00105A] mb-2">Details</h3>
                 <ul className="space-y-2">
@@ -76,12 +85,28 @@ const PlayerProfileModal: React.FC<PlayerProfileModalProps> = ({
                     <span className="text-gray-500">Position</span>
                     <span className="font-medium">{player.position}</span>
                   </li>
-                  <li className="flex justify-between border-b border-gray-100 pb-2">
-                    <span className="text-gray-500">Squad Number</span>
-                    <span className="font-medium">#{player.number}</span>
-                  </li>
+                  {player.number && (
+                    <li className="flex justify-between border-b border-gray-100 pb-2">
+                      <span className="text-gray-500">Squad Number</span>
+                      <span className="font-medium">#{player.number}</span>
+                    </li>
+                  )}
+                  {player.joinedDate && (
+                    <li className="flex justify-between border-b border-gray-100 pb-2">
+                      <span className="text-gray-500">Joined Banks o' Dee</span>
+                      <span className="font-medium">{player.joinedDate}</span>
+                    </li>
+                  )}
                 </ul>
               </div>
+
+              {/* Did You Know Section */}
+              {player.didYouKnow && (
+                <div>
+                  <h3 className="text-lg font-bold text-[#00105A] mb-2">Did You Know?</h3>
+                  <p className="text-gray-700">{player.didYouKnow}</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
