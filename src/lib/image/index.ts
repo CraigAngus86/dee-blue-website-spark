@@ -8,3 +8,4 @@ export * from "./teamImages";
 export * from "./playerImages";
 export * from "./competitionImages";
 export * from "./competitorLogos";
+export * from "./sponsorLogos";
