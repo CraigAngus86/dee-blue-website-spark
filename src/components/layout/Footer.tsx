@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Mail, MapPin, Phone, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 import Text from "../ui/typography/Text";
@@ -87,35 +86,35 @@ const Footer: React.FC = () => {
           </div>
 
           {/* Column 3 - Contact & Social */}
-          <div className="flex flex-col">
+          <div className="flex flex-col items-center text-center">
             <Heading level={3} color="white" className="mb-6">
               Contact Us
             </Heading>
             
             <div className="space-y-4 mb-8">
-              <div className="flex items-start">
-                <MapPin className="text-[#C5E7FF] h-5 w-5 mt-1 flex-shrink-0" />
-                <Text color="white" size="small" className="ml-3 opacity-75">
+              <div className="flex items-center justify-center">
+                <MapPin className="text-[#C5E7FF] h-5 w-5 mr-3 flex-shrink-0" />
+                <Text color="white" size="small" className="opacity-75">
                   Spain Park Stadium, Aberdeen, AB12 5XY
                 </Text>
               </div>
               
-              <div className="flex items-center">
-                <Phone className="text-[#C5E7FF] h-5 w-5 flex-shrink-0" />
-                <Text color="white" size="small" className="ml-3 opacity-75">
+              <div className="flex items-center justify-center">
+                <Phone className="text-[#C5E7FF] h-5 w-5 mr-3 flex-shrink-0" />
+                <Text color="white" size="small" className="opacity-75">
                   +44 1224 869 948
                 </Text>
               </div>
               
-              <div className="flex items-center">
-                <Mail className="text-[#C5E7FF] h-5 w-5 flex-shrink-0" />
-                <Text color="white" size="small" className="ml-3 opacity-75">
+              <div className="flex items-center justify-center">
+                <Mail className="text-[#C5E7FF] h-5 w-5 mr-3 flex-shrink-0" />
+                <Text color="white" size="small" className="opacity-75">
                   info@banksofdeefc.com
                 </Text>
               </div>
             </div>
             
-            <div className="flex space-x-4">
+            <div className="flex space-x-4 justify-center">
               {socialLinks.map((link) => (
                 <a
                   key={link.label}

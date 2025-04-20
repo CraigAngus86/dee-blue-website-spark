@@ -26,7 +26,7 @@ const Header: React.FC<{ className?: string; transparent?: boolean }> = ({ class
               { name: 'News', path: '/news' },
               { name: 'Team and Management', path: '/team' },
               { name: 'Match Centre', path: '/match-centre' },
-              { name: 'Stadium', path: '/stadium' },
+              { name: 'Spain Park', path: '/stadium' },
               { name: 'Commercial Opportunities', path: '/commercial' },
             ].map((item) => (
               <li key={item.name} className="h-full group relative mx-3">
@@ -70,7 +70,7 @@ const Header: React.FC<{ className?: string; transparent?: boolean }> = ({ class
                 { name: 'News', path: '/news' },
                 { name: 'Team and Management', path: '/team' },
                 { name: 'Match Centre', path: '/match-centre' },
-                { name: 'Stadium', path: '/stadium' },
+                { name: 'Spain Park', path: '/stadium' },
                 { name: 'Commercial Opportunities', path: '/commercial' },
               ].map((item) => (
                 <div key={item.name}>
