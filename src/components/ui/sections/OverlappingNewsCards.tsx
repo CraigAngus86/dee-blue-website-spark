@@ -24,10 +24,10 @@ const OverlappingNewsCards: React.FC<OverlappingNewsCardsProps> = ({
       <PatternOverlay pattern="dots" opacity={0.05} color="dark" />
       <div className={cn(
         "container mx-auto px-4 relative z-10",
-        "-mt-28 md:-mt-36", // Adjusted overlap with hero section
+        "-mt-20 sm:-mt-24 md:-mt-32 lg:-mt-40", // Responsive overlap with hero section
         className
       )}>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-7">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
           {displayArticles.map(article => (
             <NewsCard
               key={article.id}
@@ -36,7 +36,6 @@ const OverlappingNewsCards: React.FC<OverlappingNewsCardsProps> = ({
               category={article.category}
               timestamp={article.timestamp}
               excerpt={article.excerpt}
-              elevation="lg"
               className="shadow-md"
             />
           ))}

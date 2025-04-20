@@ -11,6 +11,8 @@ interface NewsCardProps {
   timestamp: string;
   excerpt?: string;
   url?: string;
+  hasLogo?: boolean;
+  logoOverlayText?: string;
   elevation?: "sm" | "md" | "lg";
   className?: string;
 }
@@ -22,69 +24,82 @@ const NewsCard: React.FC<NewsCardProps> = ({
   timestamp,
   excerpt,
   url = "#",
+  hasLogo = false,
+  logoOverlayText = "",
   elevation = "md",
   className,
 }) => {
-  const getCategoryBgColor = (category: string) => {
-    if (category.includes("MATCH")) return "bg-primary";
-    if (category.includes("TEAM")) return "bg-secondary";
-    if (category.includes("CLUB")) return "bg-secondary";
-    if (category.includes("YOUTH")) return "bg-primary-light";
-    return "bg-secondary";
-  };
-
   return (
     <a
       href={url}
       className={cn(
-        "block bg-white rounded-lg overflow-hidden transition-all duration-300",
-        "hover:-translate-y-1 hover:shadow-lg h-full flex flex-col",
+        "group flex flex-col bg-white rounded-lg overflow-hidden transition-all duration-300",
+        "hover:-translate-y-1 hover:shadow-lg h-full",
         className
       )}
     >
-      <div className="relative">
-        <div className="aspect-[4/3] overflow-hidden">
-          <ResponsiveImage
-            src={image}
-            alt={title}
-            className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-          />
-        </div>
-        
-        <span 
-          className={cn(
-            "absolute top-4 left-4 inline-block",
-            getCategoryBgColor(category),
-            "text-white text-xs font-semibold px-3 py-1.5 rounded"
-          )}
-        >
-          {category}
-        </span>
+      {/* Image Container */}
+      <div className="relative overflow-hidden">
+        {hasLogo ? (
+          <div className="relative bg-primary aspect-[16/9] flex items-center justify-center">
+            <img
+              src="/assets/images/logos/BOD_Logo_White_square.png"
+              alt="Banks o' Dee FC"
+              className="w-24 h-24 opacity-90"
+            />
+            {logoOverlayText && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <h2 className="text-white text-2xl font-bold text-center px-6">
+                  {logoOverlayText}
+                </h2>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="aspect-[16/9]">
+            <ResponsiveImage
+              src={image}
+              alt={title}
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+          </div>
+        )}
+
+        {/* Category Badge */}
+        {category && (
+          <div className="absolute top-4 left-4">
+            <span className={cn(
+              "text-xs font-bold px-3 py-1 rounded",
+              hasLogo ? "bg-white text-primary" : "bg-primary text-white"
+            )}>
+              {category}
+            </span>
+          </div>
+        )}
       </div>
 
-      <div className="p-4 flex flex-col flex-grow">
-        <div className="mb-auto">
-          <h3 className="font-montserrat font-bold text-lg leading-tight text-primary mb-2 line-clamp-2">
-            {title}
-          </h3>
+      {/* Content */}
+      <div className="flex flex-col p-4 md:p-5 flex-grow">
+        {/* Title */}
+        <h3 className="font-montserrat font-bold text-xl leading-tight text-primary mb-2.5 line-clamp-2">
+          {title}
+        </h3>
 
-          {excerpt && (
-            <p className="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-4">
-              {excerpt}
-            </p>
-          )}
-        </div>
+        {/* Excerpt - only show if provided */}
+        {excerpt && (
+          <p className="text-gray-600 text-sm mb-4 line-clamp-3 flex-grow">
+            {excerpt}
+          </p>
+        )}
 
-        <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-          <span className="text-gray-400 text-xs">
+        {/* Footer - Date and Read More */}
+        <div className="flex items-center justify-between pt-3 border-t border-gray-100 mt-auto">
+          <span className="text-gray-500 text-xs">
             {timestamp}
           </span>
-          <span className="text-primary font-medium flex items-center gap-1 group text-sm">
+          <span className="text-primary text-sm font-medium flex items-center gap-1 group-hover:text-primary-light transition-colors">
             Read More
-            <ChevronRight 
-              className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" 
-              strokeWidth={2} 
-            />
+            <ChevronRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
           </span>
         </div>
       </div>
