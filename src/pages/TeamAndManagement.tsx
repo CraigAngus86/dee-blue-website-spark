@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { ChevronRight, Search } from 'lucide-react';
 import Header from '@/components/layout/Header';
@@ -22,44 +23,45 @@ const TeamAndManagement = () => {
       key={person.id}
       className="group relative overflow-hidden transition-all duration-300 hover:shadow-xl"
     >
-      <div className={`relative aspect-[3/4] overflow-hidden ${isManagement ? 'bg-navy-800' : person.position === 'Goalkeeper' ? 'bg-[#218F50]' : 'bg-[#00105A]'}`}>
+      {/* Make the top section square with aspect-square */}
+      <div className={`relative aspect-square overflow-hidden ${isManagement ? 'bg-navy-800' : person.position === 'Goalkeeper' ? 'bg-[#218F50]' : 'bg-[#00105A]'}`}>
         {/* Background gradient */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/80 z-10"></div>
         
-        {/* Player/Staff image */}
+        {/* Player/Staff image - updated to fill square container */}
         <img 
           src={person.image} 
           alt={person.name}
-          className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
         
         {/* Player number for players */}
         {!isManagement && person.number && (
-          <div className="absolute right-4 top-4 text-8xl font-bold text-white/20 z-10">
+          <div className="absolute right-4 top-4 text-6xl font-bold text-white/20 z-10">
             {person.number}
           </div>
         )}
         
         {/* Person details overlay */}
-        <div className="absolute bottom-0 left-0 right-0 z-20 p-6 text-white">
+        <div className="absolute bottom-0 left-0 right-0 z-20 p-4 text-white bg-gradient-to-t from-black/90 to-transparent">
           <div className="flex flex-col">
-            <span className="text-lg font-light">{person.firstName}</span>
-            <h3 className="text-3xl font-bold uppercase tracking-wide mb-1">{person.lastName}</h3>
-            <p className="text-sm text-gray-300">{person.position}</p>
+            <span className="text-sm font-light">{person.firstName}</span>
+            <h3 className="text-xl font-bold uppercase tracking-wide mb-1">{person.lastName}</h3>
+            <p className="text-xs text-gray-300">{person.position}</p>
           </div>
         </div>
       </div>
       
       {/* View profile link */}
-      <div className="bg-white py-3 px-4 border-t border-gray-200">
-        <a 
-          href={`/team/${person.id}`}
-          className="flex items-center justify-between text-[#00105A] text-sm font-medium hover:text-blue-700"
-        >
+      <a 
+        href={`/team/${person.id}`}
+        className="block bg-white py-2 px-4 border-t border-gray-200 text-[#00105A] hover:bg-gray-50"
+      >
+        <div className="flex items-center justify-between text-sm font-medium">
           View Profile
           <ChevronRight size={16} />
-        </a>
-      </div>
+        </div>
+      </a>
     </div>
   );
 
@@ -67,7 +69,7 @@ const TeamAndManagement = () => {
   const renderSection = (title: string, people: any[], isManagement = false) => (
     <section className="mb-16">
       <h2 className="text-4xl font-bold text-center uppercase text-[#00105A] mb-10">{title}</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-6">
         {filterMembers(people).map(person => renderPersonCard(person, isManagement))}
       </div>
     </section>
@@ -111,11 +113,9 @@ const TeamAndManagement = () => {
             </div>
           </div>
           
-          {/* Team Management Section */}
-          {renderSection('Team Management', teamData.management, true)}
-          
-          {/* Players Sections */}
+          {/* Team Sections */}
           <div className="grid gap-16">
+            {renderSection('Team Management', teamData.management, true)}
             {renderSection('Goalkeepers', teamData.goalkeepers)}
             {renderSection('Defenders', teamData.defenders)}
             {renderSection('Midfielders', teamData.midfielders)}

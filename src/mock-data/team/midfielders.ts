@@ -7,7 +7,7 @@ export const midfielders = [
     lastName: 'ALEXANDER',
     position: 'Midfielder',
     nationality: 'Scotland',
-    image: '/lovable-uploads/6126200b-1c7a-413a-93e8-0b02654e62ca.png',
+    image: '/lovable-uploads/076a9221-3da7-46c9-b7db-823eba4dca91.png',
     number: 6
   },
   {
@@ -17,7 +17,7 @@ export const midfielders = [
     lastName: 'ANTONIAZZI',
     position: 'Midfielder',
     nationality: 'Scotland',
-    image: '/lovable-uploads/aaa77b0c-518e-431e-b1c2-7e8c88701be0.png',
+    image: '/lovable-uploads/8eef6094-466b-4423-a179-206db522b5d9.png',
     number: 7
   },
   {
@@ -27,7 +27,7 @@ export const midfielders = [
     lastName: 'GILMOUR',
     position: 'Midfielder',
     nationality: 'Scotland',
-    image: '/lovable-uploads/925fb8e8-a212-4976-be02-9f1c52003978.png',
+    image: '/lovable-uploads/21726f39-e904-4c51-8f7b-c0fe6ec46097.png',
     number: 8
   },
   {

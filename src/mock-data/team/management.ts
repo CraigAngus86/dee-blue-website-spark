@@ -6,7 +6,7 @@ export const management = [
     lastName: 'LAWSON',
     position: 'Manager',
     nationality: 'Scotland',
-    image: '/lovable-uploads/b3eda155-ca6e-4d98-957c-01f12c0e44ac.png',
+    image: '/lovable-uploads/fe628f2a-08fa-4ef4-a31b-fd6a9474c822.png',
     number: null
   },
   {

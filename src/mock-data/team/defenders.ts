@@ -7,7 +7,7 @@ export const defenders = [
     lastName: 'ANDERSON',
     position: 'Defender',
     nationality: 'Scotland',
-    image: '/lovable-uploads/d0ada052-33c3-4177-b173-fe7b2f6fa101.png',
+    image: '/lovable-uploads/147ebf0d-18b0-47e8-9dc9-64d20959df4e.png',
     number: 2
   },
   {
@@ -17,7 +17,7 @@ export const defenders = [
     lastName: 'DAVIDSON',
     position: 'Defender',
     nationality: 'Scotland',
-    image: '/lovable-uploads/155b48b7-a0d5-4f28-902a-b25ca0391241.png',
+    image: '/lovable-uploads/57237e85-6f41-4c27-8923-fdf86ddaf195.png',
     number: 3
   },
   {
