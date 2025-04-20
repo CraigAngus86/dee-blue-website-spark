@@ -7,7 +7,7 @@ export const midfielders = [
     lastName: 'ALEXANDER',
     position: 'Midfielder',
     nationality: 'Scotland',
-    image: '/assets/images/players/headshot_dummy.jpg',
+    image: '/lovable-uploads/6126200b-1c7a-413a-93e8-0b02654e62ca.png',
     number: 6
   },
   {
@@ -17,7 +17,7 @@ export const midfielders = [
     lastName: 'ANTONIAZZI',
     position: 'Midfielder',
     nationality: 'Scotland',
-    image: '/assets/images/players/headshot_dummy.jpg',
+    image: '/lovable-uploads/aaa77b0c-518e-431e-b1c2-7e8c88701be0.png',
     number: 7
   },
   {
@@ -27,7 +27,7 @@ export const midfielders = [
     lastName: 'GILMOUR',
     position: 'Midfielder',
     nationality: 'Scotland',
-    image: '/assets/images/players/headshot_dummy.jpg',
+    image: '/lovable-uploads/925fb8e8-a212-4976-be02-9f1c52003978.png',
     number: 8
   },
   {
@@ -37,7 +37,7 @@ export const midfielders = [
     lastName: 'MACLEOD',
     position: 'Midfielder',
     nationality: 'Scotland',
-    image: '/assets/images/players/headshot_dummy.jpg',
+    image: '/lovable-uploads/558639a9-77d1-4f67-be52-f332a50d957b.png',
     number: 14
   },
   {
@@ -47,7 +47,7 @@ export const midfielders = [
     lastName: 'OSPREY',
     position: 'Midfielder',
     nationality: 'Scotland',
-    image: '/assets/images/players/headshot_dummy.jpg',
+    image: '/lovable-uploads/7656c437-bb50-4503-927f-8f86d16f37a4.png',
     number: 15
   },
   {

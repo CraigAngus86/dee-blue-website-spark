@@ -1,4 +1,3 @@
-
 export const management = [
   {
     id: 101,
@@ -7,7 +6,7 @@ export const management = [
     lastName: 'LAWSON',
     position: 'Manager',
     nationality: 'Scotland',
-    image: '/assets/images/team/Training1_Square.jpg',
+    image: '/lovable-uploads/b3eda155-ca6e-4d98-957c-01f12c0e44ac.png',
     number: null
   },
   {

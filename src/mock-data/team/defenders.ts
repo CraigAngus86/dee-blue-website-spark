@@ -7,7 +7,7 @@ export const defenders = [
     lastName: 'ANDERSON',
     position: 'Defender',
     nationality: 'Scotland',
-    image: '/assets/images/players/headshot_dummy.jpg',
+    image: '/lovable-uploads/d0ada052-33c3-4177-b173-fe7b2f6fa101.png',
     number: 2
   },
   {
@@ -17,7 +17,7 @@ export const defenders = [
     lastName: 'DAVIDSON',
     position: 'Defender',
     nationality: 'Scotland',
-    image: '/assets/images/players/headshot_dummy.jpg',
+    image: '/lovable-uploads/155b48b7-a0d5-4f28-902a-b25ca0391241.png',
     number: 3
   },
   {
@@ -27,7 +27,7 @@ export const defenders = [
     lastName: 'EMMETT',
     position: 'Defender',
     nationality: 'Scotland',
-    image: '/assets/images/players/headshot_dummy.jpg',
+    image: '/lovable-uploads/c840865f-8a51-4720-b93b-3b4608e44bdd.png',
     number: 4
   },
   {

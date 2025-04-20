@@ -114,17 +114,13 @@ const TeamAndManagement = () => {
           {/* Team Management Section */}
           {renderSection('Team Management', teamData.management, true)}
           
-          {/* Goalkeepers Section */}
-          {renderSection('Goalkeepers', teamData.goalkeepers)}
-          
-          {/* Defenders Section */}
-          {renderSection('Defenders', teamData.defenders)}
-          
-          {/* Midfielders Section */}
-          {renderSection('Midfielders', teamData.midfielders)}
-          
-          {/* Forwards Section */}
-          {renderSection('Forwards', teamData.forwards)}
+          {/* Players Sections */}
+          <div className="grid gap-16">
+            {renderSection('Goalkeepers', teamData.goalkeepers)}
+            {renderSection('Defenders', teamData.defenders)}
+            {renderSection('Midfielders', teamData.midfielders)}
+            {renderSection('Forwards', teamData.forwards)}
+          </div>
         </div>
       </main>
       <Footer />
