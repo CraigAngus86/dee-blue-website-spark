@@ -15,12 +15,12 @@ export const forwards = [
   },
   {
     id: 25,
-    name: 'Kane Winton',
-    firstName: 'Kane',
-    lastName: 'WINTON',
+    name: 'Scott Milne',
+    firstName: 'Scott',
+    lastName: 'MILNE',
     position: 'Forward',
     nationality: 'Scotland',
     image: '/assets/images/players/headshot_dummy.jpg',
-    number: 20
+    number: 10
   }
 ];

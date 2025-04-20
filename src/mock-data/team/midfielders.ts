@@ -96,7 +96,7 @@ export const midfielders = [
     lastName: 'WINTON',
     position: 'Midfielder',
     nationality: 'Scotland',
-    image: '/assets/images/players/Kane_Headshot.jpg',
+    image: '/assets/images/players/headshot_dummy.jpg',
     number: 20
   }
 ];
