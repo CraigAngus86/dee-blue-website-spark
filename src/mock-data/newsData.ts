@@ -1,5 +1,4 @@
-
-import { getNewsImage } from '@/lib/imageUtils';
+import { getNewsImage } from '@/lib/image';
 
 export const newsArticles = [
   {

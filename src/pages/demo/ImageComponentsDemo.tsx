@@ -1,4 +1,3 @@
-
 import React from "react";
 import Section from "@/components/ui/layout/Section";
 import Container from "@/components/ui/layout/Container";
@@ -22,7 +21,7 @@ import {
   getTeamImage,
   getSponsorLogo,
   getCompetitorLogo 
-} from "@/lib/imageUtils";
+} from "@/lib/image";
 import { newsArticles } from "@/mock-data/newsData";
 import { upcomingFixtures, recentResults } from "@/mock-data/fixturesData";
 import { matchDayGallery } from "@/mock-data/galleryData";

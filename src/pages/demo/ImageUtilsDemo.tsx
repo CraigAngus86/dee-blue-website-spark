@@ -1,4 +1,3 @@
-
 import React from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -17,7 +16,7 @@ import {
   getMatchDayImage,
   getSponsorLogo,
   getPlaceholderImage
-} from "@/lib/imageUtils";
+} from "@/lib/image";
 
 const ImageUtilsDemo: React.FC = () => {
   return (

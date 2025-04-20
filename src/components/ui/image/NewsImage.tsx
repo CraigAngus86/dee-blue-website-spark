@@ -1,8 +1,7 @@
-
 import React from "react";
 import { cn } from "@/lib/utils";
 import ResponsiveImage from "./ResponsiveImage";
-import { getNewsImage } from "@/lib/imageUtils";
+import { getNewsImage } from "@/lib/image";
 
 interface NewsImageProps {
   filename: string;

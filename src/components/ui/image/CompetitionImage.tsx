@@ -1,8 +1,7 @@
-
 import React from "react";
 import { cn } from "@/lib/utils";
 import ResponsiveImage from "./ResponsiveImage";
-import { getCompetitionImage } from "@/lib/imageUtils";
+import { getCompetitionImage } from "@/lib/image";
 
 interface CompetitionImageProps {
   filename: string;

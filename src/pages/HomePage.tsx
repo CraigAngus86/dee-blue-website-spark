@@ -1,8 +1,7 @@
-
 import React from "react";
 import HeroSection from "@/components/ui/hero/HeroSection";
 import OverlappingNewsCards from "@/components/ui/sections/OverlappingNewsCards";
-import { getNewsImage } from "@/lib/imageUtils";
+import { getNewsImage } from "@/lib/image";
 import { newsArticles } from "@/mock-data/newsData";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";

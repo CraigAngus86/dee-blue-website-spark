@@ -1,9 +1,8 @@
-
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import ResponsiveImage from "./ResponsiveImage";
 import { Sponsor } from "@/lib/types";
-import { getSponsorLogo } from "@/lib/imageUtils";
+import { getSponsorLogo } from "@/lib/image";
 
 interface SponsorLogoProps {
   sponsor: Sponsor;

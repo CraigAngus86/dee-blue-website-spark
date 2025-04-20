@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { getStadiumImage, getNewsImage, getTeamImage } from "@/lib/imageUtils";
+import { getStadiumImage, getNewsImage, getTeamImage } from "@/lib/image";
 import ResponsiveImage from "@/components/ui/image/ResponsiveImage";
 import Text from "@/components/ui/typography/Text";
 import Heading from "@/components/ui/typography/Heading";

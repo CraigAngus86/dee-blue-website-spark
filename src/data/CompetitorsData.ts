@@ -1,6 +1,5 @@
-
 import { Competitor } from "@/lib/types";
-import { getCompetitorLogo, getPlaceholderImage } from "@/lib/imageUtils";
+import { getCompetitorLogo, getPlaceholderImage } from "@/lib/image";
 
 export const competitors: Competitor[] = [
   {

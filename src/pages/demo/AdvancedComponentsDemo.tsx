@@ -1,4 +1,3 @@
-
 import React from "react";
 import Section from "@/components/ui/layout/Section";
 import Container from "@/components/ui/layout/Container";
@@ -11,7 +10,7 @@ import NewsCard from "@/components/ui/image/NewsCard";
 import MatchCard from "@/components/ui/image/MatchCard";
 import ImageGallery from "@/components/ui/image/ImageGallery";
 
-import { getStadiumImage } from "@/lib/imageUtils";
+import { getStadiumImage } from "@/lib/image";
 import { newsArticles } from "@/mock-data/newsData";
 import { upcomingFixtures, recentResults } from "@/mock-data/fixturesData";
 import { matchDayGallery } from "@/mock-data/galleryData";

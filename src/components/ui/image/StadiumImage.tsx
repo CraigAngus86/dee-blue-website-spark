@@ -1,8 +1,7 @@
-
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import ResponsiveImage from "./ResponsiveImage";
-import { getStadiumImage } from "@/lib/imageUtils";
+import { getStadiumImage } from "@/lib/image";
 
 interface StadiumImageProps {
   filename: string;

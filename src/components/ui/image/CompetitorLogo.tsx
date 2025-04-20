@@ -1,8 +1,7 @@
-
 import React from "react";
 import { cn } from "@/lib/utils";
 import ResponsiveImage from "./ResponsiveImage";
-import { getCompetitorLogo } from "@/lib/imageUtils";
+import { getCompetitorLogo } from "@/lib/image";
 
 interface CompetitorLogoProps {
   name: string;
@@ -23,7 +22,6 @@ const CompetitorLogo: React.FC<CompetitorLogoProps> = ({
   showName = false,
   href,
 }) => {
-  // Define size classes for the logo
   const sizeClasses = {
     xs: "w-8 h-8",
     sm: "w-12 h-12",
@@ -32,21 +30,16 @@ const CompetitorLogo: React.FC<CompetitorLogoProps> = ({
     xl: "w-24 h-24",
   };
 
-  // Check if this is Banks o' Dee
   const isBOD = name.toLowerCase().includes("banks") || 
                 name.toLowerCase().includes("bod") || 
                 name.toLowerCase().includes("dee");
   
-  // Use the provided logoSrc or get it from the utility function
-  // For Banks o' Dee, use the club logo directly
   let formattedLogoSrc = logoSrc;
   
   if (!formattedLogoSrc) {
     if (isBOD) {
-      // Use the club logo for Banks o' Dee
       formattedLogoSrc = "/assets/images/logos/BOD_Logo_Navy_square.png";
     } else {
-      // Extract just the team name without the "FC" suffix for better matching
       const simpleName = name.replace(/\s+FC$|\s+Football\s+Club$/i, "").trim();
       formattedLogoSrc = getCompetitorLogo(simpleName);
     }
@@ -54,7 +47,6 @@ const CompetitorLogo: React.FC<CompetitorLogoProps> = ({
   
   console.log(`Rendering competitor logo: ${name}, path: ${formattedLogoSrc}`);
 
-  // Logo component with consistent styling
   const Logo = (
     <>
       <div 
@@ -83,7 +75,6 @@ const CompetitorLogo: React.FC<CompetitorLogoProps> = ({
     </>
   );
 
-  // Wrap in link if href is provided
   if (href) {
     return (
       <a 
@@ -96,7 +87,6 @@ const CompetitorLogo: React.FC<CompetitorLogoProps> = ({
     );
   }
 
-  // Default return
   return (
     <div className="inline-flex flex-col items-center">
       {Logo}

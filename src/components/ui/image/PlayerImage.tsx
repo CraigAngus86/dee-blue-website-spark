@@ -1,8 +1,7 @@
-
 import React from "react";
 import { cn } from "@/lib/utils";
 import ResponsiveImage from "./ResponsiveImage";
-import { getPlayerImage } from "@/lib/imageUtils";
+import { getPlayerImage } from "@/lib/image";
 
 interface PlayerImageProps {
   playerId: string;
