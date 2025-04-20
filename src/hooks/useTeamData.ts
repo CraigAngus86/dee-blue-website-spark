@@ -21,7 +21,7 @@ export function useTeamData() {
       const { data: teamMembers, error } = await supabase
         .from('team_members')
         .select('*')
-        .order('jersey_number', { ascending: true, nullsLast: true });
+        .order('jersey_number', { ascending: true });
 
       if (error) {
         console.error('Error fetching team data:', error);
