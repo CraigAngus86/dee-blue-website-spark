@@ -4,10 +4,11 @@ import { Match } from '@/types/match';
 import MatchCardNew from '../image/MatchCardNew';
 import { ButtonNew } from '../ButtonNew';
 import { Filter } from 'lucide-react';
-import { getUpcomingFixtures } from '@/mock-data/fixturesData';
+import { getUpcomingFixtures, getMatchesByMonth } from '@/mock-data/fixturesData';
 
 const FixturesList = () => {
   const upcomingFixtures = getUpcomingFixtures();
+  const fixturesByMonth = getMatchesByMonth(upcomingFixtures);
 
   return (
     <div>
@@ -22,23 +23,30 @@ const FixturesList = () => {
         </ButtonNew>
       </div>
       
-      <div className="grid gap-4">
-        {upcomingFixtures.map((match) => (
-          <MatchCardNew
-            key={match.id}
-            match={{
-              id: match.id,
-              competition: match.competition,
-              date: match.date,
-              time: match.time,
-              homeTeam: match.homeTeam,
-              awayTeam: match.awayTeam,
-              venue: match.venue || '',
-              status: 'upcoming',
-              ticketLink: match.ticketLink,
-            }}
-            variant="future"
-          />
+      <div className="space-y-8">
+        {Object.entries(fixturesByMonth).map(([month, matches]) => (
+          <div key={month}>
+            <h3 className="text-lg font-semibold text-gray-600 mb-4">{month}</h3>
+            <div className="grid gap-4">
+              {matches.map((match) => (
+                <MatchCardNew
+                  key={match.id}
+                  match={{
+                    id: match.id,
+                    competition: match.competition,
+                    date: match.date,
+                    time: match.time,
+                    homeTeam: match.homeTeam,
+                    awayTeam: match.awayTeam,
+                    venue: match.venue || '',
+                    status: 'upcoming',
+                    ticketLink: match.ticketLink,
+                  }}
+                  variant="future"
+                />
+              ))}
+            </div>
+          </div>
         ))}
       </div>
     </div>

@@ -4,10 +4,11 @@ import { Match } from '@/types/match';
 import MatchCardNew from '../image/MatchCardNew';
 import { ButtonNew } from '../ButtonNew';
 import { Filter } from 'lucide-react';
-import { getResults } from '@/mock-data/fixturesData';
+import { getResults, getMatchesByMonth } from '@/mock-data/fixturesData';
 
 const ResultsList = () => {
   const recentResults = getResults();
+  const resultsByMonth = getMatchesByMonth(recentResults);
 
   return (
     <div>
@@ -22,27 +23,34 @@ const ResultsList = () => {
         </ButtonNew>
       </div>
       
-      <div className="grid gap-4">
-        {recentResults.map((match) => (
-          <MatchCardNew
-            key={match.id}
-            match={{
-              id: match.id,
-              competition: match.competition,
-              date: match.date,
-              time: match.time,
-              homeTeam: match.homeTeam,
-              awayTeam: match.awayTeam,
-              venue: match.venue || '',
-              status: 'completed',
-              result: {
-                homeScore: match.homeScore || 0,
-                awayScore: match.awayScore || 0,
-              },
-              matchReportLink: match.matchReportLink,
-            }}
-            variant="past"
-          />
+      <div className="space-y-8">
+        {Object.entries(resultsByMonth).reverse().map(([month, matches]) => (
+          <div key={month}>
+            <h3 className="text-lg font-semibold text-gray-600 mb-4">{month}</h3>
+            <div className="grid gap-4">
+              {matches.map((match) => (
+                <MatchCardNew
+                  key={match.id}
+                  match={{
+                    id: match.id,
+                    competition: match.competition,
+                    date: match.date,
+                    time: match.time,
+                    homeTeam: match.homeTeam,
+                    awayTeam: match.awayTeam,
+                    venue: match.venue || '',
+                    status: 'completed',
+                    result: {
+                      homeScore: match.homeScore || 0,
+                      awayScore: match.awayScore || 0,
+                    },
+                    matchReportLink: match.matchReportLink,
+                  }}
+                  variant="past"
+                />
+              ))}
+            </div>
+          </div>
         ))}
       </div>
     </div>

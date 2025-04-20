@@ -1,4 +1,3 @@
-
 import { Match } from "@/types/match";
 
 // Convert date string (DD/MM/YYYY) to ISO format (YYYY-MM-DD)
@@ -157,6 +156,259 @@ const allFixtures: Match[] = [
     isCompleted: false
   }
 ];
+
+// Add league table data
+export const leagueTableData = [
+  {
+    position: 1,
+    team: "Brora Rangers",
+    played: 34,
+    won: 27,
+    drawn: 1,
+    lost: 6,
+    goalsFor: 117,
+    goalsAgainst: 31,
+    goalDifference: 86,
+    points: 82,
+    form: ["W", "W", "W", "W", "W", "W"]
+  },
+  {
+    position: 2,
+    team: "Brechin City",
+    played: 34,
+    won: 25,
+    drawn: 7,
+    lost: 2,
+    goalsFor: 84,
+    goalsAgainst: 29,
+    goalDifference: 55,
+    points: 82,
+    form: ["L", "W", "W", "W", "W", "W"]
+  },
+  {
+    position: 3,
+    team: "Banks o' Dee",
+    played: 34,
+    won: 22,
+    drawn: 6,
+    lost: 6,
+    goalsFor: 77,
+    goalsAgainst: 28,
+    goalDifference: 49,
+    points: 72,
+    form: ["W", "W", "L", "W", "W", "D"]
+  },
+  {
+    position: 4,
+    team: "Inverurie Loco Works",
+    played: 34,
+    won: 22,
+    drawn: 6,
+    lost: 6,
+    goalsFor: 74,
+    goalsAgainst: 33,
+    goalDifference: 41,
+    points: 72,
+    form: ["W", "W", "D", "W", "W", "W"]
+  },
+  {
+    position: 5,
+    team: "Fraserburgh",
+    played: 34,
+    won: 17,
+    drawn: 12,
+    lost: 5,
+    goalsFor: 71,
+    goalsAgainst: 36,
+    goalDifference: 35,
+    points: 63,
+    form: ["W", "D", "W", "L", "W", "W"]
+  },
+  {
+    position: 6,
+    team: "Clachnacuddin",
+    played: 34,
+    won: 18,
+    drawn: 5,
+    lost: 11,
+    goalsFor: 74,
+    goalsAgainst: 42,
+    goalDifference: 32,
+    points: 59,
+    form: ["W", "W", "L", "L", "W", "D"]
+  },
+  {
+    position: 7,
+    team: "Buckie Thistle",
+    played: 34,
+    won: 17,
+    drawn: 7,
+    lost: 10,
+    goalsFor: 75,
+    goalsAgainst: 44,
+    goalDifference: 31,
+    points: 58,
+    form: ["W", "D", "W", "D", "W", "W"]
+  },
+  {
+    position: 8,
+    team: "Formartine United",
+    played: 34,
+    won: 16,
+    drawn: 7,
+    lost: 11,
+    goalsFor: 59,
+    goalsAgainst: 46,
+    goalDifference: 13,
+    points: 55,
+    form: ["D", "W", "D", "L", "W", "D"]
+  },
+  {
+    position: 9,
+    team: "Huntly",
+    played: 34,
+    won: 15,
+    drawn: 3,
+    lost: 16,
+    goalsFor: 66,
+    goalsAgainst: 60,
+    goalDifference: 6,
+    points: 48,
+    form: ["L", "L", "L", "L", "L", "L"]
+  },
+  {
+    position: 10,
+    team: "Forres Mechanics",
+    played: 34,
+    won: 13,
+    drawn: 7,
+    lost: 14,
+    goalsFor: 69,
+    goalsAgainst: 80,
+    goalDifference: -11,
+    points: 46,
+    form: ["D", "L", "L", "W", "W", "D"]
+  },
+  {
+    position: 11,
+    team: "Deveronvale",
+    played: 34,
+    won: 13,
+    drawn: 4,
+    lost: 17,
+    goalsFor: 49,
+    goalsAgainst: 77,
+    goalDifference: -28,
+    points: 43,
+    form: ["L", "L", "W", "W", "W", "D"]
+  },
+  {
+    position: 12,
+    team: "Turriff United",
+    played: 34,
+    won: 12,
+    drawn: 4,
+    lost: 18,
+    goalsFor: 48,
+    goalsAgainst: 56,
+    goalDifference: -8,
+    points: 40,
+    form: ["L", "L", "W", "L", "L", "W"]
+  },
+  {
+    position: 13,
+    team: "Nairn County",
+    played: 34,
+    won: 10,
+    drawn: 7,
+    lost: 17,
+    goalsFor: 49,
+    goalsAgainst: 63,
+    goalDifference: -14,
+    points: 37,
+    form: ["L", "L", "W", "L", "L", "D"]
+  },
+  {
+    position: 14,
+    team: "Wick Academy",
+    played: 34,
+    won: 11,
+    drawn: 3,
+    lost: 20,
+    goalsFor: 47,
+    goalsAgainst: 77,
+    goalDifference: -30,
+    points: 36,
+    form: ["D", "W", "W", "W", "W", "L"]
+  },
+  {
+    position: 15,
+    team: "Keith",
+    played: 34,
+    won: 10,
+    drawn: 2,
+    lost: 22,
+    goalsFor: 33,
+    goalsAgainst: 74,
+    goalDifference: -41,
+    points: 32,
+    form: ["W", "L", "W", "L", "L", "L"]
+  },
+  {
+    position: 16,
+    team: "Lossiemouth",
+    played: 34,
+    won: 6,
+    drawn: 2,
+    lost: 26,
+    goalsFor: 28,
+    goalsAgainst: 79,
+    goalDifference: -51,
+    points: 20,
+    form: ["D", "W", "L", "L", "L", "L"]
+  },
+  {
+    position: 17,
+    team: "Strathspey Thistle",
+    played: 34,
+    won: 4,
+    drawn: 5,
+    lost: 25,
+    goalsFor: 40,
+    goalsAgainst: 112,
+    goalDifference: -72,
+    points: 17,
+    form: ["W", "L", "L", "L", "W", "L"]
+  },
+  {
+    position: 18,
+    team: "Rothes",
+    played: 34,
+    won: 3,
+    drawn: 2,
+    lost: 29,
+    goalsFor: 34,
+    goalsAgainst: 127,
+    goalDifference: -93,
+    points: 11,
+    form: ["D", "L", "L", "L", "L", "L"]
+  }
+];
+
+// Helper function to group matches by month
+export const getMatchesByMonth = (matches: Match[]) => {
+  return matches.reduce((acc, match) => {
+    const date = new Date(match.date);
+    const monthYear = date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+    
+    if (!acc[monthYear]) {
+      acc[monthYear] = [];
+    }
+    
+    acc[monthYear].push(match);
+    return acc;
+  }, {} as Record<string, Match[]>);
+};
 
 // Helper function to get completed matches (results)
 export const getResults = () => {
