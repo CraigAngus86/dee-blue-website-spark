@@ -7,8 +7,8 @@ export interface Match {
   time: string;
   homeTeam: string;
   awayTeam: string;
-  venue?: string;
-  status?: string;
+  venue: string; // Making venue required
+  status: string;
   homeScore?: number;
   awayScore?: number;
   isCompleted?: boolean;

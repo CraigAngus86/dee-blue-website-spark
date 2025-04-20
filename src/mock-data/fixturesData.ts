@@ -15,8 +15,7 @@ const allFixtures: Match[] = [
     homeTeam: 'Formartine',
     awayTeam: "Banks o' Dee",
     venue: 'North Lodge Park',
-    homeScore: 0,
-    awayScore: 2,
+    status: 'completed',
     isCompleted: true,
     result: {
       homeScore: 0,
@@ -31,8 +30,7 @@ const allFixtures: Match[] = [
     homeTeam: "Banks o' Dee",
     awayTeam: 'Aberdeen FC B',
     venue: 'Spain Park',
-    homeScore: 1,
-    awayScore: 0,
+    status: 'completed',
     isCompleted: true,
     result: {
       homeScore: 1,
@@ -47,8 +45,7 @@ const allFixtures: Match[] = [
     homeTeam: "Banks o' Dee",
     awayTeam: 'Lossiemouth',
     venue: 'Spain Park',
-    homeScore: 0,
-    awayScore: 0,
+    status: 'completed',
     isCompleted: true,
     result: {
       homeScore: 0,
@@ -63,8 +60,7 @@ const allFixtures: Match[] = [
     homeTeam: "Keith FC",
     awayTeam: "Banks o' Dee",
     venue: 'Kynoch Park',
-    homeScore: 1,
-    awayScore: 2,
+    status: 'completed',
     isCompleted: true,
     result: {
       homeScore: 1,
@@ -79,8 +75,7 @@ const allFixtures: Match[] = [
     homeTeam: "Banks o' Dee",
     awayTeam: 'Nairn County',
     venue: 'Spain Park',
-    homeScore: 4,
-    awayScore: 0,
+    status: 'completed',
     isCompleted: true,
     result: {
       homeScore: 4,
@@ -95,8 +90,7 @@ const allFixtures: Match[] = [
     homeTeam: 'Elgin City',
     awayTeam: "Banks o' Dee",
     venue: 'Borough Briggs',
-    homeScore: 2,
-    awayScore: 1,
+    status: 'completed',
     isCompleted: true,
     result: {
       homeScore: 2,
@@ -111,8 +105,7 @@ const allFixtures: Match[] = [
     homeTeam: "Banks o' Dee",
     awayTeam: 'Inverurie Locos',
     venue: 'Spain Park',
-    homeScore: 1,
-    awayScore: 1,
+    status: 'completed',
     isCompleted: true,
     result: {
       homeScore: 1,
@@ -127,8 +120,7 @@ const allFixtures: Match[] = [
     homeTeam: 'Fraserburgh',
     awayTeam: "Banks o' Dee",
     venue: 'Bellslea Park',
-    homeScore: 1,
-    awayScore: 0,
+    status: 'completed',
     isCompleted: true,
     result: {
       homeScore: 1,
@@ -143,6 +135,7 @@ const allFixtures: Match[] = [
     homeTeam: 'Forres',
     awayTeam: "Banks o' Dee",
     venue: 'Mosset Park',
+    status: 'upcoming',
     isCompleted: false
   },
   {
@@ -153,6 +146,7 @@ const allFixtures: Match[] = [
     homeTeam: "Banks o' Dee",
     awayTeam: 'Fraserburgh',
     venue: 'Spain Park',
+    status: 'upcoming',
     isCompleted: false,
     ticketLink: 'https://tickets.bankodee.com/cup-final'
   }
@@ -166,7 +160,7 @@ export const getAvailableMonths = () => {
     const monthYear = date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
     months.add(monthYear);
   });
-  return Array.from(months);
+  return Array.from(months) as string[];
 };
 
 // Helper function to get competitions as options for filter
@@ -175,7 +169,7 @@ export const getAvailableCompetitions = () => {
   allFixtures.forEach(fixture => {
     competitions.add(fixture.competition.split(' - ')[0]); // Split to handle cases like "Cup - Final"
   });
-  return Array.from(competitions);
+  return Array.from(competitions) as string[];
 };
 
 // Helper function to get seasons as options for filter
@@ -227,7 +221,7 @@ export const getMatchCenterMatches = () => {
 // Export all fixtures if needed
 export const getAllFixtures = () => allFixtures;
 
-// Export league table data
+// Keep existing league table data
 export const leagueTableData = [
   {
     position: 1,

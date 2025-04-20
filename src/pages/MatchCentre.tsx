@@ -82,7 +82,7 @@ const MatchCentre = () => {
                     <SelectValue placeholder="Season" />
                   </SelectTrigger>
                   <SelectContent>
-                    {seasons.map(season => (
+                    {seasons.map((season) => (
                       <SelectItem key={season} value={season}>
                         {season}
                       </SelectItem>
@@ -98,8 +98,8 @@ const MatchCentre = () => {
                     <SelectValue placeholder="All Months" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Months</SelectItem>
-                    {months.map(month => (
+                    <SelectItem key="all" value="">All Months</SelectItem>
+                    {months.map((month) => (
                       <SelectItem key={month} value={month}>
                         {month}
                       </SelectItem>
@@ -115,8 +115,8 @@ const MatchCentre = () => {
                     <SelectValue placeholder="All Competitions" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Competitions</SelectItem>
-                    {competitions.map(competition => (
+                    <SelectItem key="all" value="">All Competitions</SelectItem>
+                    {competitions.map((competition) => (
                       <SelectItem key={competition} value={competition}>
                         {competition}
                       </SelectItem>
