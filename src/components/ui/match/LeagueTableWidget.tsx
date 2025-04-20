@@ -38,28 +38,28 @@ const LeagueTableWidget = () => {
               3
             </div>
             <div>
-              <Text weight="bold" size="xl" color="primary">Banks o' Dee FC</Text>
+              <Text weight="bold" size="large" color="primary" className="text-lg">Banks o' Dee FC</Text>
             </div>
           </div>
           
           {/* Points - 2 columns */}
           <div className="md:col-span-2 text-center">
-            <Text size="3xl" weight="bold" color="primary" className="leading-none">60</Text>
+            <Text size="large" weight="bold" color="primary" className="text-3xl leading-none">60</Text>
             <Text size="xs" color="muted" className="uppercase mt-1">Points</Text>
           </div>
           
           {/* Stats - 4 columns */}
           <div className="md:col-span-4 flex justify-center gap-8">
             <div className="text-center">
-              <Text size="2xl" weight="bold" color="primary" className="leading-none">18</Text>
+              <Text size="large" weight="bold" color="primary" className="text-xl leading-none">18</Text>
               <Text size="xs" color="muted" className="uppercase mt-1">Won</Text>
             </div>
             <div className="text-center">
-              <Text size="2xl" weight="bold" color="primary" className="leading-none">6</Text>
+              <Text size="large" weight="bold" color="primary" className="text-xl leading-none">6</Text>
               <Text size="xs" color="muted" className="uppercase mt-1">Drawn</Text>
             </div>
             <div className="text-center">
-              <Text size="2xl" weight="bold" color="primary" className="leading-none">4</Text>
+              <Text size="large" weight="bold" color="primary" className="text-xl leading-none">4</Text>
               <Text size="xs" color="muted" className="uppercase mt-1">Lost</Text>
             </div>
           </div>
