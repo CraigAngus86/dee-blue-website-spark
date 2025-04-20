@@ -139,6 +139,36 @@ export type Database = {
           },
         ]
       }
+      competitions: {
+        Row: {
+          created_at: string | null
+          id: string
+          logo_url: string | null
+          name: string
+          short_name: string | null
+          type: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          logo_url?: string | null
+          name: string
+          short_name?: string | null
+          type?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          logo_url?: string | null
+          name?: string
+          short_name?: string | null
+          type?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       fan_audience_groups: {
         Row: {
           created_at: string | null
@@ -901,6 +931,75 @@ export type Database = {
         }
         Relationships: []
       }
+      league_standings: {
+        Row: {
+          created_at: string | null
+          drawn: number | null
+          form: string[] | null
+          goal_difference: number | null
+          goals_against: number | null
+          goals_for: number | null
+          id: string
+          lost: number | null
+          played: number | null
+          points: number | null
+          position: number | null
+          season_competition_id: string | null
+          team_id: string | null
+          updated_at: string | null
+          won: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          drawn?: number | null
+          form?: string[] | null
+          goal_difference?: number | null
+          goals_against?: number | null
+          goals_for?: number | null
+          id?: string
+          lost?: number | null
+          played?: number | null
+          points?: number | null
+          position?: number | null
+          season_competition_id?: string | null
+          team_id?: string | null
+          updated_at?: string | null
+          won?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          drawn?: number | null
+          form?: string[] | null
+          goal_difference?: number | null
+          goals_against?: number | null
+          goals_for?: number | null
+          id?: string
+          lost?: number | null
+          played?: number | null
+          points?: number | null
+          position?: number | null
+          season_competition_id?: string | null
+          team_id?: string | null
+          updated_at?: string | null
+          won?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "league_standings_season_competition_id_fkey"
+            columns: ["season_competition_id"]
+            isOneToOne: false
+            referencedRelation: "season_competitions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "league_standings_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       match_ticket_configs: {
         Row: {
           capacity: number | null
@@ -938,6 +1037,88 @@ export type Database = {
             columns: ["fixture_id"]
             isOneToOne: true
             referencedRelation: "fixtures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      matches: {
+        Row: {
+          away_score: number | null
+          away_scorers: string[] | null
+          away_team_id: string | null
+          created_at: string | null
+          home_score: number | null
+          home_scorers: string[] | null
+          home_team_id: string | null
+          id: string
+          match_date: string
+          match_report_link: string | null
+          match_time: string | null
+          season_competition_id: string | null
+          source: string | null
+          status: string | null
+          ticket_link: string | null
+          updated_at: string | null
+          venue: string | null
+        }
+        Insert: {
+          away_score?: number | null
+          away_scorers?: string[] | null
+          away_team_id?: string | null
+          created_at?: string | null
+          home_score?: number | null
+          home_scorers?: string[] | null
+          home_team_id?: string | null
+          id?: string
+          match_date: string
+          match_report_link?: string | null
+          match_time?: string | null
+          season_competition_id?: string | null
+          source?: string | null
+          status?: string | null
+          ticket_link?: string | null
+          updated_at?: string | null
+          venue?: string | null
+        }
+        Update: {
+          away_score?: number | null
+          away_scorers?: string[] | null
+          away_team_id?: string | null
+          created_at?: string | null
+          home_score?: number | null
+          home_scorers?: string[] | null
+          home_team_id?: string | null
+          id?: string
+          match_date?: string
+          match_report_link?: string | null
+          match_time?: string | null
+          season_competition_id?: string | null
+          source?: string | null
+          status?: string | null
+          ticket_link?: string | null
+          updated_at?: string | null
+          venue?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "matches_away_team_id_fkey"
+            columns: ["away_team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_home_team_id_fkey"
+            columns: ["home_team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_season_competition_id_fkey"
+            columns: ["season_competition_id"]
+            isOneToOne: false
+            referencedRelation: "season_competitions"
             referencedColumns: ["id"]
           },
         ]
@@ -1064,6 +1245,48 @@ export type Database = {
           status?: string
         }
         Relationships: []
+      }
+      season_competitions: {
+        Row: {
+          competition_id: string | null
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          season_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          competition_id?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          season_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          competition_id?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          season_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "season_competitions_competition_id_fkey"
+            columns: ["competition_id"]
+            isOneToOne: false
+            referencedRelation: "competitions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "season_competitions_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "seasons"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       season_ticket_holders: {
         Row: {
@@ -1557,6 +1780,39 @@ export type Database = {
         }
         Relationships: []
       }
+      teams: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_home_team: boolean | null
+          logo_url: string | null
+          name: string
+          short_name: string | null
+          transfermarkt_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_home_team?: boolean | null
+          logo_url?: string | null
+          name: string
+          short_name?: string | null
+          transfermarkt_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_home_team?: boolean | null
+          logo_url?: string | null
+          name?: string
+          short_name?: string | null
+          transfermarkt_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       ticket_sales: {
         Row: {
           created_at: string | null
@@ -1706,10 +1962,80 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      current_league_table: {
+        Row: {
+          drawn: number | null
+          form: string[] | null
+          goal_difference: number | null
+          goals_against: number | null
+          goals_for: number | null
+          logo: string | null
+          lost: number | null
+          played: number | null
+          points: number | null
+          position: number | null
+          team: string | null
+          won: number | null
+        }
+        Relationships: []
+      }
+      recent_results: {
+        Row: {
+          away_score: number | null
+          away_scorers: string[] | null
+          away_team: string | null
+          away_team_logo: string | null
+          competition: string | null
+          competition_short: string | null
+          home_score: number | null
+          home_scorers: string[] | null
+          home_team: string | null
+          home_team_logo: string | null
+          id: string | null
+          match_date: string | null
+          match_report_link: string | null
+          match_time: string | null
+          season: string | null
+          venue: string | null
+        }
+        Relationships: []
+      }
+      upcoming_matches: {
+        Row: {
+          away_team: string | null
+          away_team_logo: string | null
+          competition: string | null
+          competition_short: string | null
+          home_team: string | null
+          home_team_logo: string | null
+          id: string | null
+          match_date: string | null
+          match_time: string | null
+          season: string | null
+          ticket_link: string | null
+          venue: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
-      [_ in never]: never
+      get_next_match: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          season: string
+          competition: string
+          competition_short: string
+          home_team: string
+          away_team: string
+          home_team_logo: string
+          away_team_logo: string
+          match_date: string
+          match_time: string
+          venue: string
+          ticket_link: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
