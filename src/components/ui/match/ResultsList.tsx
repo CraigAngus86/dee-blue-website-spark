@@ -27,7 +27,11 @@ const ResultsList = () => {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-primary">Recent Results</h2>
-        <ButtonNew variant="outline" size="sm" iconLeft={<Filter className="mr-2 h-4 w-4" />}>
+        <ButtonNew 
+          variant="secondary" 
+          size="sm" 
+          iconLeft={<Filter className="mr-2 h-4 w-4" />}
+        >
           Filter
         </ButtonNew>
       </div>
