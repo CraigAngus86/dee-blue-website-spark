@@ -1,4 +1,3 @@
-
 export const midfielders = [
   {
     id: 14,
@@ -17,7 +16,7 @@ export const midfielders = [
     lastName: 'ANTONIAZZI',
     position: 'Midfielder',
     nationality: 'Scotland',
-    image: '/assets/images/players/headshot_dummy.jpg',
+    image: '/assets/images/players/Canto_Headshot.jpg',
     number: 7
   },
   {
@@ -77,7 +76,7 @@ export const midfielders = [
     lastName: 'WALLACE',
     position: 'Midfielder',
     nationality: 'Scotland',
-    image: '/assets/images/players/headshot_dummy.jpg',
+    image: '/assets/images/players/Puddle_Headshot.jpg',
     number: 18
   },
   {

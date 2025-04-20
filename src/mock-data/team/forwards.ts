@@ -1,4 +1,3 @@
-
 export const forwards = [
   {
     id: 24,
@@ -12,12 +11,12 @@ export const forwards = [
   },
   {
     id: 25,
-    name: 'Scott Milne',
-    firstName: 'Scott',
-    lastName: 'MILNE',
+    name: 'Kane Winton',
+    firstName: 'Kane',
+    lastName: 'WINTON',
     position: 'Forward',
     nationality: 'Scotland',
     image: '/assets/images/players/headshot_dummy.jpg',
-    number: 10
+    number: 20
   }
 ];

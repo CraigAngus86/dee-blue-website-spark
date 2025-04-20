@@ -1,4 +1,3 @@
-
 export const defenders = [
   {
     id: 4,
@@ -61,23 +60,13 @@ export const defenders = [
     number: 15
   },
   {
-    id: 10,
-    name: 'Jason Selbie',
-    firstName: 'Jason',
-    lastName: 'SELBIE',
-    position: 'Defender',
-    nationality: 'Scotland',
-    image: '/assets/images/players/Selbie_Headshot.jpg',
-    number: 16
-  },
-  {
     id: 11,
     name: 'Alasdair Stark',
     firstName: 'Alasdair',
     lastName: 'STARK',
     position: 'Defender',
     nationality: 'Scotland',
-    image: '/assets/images/players/headshot_dummy.jpg',
+    image: '/assets/images/players/Ally_Headshot.jpg',
     number: 17
   },
   {
@@ -97,7 +86,17 @@ export const defenders = [
     lastName: 'YOUNG',
     position: 'Defender',
     nationality: 'Scotland',
-    image: '/assets/images/players/headshot_dummy.jpg',
+    image: '/assets/images/players/Trigger_Headshot.jpg',
     number: 19
+  },
+  {
+    id: 10,
+    name: 'Jason Selbie',
+    firstName: 'Jason',
+    lastName: 'SELBIE',
+    position: 'Defender',
+    nationality: 'Scotland',
+    image: '/assets/images/players/headshot_dummy.jpg',
+    number: 16
   }
 ];
