@@ -4,24 +4,10 @@ import { Match } from '@/types/match';
 import MatchCardNew from '../image/MatchCardNew';
 import { ButtonNew } from '../ButtonNew';
 import { Filter } from 'lucide-react';
+import { getResults } from '@/mock-data/fixturesData';
 
 const ResultsList = () => {
-  const recentResults: Match[] = [
-    {
-      id: 'r1',
-      competition: 'Highland League',
-      date: '2025-04-08',
-      time: '15:00',
-      homeTeam: "Banks o' Dee",
-      awayTeam: 'Formartine United',
-      venue: 'Spain Park Stadium',
-      homeScore: 3,
-      awayScore: 1,
-      isCompleted: true,
-      matchReportLink: '/matches/r1'
-    },
-    // We'll add more results later
-  ];
+  const recentResults = getResults();
 
   return (
     <div>
@@ -47,7 +33,7 @@ const ResultsList = () => {
               time: match.time,
               homeTeam: match.homeTeam,
               awayTeam: match.awayTeam,
-              venue: match.venue,
+              venue: match.venue || '',
               status: 'completed',
               result: {
                 homeScore: match.homeScore || 0,

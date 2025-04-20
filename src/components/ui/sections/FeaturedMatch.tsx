@@ -1,20 +1,17 @@
-
 import React from "react";
 import MatchCard from "@/components/ui/image/MatchCard";
-import { upcomingFixtures } from "@/mock-data/fixturesData";
+import { getUpcomingFixtures } from "@/mock-data/fixturesData";
 
 interface FeaturedMatchProps {
-  matches?: typeof upcomingFixtures;
   className?: string;
   maxMatches?: number;
 }
 
 const FeaturedMatch: React.FC<FeaturedMatchProps> = ({
-  matches = upcomingFixtures,
   className,
   maxMatches = 3
 }) => {
-  const displayMatches = matches.slice(0, maxMatches);
+  const matches = getUpcomingFixtures().slice(0, maxMatches);
   
   return (
     <div className={`bg-gradient-to-br from-primary to-primary-dark rounded-lg overflow-hidden border border-white/10 shadow-xl ${className}`}>
@@ -23,8 +20,7 @@ const FeaturedMatch: React.FC<FeaturedMatchProps> = ({
       </div>
       
       <div className="p-4 space-y-4">
-        {/* Show all matches in a list with improved spacing */}
-        {displayMatches.map((match, index) => (
+        {matches.map((match, index) => (
           <div 
             key={index} 
             className={`${index > 0 ? 'mt-5 pt-5 border-t border-white/10' : ''}`}

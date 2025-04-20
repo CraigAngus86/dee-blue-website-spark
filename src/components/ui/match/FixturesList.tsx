@@ -4,21 +4,10 @@ import { Match } from '@/types/match';
 import MatchCardNew from '../image/MatchCardNew';
 import { ButtonNew } from '../ButtonNew';
 import { Filter } from 'lucide-react';
+import { getUpcomingFixtures } from '@/mock-data/fixturesData';
 
 const FixturesList = () => {
-  const upcomingFixtures: Match[] = [
-    {
-      id: '1',
-      competition: 'Highland League',
-      date: '2025-04-15',
-      time: '15:00',
-      homeTeam: "Banks o' Dee",
-      awayTeam: 'Buckie Thistle',
-      venue: 'Spain Park Stadium',
-      ticketLink: '/tickets/1'
-    },
-    // We'll add more fixtures later
-  ];
+  const upcomingFixtures = getUpcomingFixtures();
 
   return (
     <div>
@@ -44,7 +33,7 @@ const FixturesList = () => {
               time: match.time,
               homeTeam: match.homeTeam,
               awayTeam: match.awayTeam,
-              venue: match.venue,
+              venue: match.venue || '',
               status: 'upcoming',
               ticketLink: match.ticketLink,
             }}

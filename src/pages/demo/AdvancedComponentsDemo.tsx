@@ -12,10 +12,13 @@ import ImageGallery from "@/components/ui/image/ImageGallery";
 
 import { getStadiumImage } from "@/lib/image";
 import { newsArticles } from "@/mock-data/newsData";
-import { upcomingFixtures, recentResults } from "@/mock-data/fixturesData";
+import { getUpcomingFixtures, getResults } from "@/mock-data/fixturesData";
 import { matchDayGallery } from "@/mock-data/galleryData";
 
 const AdvancedComponentsDemo: React.FC = () => {
+  const upcomingFixtures = getUpcomingFixtures();
+  const recentResults = getResults();
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />

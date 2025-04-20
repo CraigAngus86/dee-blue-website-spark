@@ -1,6 +1,6 @@
 
 import React from "react";
-import { upcomingFixtures, recentResults } from "@/mock-data/fixturesData";
+import { getUpcomingFixtures, getResults } from "@/mock-data/fixturesData";
 import Container from "@/components/ui/layout/Container";
 import SectionHeader from "@/components/ui/sections/SectionHeader";
 import MatchCountdown from "@/components/ui/match/MatchCountdown";
@@ -9,11 +9,11 @@ import LeagueTableWidget from "@/components/ui/match/LeagueTableWidget";
 
 const MatchCenter: React.FC = () => {
   // Get the next match from the upcoming fixtures
-  const nextMatch = upcomingFixtures[0];
+  const nextMatch = getUpcomingFixtures()[0];
   
   // We'll need 2 past matches and 2 future matches plus the next match
-  const pastMatches = recentResults.slice(0, 2);
-  const futureMatches = upcomingFixtures.slice(1, 3);
+  const pastMatches = getResults().slice(0, 2);
+  const futureMatches = getUpcomingFixtures().slice(1, 3);
   
   const allMatches = [...pastMatches, nextMatch, ...futureMatches];
 
