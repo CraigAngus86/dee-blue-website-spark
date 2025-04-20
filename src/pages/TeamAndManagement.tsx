@@ -27,7 +27,7 @@ const TeamAndManagement = () => {
       <SectionHero 
         title="Team & Management"
         subtitle="Meet the players and staff who represent Banks o' Dee FC on and off the pitch."
-        backgroundImage="/assets/images/team/Squad1.jpg"
+        backgroundSrc="/assets/images/team/Squad1.jpg"
       />
       
       <Section spacing="lg" className="-mt-8">
@@ -63,7 +63,7 @@ const TeamAndManagement = () => {
                   gap="lg"
                   className="mt-6"
                 >
-                  {filterMembers(staffMembers.filter(m => m.type === 'management')).map((member) => (
+                  {filterMembers([...staffMembers.filter(m => m.type === 'management')]).map((member) => (
                     <StaffMemberCard key={member.id} member={member} />
                   ))}
                 </Grid>
@@ -75,7 +75,7 @@ const TeamAndManagement = () => {
                   gap="lg"
                   className="mt-6"
                 >
-                  {filterMembers(players).map((player) => (
+                  {filterMembers([...players]).map((player) => (
                     <PlayerCard key={player.id} player={player} />
                   ))}
                 </Grid>
@@ -87,7 +87,7 @@ const TeamAndManagement = () => {
                   gap="lg"
                   className="mt-6"
                 >
-                  {filterMembers(staffMembers.filter(m => m.type === 'administration')).map((member) => (
+                  {filterMembers([...staffMembers.filter(m => m.type === 'administration')]).map((member) => (
                     <StaffMemberCard key={member.id} member={member} />
                   ))}
                 </Grid>
