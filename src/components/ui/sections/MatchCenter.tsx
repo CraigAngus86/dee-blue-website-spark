@@ -1,5 +1,6 @@
 
 import React from "react";
+import { Link } from "react-router-dom";
 import { getUpcomingFixtures, getResults } from "@/mock-data/fixturesData";
 import Container from "@/components/ui/layout/Container";
 import SectionHeader from "@/components/ui/sections/SectionHeader";
@@ -17,27 +18,31 @@ const MatchCenter: React.FC = () => {
   
   const allMatches = [...pastMatches, nextMatch, ...futureMatches];
 
-  // Prepare the match data for the MatchCountdown component
-  const countdownMatchData = {
-    competition: nextMatch.competition,
-    round: nextMatch.round || "", // Provide empty string as fallback
-    date: nextMatch.date,
-    time: nextMatch.time || "TBD"
-  };
-
   return (
     <Container>
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
-        {/* Section Header */}
-        <div className="px-4 sm:px-6 pt-8 pb-4">
+        <div className="px-4 sm:px-6 pt-8 pb-4 flex justify-between items-center">
           <SectionHeader 
             title="Match Centre" 
             textColor="primary"
           />
+          <Link 
+            to="/matches" 
+            className="text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+          >
+            View All Matches →
+          </Link>
         </div>
         
         {/* Next Match Countdown */}
-        <MatchCountdown nextMatch={countdownMatchData} />
+        <MatchCountdown 
+          nextMatch={{
+            competition: nextMatch.competition,
+            round: nextMatch.round || "",
+            date: nextMatch.date,
+            time: nextMatch.time || "TBD"
+          }} 
+        />
         
         {/* Match Carousel */}
         <div className="p-4 md:p-6">

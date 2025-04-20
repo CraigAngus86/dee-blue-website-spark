@@ -144,7 +144,6 @@ const allFixtures: Match[] = [
       awayScore: 0
     }
   },
-  // Add more completed matches
   {
     id: '38',
     competition: 'Scottish Highland Football League',
@@ -154,6 +153,17 @@ const allFixtures: Match[] = [
     awayTeam: "Banks o' Dee",
     venue: 'Mosset Park',
     isCompleted: false
+  },
+  {
+    id: '39',
+    competition: 'Highland League Cup - Final',
+    date: formatDate('30/05/2025'),
+    time: '19:45',
+    homeTeam: "Banks o' Dee",
+    awayTeam: 'Fraserburgh',
+    venue: 'Spain Park',
+    isCompleted: false,
+    ticketLink: 'https://tickets.bankodee.com/cup-final'
   }
 ];
 

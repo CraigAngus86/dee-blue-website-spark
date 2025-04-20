@@ -2,27 +2,26 @@
 import React from 'react';
 import { Match } from '@/types/match';
 import MatchCardNew from '../image/MatchCardNew';
-import { ButtonNew } from '../ButtonNew';
-import { Filter } from 'lucide-react';
 import { getUpcomingFixtures, getMatchesByMonth } from '@/mock-data/fixturesData';
 
-const FixturesList = () => {
-  const upcomingFixtures = getUpcomingFixtures();
+interface FixturesListProps {
+  selectedCompetitions?: string[];
+}
+
+const FixturesList: React.FC<FixturesListProps> = ({ selectedCompetitions = [] }) => {
+  const allUpcomingFixtures = getUpcomingFixtures();
+  
+  // Filter fixtures by selected competitions if any are selected
+  const upcomingFixtures = selectedCompetitions.length > 0
+    ? allUpcomingFixtures.filter(fixture => 
+        selectedCompetitions.some(comp => fixture.competition.includes(comp))
+      )
+    : allUpcomingFixtures;
+  
   const fixturesByMonth = getMatchesByMonth(upcomingFixtures);
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-primary">Upcoming Fixtures</h2>
-        <ButtonNew 
-          variant="secondary" 
-          size="sm" 
-          iconLeft={<Filter className="mr-2 h-4 w-4" />}
-        >
-          Filter
-        </ButtonNew>
-      </div>
-      
+    <div>      
       <div className="space-y-8">
         {Object.entries(fixturesByMonth).map(([month, matches]) => (
           <div key={month}>

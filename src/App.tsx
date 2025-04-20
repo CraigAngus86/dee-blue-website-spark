@@ -82,6 +82,10 @@ const routes = [
     path: "/matches",
     element: <MatchCentre />,
   },
+  {
+    path: "/match-centre",
+    element: <MatchCentre />,
+  }
 ];
 
 const router = createBrowserRouter(routes);

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu } from 'lucide-react';
@@ -25,7 +24,7 @@ const Header: React.FC<{ className?: string; transparent?: boolean }> = ({ class
             {[
               { name: 'News', path: '/news' },
               { name: 'Team and Management', path: '/team' },
-              { name: 'Match Centre', path: '/match-centre' },
+              { name: 'Match Centre', path: '/matches' },
               { name: 'Spain Park', path: '/stadium' },
               { name: 'Commercial Opportunities', path: '/commercial' },
             ].map((item) => (
@@ -69,7 +68,7 @@ const Header: React.FC<{ className?: string; transparent?: boolean }> = ({ class
               {[
                 { name: 'News', path: '/news' },
                 { name: 'Team and Management', path: '/team' },
-                { name: 'Match Centre', path: '/match-centre' },
+                { name: 'Match Centre', path: '/matches' },
                 { name: 'Spain Park', path: '/stadium' },
                 { name: 'Commercial Opportunities', path: '/commercial' },
               ].map((item) => (
