@@ -38,18 +38,14 @@ const NewsCard: React.FC<NewsCardProps> = ({
     <a
       href={url}
       className={cn(
-        "block bg-white rounded-lg overflow-hidden transition-all duration-300 hover:-translate-y-2",
-        "h-full flex flex-col border-b-3 border-accent", 
-        "shadow-md hover:shadow-lg", 
+        "block bg-white rounded-lg overflow-hidden transition-all duration-300",
+        "hover:-translate-y-1 hover:shadow-lg h-full flex flex-col",
         className
       )}
-      style={{
-        boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)",
-      }}
     >
       <div className="relative">
-        {/* Image with square aspect ratio - no padding */}
-        <div className="aspect-[4/3] overflow-hidden m-0 p-0">
+        {/* Image container with fixed aspect ratio */}
+        <div className="aspect-[4/3] overflow-hidden">
           <ResponsiveImage
             src={image}
             alt={title}
@@ -57,31 +53,37 @@ const NewsCard: React.FC<NewsCardProps> = ({
           />
         </div>
         
-        {/* Category tag overlapping slightly with the image - reduced space by 70% */}
-        <span className={`inline-block ${getCategoryBgColor(category)} text-white text-xs font-semibold px-2 py-1 rounded-sm mt-[-8px] ml-2 relative z-10`}>
+        {/* Category tag positioned absolutely */}
+        <span 
+          className={cn(
+            "absolute top-4 left-4 inline-block",
+            getCategoryBgColor(category),
+            "text-white text-xs font-semibold px-3 py-1.5 rounded"
+          )}
+        >
           {category}
         </span>
       </div>
 
-      {/* Content section with appropriate padding and reduced gap below image */}
-      <div className="p-3 pt-[5px] flex flex-col flex-grow">
+      {/* Content section with improved spacing */}
+      <div className="p-5 flex flex-col flex-grow">
         <div className="mb-auto">
-          <h3 className="font-montserrat font-bold text-[18px] leading-tight text-primary mb-2 line-clamp-2">
+          <h3 className="font-montserrat font-bold text-lg leading-tight text-primary mb-3 line-clamp-2">
             {title}
           </h3>
 
           {excerpt && (
-            <p className="text-gray-600 text-sm leading-relaxed line-clamp-2 font-inter mb-3">
+            <p className="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-4">
               {excerpt}
             </p>
           )}
         </div>
 
-        <div className="flex items-center justify-between text-sm pt-2 border-t border-gray-100">
-          <span className="text-gray-400 text-xs font-light font-inter">
+        <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+          <span className="text-gray-400 text-xs">
             {timestamp}
           </span>
-          <span className="text-primary font-medium flex items-center gap-1 group">
+          <span className="text-primary font-medium flex items-center gap-1 group text-sm">
             Read More
             <ChevronRight 
               className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" 
