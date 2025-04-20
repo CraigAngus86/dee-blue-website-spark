@@ -20,38 +20,41 @@ const Footer: React.FC = () => {
   ];
 
   const socialLinks = [
-    { icon: <Facebook size={20} />, href: "https://facebook.com/banksofdeefc", label: "Facebook" },
-    { icon: <Twitter size={20} />, href: "https://twitter.com/banksofdeefc", label: "Twitter" },
-    { icon: <Instagram size={20} />, href: "https://instagram.com/banksofdeefc", label: "Instagram" },
-    { icon: <Linkedin size={20} />, href: "https://linkedin.com/company/banksofdeefc", label: "LinkedIn" },
+    { icon: <Facebook size={24} />, href: "https://facebook.com/banksofdeefc", label: "Facebook" },
+    { icon: <Twitter size={24} />, href: "https://twitter.com/banksofdeefc", label: "Twitter" },
+    { icon: <Instagram size={24} />, href: "https://instagram.com/banksofdeefc", label: "Instagram" },
+    { icon: <Linkedin size={24} />, href: "https://linkedin.com/company/banksofdeefc", label: "LinkedIn" },
   ];
 
   return (
-    <footer className="bg-[#00105A] text-white">
+    <footer className="bg-[#00105A] text-white py-16">
       <Container>
-        <div className="py-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
           {/* Left Column - Club Info */}
-          <div className="flex flex-col items-center lg:items-start">
-            <div className="flex items-center gap-4 mb-4">
+          <div className="flex flex-col items-start space-y-6">
+            <div className="flex items-center gap-4">
               <ClubLogo
                 variant="square"
                 background="light"
-                className="w-16 h-16"
+                size={80}
               />
               <div>
-                <Heading level={4} color="white" className="mb-0">
+                <Heading level={3} color="white" className="mb-0">
                   Banks o' Dee FC
                 </Heading>
               </div>
             </div>
-            <Text color="white" size="small" className="opacity-75 max-w-xs text-center lg:text-left">
+            <Text color="white" size="medium" className="opacity-75 max-w-xs text-left">
               Scotland's premier football club based in Aberdeen, focused on excellence and community engagement.
+            </Text>
+            <Text size="xs" color="white" className="opacity-70 mt-auto">
+              © {currentYear} Banks o' Dee Football Club. All rights reserved.
             </Text>
           </div>
 
-          {/* Middle Column - Navigation */}
+          {/* Middle Column - Quick Links */}
           <div className="flex flex-col items-center">
-            <Heading level={4} color="white" className="mb-6">
+            <Heading level={3} color="white" className="mb-8">
               Quick Links
             </Heading>
             <nav className="flex flex-col items-center gap-4">
@@ -59,7 +62,7 @@ const Footer: React.FC = () => {
                 <Link
                   key={link.name}
                   to={link.path}
-                  className="text-white hover:text-[#C5E7FF] transition-colors text-sm"
+                  className="text-white hover:text-[#C5E7FF] transition-colors text-base font-medium tracking-wide"
                 >
                   {link.name}
                 </Link>
@@ -68,39 +71,39 @@ const Footer: React.FC = () => {
           </div>
 
           {/* Right Column - Contact & Social */}
-          <div className="flex flex-col items-center lg:items-end">
-            <Heading level={4} color="white" className="mb-6">
+          <div className="flex flex-col items-end space-y-6">
+            <Heading level={3} color="white" className="mb-8">
               Contact Us
             </Heading>
-            <div className="flex flex-col items-center lg:items-end gap-4 mb-8">
-              <div className="flex items-center gap-3">
-                <MapPin className="text-[#C5E7FF] h-5 w-5" />
-                <Text size="small" color="white" className="opacity-75">
+            <div className="flex flex-col items-end gap-4">
+              <div className="flex items-center gap-3 justify-end">
+                <Text size="medium" color="white" className="opacity-75 text-right">
                   Spain Park Stadium, Aberdeen, AB12 5XY
                 </Text>
+                <MapPin className="text-[#C5E7FF] h-6 w-6" />
               </div>
-              <div className="flex items-center gap-3">
-                <Phone className="text-[#C5E7FF] h-5 w-5" />
+              <div className="flex items-center gap-3 justify-end">
                 <a 
                   href="tel:+441224869948" 
-                  className="text-white/75 hover:text-[#C5E7FF] transition-colors text-sm"
+                  className="text-white/75 hover:text-[#C5E7FF] transition-colors text-base"
                 >
                   +44 1224 869 948
                 </a>
+                <Phone className="text-[#C5E7FF] h-6 w-6" />
               </div>
-              <div className="flex items-center gap-3">
-                <Mail className="text-[#C5E7FF] h-5 w-5" />
+              <div className="flex items-center gap-3 justify-end">
                 <a 
                   href="mailto:info@banksofdeefc.com" 
-                  className="text-white/75 hover:text-[#C5E7FF] transition-colors text-sm"
+                  className="text-white/75 hover:text-[#C5E7FF] transition-colors text-base"
                 >
                   info@banksofdeefc.com
                 </a>
+                <Mail className="text-[#C5E7FF] h-6 w-6" />
               </div>
             </div>
 
             {/* Social Links */}
-            <div className="flex gap-4 mb-6">
+            <div className="flex gap-4 mt-8">
               {socialLinks.map((link) => (
                 <a 
                   key={link.label}
@@ -108,23 +111,15 @@ const Footer: React.FC = () => {
                   target="_blank" 
                   rel="noopener noreferrer"
                   aria-label={link.label}
-                  className="bg-white/10 hover:bg-[#C5E7FF] hover:text-[#00105A] transition-colors duration-300 rounded-full p-2 flex items-center justify-center"
+                  className="bg-white/10 hover:bg-[#C5E7FF] hover:text-[#00105A] transition-colors duration-300 rounded-full p-2.5 flex items-center justify-center"
                 >
                   {link.icon}
                 </a>
               ))}
             </div>
-
-            {/* Copyright */}
-            <Text size="xs" color="white" className="opacity-70 text-center lg:text-right">
-              © {currentYear} Banks o' Dee Football Club. All rights reserved.
-            </Text>
           </div>
         </div>
       </Container>
-      
-      {/* Barcelona-style gradient bar */}
-      <div className="h-2 bg-gradient-to-r from-primary to-secondary" />
     </footer>
   );
 };
