@@ -17,6 +17,14 @@ const MatchCenter: React.FC = () => {
   
   const allMatches = [...pastMatches, nextMatch, ...futureMatches];
 
+  // Prepare the match data for the MatchCountdown component
+  const countdownMatchData = {
+    competition: nextMatch.competition,
+    round: nextMatch.round || "", // Provide empty string as fallback
+    date: nextMatch.date,
+    time: nextMatch.time || "TBD"
+  };
+
   return (
     <Container>
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
@@ -29,7 +37,7 @@ const MatchCenter: React.FC = () => {
         </div>
         
         {/* Next Match Countdown */}
-        <MatchCountdown nextMatch={nextMatch} />
+        <MatchCountdown nextMatch={countdownMatchData} />
         
         {/* Match Carousel */}
         <div className="p-4 md:p-6">

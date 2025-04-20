@@ -1,3 +1,4 @@
+
 import React from "react";
 import Section from "@/components/ui/layout/Section";
 import Container from "@/components/ui/layout/Container";
@@ -90,7 +91,10 @@ const AdvancedComponentsDemo: React.FC = () => {
                       date={result.date}
                       venue={result.venue}
                       status="completed"
-                      result={result.result}
+                      result={{
+                        homeScore: result.homeScore !== undefined ? result.homeScore : 0,
+                        awayScore: result.awayScore !== undefined ? result.awayScore : 0
+                      }}
                       matchReportLink={result.matchReportLink}
                     />
                   ))}

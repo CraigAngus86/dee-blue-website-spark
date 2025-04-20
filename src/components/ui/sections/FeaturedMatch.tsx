@@ -1,3 +1,4 @@
+
 import React from "react";
 import MatchCard from "@/components/ui/image/MatchCard";
 import { getUpcomingFixtures } from "@/mock-data/fixturesData";
@@ -28,7 +29,7 @@ const FeaturedMatch: React.FC<FeaturedMatchProps> = ({
             <MatchCard
               homeTeam={match.homeTeam}
               awayTeam={match.awayTeam}
-              competition={`${match.competition} - ${match.round}`}
+              competition={match.round ? `${match.competition} - ${match.round}` : match.competition}
               date={match.date}
               time={match.time}
               venue={match.venue}

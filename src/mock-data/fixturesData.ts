@@ -7,6 +7,15 @@ const formatDate = (dateStr: string) => {
   return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
 };
 
+// Extract round information from competition if available
+const extractRound = (competition: string): { competition: string, round: string | undefined } => {
+  const parts = competition.split(' - ');
+  if (parts.length > 1) {
+    return { competition: parts[0].trim(), round: parts[1].trim() };
+  }
+  return { competition, round: undefined };
+};
+
 const allFixtures: Match[] = [
   {
     id: '1',
@@ -18,7 +27,11 @@ const allFixtures: Match[] = [
     venue: 'North Lodge Park',
     homeScore: 0,
     awayScore: 2,
-    isCompleted: true
+    isCompleted: true,
+    result: {
+      homeScore: 0,
+      awayScore: 2
+    }
   },
   {
     id: '2',
@@ -30,9 +43,109 @@ const allFixtures: Match[] = [
     venue: 'Spain Park',
     homeScore: 1,
     awayScore: 0,
-    isCompleted: true
+    isCompleted: true,
+    result: {
+      homeScore: 1,
+      awayScore: 0
+    }
   },
-  // Add more fixtures following the same pattern...
+  {
+    id: '3',
+    competition: 'Scottish Highland Football League',
+    date: formatDate('03/08/2024'),
+    time: '16:00',
+    homeTeam: "Banks o' Dee",
+    awayTeam: 'Lossiemouth',
+    venue: 'Spain Park',
+    homeScore: 0,
+    awayScore: 0,
+    isCompleted: true,
+    result: {
+      homeScore: 0,
+      awayScore: 0
+    }
+  },
+  {
+    id: '4',
+    competition: 'Scottish Highland Football League',
+    date: formatDate('07/08/2024'),
+    time: '21:00',
+    homeTeam: "Keith FC",
+    awayTeam: "Banks o' Dee",
+    venue: 'Kynoch Park',
+    homeScore: 1,
+    awayScore: 2,
+    isCompleted: true,
+    result: {
+      homeScore: 1,
+      awayScore: 2
+    }
+  },
+  {
+    id: '5',
+    competition: 'Scottish Highland Football League',
+    date: formatDate('10/08/2024'),
+    time: '16:00',
+    homeTeam: "Banks o' Dee",
+    awayTeam: 'Nairn County',
+    venue: 'Spain Park',
+    homeScore: 4,
+    awayScore: 0,
+    isCompleted: true,
+    result: {
+      homeScore: 4,
+      awayScore: 0
+    }
+  },
+  {
+    id: '6',
+    competition: 'Scottish Challenge Cup',
+    date: formatDate('13/08/2024'),
+    time: '20:45',
+    homeTeam: 'Elgin City',
+    awayTeam: "Banks o' Dee",
+    venue: 'Borough Briggs',
+    homeScore: 2,
+    awayScore: 1,
+    isCompleted: true,
+    result: {
+      homeScore: 2,
+      awayScore: 1
+    }
+  },
+  {
+    id: '7',
+    competition: 'Scottish Highland Football League',
+    date: formatDate('17/08/2024'),
+    time: '16:00',
+    homeTeam: "Banks o' Dee",
+    awayTeam: 'Inverurie Locos',
+    venue: 'Spain Park',
+    homeScore: 1,
+    awayScore: 1,
+    isCompleted: true,
+    result: {
+      homeScore: 1,
+      awayScore: 1
+    }
+  },
+  {
+    id: '8',
+    competition: 'Scottish Highland Football League',
+    date: formatDate('24/08/2024'),
+    time: '16:00',
+    homeTeam: 'Fraserburgh',
+    awayTeam: "Banks o' Dee",
+    venue: 'Bellslea Park',
+    homeScore: 1,
+    awayScore: 0,
+    isCompleted: true,
+    result: {
+      homeScore: 1,
+      awayScore: 0
+    }
+  },
+  // Add more completed matches
   {
     id: '38',
     competition: 'Scottish Highland Football League',
@@ -41,9 +154,7 @@ const allFixtures: Match[] = [
     homeTeam: 'Forres',
     awayTeam: "Banks o' Dee",
     venue: 'Mosset Park',
-    homeScore: 1,
-    awayScore: 1,
-    isCompleted: true
+    isCompleted: false
   }
 ];
 
@@ -65,4 +176,3 @@ export const getUpcomingFixtures = () => {
 
 // Export all fixtures if needed
 export const getAllFixtures = () => allFixtures;
-

@@ -1,3 +1,4 @@
+
 import React from "react";
 import Section from "@/components/ui/layout/Section";
 import Container from "@/components/ui/layout/Container";
@@ -209,7 +210,10 @@ const ImageComponentsDemo: React.FC = () => {
                     date={recentResults[0].date}
                     venue={recentResults[0].venue}
                     status="completed"
-                    result={recentResults[0].result}
+                    result={{
+                      homeScore: recentResults[0].homeScore !== undefined ? recentResults[0].homeScore : 0,
+                      awayScore: recentResults[0].awayScore !== undefined ? recentResults[0].awayScore : 0
+                    }}
                     matchReportLink={recentResults[0].matchReportLink}
                   />
                 </div>
