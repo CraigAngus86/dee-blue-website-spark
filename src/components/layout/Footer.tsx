@@ -3,7 +3,6 @@ import React from "react";
 import { Mail, MapPin, Phone, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 import Text from "../ui/typography/Text";
 import Heading from "../ui/typography/Heading";
-import ClubLogo from "../ui/image/ClubLogo";
 import Container from "../ui/layout/Container";
 import { Link } from "react-router-dom";
 
@@ -11,7 +10,6 @@ const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
   
   const navLinks = [
-    { name: 'Home', path: '/' },
     { name: 'News', path: '/news' },
     { name: 'Team', path: '/team' },
     { name: 'Fixtures', path: '/fixtures' },
@@ -38,22 +36,6 @@ const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-10">
           {/* Column 1 - Club Info */}
           <div className="flex flex-col">
-            <div className="flex items-center md:items-start mb-6">
-              <ClubLogo
-                variant="square"
-                background="light"
-                size={80}
-              />
-              <div className="ml-4">
-                <Heading level={3} color="white" className="mb-1">
-                  Banks o' Dee
-                </Heading>
-                <Text color="white" size="small" className="opacity-75">
-                  Est. 1946
-                </Text>
-              </div>
-            </div>
-            
             <Text color="white" size="small" className="opacity-75 mb-6 leading-relaxed">
               Scotland's premier football club based in Aberdeen, focused on excellence and community engagement.
             </Text>
