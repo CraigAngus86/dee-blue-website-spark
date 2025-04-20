@@ -14,14 +14,20 @@ import { staffMembers, players } from '@/mock-data/teamData';
 
 const TeamAndManagement = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [activeTab, setActiveTab] = useState('management');
   
   const filterMembers = (members: any[]) => {
     if (!searchQuery) return members;
     
     return members.filter(member => 
       member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      member.position.toLowerCase().includes(searchQuery.toLowerCase())
+      member.position?.toLowerCase().includes(searchQuery.toLowerCase())
     );
+  };
+
+  // Handle tab change
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
   };
 
   return (
@@ -39,7 +45,7 @@ const TeamAndManagement = () => {
             <div className="bg-white rounded-lg shadow-md p-6">
               {/* Filters and Search */}
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0 mb-8 pb-6 border-b border-gray-200">
-                <Tabs defaultValue="management" className="w-full md:w-auto">
+                <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full md:w-auto">
                   <TabsList className="bg-gray-100 p-1 rounded-full">
                     <TabsTrigger value="management">Team Management</TabsTrigger>
                     <TabsTrigger value="players">Players</TabsTrigger>
@@ -59,8 +65,8 @@ const TeamAndManagement = () => {
                 </div>
               </div>
 
-              {/* Content Tabs */}
-              <Tabs defaultValue="management" className="mt-6">
+              {/* Content Tabs - synchronized with the tabs above */}
+              <Tabs value={activeTab} onValueChange={handleTabChange} className="mt-6">
                 <TabsContent value="management">
                   <Grid 
                     columns={{ default: 1, sm: 2, lg: 3, xl: 4 }}
