@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ChevronRight, Search } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
-import { teamData } from '@/mock-data/teamData';
+import { teamData } from '@/mock-data/team';
 
 const TeamAndManagement = () => {
   const [searchQuery, setSearchQuery] = useState('');
