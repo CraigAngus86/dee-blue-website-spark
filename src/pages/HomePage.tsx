@@ -14,7 +14,6 @@ import FadeIn from "@/components/ui/animations/FadeIn";
 import PatternOverlay from "@/components/ui/backgrounds/PatternOverlay";
 import MatchCenter from "@/components/ui/sections/MatchCenter";
 import PlayersSection from "@/components/ui/sections/PlayersSection";
-import SocialCTA from "@/components/ui/social/SocialCTA";
 
 const HomePage: React.FC = () => {
   // Consistent shadow treatment for all cards
@@ -66,10 +65,7 @@ const HomePage: React.FC = () => {
           <FanZoneSection />
         </div>
         
-        {/* Social CTA Section */}
-        <Section background="white" spacing="md">
-          <SocialCTA />
-        </Section>
+        {/* Remove Social CTA Section that was here */}
         
         {/* Gradient Separator before Players Section */}
         <GradientSeparator />
