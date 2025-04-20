@@ -20,7 +20,8 @@ const MatchCarousel: React.FC<MatchCarouselProps> = ({ matches }) => {
         className="w-full"
         opts={{
           align: "start",
-          loop: true
+          loop: true,
+          dragFree: true // Enable free scrolling while keeping arrows
         }}
       >
         <CarouselContent className="-ml-2 md:-ml-4">
@@ -37,8 +38,8 @@ const MatchCarousel: React.FC<MatchCarouselProps> = ({ matches }) => {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="hidden md:flex" />
-        <CarouselNext className="hidden md:flex" />
+        <CarouselPrevious className="hidden md:flex -left-4 bg-white hover:bg-gray-100" />
+        <CarouselNext className="hidden md:flex -right-4 bg-white hover:bg-gray-100" />
       </Carousel>
     </div>
   );

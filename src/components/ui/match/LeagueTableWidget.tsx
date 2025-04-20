@@ -30,55 +30,54 @@ const LeagueTableWidget = () => {
         </ButtonNew>
       </div>
       
-      <div className="bg-white shadow-sm rounded-lg p-4">
-        <div className="flex flex-col md:flex-row items-center justify-between">
-          {/* Team and position */}
-          <div className="flex items-center space-x-4 mb-4 md:mb-0">
-            <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white font-bold text-xl">
+      <div className="bg-white shadow-sm rounded-lg p-6">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+          {/* Team and Position - 3 columns */}
+          <div className="md:col-span-3 flex items-center">
+            <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center text-white font-bold text-2xl mr-4">
               3
             </div>
             <div>
-              <div className="font-semibold text-lg text-primary">Banks o' Dee FC</div>
+              <Text weight="bold" size="xl" color="primary">Banks o' Dee FC</Text>
             </div>
           </div>
           
-          {/* Stats in a more detailed layout */}
-          <div className="flex flex-wrap items-center justify-between gap-6">
-            {/* Points */}
+          {/* Points - 2 columns */}
+          <div className="md:col-span-2 text-center">
+            <Text size="3xl" weight="bold" color="primary" className="leading-none">60</Text>
+            <Text size="xs" color="muted" className="uppercase mt-1">Points</Text>
+          </div>
+          
+          {/* Stats - 4 columns */}
+          <div className="md:col-span-4 flex justify-center gap-8">
             <div className="text-center">
-              <div className="text-2xl font-bold text-primary">60</div>
-              <div className="text-xs text-gray-500 uppercase">Points</div>
+              <Text size="2xl" weight="bold" color="primary" className="leading-none">18</Text>
+              <Text size="xs" color="muted" className="uppercase mt-1">Won</Text>
             </div>
-            
-            {/* Record */}
-            <div className="grid grid-cols-3 gap-4">
-              <div className="text-center">
-                <div className="text-xl font-semibold text-primary">18</div>
-                <div className="text-xs text-gray-500 uppercase">Won</div>
-              </div>
-              <div className="text-center">
-                <div className="text-xl font-semibold text-primary">6</div>
-                <div className="text-xs text-gray-500 uppercase">Drawn</div>
-              </div>
-              <div className="text-center">
-                <div className="text-xl font-semibold text-primary">4</div>
-                <div className="text-xs text-gray-500 uppercase">Lost</div>
-              </div>
+            <div className="text-center">
+              <Text size="2xl" weight="bold" color="primary" className="leading-none">6</Text>
+              <Text size="xs" color="muted" className="uppercase mt-1">Drawn</Text>
             </div>
-            
-            {/* Form */}
-            <div className="flex flex-col items-center">
-              <div className="flex space-x-1">
+            <div className="text-center">
+              <Text size="2xl" weight="bold" color="primary" className="leading-none">4</Text>
+              <Text size="xs" color="muted" className="uppercase mt-1">Lost</Text>
+            </div>
+          </div>
+          
+          {/* Form - 3 columns */}
+          <div className="md:col-span-3">
+            <div className="flex flex-col items-end">
+              <div className="flex space-x-2 mb-1">
                 {formResults.map((result, index) => (
                   <div 
                     key={index}
-                    className={`${result.color} text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold`}
+                    className={`${result.color} text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium`}
                   >
                     {result.result}
                   </div>
                 ))}
               </div>
-              <Text size="xs" color="muted" className="uppercase mt-1">
+              <Text size="xs" color="muted" className="uppercase">
                 Form
               </Text>
             </div>
