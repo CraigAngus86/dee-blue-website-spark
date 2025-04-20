@@ -1,3 +1,4 @@
+
 import React from "react";
 import { cn } from "@/lib/utils";
 import ResponsiveImage from "./ResponsiveImage";
@@ -61,9 +62,9 @@ const NewsCard: React.FC<NewsCardProps> = ({
         </span>
       </div>
 
-      <div className="p-5 flex flex-col flex-grow">
+      <div className="p-4 flex flex-col flex-grow">
         <div className="mb-auto">
-          <h3 className="font-montserrat font-bold text-lg leading-tight text-primary mb-3 line-clamp-2">
+          <h3 className="font-montserrat font-bold text-lg leading-tight text-primary mb-2 line-clamp-2">
             {title}
           </h3>
 
