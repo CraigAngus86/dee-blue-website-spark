@@ -4,12 +4,11 @@ import { ChevronRight, Search } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import PlayerProfileModal from '@/components/ui/players/PlayerProfileModal';
-import { useTeamData } from '@/hooks/useTeamData';
+import { teamData } from '@/mock-data/team';
 
 const TeamAndManagement = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPlayer, setSelectedPlayer] = useState(null);
-  const { data: teamData, isLoading, error } = useTeamData();
 
   // Filter members based on search query
   const filterMembers = (members: any[]) => {
@@ -32,7 +31,7 @@ const TeamAndManagement = () => {
         
         {/* Player image */}
         <img 
-          src={person.image_url} 
+          src={person.image} 
           alt={person.name}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
@@ -66,34 +65,6 @@ const TeamAndManagement = () => {
       </button>
     </div>
   );
-
-  if (isLoading) {
-    return (
-      <div className="flex flex-col min-h-screen">
-        <Header />
-        <main className="flex-grow">
-          <div className="max-w-7xl mx-auto px-4 py-12">
-            <div className="animate-pulse">Loading...</div>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex flex-col min-h-screen">
-        <Header />
-        <main className="flex-grow">
-          <div className="max-w-7xl mx-auto px-4 py-12">
-            <div className="text-red-500">Error loading team data</div>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
 
   // Render section
   const renderSection = (title: string, people: any[], isManagement = false) => (
