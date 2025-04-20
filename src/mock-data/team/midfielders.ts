@@ -7,7 +7,7 @@ export const midfielders = [
     lastName: 'ALEXANDER',
     position: 'Midfielder',
     nationality: 'Scotland',
-    image: '/lovable-uploads/076a9221-3da7-46c9-b7db-823eba4dca91.png',
+    image: '/assets/images/players/Maxy.jpg',
     number: 6
   },
   {
@@ -17,7 +17,7 @@ export const midfielders = [
     lastName: 'ANTONIAZZI',
     position: 'Midfielder',
     nationality: 'Scotland',
-    image: '/lovable-uploads/8eef6094-466b-4423-a179-206db522b5d9.png',
+    image: '/assets/images/players/headshot_dummy.jpg',
     number: 7
   },
   {
@@ -27,7 +27,7 @@ export const midfielders = [
     lastName: 'GILMOUR',
     position: 'Midfielder',
     nationality: 'Scotland',
-    image: '/lovable-uploads/21726f39-e904-4c51-8f7b-c0fe6ec46097.png',
+    image: '/assets/images/players/Gilly_Headshot.jpg',
     number: 8
   },
   {
@@ -37,7 +37,7 @@ export const midfielders = [
     lastName: 'MACLEOD',
     position: 'Midfielder',
     nationality: 'Scotland',
-    image: '/lovable-uploads/558639a9-77d1-4f67-be52-f332a50d957b.png',
+    image: '/assets/images/players/Hamish_Headshot.jpg',
     number: 14
   },
   {
@@ -47,7 +47,7 @@ export const midfielders = [
     lastName: 'OSPREY',
     position: 'Midfielder',
     nationality: 'Scotland',
-    image: '/lovable-uploads/7656c437-bb50-4503-927f-8f86d16f37a4.png',
+    image: '/assets/images/players/Connor_Headshot.jpg',
     number: 15
   },
   {
@@ -57,7 +57,7 @@ export const midfielders = [
     lastName: 'PHILIPSON',
     position: 'Midfielder',
     nationality: 'Scotland',
-    image: '/assets/images/players/headshot_dummy.jpg',
+    image: '/assets/images/players/Mikey_Headshot.jpg',
     number: 16
   },
   {
@@ -67,7 +67,7 @@ export const midfielders = [
     lastName: 'ROBERTSON',
     position: 'Midfielder',
     nationality: 'Scotland',
-    image: '/assets/images/players/headshot_dummy.jpg',
+    image: '/assets/images/players/Ewen_Headshot.jpg',
     number: 17
   },
   {
@@ -87,7 +87,7 @@ export const midfielders = [
     lastName: 'WATSON',
     position: 'Midfielder',
     nationality: 'Scotland',
-    image: '/assets/images/players/headshot_dummy.jpg',
+    image: '/assets/images/players/Mags_Headshot.jpg',
     number: 19
   },
   {
@@ -97,7 +97,7 @@ export const midfielders = [
     lastName: 'WINTON',
     position: 'Midfielder',
     nationality: 'Scotland',
-    image: '/assets/images/players/headshot_dummy.jpg',
+    image: '/assets/images/players/Kane_Headshot.jpg',
     number: 20
   }
 ];

@@ -7,7 +7,7 @@ export const defenders = [
     lastName: 'ANDERSON',
     position: 'Defender',
     nationality: 'Scotland',
-    image: '/lovable-uploads/147ebf0d-18b0-47e8-9dc9-64d20959df4e.png',
+    image: '/assets/images/players/Jevan_Headshot.jpg',
     number: 2
   },
   {
@@ -17,7 +17,7 @@ export const defenders = [
     lastName: 'DAVIDSON',
     position: 'Defender',
     nationality: 'Scotland',
-    image: '/lovable-uploads/57237e85-6f41-4c27-8923-fdf86ddaf195.png',
+    image: '/assets/images/players/Ramsay_Headshot.jpg',
     number: 3
   },
   {
@@ -27,7 +27,7 @@ export const defenders = [
     lastName: 'EMMETT',
     position: 'Defender',
     nationality: 'Scotland',
-    image: '/lovable-uploads/c840865f-8a51-4720-b93b-3b4608e44bdd.png',
+    image: '/assets/images/players/Luke_Headshot.jpg',
     number: 4
   },
   {
@@ -37,7 +37,7 @@ export const defenders = [
     lastName: 'KELLY',
     position: 'Defender',
     nationality: 'Scotland',
-    image: '/assets/images/players/headshot_dummy.jpg',
+    image: '/assets/images/players/DK_Headshot.jpg',
     number: 5
   },
   {
@@ -47,7 +47,7 @@ export const defenders = [
     lastName: 'LAWRIE',
     position: 'Defender',
     nationality: 'Scotland',
-    image: '/assets/images/players/headshot_dummy.jpg',
+    image: '/assets/images/players/Deano_Headshot.jpg',
     number: 12
   },
   {
@@ -57,7 +57,7 @@ export const defenders = [
     lastName: 'LEWECKI',
     position: 'Defender',
     nationality: 'Scotland',
-    image: '/assets/images/players/headshot_dummy.jpg',
+    image: '/assets/images/players/Kacper_Headshot.jpg',
     number: 15
   },
   {
@@ -67,7 +67,7 @@ export const defenders = [
     lastName: 'SELBIE',
     position: 'Defender',
     nationality: 'Scotland',
-    image: '/assets/images/players/headshot_dummy.jpg',
+    image: '/assets/images/players/Selbie_Headshot.jpg',
     number: 16
   },
   {

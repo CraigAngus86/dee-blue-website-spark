@@ -1,3 +1,4 @@
+
 export const management = [
   {
     id: 101,
@@ -6,7 +7,7 @@ export const management = [
     lastName: 'LAWSON',
     position: 'Manager',
     nationality: 'Scotland',
-    image: '/lovable-uploads/fe628f2a-08fa-4ef4-a31b-fd6a9474c822.png',
+    image: '/assets/images/players/Laws_Headshot.jpg',
     number: null
   },
   {
@@ -16,7 +17,7 @@ export const management = [
     lastName: 'WINTON',
     position: 'Manager',
     nationality: 'Scotland',
-    image: '/assets/images/team/Training2_Square.jpg',
+    image: '/assets/images/players/headshot_dummy.jpg',
     number: null
   },
   {
@@ -26,7 +27,7 @@ export const management = [
     lastName: 'GRAY',
     position: 'Assistant Manager',
     nationality: 'Scotland',
-    image: '/assets/images/team/Training3_Square.jpg',
+    image: '/assets/images/players/Aggie_Headshot.jpg',
     number: null
   },
   {
@@ -36,7 +37,7 @@ export const management = [
     lastName: 'DUNCAN',
     position: 'Physio',
     nationality: 'Scotland',
-    image: '/assets/images/team/Training4_Square.jpg',
+    image: '/assets/images/players/headshot_dummy.jpg',
     number: null
   },
   {
@@ -46,7 +47,7 @@ export const management = [
     lastName: 'MILNE',
     position: 'Goalkeeping Coach',
     nationality: 'Scotland',
-    image: '/assets/images/team/Training1_Square.jpg',
+    image: '/assets/images/players/Gordo_Headshot.jpg',
     number: null
   }
 ];
