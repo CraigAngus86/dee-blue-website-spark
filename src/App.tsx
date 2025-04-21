@@ -84,7 +84,7 @@ const routes = [
   },
   {
     path: "/match-centre",
-    element: <MatchCentre />,
+    element: <Index />, // This will redirect to /matches
   }
 ];
 

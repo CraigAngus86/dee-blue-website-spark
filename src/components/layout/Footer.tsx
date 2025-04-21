@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Mail, MapPin, Phone, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 import Text from "../ui/typography/Text";
@@ -12,7 +13,7 @@ const Footer: React.FC = () => {
   const navLinks = [
     { name: 'News', path: '/news' },
     { name: 'Team and Management', path: '/team' },
-    { name: 'Match Centre', path: '/match-centre' },
+    { name: 'Match Centre', path: '/matches' },
     { name: 'Stadium', path: '/stadium' },
     { name: 'Commercial Opportunities', path: '/commercial' },
   ];

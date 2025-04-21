@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import { getUpcomingFixtures, getResults } from "@/mock-data/fixturesData";
+import { getUpcomingFixtures, getResults, leagueTableData } from "@/mock-data/fixturesData";
 import Container from "@/components/ui/layout/Container";
 import SectionHeader from "@/components/ui/sections/SectionHeader";
 import MatchCountdown from "@/components/ui/match/MatchCountdown";
