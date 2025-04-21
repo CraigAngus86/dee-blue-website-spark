@@ -35,23 +35,35 @@ const FixturesList: React.FC<FixturesListProps> = ({
   }
   
   const fixturesByMonth = getMatchesByMonth(filteredFixtures);
+  const sortedMonths = Object.keys(fixturesByMonth).sort((a, b) => {
+    // Sort months in ascending order (oldest first)
+    const dateA = new Date(fixturesByMonth[a][0]?.date || '');
+    const dateB = new Date(fixturesByMonth[b][0]?.date || '');
+    return dateA.getTime() - dateB.getTime();
+  });
 
   return (
     <div className="space-y-8">
-      {Object.entries(fixturesByMonth).map(([month, matches]) => (
-        <div key={month}>
-          <h3 className="text-lg font-semibold text-gray-600 mb-4">{month}</h3>
-          <div className="grid gap-4">
-            {matches.map((match) => (
-              <MatchCardNew
-                key={match.id}
-                match={match}
-                variant="future"
-              />
-            ))}
+      {sortedMonths.length > 0 ? (
+        sortedMonths.map((month) => (
+          <div key={month}>
+            <h3 className="text-lg font-semibold text-gray-600 mb-4">{month}</h3>
+            <div className="grid gap-4">
+              {fixturesByMonth[month].map((match) => (
+                <MatchCardNew
+                  key={match.id}
+                  match={match}
+                  variant="future"
+                />
+              ))}
+            </div>
           </div>
+        ))
+      ) : (
+        <div className="text-center py-8 text-gray-500">
+          No upcoming fixtures found for the selected filters.
         </div>
-      ))}
+      )}
     </div>
   );
 };

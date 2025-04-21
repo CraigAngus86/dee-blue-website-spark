@@ -35,23 +35,35 @@ const ResultsList: React.FC<ResultsListProps> = ({
   }
   
   const resultsByMonth = getMatchesByMonth(filteredResults);
+  const sortedMonths = Object.keys(resultsByMonth).sort((a, b) => {
+    // Sort months in descending order (newest first)
+    const dateA = new Date(resultsByMonth[a][0]?.date || '');
+    const dateB = new Date(resultsByMonth[b][0]?.date || '');
+    return dateB.getTime() - dateA.getTime();
+  });
 
   return (
     <div className="space-y-8">
-      {Object.entries(resultsByMonth).reverse().map(([month, matches]) => (
-        <div key={month}>
-          <h3 className="text-lg font-semibold text-gray-600 mb-4">{month}</h3>
-          <div className="grid gap-4">
-            {matches.map((match) => (
-              <MatchCardNew
-                key={match.id}
-                match={match}
-                variant="past"
-              />
-            ))}
+      {sortedMonths.length > 0 ? (
+        sortedMonths.map((month) => (
+          <div key={month}>
+            <h3 className="text-lg font-semibold text-gray-600 mb-4">{month}</h3>
+            <div className="grid gap-4">
+              {resultsByMonth[month].map((match) => (
+                <MatchCardNew
+                  key={match.id}
+                  match={match}
+                  variant="past"
+                />
+              ))}
+            </div>
           </div>
+        ))
+      ) : (
+        <div className="text-center py-8 text-gray-500">
+          No results found for the selected filters.
         </div>
-      ))}
+      )}
     </div>
   );
 };

@@ -10,13 +10,19 @@ import LeagueTableWidget from "@/components/ui/match/LeagueTableWidget";
 
 const MatchCenter: React.FC = () => {
   // Get the next match from the upcoming fixtures
-  const nextMatch = getUpcomingFixtures()[0];
+  const upcomingFixtures = getUpcomingFixtures();
+  const nextMatch = upcomingFixtures.length > 0 ? upcomingFixtures[0] : null;
   
   // We'll need 2 past matches and 2 future matches plus the next match
   const pastMatches = getResults().slice(0, 2);
-  const futureMatches = getUpcomingFixtures().slice(1, 3);
+  const futureMatches = upcomingFixtures.slice(1, 3);
   
-  const allMatches = [...pastMatches, nextMatch, ...futureMatches];
+  // Create the matches array with null check for nextMatch
+  const allMatches = [
+    ...pastMatches,
+    ...(nextMatch ? [nextMatch] : []),
+    ...futureMatches
+  ].filter(Boolean); // Filter out any undefined values
 
   return (
     <Container>
@@ -48,7 +54,13 @@ const MatchCenter: React.FC = () => {
         
         {/* Match Carousel */}
         <div className="p-4 md:p-6">
-          <MatchCarousel matches={allMatches} />
+          {allMatches.length > 0 ? (
+            <MatchCarousel matches={allMatches} />
+          ) : (
+            <div className="text-center py-8 text-gray-500">
+              No matches available at the moment
+            </div>
+          )}
         </div>
         
         {/* League Table Widget */}
