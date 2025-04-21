@@ -20,7 +20,9 @@ const ResultsList: React.FC<ResultsListProps> = ({
   
   useEffect(() => {
     // Re-fetch data when the component renders or filters change
-    setAllRecentResults(getResults());
+    const results = getResults();
+    console.log("Loaded past results:", results.length);
+    setAllRecentResults(results);
   }, [selectedCompetitions, selectedMonth, selectedSeason]);
   
   // Apply filters
@@ -51,7 +53,11 @@ const ResultsList: React.FC<ResultsListProps> = ({
   console.log("Results rendered:", { 
     total: allRecentResults.length, 
     filtered: filteredResults.length,
-    months: sortedMonths
+    months: sortedMonths,
+    monthsData: Object.keys(resultsByMonth).map(month => ({
+      month,
+      count: resultsByMonth[month].length
+    }))
   });
 
   return (

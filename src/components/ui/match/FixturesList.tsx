@@ -20,7 +20,9 @@ const FixturesList: React.FC<FixturesListProps> = ({
   
   useEffect(() => {
     // Re-fetch data when the component renders or filters change
-    setAllUpcomingFixtures(getUpcomingFixtures());
+    const fixtures = getUpcomingFixtures();
+    console.log("Loaded upcoming fixtures:", fixtures.length);
+    setAllUpcomingFixtures(fixtures);
   }, [selectedCompetitions, selectedMonth, selectedSeason]);
   
   // Apply filters
@@ -51,7 +53,11 @@ const FixturesList: React.FC<FixturesListProps> = ({
   console.log("Fixtures rendered:", { 
     total: allUpcomingFixtures.length, 
     filtered: filteredFixtures.length,
-    months: sortedMonths
+    months: sortedMonths,
+    monthsData: Object.keys(fixturesByMonth).map(month => ({
+      month,
+      count: fixturesByMonth[month].length
+    }))
   });
 
   return (

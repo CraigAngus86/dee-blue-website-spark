@@ -17,7 +17,8 @@ import Container from '@/components/ui/layout/Container';
 import { 
   getAvailableCompetitions,
   getAvailableMonths,
-  getAvailableSeasons
+  getAvailableSeasons,
+  getAllFixtures
 } from '@/mock-data/fixturesData';
 
 const MatchCentre = () => {
@@ -31,10 +32,18 @@ const MatchCentre = () => {
   const [competitions, setCompetitions] = useState<string[]>([]);
   
   useEffect(() => {
+    // Get and log all fixture data to verify it's loading correctly
+    const allFixtures = getAllFixtures();
+    console.log("All fixtures data loaded:", allFixtures.length);
+    
     setSeasons(getAvailableSeasons());
     setMonths(getAvailableMonths());
     setCompetitions(getAvailableCompetitions());
-    console.log("Match Centre filters loaded");
+    console.log("Match Centre filters loaded:", {
+      seasons: getAvailableSeasons(),
+      months: getAvailableMonths(),
+      competitions: getAvailableCompetitions()
+    });
   }, []);
 
   return (
