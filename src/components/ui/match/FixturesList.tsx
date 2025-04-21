@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Match } from '@/types/match';
 import MatchCardNew from '../image/MatchCardNew';
 import { getUpcomingFixtures, getMatchesByMonth } from '@/mock-data/fixturesData';
@@ -15,7 +15,13 @@ const FixturesList: React.FC<FixturesListProps> = ({
   selectedMonth = '',
   selectedSeason = ''
 }) => {
-  const allUpcomingFixtures = getUpcomingFixtures();
+  // Force a refresh of the data when props change
+  const [allUpcomingFixtures, setAllUpcomingFixtures] = useState<Match[]>([]);
+  
+  useEffect(() => {
+    // Re-fetch data when the component renders or filters change
+    setAllUpcomingFixtures(getUpcomingFixtures());
+  }, [selectedCompetitions, selectedMonth, selectedSeason]);
   
   // Apply filters
   let filteredFixtures = allUpcomingFixtures;
@@ -40,6 +46,12 @@ const FixturesList: React.FC<FixturesListProps> = ({
     const dateA = new Date(fixturesByMonth[a][0]?.date || '');
     const dateB = new Date(fixturesByMonth[b][0]?.date || '');
     return dateA.getTime() - dateB.getTime();
+  });
+
+  console.log("Fixtures rendered:", { 
+    total: allUpcomingFixtures.length, 
+    filtered: filteredFixtures.length,
+    months: sortedMonths
   });
 
   return (

@@ -9,7 +9,7 @@ import MatchCarousel from "@/components/ui/match/MatchCarousel";
 import LeagueTableWidget from "@/components/ui/match/LeagueTableWidget";
 
 const MatchCenter: React.FC = () => {
-  // Get the next match from the upcoming fixtures
+  // Get the next match from the upcoming fixtures - force refreshing the data
   const upcomingFixtures = getUpcomingFixtures();
   const nextMatch = upcomingFixtures.length > 0 ? upcomingFixtures[0] : null;
   
@@ -23,6 +23,12 @@ const MatchCenter: React.FC = () => {
     ...(nextMatch ? [nextMatch] : []),
     ...futureMatches
   ].filter(Boolean); // Filter out any undefined values
+
+  console.log("Match Center data loaded:", { 
+    upcomingCount: upcomingFixtures.length, 
+    pastCount: pastMatches.length, 
+    nextMatch: nextMatch?.id
+  });
 
   return (
     <Container>

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Select,
@@ -25,9 +25,17 @@ const MatchCentre = () => {
   const [selectedMonth, setSelectedMonth] = useState<string>('all');
   const [selectedCompetitions, setSelectedCompetitions] = useState<string[]>([]);
 
-  const seasons = getAvailableSeasons();
-  const months = getAvailableMonths();
-  const competitions = getAvailableCompetitions();
+  // Refresh the available options when the component mounts
+  const [seasons, setSeasons] = useState<string[]>([]);
+  const [months, setMonths] = useState<string[]>([]);
+  const [competitions, setCompetitions] = useState<string[]>([]);
+  
+  useEffect(() => {
+    setSeasons(getAvailableSeasons());
+    setMonths(getAvailableMonths());
+    setCompetitions(getAvailableCompetitions());
+    console.log("Match Centre filters loaded");
+  }, []);
 
   return (
     <div className="flex flex-col min-h-screen">
