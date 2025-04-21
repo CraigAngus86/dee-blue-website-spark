@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   createBrowserRouter,
@@ -84,7 +85,7 @@ const routes = [
   },
   {
     path: "/match-centre",
-    element: <Index />, // This will redirect to /matches
+    element: <Index />,
   }
 ];
 

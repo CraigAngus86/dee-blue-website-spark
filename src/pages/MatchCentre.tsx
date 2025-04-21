@@ -22,7 +22,7 @@ import {
 
 const MatchCentre = () => {
   const [selectedSeason, setSelectedSeason] = useState<string>('2024/25');
-  const [selectedMonth, setSelectedMonth] = useState<string>('');
+  const [selectedMonth, setSelectedMonth] = useState<string>('all');
   const [selectedCompetitions, setSelectedCompetitions] = useState<string[]>([]);
 
   const seasons = getAvailableSeasons();
@@ -98,7 +98,7 @@ const MatchCentre = () => {
                     <SelectValue placeholder="All Months" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem key="all" value="">All Months</SelectItem>
+                    <SelectItem key="all-months" value="all">All Months</SelectItem>
                     {months.map((month) => (
                       <SelectItem key={month} value={month}>
                         {month}
@@ -108,14 +108,14 @@ const MatchCentre = () => {
                 </Select>
 
                 <Select
-                  value={selectedCompetitions[0] || ''}
-                  onValueChange={(value) => setSelectedCompetitions(value ? [value] : [])}
+                  value={selectedCompetitions[0] || 'all'}
+                  onValueChange={(value) => setSelectedCompetitions(value !== 'all' ? [value] : [])}
                 >
                   <SelectTrigger className="w-[220px]">
                     <SelectValue placeholder="All Competitions" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem key="all" value="">All Competitions</SelectItem>
+                    <SelectItem key="all-competitions" value="all">All Competitions</SelectItem>
                     {competitions.map((competition) => (
                       <SelectItem key={competition} value={competition}>
                         {competition}
@@ -129,7 +129,7 @@ const MatchCentre = () => {
             <TabsContent value="fixtures" className="mt-6">
               <FixturesList 
                 selectedCompetitions={selectedCompetitions}
-                selectedMonth={selectedMonth}
+                selectedMonth={selectedMonth === 'all' ? '' : selectedMonth}
                 selectedSeason={selectedSeason}
               />
             </TabsContent>
@@ -137,7 +137,7 @@ const MatchCentre = () => {
             <TabsContent value="results" className="mt-6">
               <ResultsList 
                 selectedCompetitions={selectedCompetitions}
-                selectedMonth={selectedMonth}
+                selectedMonth={selectedMonth === 'all' ? '' : selectedMonth}
                 selectedSeason={selectedSeason}
               />
             </TabsContent>

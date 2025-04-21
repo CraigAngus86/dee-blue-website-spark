@@ -35,14 +35,16 @@ const MatchCenter: React.FC = () => {
         </div>
         
         {/* Next Match Countdown */}
-        <MatchCountdown 
-          nextMatch={{
-            competition: nextMatch.competition,
-            round: nextMatch.round || "",
-            date: nextMatch.date,
-            time: nextMatch.time || "TBD"
-          }} 
-        />
+        {nextMatch && (
+          <MatchCountdown 
+            nextMatch={{
+              competition: nextMatch.competition,
+              round: nextMatch.round || "",
+              date: nextMatch.date,
+              time: nextMatch.time || "TBD"
+            }} 
+          />
+        )}
         
         {/* Match Carousel */}
         <div className="p-4 md:p-6">
