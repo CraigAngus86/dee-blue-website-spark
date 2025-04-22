@@ -3,6 +3,7 @@ import React from 'react';
 import {
   createBrowserRouter,
   RouterProvider,
+  Navigate,
 } from "react-router-dom";
 import './App.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -80,12 +81,12 @@ const routes = [
     element: <TeamAndManagement />,
   },
   {
-    path: "/matches",
+    path: "/match-centre",
     element: <MatchCentre />,
   },
   {
-    path: "/match-centre",
-    element: <Index />, // This will redirect to /matches
+    path: "/matches",
+    element: <Navigate to="/match-centre" replace />,
   }
 ];
 

@@ -39,7 +39,7 @@ const MatchCenter: React.FC = () => {
             textColor="primary"
           />
           <Link 
-            to="/matches" 
+            to="/match-centre" 
             className="text-sm font-medium text-primary hover:text-primary/80 transition-colors"
           >
             View All Matches →

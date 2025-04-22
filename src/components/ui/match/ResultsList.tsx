@@ -34,7 +34,7 @@ const ResultsList: React.FC<ResultsListProps> = ({
     );
   }
   
-  if (selectedMonth) {
+  if (selectedMonth && selectedMonth !== 'all') {
     filteredResults = filteredResults.filter(result => {
       const date = new Date(result.date);
       const monthYear = date.toLocaleString('en-US', { month: 'long', year: 'numeric' });

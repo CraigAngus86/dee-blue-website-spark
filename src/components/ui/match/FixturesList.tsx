@@ -34,7 +34,7 @@ const FixturesList: React.FC<FixturesListProps> = ({
     );
   }
   
-  if (selectedMonth) {
+  if (selectedMonth && selectedMonth !== 'all') {
     filteredFixtures = filteredFixtures.filter(fixture => {
       const date = new Date(fixture.date);
       const monthYear = date.toLocaleString('en-US', { month: 'long', year: 'numeric' });

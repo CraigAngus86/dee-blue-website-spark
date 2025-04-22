@@ -25,7 +25,7 @@ const Header: React.FC<{ className?: string; transparent?: boolean }> = ({ class
             {[
               { name: 'News', path: '/news' },
               { name: 'Team and Management', path: '/team' },
-              { name: 'Match Centre', path: '/matches' },
+              { name: 'Match Centre', path: '/match-centre' },
               { name: 'Spain Park', path: '/stadium' },
               { name: 'Commercial Opportunities', path: '/commercial' },
             ].map((item) => (
@@ -69,7 +69,7 @@ const Header: React.FC<{ className?: string; transparent?: boolean }> = ({ class
               {[
                 { name: 'News', path: '/news' },
                 { name: 'Team and Management', path: '/team' },
-                { name: 'Match Centre', path: '/matches' },
+                { name: 'Match Centre', path: '/match-centre' },
                 { name: 'Spain Park', path: '/stadium' },
                 { name: 'Commercial Opportunities', path: '/commercial' },
               ].map((item) => (
