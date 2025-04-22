@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Select,
@@ -14,6 +14,7 @@ import FixturesList from '@/components/ui/match/FixturesList';
 import ResultsList from '@/components/ui/match/ResultsList';
 import LeagueTable from '@/components/ui/match/LeagueTable';
 import Container from '@/components/ui/layout/Container';
+import { Skeleton } from "@/components/ui/skeleton";
 import { 
   getAvailableCompetitions,
   getAvailableMonths,
@@ -26,6 +27,7 @@ const MatchCentre = () => {
   const [selectedMonth, setSelectedMonth] = useState<string>('all');
   const [selectedCompetitions, setSelectedCompetitions] = useState<string[]>([]);
   const [selectedTab, setSelectedTab] = useState<string>('fixtures');
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // Refresh the available options when the component mounts
   const [seasons, setSeasons] = useState<string[]>([]);
@@ -33,18 +35,29 @@ const MatchCentre = () => {
   const [competitions, setCompetitions] = useState<string[]>([]);
   
   useEffect(() => {
-    // Get and log all fixture data to verify it's loading correctly
-    const allFixtures = getAllFixtures();
-    console.log("All fixtures data loaded:", allFixtures.length);
+    const loadData = async () => {
+      setIsLoading(true);
+      try {
+        // Get and log all fixture data to verify it's loading correctly
+        const allFixtures = getAllFixtures();
+        console.log("All fixtures data loaded:", allFixtures.length);
+        
+        setSeasons(getAvailableSeasons());
+        setMonths(['all', ...getAvailableMonths()]); // Add 'all' option
+        setCompetitions(getAvailableCompetitions());
+        console.log("Match Centre filters loaded:", {
+          seasons: getAvailableSeasons(),
+          months: getAvailableMonths(),
+          competitions: getAvailableCompetitions()
+        });
+      } catch (error) {
+        console.error("Error loading match centre data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
     
-    setSeasons(getAvailableSeasons());
-    setMonths(['all', ...getAvailableMonths()]); // Add 'all' option
-    setCompetitions(getAvailableCompetitions());
-    console.log("Match Centre filters loaded:", {
-      seasons: getAvailableSeasons(),
-      months: getAvailableMonths(),
-      competitions: getAvailableCompetitions()
-    });
+    loadData();
   }, []);
   
   // Log state changes
@@ -54,6 +67,43 @@ const MatchCentre = () => {
     console.log("- selectedMonth:", selectedMonth);
     console.log("- selectedCompetitions:", selectedCompetitions);
   }, [selectedTab, selectedMonth, selectedCompetitions]);
+
+  // Memoize filter props to prevent unnecessary re-renders
+  const filterProps = useMemo(() => ({
+    selectedCompetitions,
+    selectedMonth,
+    selectedSeason
+  }), [selectedCompetitions, selectedMonth, selectedSeason]);
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col min-h-screen">
+        <Header />
+        <main className="flex-grow bg-gray-50">
+          <div className="relative bg-[#00105A] h-48">
+            <div className="absolute inset-0 opacity-20">
+              <Skeleton className="w-full h-full" />
+            </div>
+            <Container>
+              <div className="relative pt-20 pb-8">
+                <Skeleton className="h-10 w-64 mb-2" />
+                <Skeleton className="h-6 w-80" />
+              </div>
+            </Container>
+          </div>
+          <Container className="py-8">
+            <Skeleton className="h-12 w-full mb-6" />
+            <div className="space-y-4">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Skeleton key={i} className="h-24 w-full" />
+              ))}
+            </div>
+          </Container>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -167,19 +217,11 @@ const MatchCentre = () => {
             </div>
 
             <TabsContent value="fixtures" className="mt-6">
-              <FixturesList 
-                selectedCompetitions={selectedCompetitions}
-                selectedMonth={selectedMonth === 'all' ? '' : selectedMonth}
-                selectedSeason={selectedSeason}
-              />
+              <FixturesList {...filterProps} />
             </TabsContent>
 
             <TabsContent value="results" className="mt-6">
-              <ResultsList 
-                selectedCompetitions={selectedCompetitions}
-                selectedMonth={selectedMonth === 'all' ? '' : selectedMonth}
-                selectedSeason={selectedSeason}
-              />
+              <ResultsList {...filterProps} />
             </TabsContent>
 
             <TabsContent value="table" className="mt-6">

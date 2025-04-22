@@ -1,8 +1,9 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Match } from '@/types/match';
 import MatchCardNew from '../image/MatchCardNew';
 import { getResults, getMatchesByMonth } from '@/mock-data/fixturesData';
+import LoadingState from '../common/LoadingState';
 
 interface ResultsListProps {
   selectedCompetitions?: string[];
@@ -12,76 +13,102 @@ interface ResultsListProps {
 
 const ResultsList: React.FC<ResultsListProps> = ({ 
   selectedCompetitions = [],
-  selectedMonth = '',
+  selectedMonth = 'all',
   selectedSeason = ''
 }) => {
-  // Force a refresh of the data when props change
   const [allRecentResults, setAllRecentResults] = useState<Match[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   
   useEffect(() => {
     // Re-fetch data when the component renders or filters change
-    const results = getResults();
-    console.log("Loaded past results:", results.length);
-    console.log("ALL RESULTS:", results.length);
-    console.log("Date range:", results.map(f => f.date).sort());
-    console.log("Unique months:", [...new Set(results.map(f => {
-      const date = new Date(f.date);
-      return `${date.getMonth()+1}/${date.getFullYear()}`;
-    }))]);
+    const loadResults = () => {
+      setIsLoading(true);
+      try {
+        const results = getResults();
+        console.log("Loaded past results:", results.length);
+        console.log("ALL RESULTS:", results.length);
+        console.log("Date range:", results.map(f => f.date).sort());
+        console.log("Unique months:", [...new Set(results.map(f => {
+          const date = new Date(f.date);
+          return `${date.getMonth()+1}/${date.getFullYear()}`;
+        }))]);
+        
+        // Log each result's status to debug completion status issues
+        results.forEach(result => {
+          console.log(`Result ${result.id}: status=${result.status}, date=${result.date}, isCompleted=${result.isCompleted}`);
+        });
+        
+        setAllRecentResults(results);
+      } catch (error) {
+        console.error("Error loading results:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
     
-    // Log each result's status to debug completion status issues
-    results.forEach(result => {
-      console.log(`Result ${result.id}: status=${result.status}, date=${result.date}, isCompleted=${result.isCompleted}`);
-    });
-    
-    setAllRecentResults(results);
+    loadResults();
   }, [selectedCompetitions, selectedMonth, selectedSeason]);
   
-  // Apply filters
-  let filteredResults = allRecentResults;
+  // Apply filters using useMemo for performance
+  const filteredResults = useMemo(() => {
+    let filtered = allRecentResults;
+    
+    if (selectedCompetitions.length > 0) {
+      filtered = filtered.filter(result => 
+        selectedCompetitions.some(comp => result.competition.includes(comp))
+      );
+    }
+    
+    if (selectedMonth && selectedMonth !== 'all') {
+      filtered = filtered.filter(result => {
+        const date = new Date(result.date);
+        const monthYear = date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+        console.log(`Comparing ${monthYear} to ${selectedMonth}`);
+        return monthYear === selectedMonth;
+      });
+    }
+    
+    console.log("FILTERED RESULTS:", filtered.length);
+    console.log("Filtered date range:", filtered.map(f => f.date).sort());
+    
+    return filtered;
+  }, [allRecentResults, selectedCompetitions, selectedMonth]);
   
-  if (selectedCompetitions.length > 0) {
-    filteredResults = filteredResults.filter(result => 
-      selectedCompetitions.some(comp => result.competition.includes(comp))
-    );
-  }
-  
-  if (selectedMonth && selectedMonth !== 'all') {
-    filteredResults = filteredResults.filter(result => {
-      const date = new Date(result.date);
-      const monthYear = date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
-      console.log(`Comparing ${monthYear} to ${selectedMonth}`);
-      return monthYear === selectedMonth;
+  // Get results by month with useMemo for performance
+  const resultsByMonthData = useMemo(() => {
+    // Sort results by date before grouping by month
+    const sortedResults = [...filteredResults].sort((a, b) => {
+      return new Date(b.date).getTime() - new Date(a.date).getTime(); // Note: descending for results
     });
-  }
+    
+    return getMatchesByMonth(sortedResults);
+  }, [filteredResults]);
   
-  console.log("FILTERED RESULTS:", filteredResults.length);
-  console.log("Filtered date range:", filteredResults.map(f => f.date).sort());
-  
-  // Sort results by date before grouping by month
-  const sortedResults = [...filteredResults].sort((a, b) => {
-    return new Date(b.date).getTime() - new Date(a.date).getTime(); // Note: descending for results
-  });
-  
-  const resultsByMonth = getMatchesByMonth(sortedResults);
-  const sortedMonths = Object.keys(resultsByMonth).sort((a, b) => {
-    // Sort months in descending order (newest first)
-    const dateA = new Date(resultsByMonth[a][0]?.date || '');
-    const dateB = new Date(resultsByMonth[b][0]?.date || '');
-    return dateB.getTime() - dateA.getTime();
-  });
+  // Sort months for display
+  const sortedMonths = useMemo(() => {
+    return Object.keys(resultsByMonthData).sort((a, b) => {
+      // Sort months in descending order (newest first)
+      const dateA = new Date(resultsByMonthData[a][0]?.date || '');
+      const dateB = new Date(resultsByMonthData[b][0]?.date || '');
+      return dateB.getTime() - dateA.getTime();
+    });
+  }, [resultsByMonthData]);
 
   console.log("Results Tab Render:");
   console.log("- All results available:", allRecentResults.length);
   console.log("- Filtered results:", filteredResults.length);
-  console.log("- Number of months:", Object.keys(resultsByMonth || {}).length);
-  console.log("- Months:", Object.keys(resultsByMonth || {}));
+  console.log("- Number of months:", Object.keys(resultsByMonthData || {}).length);
+  console.log("- Months:", Object.keys(resultsByMonthData || {}));
   
   // Check for fixture distribution across months
-  if (resultsByMonth) {
-    Object.entries(resultsByMonth).forEach(([month, fixtures]) => {
+  if (resultsByMonthData) {
+    Object.entries(resultsByMonthData).forEach(([month, fixtures]) => {
       console.log(`  - ${month}: ${fixtures.length} fixtures`);
     });
+  }
+
+  if (isLoading) {
+    return <LoadingState count={2} />;
   }
 
   return (
@@ -91,7 +118,7 @@ const ResultsList: React.FC<ResultsListProps> = ({
           <div key={month}>
             <h3 className="text-lg font-semibold text-gray-600 mb-4">{month}</h3>
             <div className="grid gap-4">
-              {resultsByMonth[month].map((match) => (
+              {resultsByMonthData[month].map((match) => (
                 <MatchCardNew
                   key={match.id}
                   match={match}
@@ -110,4 +137,4 @@ const ResultsList: React.FC<ResultsListProps> = ({
   );
 };
 
-export default ResultsList;
+export default React.memo(ResultsList);
