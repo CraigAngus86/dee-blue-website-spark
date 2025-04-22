@@ -25,19 +25,6 @@ const ResultsList: React.FC<ResultsListProps> = ({
       setIsLoading(true);
       try {
         const results = getResults();
-        console.log("Loaded past results:", results.length);
-        console.log("ALL RESULTS:", results.length);
-        console.log("Date range:", results.map(f => f.date).sort());
-        console.log("Unique months:", [...new Set(results.map(f => {
-          const date = new Date(f.date);
-          return `${date.getMonth()+1}/${date.getFullYear()}`;
-        }))]);
-        
-        // Log each result's status to debug completion status issues
-        results.forEach(result => {
-          console.log(`Result ${result.id}: status=${result.status}, date=${result.date}, isCompleted=${result.isCompleted}`);
-        });
-        
         setAllRecentResults(results);
       } catch (error) {
         console.error("Error loading results:", error);
@@ -63,13 +50,9 @@ const ResultsList: React.FC<ResultsListProps> = ({
       filtered = filtered.filter(result => {
         const date = new Date(result.date);
         const monthYear = date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
-        console.log(`Comparing ${monthYear} to ${selectedMonth}`);
         return monthYear === selectedMonth;
       });
     }
-    
-    console.log("FILTERED RESULTS:", filtered.length);
-    console.log("Filtered date range:", filtered.map(f => f.date).sort());
     
     return filtered;
   }, [allRecentResults, selectedCompetitions, selectedMonth]);
@@ -93,19 +76,6 @@ const ResultsList: React.FC<ResultsListProps> = ({
       return dateB.getTime() - dateA.getTime();
     });
   }, [resultsByMonthData]);
-
-  console.log("Results Tab Render:");
-  console.log("- All results available:", allRecentResults.length);
-  console.log("- Filtered results:", filteredResults.length);
-  console.log("- Number of months:", Object.keys(resultsByMonthData || {}).length);
-  console.log("- Months:", Object.keys(resultsByMonthData || {}));
-  
-  // Check for fixture distribution across months
-  if (resultsByMonthData) {
-    Object.entries(resultsByMonthData).forEach(([month, fixtures]) => {
-      console.log(`  - ${month}: ${fixtures.length} fixtures`);
-    });
-  }
 
   if (isLoading) {
     return <LoadingState count={2} />;

@@ -25,13 +25,6 @@ const FixturesList: React.FC<FixturesListProps> = ({
       setIsLoading(true);
       try {
         const fixtures = getUpcomingFixtures();
-        console.log("Loaded upcoming fixtures:", fixtures.length);
-        console.log("ALL UPCOMING FIXTURES:", fixtures.length);
-        console.log("Date range:", fixtures.map(f => f.date).sort());
-        console.log("Unique months:", [...new Set(fixtures.map(f => {
-          const date = new Date(f.date);
-          return `${date.getMonth()+1}/${date.getFullYear()}`;
-        }))]);
         setAllUpcomingFixtures(fixtures);
       } catch (error) {
         console.error("Error loading fixtures:", error);
@@ -57,13 +50,9 @@ const FixturesList: React.FC<FixturesListProps> = ({
       filtered = filtered.filter(fixture => {
         const date = new Date(fixture.date);
         const monthYear = date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
-        console.log(`Comparing ${monthYear} to ${selectedMonth}`);
         return monthYear === selectedMonth;
       });
     }
-    
-    console.log("FILTERED FIXTURES:", filtered.length);
-    console.log("Filtered date range:", filtered.map(f => f.date).sort());
     
     return filtered;
   }, [allUpcomingFixtures, selectedCompetitions, selectedMonth]);
@@ -87,16 +76,6 @@ const FixturesList: React.FC<FixturesListProps> = ({
       return dateA.getTime() - dateB.getTime();
     });
   }, [fixturesByMonthData]);
-
-  console.log("Fixtures rendered:", { 
-    total: allUpcomingFixtures.length, 
-    filtered: filteredFixtures.length,
-    months: sortedMonths,
-    monthsData: Object.keys(fixturesByMonthData).map(month => ({
-      month,
-      count: fixturesByMonthData[month].length
-    }))
-  });
 
   if (isLoading) {
     return <LoadingState count={2} />;
