@@ -1,3 +1,4 @@
+
 import { Match } from "@/types/match";
 
 // Convert date string (DD/MM/YYYY) to ISO format (YYYY-MM-DD)
@@ -177,11 +178,20 @@ export const getAvailableSeasons = () => {
   return ['2024/25'];
 };
 
-// Helper function to group matches by month
+// Helper function to group matches by month - Enhanced with debugging
 export const getMatchesByMonth = (matches: Match[]) => {
-  return matches.reduce((acc, match) => {
+  console.log("getMatchesByMonth input:", matches.length);
+  
+  // Make sure to sort by date first
+  const sortedMatches = [...matches].sort((a, b) => {
+    return new Date(a.date).getTime() - new Date(b.date).getTime();
+  });
+  
+  const result = sortedMatches.reduce((acc, match) => {
     const date = new Date(match.date);
+    // Important: Format the month properly
     const monthYear = date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+    console.log("Processing match:", match.date, "→", monthYear);
     
     if (!acc[monthYear]) {
       acc[monthYear] = [];
@@ -190,22 +200,39 @@ export const getMatchesByMonth = (matches: Match[]) => {
     acc[monthYear].push(match);
     return acc;
   }, {} as Record<string, Match[]>);
+  
+  console.log("Months after grouping:", Object.keys(result));
+  return result;
 };
 
 // Helper function to get completed matches (results)
 export const getResults = () => {
-  const now = new Date();
-  return allFixtures
-    .filter(match => match.isCompleted)
+  console.log("getResults called - all fixtures:", allFixtures.length);
+  const results = allFixtures
+    .filter(match => {
+      const isCompleted = match.isCompleted === true;
+      console.log(`Fixture ${match.id}: status=${match.status}, isCompleted=${isCompleted}, date=${match.date}`);
+      return isCompleted;
+    })
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  
+  console.log(`Filtered ${allFixtures.length} fixtures to ${results.length} completed results`);
+  return results;
 };
 
 // Helper function to get upcoming fixtures
 export const getUpcomingFixtures = () => {
-  const now = new Date();
-  return allFixtures
-    .filter(match => !match.isCompleted)
+  console.log("getUpcomingFixtures called - all fixtures:", allFixtures.length);
+  const fixtures = allFixtures
+    .filter(match => {
+      const isUpcoming = match.isCompleted === false;
+      console.log(`Fixture ${match.id}: status=${match.status}, isUpcoming=${isUpcoming}, date=${match.date}`);
+      return isUpcoming;
+    })
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  
+  console.log(`Filtered ${allFixtures.length} fixtures to ${fixtures.length} upcoming fixtures`);
+  return fixtures;
 };
 
 // Helper to get matches for the match center carousel (2 past, 1 next, 2 future)

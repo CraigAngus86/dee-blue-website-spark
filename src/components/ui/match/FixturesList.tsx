@@ -22,6 +22,12 @@ const FixturesList: React.FC<FixturesListProps> = ({
     // Re-fetch data when the component renders or filters change
     const fixtures = getUpcomingFixtures();
     console.log("Loaded upcoming fixtures:", fixtures.length);
+    console.log("ALL UPCOMING FIXTURES:", fixtures.length);
+    console.log("Date range:", fixtures.map(f => f.date).sort());
+    console.log("Unique months:", [...new Set(fixtures.map(f => {
+      const date = new Date(f.date);
+      return `${date.getMonth()+1}/${date.getFullYear()}`;
+    }))]);
     setAllUpcomingFixtures(fixtures);
   }, [selectedCompetitions, selectedMonth, selectedSeason]);
   
@@ -38,11 +44,20 @@ const FixturesList: React.FC<FixturesListProps> = ({
     filteredFixtures = filteredFixtures.filter(fixture => {
       const date = new Date(fixture.date);
       const monthYear = date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+      console.log(`Comparing ${monthYear} to ${selectedMonth}`);
       return monthYear === selectedMonth;
     });
   }
   
-  const fixturesByMonth = getMatchesByMonth(filteredFixtures);
+  console.log("FILTERED FIXTURES:", filteredFixtures.length);
+  console.log("Filtered date range:", filteredFixtures.map(f => f.date).sort());
+  
+  // Make sure to sort fixtures first before grouping by month
+  const sortedFixtures = [...filteredFixtures].sort((a, b) => {
+    return new Date(a.date).getTime() - new Date(b.date).getTime();
+  });
+  
+  const fixturesByMonth = getMatchesByMonth(sortedFixtures);
   const sortedMonths = Object.keys(fixturesByMonth).sort((a, b) => {
     // Sort months in ascending order (oldest first)
     const dateA = new Date(fixturesByMonth[a][0]?.date || '');

@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getUpcomingFixtures, getResults, leagueTableData } from "@/mock-data/fixturesData";
 import Container from "@/components/ui/layout/Container";
@@ -9,14 +9,12 @@ import MatchCarousel from "@/components/ui/match/MatchCarousel";
 import LeagueTableWidget from "@/components/ui/match/LeagueTableWidget";
 
 const MatchCenter: React.FC = () => {
-  // Get the next match from the upcoming fixtures - force refreshing the data
+  // Get data on component mount to ensure fresh data
   const upcomingFixtures = getUpcomingFixtures();
-  const nextMatch = upcomingFixtures.length > 0 ? upcomingFixtures[0] : null;
-  
-  // We'll need 2 past matches and 2 future matches plus the next match
   const pastMatches = getResults().slice(0, 2);
+  const nextMatch = upcomingFixtures.length > 0 ? upcomingFixtures[0] : null;
   const futureMatches = upcomingFixtures.slice(1, 3);
-  
+
   // Create the matches array with null check for nextMatch
   const allMatches = [
     ...pastMatches,
@@ -27,8 +25,19 @@ const MatchCenter: React.FC = () => {
   console.log("Match Center data loaded:", { 
     upcomingCount: upcomingFixtures.length, 
     pastCount: pastMatches.length, 
-    nextMatch: nextMatch?.id
+    nextMatch: nextMatch?.id,
+    allMatchesCount: allMatches.length
   });
+
+  // Log all matches to verify data is correct
+  useEffect(() => {
+    console.log("MatchCenter matches:", allMatches.map(match => ({
+      id: match.id,
+      date: match.date,
+      teams: `${match.homeTeam} vs ${match.awayTeam}`,
+      status: match.status
+    })));
+  }, [allMatches]);
 
   return (
     <Container>

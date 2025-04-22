@@ -25,6 +25,7 @@ const MatchCentre = () => {
   const [selectedSeason, setSelectedSeason] = useState<string>('2024/25');
   const [selectedMonth, setSelectedMonth] = useState<string>('all');
   const [selectedCompetitions, setSelectedCompetitions] = useState<string[]>([]);
+  const [selectedTab, setSelectedTab] = useState<string>('fixtures');
 
   // Refresh the available options when the component mounts
   const [seasons, setSeasons] = useState<string[]>([]);
@@ -37,7 +38,7 @@ const MatchCentre = () => {
     console.log("All fixtures data loaded:", allFixtures.length);
     
     setSeasons(getAvailableSeasons());
-    setMonths(getAvailableMonths());
+    setMonths(['all', ...getAvailableMonths()]); // Add 'all' option
     setCompetitions(getAvailableCompetitions());
     console.log("Match Centre filters loaded:", {
       seasons: getAvailableSeasons(),
@@ -45,6 +46,14 @@ const MatchCentre = () => {
       competitions: getAvailableCompetitions()
     });
   }, []);
+  
+  // Log state changes
+  useEffect(() => {
+    console.log("State changed:");
+    console.log("- selectedTab:", selectedTab);
+    console.log("- selectedMonth:", selectedMonth);
+    console.log("- selectedCompetitions:", selectedCompetitions);
+  }, [selectedTab, selectedMonth, selectedCompetitions]);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -67,7 +76,14 @@ const MatchCentre = () => {
         </div>
 
         <Container className="py-8">
-          <Tabs defaultValue="fixtures" className="w-full">
+          <Tabs 
+            defaultValue="fixtures" 
+            className="w-full"
+            onValueChange={(value) => {
+              console.log("Tab changed to:", value);
+              setSelectedTab(value);
+            }}
+          >
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
               <TabsList className="bg-white border flex justify-start p-1">
                 <TabsTrigger 
@@ -109,14 +125,17 @@ const MatchCentre = () => {
 
                 <Select
                   value={selectedMonth}
-                  onValueChange={setSelectedMonth}
+                  onValueChange={(val) => {
+                    console.log("Month selection changed to:", val);
+                    setSelectedMonth(val);
+                  }}
                 >
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="All Months" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem key="all-months" value="all">All Months</SelectItem>
-                    {months.map((month) => (
+                    {months.filter(m => m !== 'all').map((month) => (
                       <SelectItem key={month} value={month}>
                         {month}
                       </SelectItem>
@@ -126,7 +145,11 @@ const MatchCentre = () => {
 
                 <Select
                   value={selectedCompetitions[0] || 'all'}
-                  onValueChange={(value) => setSelectedCompetitions(value !== 'all' ? [value] : [])}
+                  onValueChange={(value) => {
+                    const newValue = value !== 'all' ? [value] : [];
+                    console.log("Competition selection changed to:", newValue);
+                    setSelectedCompetitions(newValue);
+                  }}
                 >
                   <SelectTrigger className="w-[220px]">
                     <SelectValue placeholder="All Competitions" />
