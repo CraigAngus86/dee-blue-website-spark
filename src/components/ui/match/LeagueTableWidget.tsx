@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ChevronRight } from 'lucide-react';
 import { ButtonNew } from "@/components/ui/ButtonNew";
@@ -39,15 +38,13 @@ const LeagueTableWidget = () => {
       
       <div className="bg-white shadow-sm rounded-lg p-6">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
-          {/* Team and Position - 3 columns */}
           <div className="md:col-span-3 flex items-center gap-3">
             <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white font-bold text-xl">
               {teamData ? teamData.position : 3}
             </div>
-            <Text weight="bold" size="large" color="primary" className="text-lg">Banks o' Dee FC</Text>
+            <Text weight="bold" size="large" color="primary" className="text-lg">Banks o' Dee</Text>
           </div>
           
-          {/* Stats Group - 6 columns */}
           <div className="md:col-span-6 flex justify-center items-center gap-8">
             <div className="text-center">
               <Text size="large" weight="bold" color="primary" className="text-3xl leading-none">
@@ -75,7 +72,6 @@ const LeagueTableWidget = () => {
             </div>
           </div>
           
-          {/* Form - 3 columns */}
           <div className="md:col-span-3">
             <div className="flex flex-col items-end">
               <div className="flex space-x-2 mb-1">

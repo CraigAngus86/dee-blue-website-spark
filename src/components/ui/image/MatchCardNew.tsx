@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Match } from '@/types/match';
 import { CardNew } from '@/components/ui/CardNew';
@@ -54,11 +53,11 @@ const MatchCardNew: React.FC<MatchCardNewProps> = ({ match, variant, className }
         
         <div className="text-center w-[30%] sm:w-2/12">
           {isPast && match.result ? (
-            <div className="flex flex-col items-center justify-center">
+            <div className="flex items-center justify-center space-x-2">
               <div className="text-lg sm:text-2xl font-bold">
                 {match.result.homeScore}
               </div>
-              <div className="text-sm sm:text-lg text-gray-400 my-1">-</div>
+              <div className="text-sm sm:text-lg text-gray-400">-</div>
               <div className="text-lg sm:text-2xl font-bold">
                 {match.result.awayScore}
               </div>
@@ -111,4 +110,3 @@ const MatchCardNew: React.FC<MatchCardNewProps> = ({ match, variant, className }
 };
 
 export default MatchCardNew;
-
