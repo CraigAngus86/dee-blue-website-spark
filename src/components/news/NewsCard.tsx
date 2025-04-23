@@ -31,7 +31,7 @@ const NewsCard: React.FC<NewsCardProps> = ({
         onClick={onClick}
       >
         <div className="relative">
-          {/* Image with gradient overlay */}
+          {/* Image with consistent aspect ratio */}
           <div className={cn(
             "relative",
             isFeatured ? "aspect-[2/1]" : "aspect-square"
