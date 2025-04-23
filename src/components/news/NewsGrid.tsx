@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import NewsCard from "./NewsCard";
 import { newsArticles } from "@/mock-data/newsData";
-import Grid from "@/components/ui/layout/Grid";
 
 const NewsGrid = () => {
   const [activeFilter, setActiveFilter] = useState('all');
@@ -29,6 +28,37 @@ const NewsGrid = () => {
     return 0;
   });
   
+  // Organize articles into rows for better layout control
+  const organizeArticlesInRows = (articles) => {
+    const rows = [];
+    let currentRow = [];
+    let currentRowWidth = 0;
+    
+    // Each normal article takes 1 unit of width, featured takes 2
+    articles.forEach(article => {
+      const articleWidth = article.isFeatured ? 2 : 1;
+      
+      // If adding this article would exceed row width (3 units), start a new row
+      if (currentRowWidth + articleWidth > 3) {
+        rows.push([...currentRow]);
+        currentRow = [article];
+        currentRowWidth = articleWidth;
+      } else {
+        currentRow.push(article);
+        currentRowWidth += articleWidth;
+      }
+    });
+    
+    // Add the last row if it has any articles
+    if (currentRow.length > 0) {
+      rows.push(currentRow);
+    }
+    
+    return rows;
+  };
+  
+  const articleRows = organizeArticlesInRows(sortedNews);
+  
   return (
     <div className="w-full">
       {/* Filters */}
@@ -46,25 +76,26 @@ const NewsGrid = () => {
         ))}
       </div>
       
-      {/* Grid Container with proper handling of featured articles */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {sortedNews.map((article) => (
-          // Apply md:col-span-2 directly to the grid item for featured articles
-          <div 
-            key={article.id}
-            className={article.isFeatured ? "md:col-span-2" : ""}
-          >
-            <NewsCard
-              image={article.image}
-              title={article.title}
-              category={article.category}
-              date={article.date}
-              excerpt={article.excerpt}
-              isFeatured={article.isFeatured}
-            />
-          </div>
-        ))}
-      </div>
+      {/* Display articles row by row */}
+      {articleRows.map((row, rowIndex) => (
+        <div key={rowIndex} className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          {row.map((article) => (
+            <div 
+              key={article.id}
+              className={article.isFeatured ? "md:col-span-2" : ""}
+            >
+              <NewsCard
+                image={article.image}
+                title={article.title}
+                category={article.category}
+                date={article.date}
+                excerpt={article.excerpt}
+                isFeatured={article.isFeatured}
+              />
+            </div>
+          ))}
+        </div>
+      ))}
     </div>
   );
 };
