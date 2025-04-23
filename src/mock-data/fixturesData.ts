@@ -1,4 +1,3 @@
-
 import { Match } from "@/types/match";
 import { fixtures2025_26 } from "./fixturesData2025_26";
 
@@ -606,8 +605,12 @@ export const allFixtures: Match[] = [
     homeTeam: "Forres Mechanics FC",
     awayTeam: "Banks o' Dee FC",
     venue: "Mosset Park",
-    status: "upcoming",
-    isCompleted: false
+    status: "completed",
+    isCompleted: true,
+    result: {
+      homeScore: 1,
+      awayScore: 1
+    }
   },
   {
     id: "40",

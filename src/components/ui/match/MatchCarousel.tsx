@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { 
   Carousel,
   CarouselContent,
@@ -10,18 +10,21 @@ import {
 import MatchCardNew from "@/components/ui/image/MatchCardNew";
 
 interface MatchCarouselProps {
-  matches: Array<any>; // Using any temporarily, we should define a proper type
+  matches: Array<any>;
 }
 
 const MatchCarousel: React.FC<MatchCarouselProps> = ({ matches }) => {
+  const nextMatchIndex = matches.findIndex(match => !match.isCompleted);
+  
   return (
     <div className="relative">
       <Carousel
         className="w-full"
         opts={{
-          align: "start",
+          align: "center",
           loop: true,
-          dragFree: true // Enable free scrolling while keeping arrows
+          startIndex: Math.max(0, nextMatchIndex),
+          dragFree: true
         }}
       >
         <CarouselContent className="-ml-2 md:-ml-4">
@@ -30,7 +33,7 @@ const MatchCarousel: React.FC<MatchCarouselProps> = ({ matches }) => {
               <MatchCardNew
                 match={match}
                 variant={match.status === "upcoming" ? 
-                  (index === Math.floor(matches.length / 2) ? "next" : "future") : 
+                  (index === nextMatchIndex ? "next" : "future") : 
                   "past"
                 }
                 className="h-full"
