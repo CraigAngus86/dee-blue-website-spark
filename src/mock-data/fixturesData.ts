@@ -1,3 +1,4 @@
+
 import { Match } from "@/types/match";
 import { fixtures2025_26 } from "./fixturesData2025_26";
 
@@ -625,6 +626,57 @@ export const allFixtures: Match[] = [
 // Export available seasons
 export const getAvailableSeasons = () => {
   return ['2024/25', '2025/26'];
+};
+
+// Get all available competitions from all fixtures
+export const getAvailableCompetitions = () => {
+  const allCompetitionsSet = new Set<string>();
+  
+  [...allFixtures, ...fixtures2025_26].forEach(fixture => {
+    allCompetitionsSet.add(fixture.competition);
+  });
+  
+  return Array.from(allCompetitionsSet);
+};
+
+// Get all available month-year combinations from all fixtures
+export const getAvailableMonths = () => {
+  const monthsSet = new Set<string>();
+  
+  [...allFixtures, ...fixtures2025_26].forEach(match => {
+    const date = new Date(match.date);
+    const monthYear = date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+    monthsSet.add(monthYear);
+  });
+  
+  return Array.from(monthsSet).sort((a, b) => {
+    const dateA = new Date(a);
+    const dateB = new Date(b);
+    return dateA.getTime() - dateB.getTime();
+  });
+};
+
+// Get all matches grouped by month
+export const getMatchesByMonth = (matches: Match[]) => {
+  const matchesByMonth: Record<string, Match[]> = {};
+  
+  matches.forEach((match) => {
+    const date = new Date(match.date);
+    const monthYear = date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+    
+    if (!matchesByMonth[monthYear]) {
+      matchesByMonth[monthYear] = [];
+    }
+    
+    matchesByMonth[monthYear].push(match);
+  });
+  
+  return matchesByMonth;
+};
+
+// Get all fixtures (from all seasons)
+export const getAllFixtures = () => {
+  return [...allFixtures, ...fixtures2025_26];
 };
 
 // Helper function to get fixtures by season
