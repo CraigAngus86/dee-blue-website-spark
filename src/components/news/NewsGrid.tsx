@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import NewsCard from "./NewsCard";
 import { newsArticles } from "@/mock-data/newsData";
-import Grid from "../ui/layout/Grid";
 
 const NewsGrid = () => {
   const [activeFilter, setActiveFilter] = useState('all');
@@ -24,13 +23,8 @@ const NewsGrid = () => {
     return categorySlug === activeFilter;
   });
 
-  // Sort news by featured status first, then by date
+  // Sort news by date (more recent first)
   const sortedNews = [...filteredNews].sort((a, b) => {
-    // Featured articles come first
-    if (a.isFeatured && !b.isFeatured) return -1;
-    if (!a.isFeatured && b.isFeatured) return 1;
-    
-    // Then sort by date (more recent first)
     const dateA = new Date(a.date).getTime();
     const dateB = new Date(b.date).getTime();
     return dateB - dateA;
@@ -53,12 +47,12 @@ const NewsGrid = () => {
         ))}
       </div>
       
-      {/* News Grid - Using auto-flow grid layout */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-auto">
-        {sortedNews.map((article, index) => (
+      {/* News Grid - CSS Grid with explicit placement for featured articles */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {sortedNews.map((article) => (
           <div 
             key={article.id}
-            className={`${article.isFeatured ? "md:col-span-2" : "md:col-span-1"}`}
+            className={article.isFeatured ? "md:col-span-2" : ""}
           >
             <NewsCard
               image={article.image}

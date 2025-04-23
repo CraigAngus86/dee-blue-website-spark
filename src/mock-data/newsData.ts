@@ -20,7 +20,7 @@ export const newsArticles = [
     category: "CLUB NEWS",
     date: "April 7, 2025",
     timestamp: "10 days ago",
-    isFeatured: true
+    isFeatured: false
   },
   {
     id: 3,
@@ -29,7 +29,8 @@ export const newsArticles = [
     image: getNewsImage(2),
     category: "CLUB NEWS",
     date: "April 5, 2025",
-    timestamp: "12 days ago"
+    timestamp: "12 days ago",
+    isFeatured: false
   },
   {
     id: 4,
@@ -38,7 +39,8 @@ export const newsArticles = [
     image: getNewsImage(3),
     category: "CLUB NEWS",
     date: "April 3, 2025",
-    timestamp: "2 weeks ago"
+    timestamp: "2 weeks ago",
+    isFeatured: true
   },
   {
     id: 5,
@@ -47,7 +49,8 @@ export const newsArticles = [
     image: getNewsImage(4),
     category: "TEAM NEWS",
     date: "April 2, 2025",
-    timestamp: "2 weeks ago"
+    timestamp: "2 weeks ago",
+    isFeatured: false
   },
   {
     id: 6,
@@ -56,7 +59,8 @@ export const newsArticles = [
     image: getNewsImage(0),
     category: "CLUB NEWS",
     date: "March 31, 2025",
-    timestamp: "3 weeks ago"
+    timestamp: "3 weeks ago",
+    isFeatured: false
   },
   {
     id: 7,
@@ -65,7 +69,8 @@ export const newsArticles = [
     image: getNewsImage(1),
     category: "MATCH REPORT",
     date: "March 28, 2025",
-    timestamp: "3 weeks ago"
+    timestamp: "3 weeks ago",
+    isFeatured: false
   },
   {
     id: 8,
@@ -74,7 +79,8 @@ export const newsArticles = [
     image: getNewsImage(2),
     category: "COMMUNITY",
     date: "March 25, 2025",
-    timestamp: "4 weeks ago"
+    timestamp: "4 weeks ago",
+    isFeatured: true
   },
   {
     id: 9,
@@ -83,7 +89,8 @@ export const newsArticles = [
     image: getNewsImage(3),
     category: "CLUB NEWS",
     date: "March 20, 2025",
-    timestamp: "1 month ago"
+    timestamp: "1 month ago",
+    isFeatured: false
   },
   {
     id: 10,
@@ -92,6 +99,7 @@ export const newsArticles = [
     image: getNewsImage(4),
     category: "CLUB NEWS",
     date: "March 15, 2025",
-    timestamp: "1 month ago"
+    timestamp: "1 month ago",
+    isFeatured: false
   }
 ];
