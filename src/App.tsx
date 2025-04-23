@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   createBrowserRouter,
@@ -19,6 +18,7 @@ import HomePage from "./pages/HomePage";
 import Index from "./pages/Index";
 import TeamAndManagement from "./pages/TeamAndManagement";
 import MatchCentre from "./pages/MatchCentre";
+import NewsPage from "./pages/NewsPage";
 
 // Create a client
 const queryClient = new QueryClient();
@@ -87,6 +87,10 @@ const routes = [
   {
     path: "/matches",
     element: <Navigate to="/match-centre" replace />,
+  },
+  {
+    path: "/news",
+    element: <NewsPage />,
   }
 ];
 

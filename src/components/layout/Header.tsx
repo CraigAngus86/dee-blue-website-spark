@@ -62,6 +62,7 @@ const Header: React.FC<{ className?: string; transparent?: boolean }> = ({ class
         </div>
       </div>
       
+      {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <div className="lg:hidden absolute top-20 left-0 right-0 bg-primary shadow-lg animate-slide-in-right">
           <div className="container mx-auto px-4">
