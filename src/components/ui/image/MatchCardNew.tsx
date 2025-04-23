@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Match } from '@/types/match';
 import { CardNew } from '@/components/ui/CardNew';
@@ -16,35 +17,14 @@ const formatDate = (dateStr: string) => {
   return date.toLocaleDateString('en-GB', {
     weekday: 'short',
     day: 'numeric',
-    month: 'short',
-    year: 'numeric'
+    month: 'short'
   });
-};
-
-const ResultBadge = ({ match }: { match: Match }) => {
-  if (!match.isCompleted || !match.result) return null;
-  
-  const isBanksHome = match.homeTeam.includes("Banks o' Dee");
-  const banksScore = isBanksHome ? match.result.homeScore : match.result.awayScore;
-  const opponentScore = isBanksHome ? match.result.awayScore : match.result.homeScore;
-  
-  let result: 'win' | 'loss' | 'draw' = 'draw';
-  if (banksScore > opponentScore) result = 'win';
-  if (banksScore < opponentScore) result = 'loss';
-  
-  return (
-    <div className={`
-      absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold z-10
-      ${result === 'win' ? 'bg-green-500' : result === 'loss' ? 'bg-red-500' : 'bg-amber-500'}
-    `}>
-      {result === 'win' ? 'W' : result === 'loss' ? 'L' : 'D'}
-    </div>
-  );
 };
 
 const MatchCardNew: React.FC<MatchCardNewProps> = ({ match, variant, className }) => {
   const isPast = match.isCompleted || variant === 'past';
   const isNext = variant === 'next';
+  const isBanksHome = match.homeTeam.includes("Banks o'");
 
   return (
     <CardNew 
@@ -52,89 +32,71 @@ const MatchCardNew: React.FC<MatchCardNewProps> = ({ match, variant, className }
       elevation={isNext ? "md" : "sm"}
       hoverEffect={true}
     >
-      <ResultBadge match={match} />
-      
-      <div className="p-3 border-b border-gray-100 flex justify-between items-center">
-        <div className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-          {match.competition}
-        </div>
-        
-        {isPast ? (
-          <Badge variant="secondary" className="text-xs">RESULT</Badge>
-        ) : isNext ? (
-          <Badge variant="destructive" className="text-xs">NEXT MATCH</Badge>
-        ) : (
-          <Badge variant="outline" className="text-xs">UPCOMING</Badge>
-        )}
+      <div className={`p-3 text-center font-semibold text-sm uppercase ${isNext ? 'bg-blue-900 text-white' : 'bg-gray-100 text-gray-700'}`}>
+        {isPast ? 'FINAL RESULT' : isNext ? 'NEXT MATCH' : 'UPCOMING MATCH'}
       </div>
       
-      <div className="p-4">
-        <div className="text-sm text-gray-600 mb-3 flex items-center">
-          <Clock className="w-4 h-4 mr-1" />
-          {formatDate(match.date)} {match.time && `• ${match.time}`}
+      <div className="p-3 text-center text-xs font-medium text-gray-500 uppercase">
+        {match.competition}
+      </div>
+      
+      <div className="flex items-center justify-between px-6 py-4">
+        <div className="flex flex-col items-center text-center w-5/12">
+          <CompetitorLogo
+            name={match.homeTeam}
+            size="md"
+            className="w-16 h-16"
+          />
+          <span className={`mt-2 text-sm ${match.homeTeam.includes("Banks o' Dee") ? "font-bold" : ""}`}>
+            {match.homeTeam}
+          </span>
         </div>
         
-        <div className="flex items-center justify-between my-4">
-          <div className="flex flex-col items-center text-center w-5/12">
-            <CompetitorLogo
-              name={match.homeTeam}
-              size="sm"
-              className="w-12 h-12"
-            />
-            <span className={`mt-2 text-sm ${match.homeTeam.includes("Banks o' Dee") ? "font-bold" : ""}`}>
-              {match.homeTeam}
-            </span>
-          </div>
-          
-          <div className="text-center w-2/12 px-2">
-            {isPast && match.result ? (
-              <div className="text-2xl font-bold">
-                {match.result.homeScore} <span className="text-lg text-gray-400">-</span> {match.result.awayScore}
-              </div>
-            ) : (
-              <div className="text-xl font-medium text-gray-400">
-                VS
-              </div>
-            )}
-            {isPast && <div className="text-xs text-gray-500 mt-1">FT</div>}
-          </div>
-          
-          <div className="flex flex-col items-center text-center w-5/12">
-            <CompetitorLogo
-              name={match.awayTeam}
-              size="sm"
-              className="w-12 h-12"
-            />
-            <span className={`mt-2 text-sm ${match.awayTeam.includes("Banks o' Dee") ? "font-bold" : ""}`}>
-              {match.awayTeam}
-            </span>
-          </div>
+        <div className="text-center">
+          {isPast && match.result ? (
+            <div className="text-2xl font-bold">
+              {match.result.homeScore} <span className="text-2xl text-gray-400">-</span> {match.result.awayScore}
+            </div>
+          ) : (
+            <div className="text-xl font-bold text-gray-700 py-2">
+              VS
+            </div>
+          )}
         </div>
         
-        <div className="text-sm text-gray-500 flex items-center mt-4">
-          <MapPin className="w-4 h-4 mr-1" />
-          {match.venue}
+        <div className="flex flex-col items-center text-center w-5/12">
+          <CompetitorLogo
+            name={match.awayTeam}
+            size="md"
+            className="w-16 h-16"
+          />
+          <span className={`mt-2 text-sm ${match.awayTeam.includes("Banks o' Dee") ? "font-bold" : ""}`}>
+            {match.awayTeam}
+          </span>
         </div>
       </div>
       
-      {isPast && match.matchReportLink && (
-        <div className="px-4 py-3 bg-gray-50 border-t border-gray-100">
-          <a 
-            href={match.matchReportLink} 
-            className="text-sm text-primary font-medium hover:underline"
-          >
-            Match Report →
-          </a>
+      <div className="p-3 border-t border-gray-100">
+        <div className="flex items-center justify-center mb-1">
+          <Clock className="w-4 h-4 mr-1 text-gray-500" />
+          <span className="text-sm text-gray-600">
+            {formatDate(match.date)} • {match.time}
+          </span>
         </div>
-      )}
+        
+        <div className="flex items-center justify-center">
+          <MapPin className="w-4 h-4 mr-1 text-gray-500" />
+          <span className="text-sm text-gray-600">{match.venue}</span>
+        </div>
+      </div>
       
-      {!isPast && match.ticketLink && (
-        <div className="px-4 py-3 bg-gray-50 border-t border-gray-100">
+      {isNext && match.ticketLink && (
+        <div className="p-3 text-center border-t border-gray-100 bg-gray-50">
           <a 
             href={match.ticketLink} 
             className="text-sm text-primary font-medium hover:underline"
           >
-            Buy Tickets →
+            MATCH DETAILS
           </a>
         </div>
       )}

@@ -29,20 +29,22 @@ const MatchCarousel: React.FC<MatchCarouselProps> = ({ matches }) => {
           startIndex: Math.max(0, nextMatchIndex),
         }}
       >
-        <CarouselContent className="-ml-2 md:-ml-4">
+        <CarouselContent>
           {matches.map((match, index) => (
-            <CarouselItem key={match.id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
-              <MatchCardNew
-                match={match}
-                variant={match.isCompleted ? "past" : 
-                  (index === nextMatchIndex ? "next" : "future")}
-                className="h-full"
-              />
+            <CarouselItem key={match.id} className="md:basis-1/2 lg:basis-1/3">
+              <div className="p-1">
+                <MatchCardNew
+                  match={match}
+                  variant={match.isCompleted ? "past" : 
+                    (index === nextMatchIndex ? "next" : "future")}
+                  className="h-full"
+                />
+              </div>
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="hidden md:flex -left-4 bg-white hover:bg-gray-100" />
-        <CarouselNext className="hidden md:flex -right-4 bg-white hover:bg-gray-100" />
+        <CarouselPrevious className="hidden md:flex left-1 bg-white hover:bg-gray-100" />
+        <CarouselNext className="hidden md:flex right-1 bg-white hover:bg-gray-100" />
       </Carousel>
     </div>
   );

@@ -17,15 +17,18 @@ const MatchCenter: React.FC = () => {
     <Container>
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
         <div className="px-4 sm:px-6 pt-8 pb-4 flex justify-between items-center">
-          <SectionHeader 
-            title="Match Centre" 
-            textColor="primary"
-          />
+          <div className="border-l-4 border-primary pl-3">
+            <SectionHeader 
+              title="Match Centre" 
+              textColor="primary"
+            />
+          </div>
           <Link 
             to="/match-centre" 
-            className="text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+            className="text-sm font-medium text-primary hover:text-primary/80 transition-colors flex items-center"
           >
-            View All Matches →
+            View All Matches 
+            <span className="inline-block ml-1">→</span>
           </Link>
         </div>
         
