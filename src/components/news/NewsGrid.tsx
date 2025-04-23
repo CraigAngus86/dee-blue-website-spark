@@ -17,7 +17,15 @@ const NewsGrid = () => {
   // Filter news based on category
   const filteredNews = newsArticles.filter(article => {
     if (activeFilter === 'all') return true;
-    return article.category.toLowerCase().replace(" ", "-") === activeFilter;
+    const categorySlug = article.category?.toLowerCase().replace(" ", "-");
+    return categorySlug === activeFilter;
+  });
+  
+  // Make sure we're showing featured articles first
+  const sortedNews = [...filteredNews].sort((a, b) => {
+    if (a.isFeatured && !b.isFeatured) return -1;
+    if (!a.isFeatured && b.isFeatured) return 1;
+    return 0;
   });
   
   return (
@@ -39,7 +47,7 @@ const NewsGrid = () => {
       
       {/* Grid Container */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredNews.map((article, index) => (
+        {sortedNews.map((article) => (
           <NewsCard
             key={article.id}
             image={article.image}
@@ -47,7 +55,7 @@ const NewsGrid = () => {
             category={article.category}
             date={article.date}
             excerpt={article.excerpt}
-            isFeatured={index === 0}
+            isFeatured={article.isFeatured}
           />
         ))}
       </div>
