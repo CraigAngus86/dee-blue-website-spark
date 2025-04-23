@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Match } from '@/types/match';
 import { CardNew } from '@/components/ui/CardNew';
@@ -22,23 +21,20 @@ const formatDate = (dateStr: string) => {
   });
 };
 
-// Result badge component showing W/L/D for completed matches
 const ResultBadge = ({ match }: { match: Match }) => {
   if (!match.isCompleted || !match.result) return null;
   
-  // Determine if Banks o' Dee is home or away team
   const isBanksHome = match.homeTeam.includes("Banks o' Dee");
   const banksScore = isBanksHome ? match.result.homeScore : match.result.awayScore;
   const opponentScore = isBanksHome ? match.result.awayScore : match.result.homeScore;
   
-  // Determine result
   let result: 'win' | 'loss' | 'draw' = 'draw';
   if (banksScore > opponentScore) result = 'win';
   if (banksScore < opponentScore) result = 'loss';
   
   return (
     <div className={`
-      absolute top-2 right-2 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold
+      absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold z-10
       ${result === 'win' ? 'bg-green-500' : result === 'loss' ? 'bg-red-500' : 'bg-amber-500'}
     `}>
       {result === 'win' ? 'W' : result === 'loss' ? 'L' : 'D'}
@@ -56,10 +52,8 @@ const MatchCardNew: React.FC<MatchCardNewProps> = ({ match, variant, className }
       elevation={isNext ? "md" : "sm"}
       hoverEffect={true}
     >
-      {/* Result Badge - W/L/D for completed matches */}
       <ResultBadge match={match} />
       
-      {/* Competition header */}
       <div className="p-3 border-b border-gray-100 flex justify-between items-center">
         <div className="text-xs font-medium text-gray-500 uppercase tracking-wider">
           {match.competition}
@@ -74,17 +68,13 @@ const MatchCardNew: React.FC<MatchCardNewProps> = ({ match, variant, className }
         )}
       </div>
       
-      {/* Match Content */}
       <div className="p-4">
-        {/* Date and time */}
         <div className="text-sm text-gray-600 mb-3 flex items-center">
           <Clock className="w-4 h-4 mr-1" />
           {formatDate(match.date)} {match.time && `• ${match.time}`}
         </div>
         
-        {/* Teams and score */}
         <div className="flex items-center justify-between my-4">
-          {/* Home team */}
           <div className="flex flex-col items-center text-center w-5/12">
             <CompetitorLogo
               name={match.homeTeam}
@@ -96,7 +86,6 @@ const MatchCardNew: React.FC<MatchCardNewProps> = ({ match, variant, className }
             </span>
           </div>
           
-          {/* Score or VS */}
           <div className="text-center w-2/12 px-2">
             {isPast && match.result ? (
               <div className="text-2xl font-bold">
@@ -110,7 +99,6 @@ const MatchCardNew: React.FC<MatchCardNewProps> = ({ match, variant, className }
             {isPast && <div className="text-xs text-gray-500 mt-1">FT</div>}
           </div>
           
-          {/* Away team */}
           <div className="flex flex-col items-center text-center w-5/12">
             <CompetitorLogo
               name={match.awayTeam}
@@ -123,14 +111,12 @@ const MatchCardNew: React.FC<MatchCardNewProps> = ({ match, variant, className }
           </div>
         </div>
         
-        {/* Venue */}
         <div className="text-sm text-gray-500 flex items-center mt-4">
           <MapPin className="w-4 h-4 mr-1" />
           {match.venue}
         </div>
       </div>
       
-      {/* Action Footer */}
       {isPast && match.matchReportLink && (
         <div className="px-4 py-3 bg-gray-50 border-t border-gray-100">
           <a 
