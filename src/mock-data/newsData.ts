@@ -1,4 +1,3 @@
-
 import { getNewsImage } from '@/lib/image';
 
 export const newsArticles = [
@@ -8,8 +7,8 @@ export const newsArticles = [
     excerpt: "A stunning performance from the squad resulted in a 3-0 win against Formartine United at Spain Park, pushing the team closer to the league title...",
     image: getNewsImage(0),
     category: "MATCH REPORT",
-    date: "April 8, 2025",
-    timestamp: "2 days ago",
+    date: "March 25, 2025",
+    timestamp: "2 weeks ago",
     isFeatured: true
   },
   {
