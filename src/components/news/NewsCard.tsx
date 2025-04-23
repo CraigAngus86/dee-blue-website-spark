@@ -34,12 +34,15 @@ const NewsCard: React.FC<NewsCardProps> = ({
       >
         <div className="relative">
           {/* Image with gradient overlay */}
-          <div className="relative aspect-square">
+          <div className={cn(
+            "relative",
+            isFeatured ? "aspect-[2/1]" : "aspect-square"
+          )}>
             <ResponsiveImage
               src={image}
               alt={title}
               className="w-full h-full transform transition-transform duration-500 group-hover:scale-105"
-              aspectRatio="1/1"
+              aspectRatio={isFeatured ? "2/1" : "1/1"}
               objectFit="cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#00105A]/90 via-[#00105A]/50 to-transparent" />

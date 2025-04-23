@@ -1,24 +1,25 @@
-
 import { getNewsImage } from '@/lib/image';
 
 export const newsArticles = [
   {
     id: 1,
     title: "Banks o' Dee secure crucial victory in Highland League clash",
-    excerpt: "A stunning performance from the squad resulted in a 3-0 win against Formartine United at Spain Park...",
+    excerpt: "A stunning performance from the squad resulted in a 3-0 win against Formartine United at Spain Park, pushing the team closer to the league title...",
     image: getNewsImage(0),
     category: "MATCH REPORT",
     date: "April 8, 2025",
-    timestamp: "2 days ago"
+    timestamp: "2 days ago",
+    isFeatured: true
   },
   {
     id: 2,
-    title: "Youth Academy stars shine in weekend fixtures",
-    excerpt: "The Banks o' Dee youth teams had an excellent weekend with victories across multiple age groups...",
+    title: "Major Stadium Upgrades Announced for Spain Park",
+    excerpt: "The club unveils ambitious plans for facility improvements, including expanded seating capacity and state-of-the-art training facilities...",
     image: getNewsImage(1),
-    category: "YOUTH",
+    category: "CLUB NEWS",
     date: "April 7, 2025",
-    timestamp: "3 days ago"
+    timestamp: "3 days ago",
+    isFeatured: true
   },
   {
     id: 3,
