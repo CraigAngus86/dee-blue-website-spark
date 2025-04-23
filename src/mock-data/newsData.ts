@@ -1,3 +1,4 @@
+
 import { getNewsImage } from '@/lib/image';
 
 export const newsArticles = [

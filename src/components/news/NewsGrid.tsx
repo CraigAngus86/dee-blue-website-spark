@@ -1,6 +1,8 @@
 
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
+import NewsCard from "./NewsCard";
+import { newsArticles } from "@/mock-data/newsData";
 
 const NewsGrid = () => {
   const [activeFilter, setActiveFilter] = useState('all');
@@ -11,6 +13,12 @@ const NewsGrid = () => {
     { id: 'club-news', label: 'Club News' },
     { id: 'community', label: 'Community' }
   ];
+
+  // Filter news based on category
+  const filteredNews = newsArticles.filter(article => {
+    if (activeFilter === 'all') return true;
+    return article.category.toLowerCase().replace(" ", "-") === activeFilter;
+  });
   
   return (
     <div className="w-full">
@@ -31,19 +39,16 @@ const NewsGrid = () => {
       
       {/* Grid Container */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* Featured Article (2x2) */}
-        <div className="bg-gray-100 rounded-lg md:col-span-2 md:row-span-2 aspect-[16/9] md:aspect-auto min-h-[400px] flex items-center justify-center p-8 text-center">
-          <p className="text-gray-600 font-medium">Featured Article</p>
-        </div>
-        
-        {/* Standard Articles */}
-        {Array(5).fill(0).map((_, index) => (
-          <div 
-            key={index} 
-            className="bg-gray-100 rounded-lg aspect-[4/3] flex items-center justify-center p-4 text-center"
-          >
-            <p className="text-gray-600 font-medium">Article {index + 1}</p>
-          </div>
+        {filteredNews.map((article, index) => (
+          <NewsCard
+            key={article.id}
+            image={article.image}
+            title={article.title}
+            category={article.category}
+            date={article.date}
+            excerpt={article.excerpt}
+            isFeatured={index === 0}
+          />
         ))}
       </div>
     </div>
