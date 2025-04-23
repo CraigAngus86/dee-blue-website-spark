@@ -40,7 +40,7 @@ export const getCompetitorLogo = (
   );
   
   if (match === "Banks o' Dee") {
-    return "/assets/images/competitors/Banks o' Dee.png";
+    return "/assets/images/logos/BOD_Logo_Navy_square.png";
   }
   
   if (match) {
@@ -50,3 +50,4 @@ export const getCompetitorLogo = (
   // Fallback to placeholder if no match is found
   return getPlaceholderImage(200, 200, teamName);
 };
+
