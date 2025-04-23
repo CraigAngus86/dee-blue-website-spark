@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import { getMatchCenterMatches } from "@/mock-data/fixturesData";
 import Container from "@/components/ui/layout/Container";

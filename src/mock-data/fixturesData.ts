@@ -626,9 +626,9 @@ export const allFixtures: Match[] = [
   }
 ];
 
-// Update the April 12, 2024 match to show a 1-1 draw as requested
+// Update the April 12, 2025 match to show a 1-1 draw as requested
 const forresMatchIndex = allFixtures.findIndex(
-  match => match.date === "2024-04-12" && 
+  match => match.date === "2025-04-12" && 
   match.homeTeam === "Forres Mechanics FC" && 
   match.awayTeam === "Banks o' Dee FC"
 );
@@ -711,7 +711,7 @@ const getFixturesBySeason = (season: string): Match[] => {
 
 // Helper function to get completed matches (results)
 export const getResults = (season?: string) => {
-  const fixtures = season ? getFixturesBySeason(season) : allFixtures;
+  const fixtures = season ? getFixturesBySeason(season) : getAllFixtures();
   return fixtures
     .filter(match => match.isCompleted)
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
@@ -719,19 +719,33 @@ export const getResults = (season?: string) => {
 
 // Helper function to get upcoming fixtures
 export const getUpcomingFixtures = (season?: string) => {
-  const fixtures = season ? getFixturesBySeason(season) : allFixtures;
+  const fixtures = season ? getFixturesBySeason(season) : getAllFixtures();
   return fixtures
     .filter(match => !match.isCompleted)
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 };
 
 // Helper to get matches for the match center carousel
-export const getMatchCenterMatches = (season?: string) => {
-  const pastMatches = getResults(season).slice(0, 2);
-  const futureMatches = getUpcomingFixtures(season);
+export const getMatchCenterMatches = () => {
+  // Get the most recent completed matches (last 2)
+  const pastMatches = getResults().slice(0, 2);
+  
+  // Get all upcoming fixtures across both seasons
+  const futureMatches = getUpcomingFixtures();
+  
+  // The next match is the first upcoming match
   const nextMatch = futureMatches[0];
+  
+  // Get the next two upcoming matches after the "next" match
   const upcomingMatches = futureMatches.slice(1, 3);
   
+  console.log("Match Center Data:", {
+    pastMatches: pastMatches.length,
+    nextMatch: nextMatch ? "Yes" : "No",
+    upcomingMatches: upcomingMatches.length
+  });
+  
+  // Combine past matches, next match, and upcoming matches
   return [...pastMatches, nextMatch, ...upcomingMatches].filter(Boolean);
 };
 
