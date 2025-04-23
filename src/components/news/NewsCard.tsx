@@ -18,6 +18,8 @@ interface NewsCardProps {
 const NewsCard: React.FC<NewsCardProps> = ({
   image,
   title,
+  category,
+  date,
   excerpt,
   isFeatured = false,
   onClick,
@@ -47,12 +49,24 @@ const NewsCard: React.FC<NewsCardProps> = ({
 
           {/* Content overlay */}
           <div className="absolute inset-0 flex flex-col justify-end p-6">
+            {category && (
+              <span className="inline-block text-xs font-bold bg-white text-primary px-3 py-1 rounded mb-3">
+                {category}
+              </span>
+            )}
+            
             <h3 className={cn(
               "font-montserrat font-bold text-white mb-2 line-clamp-3",
               isFeatured ? "text-2xl md:text-3xl" : "text-lg"
             )}>
               {title}
             </h3>
+
+            {date && (
+              <span className="text-white/70 text-sm mb-2">
+                {date}
+              </span>
+            )}
 
             {isFeatured && excerpt && (
               <p className="text-white/80 line-clamp-2 hidden md:block">

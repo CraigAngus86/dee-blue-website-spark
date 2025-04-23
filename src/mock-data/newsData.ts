@@ -1,3 +1,4 @@
+
 import { getNewsImage } from '@/lib/image';
 
 export const newsArticles = [
@@ -7,8 +8,8 @@ export const newsArticles = [
     excerpt: "A stunning performance from the squad resulted in a 3-0 win against Formartine United at Spain Park, pushing the team closer to the league title...",
     image: getNewsImage(0),
     category: "MATCH REPORT",
-    date: "March 25, 2025",
-    timestamp: "2 weeks ago",
+    date: "April 10, 2025",
+    timestamp: "1 week ago",
     isFeatured: true
   },
   {
@@ -18,7 +19,7 @@ export const newsArticles = [
     image: getNewsImage(1),
     category: "CLUB NEWS",
     date: "April 7, 2025",
-    timestamp: "3 days ago",
+    timestamp: "10 days ago",
     isFeatured: true
   },
   {
@@ -28,7 +29,7 @@ export const newsArticles = [
     image: getNewsImage(2),
     category: "CLUB NEWS",
     date: "April 5, 2025",
-    timestamp: "5 days ago"
+    timestamp: "12 days ago"
   },
   {
     id: 4,
@@ -37,7 +38,7 @@ export const newsArticles = [
     image: getNewsImage(3),
     category: "CLUB NEWS",
     date: "April 3, 2025",
-    timestamp: "1 week ago"
+    timestamp: "2 weeks ago"
   },
   {
     id: 5,
@@ -46,7 +47,7 @@ export const newsArticles = [
     image: getNewsImage(4),
     category: "TEAM NEWS",
     date: "April 2, 2025",
-    timestamp: "1 week ago"
+    timestamp: "2 weeks ago"
   },
   {
     id: 6,
@@ -55,7 +56,7 @@ export const newsArticles = [
     image: getNewsImage(0),
     category: "CLUB NEWS",
     date: "March 31, 2025",
-    timestamp: "10 days ago"
+    timestamp: "3 weeks ago"
   },
   {
     id: 7,
@@ -64,7 +65,7 @@ export const newsArticles = [
     image: getNewsImage(1),
     category: "MATCH REPORT",
     date: "March 28, 2025",
-    timestamp: "2 weeks ago"
+    timestamp: "3 weeks ago"
   },
   {
     id: 8,
@@ -73,7 +74,7 @@ export const newsArticles = [
     image: getNewsImage(2),
     category: "COMMUNITY",
     date: "March 25, 2025",
-    timestamp: "2 weeks ago"
+    timestamp: "4 weeks ago"
   },
   {
     id: 9,
@@ -82,7 +83,7 @@ export const newsArticles = [
     image: getNewsImage(3),
     category: "CLUB NEWS",
     date: "March 20, 2025",
-    timestamp: "3 weeks ago"
+    timestamp: "1 month ago"
   },
   {
     id: 10,
