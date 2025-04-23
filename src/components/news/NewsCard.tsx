@@ -26,14 +26,14 @@ const NewsCard: React.FC<NewsCardProps> = ({
   return (
     <HoverEffect effect="lift" className="h-full">
       <CardNew
-        className="group cursor-pointer h-full overflow-hidden"
+        className="group cursor-pointer h-full flex flex-col overflow-hidden"
         elevation="flat"
         onClick={onClick}
       >
-        <div className="relative h-full">
-          {/* Image with consistent aspect ratio */}
+        <div className="relative flex-grow flex flex-col">
+          {/* Image container with full height */}
           <div className={cn(
-            "relative",
+            "relative flex-grow",
             isFeatured ? "aspect-[2/1]" : "aspect-square"
           )}>
             <ResponsiveImage
@@ -54,12 +54,6 @@ const NewsCard: React.FC<NewsCardProps> = ({
             )}>
               {title}
             </h3>
-
-            {isFeatured && excerpt && (
-              <p className="text-white/80 line-clamp-2 hidden md:block mb-2">
-                {excerpt}
-              </p>
-            )}
 
             {date && (
               <span className="text-white/70 text-sm">

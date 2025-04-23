@@ -109,7 +109,7 @@ const NewsGrid = () => {
               image={article.image}
               title={article.title}
               date={article.date}
-              excerpt={article.excerpt}
+              excerpt={article.isFeatured ? undefined : article.excerpt}
               isFeatured={article.isFeatured}
               onClick={() => openArticle(article.id)}
             />
