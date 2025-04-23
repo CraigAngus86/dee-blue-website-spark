@@ -17,15 +17,13 @@ const MatchCarousel: React.FC<MatchCarouselProps> = ({ matches }) => {
   // Find the index of the next match (first upcoming match)
   const nextMatchIndex = matches.findIndex(match => !match.isCompleted);
   
-  console.log("Next match index:", nextMatchIndex, "Total matches:", matches.length);
-  
   return (
     <div className="relative">
       <Carousel
         className="w-full"
         opts={{
           align: "center",
-          loop: true,
+          loop: false, // Disable looping
           startIndex: Math.max(0, nextMatchIndex),
         }}
       >
