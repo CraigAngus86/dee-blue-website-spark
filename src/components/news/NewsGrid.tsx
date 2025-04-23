@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import NewsCard from "./NewsCard";
 import { newsArticles } from "@/mock-data/newsData";
-import { Grid } from "@/components/ui/layout/Grid";
+import Grid from "@/components/ui/layout/Grid";
 
 const NewsGrid = () => {
   const [activeFilter, setActiveFilter] = useState('all');
