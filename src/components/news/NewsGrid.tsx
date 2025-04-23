@@ -17,7 +17,7 @@ const NewsGrid = () => {
   // Filter news based on category
   const filteredNews = newsArticles.filter(article => {
     if (activeFilter === 'all') return true;
-    const categorySlug = article.category?.toLowerCase().replace(" ", "-");
+    const categorySlug = article.category?.toLowerCase().replace(/\s+/g, "-");
     return categorySlug === activeFilter;
   });
   

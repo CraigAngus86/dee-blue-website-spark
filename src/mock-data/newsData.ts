@@ -57,5 +57,41 @@ export const newsArticles = [
     category: "CLUB NEWS",
     date: "March 31, 2025",
     timestamp: "10 days ago"
+  },
+  {
+    id: 7,
+    title: "Youth team secures impressive win in development league",
+    excerpt: "Our under-18s put in a commanding performance to secure a 4-1 victory against local rivals...",
+    image: getNewsImage(1),
+    category: "MATCH REPORT",
+    date: "March 28, 2025",
+    timestamp: "2 weeks ago"
+  },
+  {
+    id: 8,
+    title: "Club launches new community outreach program",
+    excerpt: "Banks o' Dee FC is proud to announce a new initiative aimed at supporting local schools and community groups...",
+    image: getNewsImage(2),
+    category: "COMMUNITY",
+    date: "March 25, 2025",
+    timestamp: "2 weeks ago"
+  },
+  {
+    id: 9,
+    title: "Record season ticket sales reported for next season",
+    excerpt: "The club is delighted to announce record-breaking season ticket sales for the upcoming campaign...",
+    image: getNewsImage(3),
+    category: "CLUB NEWS",
+    date: "March 20, 2025",
+    timestamp: "3 weeks ago"
+  },
+  {
+    id: 10,
+    title: "New kit partnership revealed for next season",
+    excerpt: "Banks o' Dee FC is excited to reveal a new partnership with a leading sports manufacturer for next season's kits...",
+    image: getNewsImage(4),
+    category: "CLUB NEWS",
+    date: "March 15, 2025",
+    timestamp: "1 month ago"
   }
 ];

@@ -27,7 +27,7 @@ const NewsCard: React.FC<NewsCardProps> = ({
       <CardNew
         className={cn(
           "group cursor-pointer h-full overflow-hidden",
-          isFeatured && "md:col-span-2 md:row-span-2"
+          isFeatured && "md:col-span-2"
         )}
         elevation="flat"
         onClick={onClick}
