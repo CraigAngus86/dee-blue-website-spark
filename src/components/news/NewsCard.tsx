@@ -25,10 +25,7 @@ const NewsCard: React.FC<NewsCardProps> = ({
   return (
     <HoverEffect effect="lift" className="h-full">
       <CardNew
-        className={cn(
-          "group cursor-pointer h-full overflow-hidden",
-          isFeatured && "md:col-span-2"
-        )}
+        className="group cursor-pointer h-full overflow-hidden"
         elevation="flat"
         onClick={onClick}
       >

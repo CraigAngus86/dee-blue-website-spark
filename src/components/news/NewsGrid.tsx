@@ -46,18 +46,23 @@ const NewsGrid = () => {
         ))}
       </div>
       
-      {/* Grid Container - Using CSS Grid directly for better control */}
+      {/* Grid Container with proper handling of featured articles */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {sortedNews.map((article) => (
-          <NewsCard
+          // Apply md:col-span-2 directly to the grid item for featured articles
+          <div 
             key={article.id}
-            image={article.image}
-            title={article.title}
-            category={article.category}
-            date={article.date}
-            excerpt={article.excerpt}
-            isFeatured={article.isFeatured}
-          />
+            className={article.isFeatured ? "md:col-span-2" : ""}
+          >
+            <NewsCard
+              image={article.image}
+              title={article.title}
+              category={article.category}
+              date={article.date}
+              excerpt={article.excerpt}
+              isFeatured={article.isFeatured}
+            />
+          </div>
         ))}
       </div>
     </div>
