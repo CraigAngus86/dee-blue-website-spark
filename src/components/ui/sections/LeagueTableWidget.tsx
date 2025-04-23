@@ -14,15 +14,21 @@ import { leagueTableData } from "@/mock-data/fixturesData";
 // A more detailed mock of the league table data
 interface LeagueTableWidgetProps {
   className?: string;
+  season?: string;
 }
 
-const LeagueTableWidget: React.FC<LeagueTableWidgetProps> = ({ className }) => {
+const LeagueTableWidget: React.FC<LeagueTableWidgetProps> = ({ className, season = "2024/25" }) => {
   // Map form results to colors and styles
   const formColors: Record<string, string> = {
     W: "bg-green-500 text-white",
     D: "bg-amber-400 text-white",
-    L: "bg-red-500 text-white"
+    L: "bg-red-500 text-white",
+    "-": "bg-gray-300 text-gray-600"
   };
+  
+  const tableData = season === "2025/26" 
+    ? getEmptyLeagueTable() 
+    : leagueTableData;
   
   return (
     <div className={`${className}`}>
@@ -45,7 +51,7 @@ const LeagueTableWidget: React.FC<LeagueTableWidgetProps> = ({ className }) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {leagueTableData.map((team) => (
+            {tableData.map((team) => (
               <TableRow 
                 key={team.position} 
                 className={team.team.toLowerCase().includes("banks") ? 
@@ -96,5 +102,44 @@ const LeagueTableWidget: React.FC<LeagueTableWidgetProps> = ({ className }) => {
     </div>
   );
 };
+
+// Function to create an empty league table for start of season
+function getEmptyLeagueTable() {
+  // All teams in alphabetical order
+  const teams = [
+    "Banks o' Dee FC",
+    "Brechin City FC",
+    "Brora Rangers FC",
+    "Buckie Thistle FC",
+    "Clachnacuddin FC",
+    "Deveronvale FC",
+    "Formartine United FC",
+    "Forres Mechanics FC",
+    "Fraserburgh FC",
+    "Huntly FC",
+    "Inverurie Loco Works FC",
+    "Keith FC",
+    "Lossiemouth FC",
+    "Nairn County FC",
+    "Rothes FC",
+    "Strathspey Thistle FC",
+    "Turriff United FC",
+    "Wick Academy FC"
+  ];
+  
+  return teams.sort().map((team, index) => ({
+    position: index + 1,
+    team,
+    played: 0,
+    won: 0,
+    drawn: 0,
+    lost: 0,
+    goalsFor: 0,
+    goalsAgainst: 0,
+    goalDifference: 0,
+    points: 0,
+    form: ["-", "-", "-", "-", "-"]
+  }));
+}
 
 export default LeagueTableWidget;

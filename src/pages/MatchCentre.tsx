@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -226,7 +227,7 @@ const MatchCentre = () => {
               </TabsContent>
 
               <TabsContent value="table" className="mt-6">
-                <LeagueTable />
+                <LeagueTable selectedSeason={selectedSeason} />
               </TabsContent>
             </Tabs>
           </Container>

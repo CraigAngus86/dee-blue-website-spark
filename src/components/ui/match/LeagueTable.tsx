@@ -3,7 +3,11 @@ import React, { useState, useEffect } from 'react';
 import LeagueTableWidget from '../sections/LeagueTableWidget';
 import LoadingState from '../common/LoadingState';
 
-const LeagueTable = () => {
+interface LeagueTableProps {
+  selectedSeason?: string;
+}
+
+const LeagueTable: React.FC<LeagueTableProps> = ({ selectedSeason = "2024/25" }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -22,7 +26,7 @@ const LeagueTable = () => {
   return (
     <div>
       <h2 className="text-2xl font-bold text-primary mb-6">League Table</h2>
-      <LeagueTableWidget />
+      <LeagueTableWidget season={selectedSeason} />
     </div>
   );
 };
