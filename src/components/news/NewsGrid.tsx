@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import NewsCard from "./NewsCard";
@@ -103,7 +104,6 @@ const NewsGrid = () => {
           <div 
             key={article.id}
             className={article.isFeatured ? "lg:col-span-2" : ""}
-            onClick={() => openArticle(article.id)}
           >
             <NewsCard
               image={article.image}

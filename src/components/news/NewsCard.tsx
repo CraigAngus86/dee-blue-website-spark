@@ -30,7 +30,7 @@ const NewsCard: React.FC<NewsCardProps> = ({
         elevation="flat"
         onClick={onClick}
       >
-        <div className="relative">
+        <div className="relative h-full">
           {/* Image with consistent aspect ratio */}
           <div className={cn(
             "relative",
@@ -55,16 +55,16 @@ const NewsCard: React.FC<NewsCardProps> = ({
               {title}
             </h3>
 
-            {date && isFeatured && (
-              <span className="text-white/70 text-sm mb-2">
-                {date}
-              </span>
-            )}
-
             {isFeatured && excerpt && (
-              <p className="text-white/80 line-clamp-2 hidden md:block">
+              <p className="text-white/80 line-clamp-2 hidden md:block mb-2">
                 {excerpt}
               </p>
+            )}
+
+            {date && (
+              <span className="text-white/70 text-sm">
+                {date}
+              </span>
             )}
           </div>
         </div>
