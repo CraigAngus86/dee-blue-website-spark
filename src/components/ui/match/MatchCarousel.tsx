@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { 
   Carousel,
   CarouselContent,
@@ -14,7 +14,10 @@ interface MatchCarouselProps {
 }
 
 const MatchCarousel: React.FC<MatchCarouselProps> = ({ matches }) => {
+  // Find the index of the next match (first upcoming match)
   const nextMatchIndex = matches.findIndex(match => !match.isCompleted);
+  
+  console.log("Next match index:", nextMatchIndex, "Total matches:", matches.length);
   
   return (
     <div className="relative">
@@ -24,7 +27,6 @@ const MatchCarousel: React.FC<MatchCarouselProps> = ({ matches }) => {
           align: "center",
           loop: true,
           startIndex: Math.max(0, nextMatchIndex),
-          dragFree: true
         }}
       >
         <CarouselContent className="-ml-2 md:-ml-4">
@@ -32,10 +34,8 @@ const MatchCarousel: React.FC<MatchCarouselProps> = ({ matches }) => {
             <CarouselItem key={match.id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
               <MatchCardNew
                 match={match}
-                variant={match.status === "upcoming" ? 
-                  (index === nextMatchIndex ? "next" : "future") : 
-                  "past"
-                }
+                variant={match.isCompleted ? "past" : 
+                  (index === nextMatchIndex ? "next" : "future")}
                 className="h-full"
               />
             </CarouselItem>

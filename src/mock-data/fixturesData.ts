@@ -626,6 +626,22 @@ export const allFixtures: Match[] = [
   }
 ];
 
+// Update the April 12, 2024 match to show a 1-1 draw as requested
+const forresMatchIndex = allFixtures.findIndex(
+  match => match.date === "2024-04-12" && 
+  match.homeTeam === "Forres Mechanics FC" && 
+  match.awayTeam === "Banks o' Dee FC"
+);
+
+if (forresMatchIndex !== -1) {
+  allFixtures[forresMatchIndex].result = {
+    homeScore: 1,
+    awayScore: 1
+  };
+  allFixtures[forresMatchIndex].isCompleted = true;
+  allFixtures[forresMatchIndex].status = "completed";
+}
+
 // Export available seasons
 export const getAvailableSeasons = () => {
   return ['2024/25', '2025/26'];

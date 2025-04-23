@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { getMatchCenterMatches } from "@/mock-data/fixturesData";
 import Container from "@/components/ui/layout/Container";
@@ -8,6 +8,7 @@ import MatchCarousel from "@/components/ui/match/MatchCarousel";
 import LeagueTableWidget from "@/components/ui/match/LeagueTableWidget";
 
 const MatchCenter: React.FC = () => {
+  // Get matches from both seasons
   const matches = getMatchCenterMatches();
   
   console.log("Match Center loaded with matches:", matches.length);
