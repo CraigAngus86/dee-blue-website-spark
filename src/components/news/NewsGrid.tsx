@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import NewsCard from "./NewsCard";
@@ -21,42 +20,34 @@ const NewsGrid = () => {
     { id: 'community', label: 'Community' }
   ];
 
-  // Filter news based on selected category
   const filteredNews = newsArticles.filter(article => {
     if (activeFilter === 'all') return true;
     
-    // Convert category to kebab-case for comparison
     const categorySlug = article.category?.toLowerCase().replace(/\s+/g, "-");
     return categorySlug === activeFilter;
   });
 
-  // Sort news by date (more recent first)
   const sortedNews = [...filteredNews].sort((a, b) => {
     const dateA = new Date(a.date).getTime();
     const dateB = new Date(b.date).getTime();
     return dateB - dateA;
   });
 
-  // Handle opening article modal
   const openArticle = (articleId: number) => {
     const article = newsArticles.find(item => item.id === articleId);
     if (article) {
       setSelectedArticle(article);
       setIsModalOpen(true);
-      // Update URL without page reload
       navigate(`/news?article=${articleId}`, { replace: true });
     }
   };
   
-  // Handle closing article modal
   const closeArticle = () => {
     setSelectedArticle(null);
     setIsModalOpen(false);
-    // Reset URL to just /news
     navigate('/news', { replace: true });
   };
   
-  // Handle navigation between articles
   const navigateArticle = (direction: 'prev' | 'next') => {
     if (!selectedArticle) return;
     
@@ -77,7 +68,6 @@ const NewsGrid = () => {
     }
   };
   
-  // Check for article in URL on component mount or URL change
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const articleId = params.get('article');
@@ -90,7 +80,6 @@ const NewsGrid = () => {
 
   return (
     <div className="w-full">
-      {/* Filter Buttons */}
       <div className="flex flex-wrap gap-3 mb-8">
         {filters.map(filter => (
           <Button
@@ -98,19 +87,22 @@ const NewsGrid = () => {
             variant={activeFilter === filter.id ? "default" : "outline"}
             onClick={() => setActiveFilter(filter.id)}
             size="lg"
-            className="font-medium"
+            className={`font-medium ${
+              activeFilter === filter.id 
+                ? "text-white"
+                : "text-primary"
+            }`}
           >
             {filter.label}
           </Button>
         ))}
       </div>
       
-      {/* News Grid - CSS Grid with explicit placement for featured articles */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {sortedNews.map((article) => (
           <div 
             key={article.id}
-            className={article.isFeatured ? "md:col-span-2" : ""}
+            className={article.isFeatured ? "lg:col-span-2" : ""}
             onClick={() => openArticle(article.id)}
           >
             <NewsCard
@@ -125,7 +117,6 @@ const NewsGrid = () => {
         ))}
       </div>
       
-      {/* Article Modal */}
       <NewsModal
         article={selectedArticle}
         isOpen={isModalOpen}
