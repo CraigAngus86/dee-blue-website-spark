@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useMemo } from 'react';
 import { Match } from '@/types/match';
 import MatchCardNew from '../image/MatchCardNew';
@@ -14,17 +13,16 @@ interface FixturesListProps {
 const FixturesList: React.FC<FixturesListProps> = ({ 
   selectedCompetitions = [],
   selectedMonth = 'all',
-  selectedSeason = ''
+  selectedSeason = '2024/25'
 }) => {
   const [allUpcomingFixtures, setAllUpcomingFixtures] = useState<Match[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   
   useEffect(() => {
-    // Re-fetch data when the component renders or filters change
     const loadFixtures = () => {
       setIsLoading(true);
       try {
-        const fixtures = getUpcomingFixtures();
+        const fixtures = getUpcomingFixtures(selectedSeason);
         setAllUpcomingFixtures(fixtures);
       } catch (error) {
         console.error("Error loading fixtures:", error);
@@ -36,7 +34,6 @@ const FixturesList: React.FC<FixturesListProps> = ({
     loadFixtures();
   }, [selectedCompetitions, selectedMonth, selectedSeason]);
   
-  // Apply filters with useMemo for performance
   const filteredFixtures = useMemo(() => {
     let filtered = allUpcomingFixtures;
     
@@ -57,9 +54,7 @@ const FixturesList: React.FC<FixturesListProps> = ({
     return filtered;
   }, [allUpcomingFixtures, selectedCompetitions, selectedMonth]);
   
-  // Get fixtures by month with useMemo for performance
   const fixturesByMonthData = useMemo(() => {
-    // Make sure to sort fixtures first before grouping by month
     const sortedFixtures = [...filteredFixtures].sort((a, b) => {
       return new Date(a.date).getTime() - new Date(b.date).getTime();
     });
@@ -67,10 +62,8 @@ const FixturesList: React.FC<FixturesListProps> = ({
     return getMatchesByMonth(sortedFixtures);
   }, [filteredFixtures]);
   
-  // Sort months for display
   const sortedMonths = useMemo(() => {
     return Object.keys(fixturesByMonthData).sort((a, b) => {
-      // Sort months in ascending order (oldest first)
       const dateA = new Date(fixturesByMonthData[a][0]?.date || '');
       const dateB = new Date(fixturesByMonthData[b][0]?.date || '');
       return dateA.getTime() - dateB.getTime();

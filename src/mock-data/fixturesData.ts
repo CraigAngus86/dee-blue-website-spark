@@ -1,4 +1,5 @@
 import { Match } from "@/types/match";
+import { fixtures2025_26 } from "./fixturesData2025_26";
 
 // Convert date string (DD/MM/YYYY) to ISO format (YYYY-MM-DD)
 const formatDate = (dateStr: string) => {
@@ -621,72 +622,47 @@ export const allFixtures: Match[] = [
   }
 ];
 
-// Helper function to get dates as options for filter
-export const getAvailableMonths = () => {
-  const months = new Set();
-  allFixtures.forEach(fixture => {
-    const date = new Date(fixture.date);
-    const monthYear = date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
-    months.add(monthYear);
-  });
-  return Array.from(months) as string[];
-};
-
-// Helper function to get competitions as options for filter
-export const getAvailableCompetitions = () => {
-  const competitions = new Set();
-  allFixtures.forEach(fixture => {
-    competitions.add(fixture.competition.split(' - ')[0]); // Split to handle cases like "Cup - Final"
-  });
-  return Array.from(competitions) as string[];
-};
-
-// Helper function to get seasons as options for filter
+// Export available seasons
 export const getAvailableSeasons = () => {
-  return ['2024/25'];
+  return ['2024/25', '2025/26'];
 };
 
-// Helper function to group matches by month
-export const getMatchesByMonth = (matches: Match[]) => {
-  return matches.reduce((acc, match) => {
-    const date = new Date(match.date);
-    const monthYear = date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
-    
-    if (!acc[monthYear]) {
-      acc[monthYear] = [];
-    }
-    
-    acc[monthYear].push(match);
-    return acc;
-  }, {} as Record<string, Match[]>);
+// Helper function to get fixtures by season
+const getFixturesBySeason = (season: string): Match[] => {
+  switch (season) {
+    case '2025/26':
+      return fixtures2025_26;
+    case '2024/25':
+    default:
+      return allFixtures;
+  }
 };
 
 // Helper function to get completed matches (results)
-export const getResults = () => {
-  return allFixtures
+export const getResults = (season?: string) => {
+  const fixtures = season ? getFixturesBySeason(season) : allFixtures;
+  return fixtures
     .filter(match => match.isCompleted)
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 };
 
 // Helper function to get upcoming fixtures
-export const getUpcomingFixtures = () => {
-  return allFixtures
+export const getUpcomingFixtures = (season?: string) => {
+  const fixtures = season ? getFixturesBySeason(season) : allFixtures;
+  return fixtures
     .filter(match => !match.isCompleted)
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 };
 
-// Helper to get matches for the match center carousel (2 past, 1 next, 2 future)
-export const getMatchCenterMatches = () => {
-  const pastMatches = getResults().slice(0, 2);
-  const futureMatches = getUpcomingFixtures();
+// Helper to get matches for the match center carousel
+export const getMatchCenterMatches = (season?: string) => {
+  const pastMatches = getResults(season).slice(0, 2);
+  const futureMatches = getUpcomingFixtures(season);
   const nextMatch = futureMatches[0];
   const upcomingMatches = futureMatches.slice(1, 3);
   
   return [...pastMatches, nextMatch, ...upcomingMatches].filter(Boolean);
 };
-
-// Export all fixtures if needed
-export const getAllFixtures = () => allFixtures;
 
 // Keep existing league table data
 export const leagueTableData = [

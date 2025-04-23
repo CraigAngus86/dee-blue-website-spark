@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -29,7 +28,6 @@ const MatchCentre = () => {
   const [selectedTab, setSelectedTab] = useState<string>('fixtures');
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // Refresh the available options when the component mounts
   const [seasons, setSeasons] = useState<string[]>([]);
   const [months, setMonths] = useState<string[]>([]);
   const [competitions, setCompetitions] = useState<string[]>([]);
@@ -38,12 +36,11 @@ const MatchCentre = () => {
     const loadData = async () => {
       setIsLoading(true);
       try {
-        // Get and log all fixture data to verify it's loading correctly
         const allFixtures = getAllFixtures();
         console.log("All fixtures data loaded:", allFixtures.length);
         
         setSeasons(getAvailableSeasons());
-        setMonths(['all', ...getAvailableMonths()]); // Add 'all' option
+        setMonths(['all', ...getAvailableMonths()]);
         setCompetitions(getAvailableCompetitions());
         console.log("Match Centre filters loaded:", {
           seasons: getAvailableSeasons(),
@@ -60,7 +57,6 @@ const MatchCentre = () => {
     loadData();
   }, []);
   
-  // Log state changes
   useEffect(() => {
     console.log("State changed:");
     console.log("- selectedTab:", selectedTab);
@@ -68,7 +64,6 @@ const MatchCentre = () => {
     console.log("- selectedCompetitions:", selectedCompetitions);
   }, [selectedTab, selectedMonth, selectedCompetitions]);
 
-  // Memoize filter props to prevent unnecessary re-renders
   const filterProps = useMemo(() => ({
     selectedCompetitions,
     selectedMonth,

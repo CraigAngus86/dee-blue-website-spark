@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useMemo } from 'react';
 import { Match } from '@/types/match';
 import MatchCardNew from '../image/MatchCardNew';
@@ -14,17 +13,16 @@ interface ResultsListProps {
 const ResultsList: React.FC<ResultsListProps> = ({ 
   selectedCompetitions = [],
   selectedMonth = 'all',
-  selectedSeason = ''
+  selectedSeason = '2024/25'
 }) => {
   const [allRecentResults, setAllRecentResults] = useState<Match[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   
   useEffect(() => {
-    // Re-fetch data when the component renders or filters change
     const loadResults = () => {
       setIsLoading(true);
       try {
-        const results = getResults();
+        const results = getResults(selectedSeason);
         setAllRecentResults(results);
       } catch (error) {
         console.error("Error loading results:", error);
@@ -36,7 +34,6 @@ const ResultsList: React.FC<ResultsListProps> = ({
     loadResults();
   }, [selectedCompetitions, selectedMonth, selectedSeason]);
   
-  // Apply filters using useMemo for performance
   const filteredResults = useMemo(() => {
     let filtered = allRecentResults;
     
@@ -57,20 +54,16 @@ const ResultsList: React.FC<ResultsListProps> = ({
     return filtered;
   }, [allRecentResults, selectedCompetitions, selectedMonth]);
   
-  // Get results by month with useMemo for performance
   const resultsByMonthData = useMemo(() => {
-    // Sort results by date before grouping by month
     const sortedResults = [...filteredResults].sort((a, b) => {
-      return new Date(b.date).getTime() - new Date(a.date).getTime(); // Note: descending for results
+      return new Date(b.date).getTime() - new Date(a.date).getTime();
     });
     
     return getMatchesByMonth(sortedResults);
   }, [filteredResults]);
   
-  // Sort months for display
   const sortedMonths = useMemo(() => {
     return Object.keys(resultsByMonthData).sort((a, b) => {
-      // Sort months in descending order (newest first)
       const dateA = new Date(resultsByMonthData[a][0]?.date || '');
       const dateB = new Date(resultsByMonthData[b][0]?.date || '');
       return dateB.getTime() - dateA.getTime();
