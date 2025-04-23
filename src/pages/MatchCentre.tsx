@@ -125,7 +125,7 @@ const MatchCentre = () => {
           </div>
         </div>
 
-        <div className="bg-secondary py-8">
+        <div className="bg-[#F4F7FB] py-8">
           <Container>
             <Tabs 
               defaultValue="fixtures" 
