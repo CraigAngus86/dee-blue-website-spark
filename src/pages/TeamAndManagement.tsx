@@ -81,23 +81,27 @@ const TeamAndManagement = () => {
       <Header />
       <main className="flex-grow">
         {/* Hero Section */}
-        <div className="relative bg-[#00105A] h-64 md:h-80">
-          <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-r from-[#00105A] to-[#00105A]/70"></div>
-            <img 
-              src="/assets/images/team/Squad1.jpg"
-              alt="Banks o' Dee Team" 
-              className="w-full h-full object-cover opacity-30"
-            />
+        <div className="relative h-[40vh] min-h-[300px] w-full bg-[#00105A]">
+          <div 
+            className="absolute inset-0 bg-cover bg-center z-0" 
+            style={{ 
+              backgroundImage: `url(/assets/images/team/Squad1.jpg)`,
+              backgroundPosition: "center 30%"
+            }}
+          >
+            <div className="absolute inset-0 bg-[#00105A]/60 z-10"></div>
           </div>
-          <div className="relative max-w-7xl mx-auto px-4 py-16 md:py-24 flex flex-col justify-center h-full">
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">Team & Management</h1>
-            <p className="text-gray-300 max-w-2xl">
-              Meet the players and staff who represent Banks o' Dee FC on and off the pitch.
+          
+          <div className="relative z-20 h-full flex flex-col justify-center items-center text-center px-4 max-w-4xl mx-auto">
+            <h1 className="text-4xl md:text-5xl font-montserrat font-bold text-white mb-4">
+              Team & Management
+            </h1>
+            <p className="text-lg md:text-xl text-white/90 max-w-2xl font-inter">
+              Meet the players and staff who represent Banks o' Dee FC on and off the pitch
             </p>
           </div>
         </div>
-        
+
         {/* Main Content */}
         <div className="max-w-7xl mx-auto px-4 py-12">
           {/* Search Bar */}

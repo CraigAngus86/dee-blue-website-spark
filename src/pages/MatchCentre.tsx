@@ -104,20 +104,25 @@ const MatchCentre = () => {
     <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-grow bg-gray-50">
-        <div className="relative bg-[#00105A] h-48">
-          <div className="absolute inset-0 opacity-20">
-            <img 
-              src="/assets/images/stadium/Spain Park.jpg" 
-              alt="Spain Park Stadium" 
-              className="w-full h-full object-cover"
-            />
+        <div className="relative h-[40vh] min-h-[300px] w-full bg-[#00105A]">
+          <div 
+            className="absolute inset-0 bg-cover bg-center z-0" 
+            style={{ 
+              backgroundImage: `url(/assets/images/stadium/Spain Park.jpg)`,
+              backgroundPosition: "center 30%"
+            }}
+          >
+            <div className="absolute inset-0 bg-[#00105A]/60 z-10"></div>
           </div>
-          <Container>
-            <div className="relative pt-20 pb-8">
-              <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Match Centre</h1>
-              <p className="text-gray-300">View fixtures, results and league standings</p>
-            </div>
-          </Container>
+          
+          <div className="relative z-20 h-full flex flex-col justify-center items-center text-center px-4 max-w-4xl mx-auto">
+            <h1 className="text-4xl md:text-5xl font-montserrat font-bold text-white mb-4">
+              Match Centre
+            </h1>
+            <p className="text-lg md:text-xl text-white/90 max-w-2xl font-inter">
+              View fixtures, results and league standings
+            </p>
+          </div>
         </div>
 
         <Container className="py-8">
