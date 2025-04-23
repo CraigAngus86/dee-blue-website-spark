@@ -8,8 +8,8 @@ export const getCompetitorLogo = (
   teamName: string,
   variant?: 'default' | 'alternate'
 ): string => {
-  // Extract the first part of the team name (before any spaces)
-  const teamKey = teamName.split(' ')[0];
+  // Normalize team name by removing 'FC' and converting to lowercase
+  const normalizedTeamKey = teamName.replace(' FC', '').split(' ')[0].toLowerCase();
   
   // List of available competitor images
   const competitorImages = [
@@ -29,14 +29,19 @@ export const getCompetitorLogo = (
     "Rothes",
     "Strathspey",
     "Turriff",
-    "Wick"
+    "Wick",
+    "Banks o' Dee"  // Added explicit match for Banks o' Dee
   ];
   
   // Find a matching competitor image
   const match = competitorImages.find(name => 
-    teamKey.toLowerCase().includes(name.toLowerCase()) || 
-    name.toLowerCase().includes(teamKey.toLowerCase())
+    normalizedTeamKey.includes(name.toLowerCase()) || 
+    name.toLowerCase().includes(normalizedTeamKey)
   );
+  
+  if (match === "Banks o' Dee") {
+    return "/assets/images/competitors/Banks o' Dee.png";
+  }
   
   if (match) {
     return `/assets/images/competitors/${match}.png`;
