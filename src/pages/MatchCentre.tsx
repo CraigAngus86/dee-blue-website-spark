@@ -103,7 +103,7 @@ const MatchCentre = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="flex-grow bg-gray-50">
+      <main className="flex-grow">
         <div className="relative h-[40vh] min-h-[300px] w-full bg-[#00105A]">
           <div 
             className="absolute inset-0 bg-cover bg-center z-0" 
@@ -125,110 +125,112 @@ const MatchCentre = () => {
           </div>
         </div>
 
-        <Container className="py-8">
-          <Tabs 
-            defaultValue="fixtures" 
-            className="w-full"
-            onValueChange={(value) => {
-              console.log("Tab changed to:", value);
-              setSelectedTab(value);
-            }}
-          >
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-              <TabsList className="bg-white border flex justify-start p-1">
-                <TabsTrigger 
-                  value="fixtures"
-                  className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-white"
-                >
-                  Fixtures
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="results"
-                  className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-white"
-                >
-                  Results
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="table"
-                  className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-white"
-                >
-                  League Table
-                </TabsTrigger>
-              </TabsList>
+        <div className="bg-secondary py-8">
+          <Container>
+            <Tabs 
+              defaultValue="fixtures" 
+              className="w-full"
+              onValueChange={(value) => {
+                console.log("Tab changed to:", value);
+                setSelectedTab(value);
+              }}
+            >
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                <TabsList className="bg-white border flex justify-start p-1">
+                  <TabsTrigger 
+                    value="fixtures"
+                    className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-white"
+                  >
+                    Fixtures
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="results"
+                    className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-white"
+                  >
+                    Results
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="table"
+                    className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-white"
+                  >
+                    League Table
+                  </TabsTrigger>
+                </TabsList>
 
-              <div className="flex flex-wrap gap-2">
-                <Select
-                  value={selectedSeason}
-                  onValueChange={setSelectedSeason}
-                >
-                  <SelectTrigger className="w-[140px]">
-                    <SelectValue placeholder="Season" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {seasons.map((season) => (
-                      <SelectItem key={season} value={season}>
-                        {season}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="flex flex-wrap gap-2">
+                  <Select
+                    value={selectedSeason}
+                    onValueChange={setSelectedSeason}
+                  >
+                    <SelectTrigger className="w-[140px]">
+                      <SelectValue placeholder="Season" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {seasons.map((season) => (
+                        <SelectItem key={season} value={season}>
+                          {season}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
 
-                <Select
-                  value={selectedMonth}
-                  onValueChange={(val) => {
-                    console.log("Month selection changed to:", val);
-                    setSelectedMonth(val);
-                  }}
-                >
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="All Months" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem key="all-months" value="all">All Months</SelectItem>
-                    {months.filter(m => m !== 'all').map((month) => (
-                      <SelectItem key={month} value={month}>
-                        {month}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  <Select
+                    value={selectedMonth}
+                    onValueChange={(val) => {
+                      console.log("Month selection changed to:", val);
+                      setSelectedMonth(val);
+                    }}
+                  >
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="All Months" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem key="all-months" value="all">All Months</SelectItem>
+                      {months.filter(m => m !== 'all').map((month) => (
+                        <SelectItem key={month} value={month}>
+                          {month}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
 
-                <Select
-                  value={selectedCompetitions[0] || 'all'}
-                  onValueChange={(value) => {
-                    const newValue = value !== 'all' ? [value] : [];
-                    console.log("Competition selection changed to:", newValue);
-                    setSelectedCompetitions(newValue);
-                  }}
-                >
-                  <SelectTrigger className="w-[220px]">
-                    <SelectValue placeholder="All Competitions" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem key="all-competitions" value="all">All Competitions</SelectItem>
-                    {competitions.map((competition) => (
-                      <SelectItem key={competition} value={competition}>
-                        {competition}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  <Select
+                    value={selectedCompetitions[0] || 'all'}
+                    onValueChange={(value) => {
+                      const newValue = value !== 'all' ? [value] : [];
+                      console.log("Competition selection changed to:", newValue);
+                      setSelectedCompetitions(newValue);
+                    }}
+                  >
+                    <SelectTrigger className="w-[220px]">
+                      <SelectValue placeholder="All Competitions" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem key="all-competitions" value="all">All Competitions</SelectItem>
+                      {competitions.map((competition) => (
+                        <SelectItem key={competition} value={competition}>
+                          {competition}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-            </div>
 
-            <TabsContent value="fixtures" className="mt-6">
-              <FixturesList {...filterProps} />
-            </TabsContent>
+              <TabsContent value="fixtures" className="mt-6">
+                <FixturesList {...filterProps} />
+              </TabsContent>
 
-            <TabsContent value="results" className="mt-6">
-              <ResultsList {...filterProps} />
-            </TabsContent>
+              <TabsContent value="results" className="mt-6">
+                <ResultsList {...filterProps} />
+              </TabsContent>
 
-            <TabsContent value="table" className="mt-6">
-              <LeagueTable />
-            </TabsContent>
-          </Tabs>
-        </Container>
+              <TabsContent value="table" className="mt-6">
+                <LeagueTable />
+              </TabsContent>
+            </Tabs>
+          </Container>
+        </div>
       </main>
       <Footer />
     </div>
