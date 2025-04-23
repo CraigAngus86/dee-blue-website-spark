@@ -1,95 +1,58 @@
-import React from "react";
-import { cn } from "@/lib/utils";
-import ResponsiveImage from "./ResponsiveImage";
-import { getCompetitorLogo } from "@/lib/image";
+
+import React from 'react';
+import { cn } from '@/lib/utils';
+import { getCompetitorLogo } from '@/lib/image/competitorLogos';
+import ResponsiveImage from './ResponsiveImage';
 
 interface CompetitorLogoProps {
   name: string;
-  logoSrc?: string;
-  size?: "xs" | "sm" | "md" | "lg" | "xl";
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | number;
+  variant?: 'default' | 'alternate';
   className?: string;
-  containerClassName?: string;
-  showName?: boolean;
-  href?: string;
 }
 
 const CompetitorLogo: React.FC<CompetitorLogoProps> = ({
   name,
-  logoSrc,
-  size = "md",
+  size = 'md',
+  variant = 'default',
   className,
-  containerClassName,
-  showName = false,
-  href,
 }) => {
-  const sizeClasses = {
-    xs: "w-8 h-8",
-    sm: "w-12 h-12",
-    md: "w-16 h-16",
-    lg: "w-20 h-20",
-    xl: "w-24 h-24",
+  // Get logo path
+  const logoPath = getCompetitorLogo(name, variant);
+  
+  // Map sizes to pixel values
+  const sizeMap = {
+    xs: 16,
+    sm: 24,
+    md: 32,
+    lg: 48,
+    xl: 64,
   };
-
-  const isBOD = name.toLowerCase().includes("banks") || 
-                name.toLowerCase().includes("bod") || 
-                name.toLowerCase().includes("dee");
   
-  let formattedLogoSrc = logoSrc;
+  // Determine actual size in pixels
+  const actualSize = typeof size === 'number' ? size : sizeMap[size];
   
-  if (!formattedLogoSrc) {
-    if (isBOD) {
-      formattedLogoSrc = "/assets/images/logos/BOD_Logo_Navy_square.png";
-    } else {
-      const simpleName = name.replace(/\s+FC$|\s+Football\s+Club$/i, "").trim();
-      formattedLogoSrc = getCompetitorLogo(simpleName);
-    }
-  }
+  console.log(`Rendering competitor logo: ${name}, path: ${logoPath}`);
   
-  console.log(`Rendering competitor logo: ${name}, path: ${formattedLogoSrc}`);
-
-  const Logo = (
-    <>
-      <div 
-        className={cn(
-          "inline-flex items-center justify-center bg-white p-2 rounded-full shadow-sm",
-          sizeClasses[size],
-          containerClassName
-        )}
-      >
-        <ResponsiveImage
-          src={formattedLogoSrc}
-          alt={`${name} logo`}
-          className={cn("max-w-full max-h-full", className)}
-          objectFit="contain"
-          loading="lazy"
-          onLoad={() => console.log(`Competitor logo loaded: ${name}`)}
-          onError={() => console.error(`Failed to load competitor logo: ${name}`)}
-        />
-      </div>
-      
-      {showName && (
-        <span className="mt-1 text-xs font-medium text-center block">
-          {name}
-        </span>
-      )}
-    </>
-  );
-
-  if (href) {
-    return (
-      <a 
-        href={href} 
-        className="inline-flex flex-col items-center" 
-        title={name}
-      >
-        {Logo}
-      </a>
-    );
-  }
-
   return (
-    <div className="inline-flex flex-col items-center">
-      {Logo}
+    <div 
+      className={cn(
+        "flex items-center justify-center overflow-hidden",
+        className
+      )}
+      style={{
+        width: `${actualSize}px`, 
+        height: `${actualSize}px`,
+      }}
+    >
+      <ResponsiveImage
+        src={logoPath}
+        alt={`${name} logo`}
+        className="w-full h-full"
+        objectFit="contain"
+        onLoad={() => console.log(`Competitor logo loaded: ${name}`)}
+        onError={() => console.error(`Failed to load competitor logo: ${name}`)}
+      />
     </div>
   );
 };

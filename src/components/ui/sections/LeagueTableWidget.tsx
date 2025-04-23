@@ -62,7 +62,9 @@ const LeagueTableWidget: React.FC<LeagueTableWidgetProps> = ({ className, season
                 <TableCell className="font-semibold">{team.position}</TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    <CompetitorLogo name={team.team} size="xs" />
+                    <div className="w-6 h-6 flex-shrink-0">
+                      <CompetitorLogo name={team.team} size="sm" className="w-full h-full" />
+                    </div>
                     <span className={team.team.toLowerCase().includes("banks") ? "font-semibold" : ""}>{team.team}</span>
                   </div>
                 </TableCell>
