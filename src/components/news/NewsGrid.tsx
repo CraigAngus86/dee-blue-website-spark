@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import NewsCard from "./NewsCard";
 import { newsArticles } from "@/mock-data/newsData";
+import { Grid } from "@/components/ui/layout/Grid";
 
 const NewsGrid = () => {
   const [activeFilter, setActiveFilter] = useState('all');
@@ -45,7 +46,7 @@ const NewsGrid = () => {
         ))}
       </div>
       
-      {/* Grid Container */}
+      {/* Grid Container - Using CSS Grid directly for better control */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {sortedNews.map((article) => (
           <NewsCard

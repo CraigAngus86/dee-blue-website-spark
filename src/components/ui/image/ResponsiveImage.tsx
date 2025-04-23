@@ -1,137 +1,70 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { cn } from "@/lib/utils";
+
+type AspectRatio = "1/1" | "16/9" | "4/3" | "2/1" | "3/2";
+type ObjectFit = "cover" | "contain" | "fill" | "none" | "scale-down";
 
 interface ResponsiveImageProps {
   src: string;
   alt: string;
+  aspectRatio?: AspectRatio;
+  objectFit?: ObjectFit;
   className?: string;
-  aspectRatio?: string;
-  width?: number | string;
-  height?: number | string;
-  sizes?: string;
-  srcSet?: string;
-  objectFit?: "contain" | "cover" | "fill" | "none" | "scale-down";
   priority?: boolean;
-  placeholder?: "blur" | "empty";
-  blurDataURL?: string;
-  rounded?: boolean | "sm" | "md" | "lg" | "full";
-  shadow?: boolean | "sm" | "md" | "lg";
-  loading?: "lazy" | "eager";
-  onLoad?: () => void;
-  onError?: () => void;
 }
 
 const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
   src,
   alt,
-  className,
-  aspectRatio,
-  width,
-  height,
-  sizes = "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw",
-  srcSet,
+  aspectRatio = "16/9",
   objectFit = "cover",
+  className,
   priority = false,
-  placeholder = "empty",
-  blurDataURL,
-  rounded = false,
-  shadow = false,
-  loading = "lazy",
-  onLoad,
-  onError,
 }) => {
-  const [imgError, setImgError] = useState(false);
-  const [imgSrc, setImgSrc] = useState(src);
-
-  // Calculate classes for rounded corners
-  const roundedClasses = rounded
-    ? typeof rounded === "string"
-      ? `rounded-${rounded}`
-      : "rounded"
-    : "";
-
-  // Calculate classes for shadow
-  const shadowClasses = shadow
-    ? typeof shadow === "string"
-      ? `shadow-${shadow}`
-      : "shadow"
-    : "";
-
-  // Style object for the image
-  const style: React.CSSProperties = {
-    objectFit,
+  const aspectRatioClasses = {
+    "1/1": "aspect-square",
+    "16/9": "aspect-video",
+    "4/3": "aspect-4/3",
+    "2/1": "aspect-[2/1]",
+    "3/2": "aspect-[3/2]",
   };
 
-  // Add aspect ratio if provided
-  if (aspectRatio) {
-    style.aspectRatio = aspectRatio;
-  }
-
-  // Add explicit height or width if provided
-  if (height !== undefined) {
-    style.height = typeof height === 'number' ? `${height}px` : height;
-  }
-  
-  if (width !== undefined) {
-    style.width = typeof width === 'number' ? `${width}px` : width;
-  }
-
-  const handleError = (e: React.SyntheticEvent<HTMLImageElement>) => {
-    console.error(`Failed to load image: ${imgSrc}`);
-    setImgError(true);
-    if (onError) onError();
+  const objectFitClasses = {
+    cover: "object-cover",
+    contain: "object-contain",
+    fill: "object-fill",
+    none: "object-none",
+    "scale-down": "object-scale-down",
   };
 
-  const handleLoad = () => {
-    console.log(`Successfully loaded image: ${imgSrc}`);
-    if (onLoad) onLoad();
+  const onLoad = () => {
+    console.info(`Successfully loaded image: ${src}`);
   };
 
-  // Show a fallback when image fails to load
-  if (imgError) {
-    return (
-      <div
-        className={cn(
-          "overflow-hidden bg-gray-200 flex items-center justify-center",
-          roundedClasses,
-          shadowClasses,
-          className
-        )}
-        style={{
-          width: width || "auto",
-          height: height || "auto",
-          ...style
-        }}
-      >
-        <span className="text-gray-400 text-sm">{alt}</span>
-      </div>
-    );
-  }
+  const onError = () => {
+    console.error(`Failed to load image: ${src}`);
+  };
 
   return (
     <div
       className={cn(
-        "overflow-hidden",
-        roundedClasses,
-        shadowClasses,
+        aspectRatioClasses[aspectRatio],
+        "relative overflow-hidden",
         className
       )}
-      style={{
-        width: width || "auto",
-        height: height || "auto",
-      }}
     >
       <img
-        src={imgSrc}
+        src={src}
         alt={alt}
-        srcSet={srcSet}
-        sizes={sizes}
-        loading={priority ? "eager" : loading}
-        className="w-full h-full"
-        style={style}
-        onLoad={handleLoad}
-        onError={handleError}
+        loading={priority ? "eager" : "lazy"}
+        className={cn(
+          "w-full h-full",
+          objectFitClasses[objectFit],
+          "transition-opacity duration-300"
+        )}
+        onLoad={onLoad}
+        onError={onError}
       />
     </div>
   );
