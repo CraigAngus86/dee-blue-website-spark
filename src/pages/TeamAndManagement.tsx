@@ -1,10 +1,10 @@
-
 import React, { useState } from 'react';
 import { ChevronRight, Search } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import PlayerProfileModal from '@/components/ui/players/PlayerProfileModal';
 import { teamData } from '@/mock-data/team';
+import { Separator } from '@/components/ui/separator';
 
 const TeamAndManagement = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -69,9 +69,13 @@ const TeamAndManagement = () => {
   // Render section
   const renderSection = (title: string, people: any[], isManagement = false) => (
     <section className="mb-16">
-      <h2 className="text-4xl font-bold text-center uppercase text-[#00105A] mb-10">{title}</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {filterMembers(people).map(person => renderPersonCard(person, isManagement))}
+      <div className="bg-[#F4F7FB] py-16">
+        <h2 className="text-4xl font-bold text-center uppercase text-[#00105A] mb-10">{title}</h2>
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {filterMembers(people).map(person => renderPersonCard(person, isManagement))}
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -103,9 +107,9 @@ const TeamAndManagement = () => {
         </div>
 
         {/* Main Content */}
-        <div className="max-w-7xl mx-auto px-4 py-12">
+        <div className="py-12">
           {/* Search Bar */}
-          <div className="max-w-md mx-auto mb-16">
+          <div className="max-w-md mx-auto mb-16 px-4">
             <div className="relative">
               <input
                 type="text"
@@ -119,11 +123,15 @@ const TeamAndManagement = () => {
           </div>
           
           {/* Team Sections */}
-          <div className="grid gap-16">
+          <div className="space-y-4">
             {renderSection('Team Management', teamData.management, true)}
+            <div className="h-4 bg-white" />
             {renderSection('Goalkeepers', teamData.goalkeepers)}
+            <div className="h-4 bg-white" />
             {renderSection('Defenders', teamData.defenders)}
+            <div className="h-4 bg-white" />
             {renderSection('Midfielders', teamData.midfielders)}
+            <div className="h-4 bg-white" />
             {renderSection('Forwards', teamData.forwards)}
           </div>
         </div>
