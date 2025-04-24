@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -21,6 +20,7 @@ interface TimelineEntry {
   year: string;
   title: string;
   description: string;
+  expandedContent: string;
   imageUrl: string;
 }
 
@@ -32,35 +32,40 @@ const SpainParkPage: React.FC = () => {
       year: '1948',
       title: 'Stadium Founding',
       description: 'Spain Park was established as the home ground for Banks o\' Dee FC, providing a permanent base for the club.',
-      imageUrl: '/placeholder.svg' // Use placeholder for now
+      expandedContent: 'The decision to create Spain Park came after many years of the club playing at various locations around Aberdeen. The land was acquired through significant fundraising efforts by club supporters and the local community. The initial facilities were basic, with wooden stands and minimal amenities, but it represented a major milestone in establishing the club\'s identity and permanent home.',
+      imageUrl: 'https://images.unsplash.com/photo-1472396961693-142e6e269027'
     },
     {
       id: '2',
       year: '1976',
       title: 'First Major Renovation',
       description: 'The stadium underwent its first significant upgrade with improved seating and facilities for supporters.',
-      imageUrl: '/placeholder.svg'
+      expandedContent: 'After nearly three decades with minimal changes, the 1976 renovations marked the first comprehensive upgrade to Spain Park. The wooden stands were replaced with more permanent structures, proper changing facilities were built for both home and away teams, and basic catering facilities were added. This renovation coincided with the club\'s increasing success in regional competitions and growing supporter base.',
+      imageUrl: 'https://images.unsplash.com/photo-1433086966358-54859d0ed716'
     },
     {
       id: '3',
       year: '1992',
       title: 'Floodlights Installation',
       description: 'Floodlights were added to the stadium, allowing for evening matches and expanding the club\'s fixture capabilities.',
-      imageUrl: '/placeholder.svg'
+      expandedContent: 'The addition of floodlights in 1992 marked a significant advancement for Spain Park. This upgrade enabled the club to host evening matches and training sessions, greatly expanding the facility\'s utility and the club\'s ability to participate in various competitions. The modern lighting system improved visibility and enhanced the matchday experience for both players and spectators.',
+      imageUrl: 'https://images.unsplash.com/photo-1500673922987-e212871fec22'
     },
     {
       id: '4',
       year: '2005',
       title: 'Main Stand Development',
       description: 'A new main stand was constructed, increasing the seating capacity and providing improved views of the pitch.',
-      imageUrl: '/placeholder.svg'
+      expandedContent: 'The 2005 main stand development was a major milestone in Spain Park\'s history. The new structure not only increased seating capacity but also included modern facilities such as improved changing rooms, a medical room, and enhanced spectator amenities. This development reflected the club\'s growing ambitions and commitment to providing a better matchday experience.',
+      imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb'
     },
     {
       id: '5',
       year: '2012',
       title: 'Synthetic Pitch Installation',
-      description: 'The traditional grass surface was replaced with a state-of-the-art synthetic pitch, reducing maintenance and improving playability in all weather conditions.',
-      imageUrl: '/placeholder.svg'
+      description: 'The traditional grass surface was replaced with a state-of-the-art synthetic pitch.',
+      expandedContent: 'The installation of the synthetic pitch in 2012 was a forward-thinking decision that significantly improved the playing surface\'s reliability and reduced maintenance costs. This upgrade allowed for more consistent playing conditions throughout the year and increased the facility\'s usage capacity for both matches and training sessions.',
+      imageUrl: 'https://images.unsplash.com/photo-1523712999610-f77fbcfc3843'
     },
     {
       id: '6',

@@ -5,12 +5,14 @@ import Section from '@/components/ui/layout/Section';
 import Container from '@/components/ui/layout/Container';
 import Heading from '@/components/ui/typography/Heading';
 import Text from '@/components/ui/typography/Text';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 export interface TimelineEntry {
   id: string;
   year: string;
   title: string;
   description: string;
+  expandedContent?: string;
   imageUrl: string;
 }
 
@@ -20,6 +22,7 @@ interface StadiumTimelineProps {
 
 const StadiumTimeline: React.FC<StadiumTimelineProps> = ({ items }) => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
   const timelineRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [touchStart, setTouchStart] = useState(0);
@@ -30,11 +33,16 @@ const StadiumTimeline: React.FC<StadiumTimelineProps> = ({ items }) => {
       setIsMobile(window.innerWidth < 640);
     };
     
-    handleResize(); // Set initial value
+    handleResize();
     window.addEventListener('resize', handleResize);
     
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // Auto collapse when changing slides
+  useEffect(() => {
+    setExpandedId(null);
+  }, [activeIndex]);
 
   const handleNext = () => {
     setActiveIndex((prev) => (prev < items.length - 1 ? prev + 1 : prev));
@@ -93,8 +101,8 @@ const StadiumTimeline: React.FC<StadiumTimelineProps> = ({ items }) => {
           </Text>
         </div>
         
-        {/* Desktop & Mobile Navigation Arrows */}
         <div className="relative">
+          {/* Navigation Arrows */}
           <button 
             onClick={handlePrev}
             disabled={activeIndex === 0}
@@ -123,7 +131,7 @@ const StadiumTimeline: React.FC<StadiumTimelineProps> = ({ items }) => {
             <div className="relative w-full h-64 md:h-80 mb-12 overflow-hidden rounded-lg shadow-lg">
               <div 
                 className="absolute inset-0 bg-cover bg-center transition-opacity duration-500"
-                style={{ backgroundImage: `url(${items[activeIndex]?.imageUrl || '/placeholder.svg'})` }}
+                style={{ backgroundImage: `url(${items[activeIndex]?.imageUrl})` }}
               />
               <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#00105A]/50" />
             </div>
@@ -136,7 +144,7 @@ const StadiumTimeline: React.FC<StadiumTimelineProps> = ({ items }) => {
               {/* Timeline points with years */}
               <div 
                 ref={timelineRef}
-                className="flex space-x-4 md:space-x-8 overflow-x-auto pb-8 hide-scrollbar relative"
+                className="flex space-x-4 md:space-x-8 overflow-x-auto pb-8 scrollbar-hide relative"
               >
                 {items.map((item, index) => (
                   <div
@@ -168,6 +176,23 @@ const StadiumTimeline: React.FC<StadiumTimelineProps> = ({ items }) => {
                       <Text size="small" color="muted" className="line-clamp-3">
                         {item.description}
                       </Text>
+                      
+                      {item.expandedContent && (
+                        <Collapsible
+                          open={expandedId === item.id}
+                          onOpenChange={() => {
+                            setExpandedId(expandedId === item.id ? null : item.id);
+                          }}
+                          className="mt-4"
+                        >
+                          <CollapsibleTrigger className="text-sm text-primary hover:text-primary/80 underline transition-colors">
+                            {expandedId === item.id ? 'Read less' : 'Read more'}
+                          </CollapsibleTrigger>
+                          <CollapsibleContent className="mt-4 text-sm text-muted-foreground border-t border-[#C5E7FF] pt-4">
+                            {item.expandedContent}
+                          </CollapsibleContent>
+                        </Collapsible>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -190,9 +215,6 @@ const StadiumTimeline: React.FC<StadiumTimelineProps> = ({ items }) => {
           ))}
         </div>
       </Container>
-      
-      {/* Add the hide-scrollbar styles to the component using Tailwind classes instead of JSX style */}
-      {/* The JSX style element with jsx={true} was causing the TypeScript error */}
     </Section>
   );
 };
