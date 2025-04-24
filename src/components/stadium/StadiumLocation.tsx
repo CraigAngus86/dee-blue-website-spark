@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { MapPin, Car, Bus, Phone } from 'lucide-react';
 import { CardNew, CardNewContent } from '@/components/ui/CardNew';
@@ -21,20 +20,7 @@ const StadiumLocation: React.FC = () => {
                   alt="Spain Park Location Map"
                   className="w-full h-full object-cover"
                 />
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div className="absolute top-[61%] left-[67%] transform -translate-x-1/2 -translate-y-1/2">
-                        <div className="bg-yellow-500 p-3 rounded-full shadow-lg animate-pulse">
-                          <MapPin className="text-white w-8 h-8" />
-                        </div>
-                      </div>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      Spain Park Stadium
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                {/* Removed the yellow pins */}
               </div>
             </CardNew>
           </div>
