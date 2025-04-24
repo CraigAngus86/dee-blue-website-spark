@@ -17,14 +17,14 @@ const StadiumLocation: React.FC = () => {
             <CardNew elevation="md" className="overflow-hidden h-full">
               <div className="relative w-full h-full min-h-[400px]">
                 <img 
-                  src="/lovable-uploads/26f429c0-cc7d-42a7-be54-228cc33dece3.png"
+                  src="/lovable-uploads/e0c67a5a-0283-454f-befc-81d2b10a22cc.png"
                   alt="Spain Park Location Map"
                   className="w-full h-full object-cover"
                 />
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <div className="absolute top-[52%] left-[68%] transform -translate-x-1/2 -translate-y-1/2">
+                      <div className="absolute top-[61%] left-[67%] transform -translate-x-1/2 -translate-y-1/2">
                         <div className="bg-yellow-500 p-3 rounded-full shadow-lg animate-pulse">
                           <MapPin className="text-white w-8 h-8" />
                         </div>
