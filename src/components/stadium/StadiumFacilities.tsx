@@ -2,7 +2,10 @@
 import React from 'react';
 import { Target, Dumbbell, Users, Building2 } from 'lucide-react';
 import { ButtonNew } from '@/components/ui/ButtonNew';
-import { CardNew, CardNewContent, CardNewTitle, CardNewDescription } from '@/components/ui/CardNew';
+import Section from '@/components/ui/layout/Section';
+import Container from '@/components/ui/layout/Container';
+import Heading from '@/components/ui/typography/Heading';
+import Text from '@/components/ui/typography/Text';
 
 interface FacilityCardProps {
   icon: React.ReactNode;
@@ -11,48 +14,50 @@ interface FacilityCardProps {
 }
 
 const FacilityCard: React.FC<FacilityCardProps> = ({ icon, title, description }) => (
-  <CardNew elevation="sm" hoverEffect className="flex-1 min-w-[220px] max-w-[280px] h-full">
-    <CardNewContent className="p-4 flex flex-col items-center justify-center h-full">
-      <div className="text-primary mb-3 flex justify-center">{icon}</div>
-      <CardNewTitle className="text-base mb-2 text-center">{title}</CardNewTitle>
-      <CardNewDescription className="text-xs text-center">{description}</CardNewDescription>
-    </CardNewContent>
-  </CardNew>
+  <div className="bg-light-gray rounded-lg p-6 flex flex-col items-center text-center transition-transform hover:transform hover:scale-105">
+    <div className="bg-primary/10 p-4 rounded-full mb-4">
+      {React.cloneElement(icon as React.ReactElement, { className: "h-8 w-8 text-primary" })}
+    </div>
+    <Heading level={3} color="primary" className="mb-2">{title}</Heading>
+    <Text size="small" color="muted">{description}</Text>
+  </div>
 );
 
 const StadiumFacilities: React.FC = () => {
   const facilities = [
     {
-      icon: <Target className="w-6 h-6" />,
+      icon: <Target />,
       title: "Main Pitch",
       description: "State-of-the-art 3G synthetic surface for matches and training."
     },
     {
-      icon: <Dumbbell className="w-6 h-6" />,
+      icon: <Dumbbell />,
       title: "Gym",
       description: "Modern equipment and facilities available to members and public."
     },
     {
-      icon: <Users className="w-6 h-6" />,
+      icon: <Users />,
       title: "Hospitality Areas",
       description: "Corporate and fan hospitality spaces for matchdays and events."
     },
     {
-      icon: <Building2 className="w-6 h-6" />,
+      icon: <Building2 />,
       title: "Meeting Spaces",
       description: "Professional meeting rooms and facilities for business use."
     }
   ];
 
   return (
-    <section className="bg-[#F4F7FB] py-16">
-      <div className="max-w-7xl mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center uppercase text-[#00105A] mb-3">Stadium Facilities</h2>
-        <p className="text-center text-dark-gray mb-8 max-w-2xl mx-auto">
-          Spain Park offers modern facilities for sports, events, and business use.
-        </p>
+    <Section background="white" spacing="lg">
+      <Container>
+        <div className="text-center mb-8">
+          <Heading level={2} color="primary">Stadium Facilities</Heading>
+          <Text size="large" className="max-w-3xl mx-auto mt-4">
+            Spain Park offers modern facilities for sports, events, and business use.
+          </Text>
+        </div>
         
-        <div className="flex flex-wrap gap-6 justify-center mb-10">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
           {facilities.map((facility, index) => (
             <FacilityCard key={index} {...facility} />
           ))}
@@ -63,8 +68,8 @@ const StadiumFacilities: React.FC = () => {
             Contact Us for Bookings
           </ButtonNew>
         </div>
-      </div>
-    </section>
+      </Container>
+    </Section>
   );
 };
 

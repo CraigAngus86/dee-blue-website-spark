@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Section from '@/components/ui/layout/Section';
@@ -73,32 +72,31 @@ const StadiumTimeline: React.FC<StadiumTimelineProps> = ({ items }) => {
           </Text>
         </div>
         
-        <div className="mb-6">
-          <TimelineImage 
-            src={items[activeIndex].imageUrl} 
-            alt={items[activeIndex].title} 
-          />
-        </div>
-        
         <div className="relative">
-          <button 
-            onClick={handlePrev}
-            disabled={activeIndex === 0}
-            className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-white/80 hover:bg-white text-primary p-2 rounded-full shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-            aria-label="Previous timeline item"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </button>
-          
-          <button 
-            onClick={handleNext}
-            disabled={activeIndex === items.length - 1}
-            className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-white/80 hover:bg-white text-primary p-2 rounded-full shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-            aria-label="Next timeline item"
-          >
-            <ChevronRight className="h-5 w-5" />
-          </button>
-          
+          <div className="mb-6 relative">
+            <TimelineImage 
+              src={items[activeIndex].imageUrl} 
+              alt={items[activeIndex].title} 
+            />
+            <button 
+              onClick={handlePrev}
+              disabled={activeIndex === 0}
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10 bg-white/80 hover:bg-white text-primary p-2 rounded-full shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label="Previous timeline item"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            
+            <button 
+              onClick={handleNext}
+              disabled={activeIndex === items.length - 1}
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 z-10 bg-white/80 hover:bg-white text-primary p-2 rounded-full shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label="Next timeline item"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
+          </div>
+
           <div 
             className="overflow-hidden"
             onTouchStart={handleTouchStart}
