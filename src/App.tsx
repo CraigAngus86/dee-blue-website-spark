@@ -1,97 +1,29 @@
-import React from 'react';
-import {
-  createBrowserRouter,
-  RouterProvider,
-  Navigate,
-} from "react-router-dom";
-import './App.css';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import ComponentsDemo from "./pages/demo/ComponentsDemo";
-import SponsorsDemo from "./pages/demo/SponsorsDemo";
-import CompetitorsDemo from "./pages/demo/CompetitorsDemo";
-import ImageDemo from "./pages/ImageDemo";
-import ImagesDemo from "./pages/demo/ImagesDemo";
-import ImageUtilsDemo from "./pages/demo/ImageUtilsDemo";
-import AdvancedComponentsDemo from "./pages/demo/AdvancedComponentsDemo";
-import ImageComponentsDemo from "./pages/demo/ImageComponentsDemo";
-import HomePage from "./pages/HomePage";
-import Index from "./pages/Index";
-import TeamAndManagement from "./pages/TeamAndManagement";
-import MatchCentre from "./pages/MatchCentre";
-import NewsPage from "./pages/NewsPage";
 
-// Create a client
-const queryClient = new QueryClient();
+import './App.css';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import HomePage from './pages/HomePage';
+import NewsPage from './pages/NewsPage';
+import TeamAndManagement from './pages/TeamAndManagement';
+import MatchCentre from './pages/MatchCentre';
+import NotFound from './pages/NotFound';
+import { HelmetProvider } from 'react-helmet-async';
+import { Toaster } from "@/components/ui/toaster";
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <div className="App">
-        <RouterProvider router={router} />
-      </div>
-    </QueryClientProvider>
+    <HelmetProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/news" element={<NewsPage />} />
+          <Route path="/team" element={<TeamAndManagement />} />
+          <Route path="/matches" element={<MatchCentre />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+        <Toaster />
+      </BrowserRouter>
+    </HelmetProvider>
   );
 }
 
 export default App;
-
-const routes = [
-  {
-    path: "/",
-    element: <HomePage />,
-  },
-  {
-    path: "/index",
-    element: <Index />,
-  },
-  {
-    path: "/demo/components",
-    element: <ComponentsDemo />,
-  },
-  {
-    path: "/demo/sponsors",
-    element: <SponsorsDemo />,
-  },
-  {
-    path: "/demo/competitors",
-    element: <CompetitorsDemo />,
-  },
-  {
-    path: "/image-demo",
-    element: <ImageDemo />,
-  },
-  {
-    path: "/demo/images",
-    element: <ImagesDemo />,
-  },
-  {
-    path: "/demo/image-utils",
-    element: <ImageUtilsDemo />,
-  },
-  {
-    path: "/demo/advanced-components",
-    element: <AdvancedComponentsDemo />,
-  },
-  {
-    path: "/demo/image-components",
-    element: <ImageComponentsDemo />,
-  },
-  {
-    path: "/team",
-    element: <TeamAndManagement />,
-  },
-  {
-    path: "/match-centre",
-    element: <MatchCentre />,
-  },
-  {
-    path: "/matches",
-    element: <Navigate to="/match-centre" replace />,
-  },
-  {
-    path: "/news",
-    element: <NewsPage />,
-  }
-];
-
-const router = createBrowserRouter(routes);
