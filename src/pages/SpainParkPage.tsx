@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -6,6 +5,8 @@ import { Helmet } from 'react-helmet-async';
 import StadiumHero from '@/components/stadium/StadiumHero';
 import StadiumOverview from '@/components/stadium/StadiumOverview';
 import StadiumTimeline from '@/components/stadium/StadiumTimeline';
+import StadiumFacilities from '@/components/stadium/StadiumFacilities';
+import StadiumLocation from '@/components/stadium/StadiumLocation';
 
 // Section configuration type
 interface SectionConfig {
@@ -117,6 +118,8 @@ const SpainParkPage: React.FC = () => {
         items: timelineData
       }
     },
+    { id: 'facilities', type: 'facilities', visible: true },
+    { id: 'location', type: 'location', visible: true },
     { id: 'gallery', type: 'gallery', visible: false },
     { id: 'facilities', type: 'facilities', visible: false },
     { id: 'location', type: 'location', visible: false },
@@ -134,6 +137,10 @@ const SpainParkPage: React.FC = () => {
         return <StadiumOverview key={section.id} {...section.data} />;
       case 'timeline':
         return <StadiumTimeline key={section.id} {...section.data} />;
+      case 'facilities':
+        return <StadiumFacilities key={section.id} />;
+      case 'location':
+        return <StadiumLocation key={section.id} />;
       // Additional section types will be added in future phases
       default:
         return null;
@@ -150,7 +157,29 @@ const SpainParkPage: React.FC = () => {
       <div className="min-h-screen flex flex-col">
         <Header />
         
-        <main className="flex-grow pt-16">
+        <main className="flex-grow">
+          {/* Hero Section */}
+          <div className="relative h-[40vh] min-h-[300px] w-full bg-[#00105A]">
+            <div 
+              className="absolute inset-0 bg-cover bg-center z-0" 
+              style={{ 
+                backgroundImage: `url(/assets/images/stadium/Spain Park.jpg)`,
+                backgroundPosition: "center 30%"
+              }}
+            >
+              <div className="absolute inset-0 bg-[#00105A]/60 z-10"></div>
+            </div>
+            
+            <div className="relative z-20 h-full flex flex-col justify-center items-center text-center px-4 max-w-4xl mx-auto">
+              <h1 className="text-4xl md:text-5xl font-montserrat font-bold text-white mb-4">
+                Spain Park
+              </h1>
+              <p className="text-lg md:text-xl text-white/90 max-w-2xl font-inter">
+                Home of Banks o' Dee Football Club
+              </p>
+            </div>
+          </div>
+
           {pageSections.map(section => renderSection(section))}
         </main>
         
