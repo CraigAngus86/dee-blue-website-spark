@@ -121,8 +121,6 @@ const SpainParkPage: React.FC = () => {
     { id: 'facilities', type: 'facilities', visible: true },
     { id: 'location', type: 'location', visible: true },
     { id: 'gallery', type: 'gallery', visible: false },
-    { id: 'facilities', type: 'facilities', visible: false },
-    { id: 'location', type: 'location', visible: false },
     { id: 'contact', type: 'contact', visible: false }
   ];
 
