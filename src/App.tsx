@@ -5,6 +5,7 @@ import HomePage from './pages/HomePage';
 import NewsPage from './pages/NewsPage';
 import TeamAndManagement from './pages/TeamAndManagement';
 import MatchCentre from './pages/MatchCentre';
+import SpainParkPage from './pages/SpainParkPage';
 import NotFound from './pages/NotFound';
 import { HelmetProvider } from 'react-helmet-async';
 import { Toaster } from "@/components/ui/toaster";
@@ -18,6 +19,7 @@ function App() {
           <Route path="/news" element={<NewsPage />} />
           <Route path="/team" element={<TeamAndManagement />} />
           <Route path="/matches" element={<MatchCentre />} />
+          <Route path="/spainpark" element={<SpainParkPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <Toaster />
