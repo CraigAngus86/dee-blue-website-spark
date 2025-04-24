@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { Target, Dumbbell, Users, Building2 } from 'lucide-react';
+import { Target, Dumbbell, Users, Building2, Phone } from 'lucide-react';
+import { ButtonNew } from '@/components/ui/ButtonNew';
 import Section from '@/components/ui/layout/Section';
 import Container from '@/components/ui/layout/Container';
 import Heading from '@/components/ui/typography/Heading';
@@ -60,6 +61,17 @@ const StadiumFacilities: React.FC = () => {
           {facilities.map((facility, index) => (
             <FacilityCard key={index} {...facility} />
           ))}
+        </div>
+
+        <div className="mt-12 text-center">
+          <ButtonNew 
+            variant="accent"
+            size="lg"
+            iconLeft={<Phone className="h-5 w-5" />}
+            href="tel:01224869010"
+          >
+            Contact for Bookings
+          </ButtonNew>
         </div>
       </Container>
     </Section>
