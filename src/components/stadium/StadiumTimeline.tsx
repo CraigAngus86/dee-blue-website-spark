@@ -191,15 +191,8 @@ const StadiumTimeline: React.FC<StadiumTimelineProps> = ({ items }) => {
         </div>
       </Container>
       
-      <style jsx>{`
-        .hide-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-        .hide-scrollbar {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-      `}</style>
+      {/* Add the hide-scrollbar styles to the component using Tailwind classes instead of JSX style */}
+      {/* The JSX style element with jsx={true} was causing the TypeScript error */}
     </Section>
   );
 };
