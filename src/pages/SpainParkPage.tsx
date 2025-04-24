@@ -5,8 +5,8 @@ import { Helmet } from 'react-helmet-async';
 import StadiumHero from '@/components/stadium/StadiumHero';
 import StadiumOverview from '@/components/stadium/StadiumOverview';
 import StadiumTimeline from '@/components/stadium/StadiumTimeline';
+import CloudinaryImage from '@/components/ui/image/CloudinaryImage';
 
-// Section configuration type
 interface SectionConfig {
   id: string;
   type: 'hero' | 'overview' | 'gallery' | 'timeline' | 'facilities' | 'location' | 'contact';
@@ -14,7 +14,6 @@ interface SectionConfig {
   data?: any; // Section-specific data
 }
 
-// Timeline data type
 interface TimelineEntry {
   id: string;
   year: string;
@@ -25,7 +24,6 @@ interface TimelineEntry {
 }
 
 const SpainParkPage: React.FC = () => {
-  // Timeline data
   const timelineData: TimelineEntry[] = [
     {
       id: '1',
@@ -85,7 +83,6 @@ const SpainParkPage: React.FC = () => {
     }
   ];
 
-  // Section configuration
   const pageSections: SectionConfig[] = [
     { 
       id: 'hero', 
@@ -122,7 +119,6 @@ const SpainParkPage: React.FC = () => {
     { id: 'contact', type: 'contact', visible: false }
   ];
 
-  // Render a section based on its type
   const renderSection = (section: SectionConfig) => {
     if (!section.visible) return null;
 
@@ -133,7 +129,6 @@ const SpainParkPage: React.FC = () => {
         return <StadiumOverview key={section.id} {...section.data} />;
       case 'timeline':
         return <StadiumTimeline key={section.id} {...section.data} />;
-      // Additional section types will be added in future phases
       default:
         return null;
     }
@@ -150,6 +145,16 @@ const SpainParkPage: React.FC = () => {
         <Header />
         
         <main className="flex-grow pt-16">
+          <div className="mb-8">
+            <CloudinaryImage 
+              publicId="cld-sample-5"
+              alt="Sample Cloudinary Image"
+              width={800}
+              height={600}
+              className="rounded-lg shadow-md"
+            />
+          </div>
+          
           {pageSections.map(section => renderSection(section))}
         </main>
         
