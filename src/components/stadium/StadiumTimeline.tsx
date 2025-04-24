@@ -5,19 +5,12 @@ import Section from '@/components/ui/layout/Section';
 import Container from '@/components/ui/layout/Container';
 import Heading from '@/components/ui/typography/Heading';
 import Text from '@/components/ui/typography/Text';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-
-export interface TimelineEntry {
-  id: string;
-  year: string;
-  title: string;
-  description: string;
-  expandedContent?: string;
-  imageUrl: string;
-}
+import TimelineEntry from './TimelineEntry';
+import TimelineExpandedContent from './TimelineExpandedContent';
+import type { TimelineEntry as TimelineEntryType } from '@/types/timeline';
 
 interface StadiumTimelineProps {
-  items: TimelineEntry[];
+  items: TimelineEntryType[];
 }
 
 const StadiumTimeline: React.FC<StadiumTimelineProps> = ({ items }) => {
@@ -27,50 +20,33 @@ const StadiumTimeline: React.FC<StadiumTimelineProps> = ({ items }) => {
   const [isMobile, setIsMobile] = useState(false);
   const [touchStart, setTouchStart] = useState(0);
 
-  // Check if we're on mobile
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 640);
-    };
-    
+    const handleResize = () => setIsMobile(window.innerWidth < 640);
     handleResize();
     window.addEventListener('resize', handleResize);
-    
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Auto collapse when changing slides
-  useEffect(() => {
-    setExpandedId(null);
-  }, [activeIndex]);
-
   const handleNext = () => {
-    setActiveIndex((prev) => (prev < items.length - 1 ? prev + 1 : prev));
+    setActiveIndex(prev => (prev < items.length - 1 ? prev + 1 : prev));
   };
 
   const handlePrev = () => {
-    setActiveIndex((prev) => (prev > 0 ? prev - 1 : prev));
+    setActiveIndex(prev => (prev > 0 ? prev - 1 : prev));
   };
 
   const scrollToActive = (index: number) => {
     if (!timelineRef.current) return;
-    
     const timelineElement = timelineRef.current;
     const itemWidth = timelineElement.scrollWidth / items.length;
     const scrollPosition = itemWidth * index - timelineElement.clientWidth / 2 + itemWidth / 2;
-    
-    timelineElement.scrollTo({
-      left: scrollPosition,
-      behavior: 'smooth'
-    });
+    timelineElement.scrollTo({ left: scrollPosition, behavior: 'smooth' });
   };
 
-  // Scroll to active item when it changes
   useEffect(() => {
     scrollToActive(activeIndex);
   }, [activeIndex]);
 
-  // Touch handlers for swipe functionality
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStart(e.touches[0].clientX);
   };
@@ -78,16 +54,9 @@ const StadiumTimeline: React.FC<StadiumTimelineProps> = ({ items }) => {
   const handleTouchEnd = (e: React.TouchEvent) => {
     const touchEnd = e.changedTouches[0].clientX;
     const diff = touchStart - touchEnd;
-    
-    // If the touch movement is significant
     if (Math.abs(diff) > 50) {
-      if (diff > 0) {
-        // Swipe left, go next
-        handleNext();
-      } else {
-        // Swipe right, go prev
-        handlePrev();
-      }
+      if (diff > 0) handleNext();
+      else handlePrev();
     }
   };
 
@@ -95,14 +64,15 @@ const StadiumTimeline: React.FC<StadiumTimelineProps> = ({ items }) => {
     <Section background="light" spacing="lg">
       <Container>
         <div className="text-center mb-12">
-          <Heading level={2} color="primary" className="mb-4">Stadium Timeline</Heading>
+          <Heading level={2} color="primary" className="mb-4">
+            Stadium Timeline
+          </Heading>
           <Text size="large" className="max-w-3xl mx-auto">
             Explore the history and development of Spain Park through the years
           </Text>
         </div>
         
         <div className="relative">
-          {/* Navigation Arrows */}
           <button 
             onClick={handlePrev}
             disabled={activeIndex === 0}
@@ -121,80 +91,28 @@ const StadiumTimeline: React.FC<StadiumTimelineProps> = ({ items }) => {
             <ChevronRight className="h-5 w-5" />
           </button>
           
-          {/* Timeline Content */}
           <div 
             className="overflow-hidden"
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
           >
-            {/* Current Timeline Image */}
-            <div className="relative w-full h-64 md:h-80 mb-12 overflow-hidden rounded-lg shadow-lg">
-              <div 
-                className="absolute inset-0 bg-cover bg-center transition-opacity duration-500"
-                style={{ backgroundImage: `url(${items[activeIndex]?.imageUrl})` }}
-              />
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#00105A]/50" />
-            </div>
-            
             {/* Timeline Track */}
             <div className="relative py-8">
-              {/* The timeline line */}
               <div className="absolute top-[2.5rem] left-0 right-0 h-1 bg-[#C5E7FF]"></div>
               
-              {/* Timeline points with years */}
               <div 
                 ref={timelineRef}
                 className="flex space-x-4 md:space-x-8 overflow-x-auto pb-8 scrollbar-hide relative"
               >
                 {items.map((item, index) => (
-                  <div
+                  <TimelineEntry
                     key={item.id}
-                    className={`flex-shrink-0 flex flex-col items-center transition-transform duration-300 ${
-                      index === activeIndex ? 'scale-110' : 'opacity-70'
-                    }`}
-                    style={{ width: isMobile ? '80%' : '200px' }}
-                  >
-                    <button
-                      onClick={() => setActiveIndex(index)}
-                      className={`w-5 h-5 rounded-full mb-4 transition-all duration-300 flex items-center justify-center ${
-                        index === activeIndex 
-                          ? 'bg-accent border-2 border-accent scale-125' 
-                          : 'bg-white border border-[#C5E7FF]'
-                      }`}
-                      aria-label={`Go to ${item.year}: ${item.title}`}
-                    >
-                      {index < activeIndex && <div className="w-2 h-2 rounded-full bg-[#00105A]" />}
-                    </button>
-                    
-                    <div className="text-center">
-                      <Text size="large" weight="bold" className="text-primary">
-                        {item.year}
-                      </Text>
-                      <Heading level={4} className="mt-2 mb-3">
-                        {item.title}
-                      </Heading>
-                      <Text size="small" color="muted" className="line-clamp-3">
-                        {item.description}
-                      </Text>
-                      
-                      {item.expandedContent && (
-                        <Collapsible
-                          open={expandedId === item.id}
-                          onOpenChange={() => {
-                            setExpandedId(expandedId === item.id ? null : item.id);
-                          }}
-                          className="mt-4"
-                        >
-                          <CollapsibleTrigger className="text-sm text-primary hover:text-primary/80 underline transition-colors">
-                            {expandedId === item.id ? 'Read less' : 'Read more'}
-                          </CollapsibleTrigger>
-                          <CollapsibleContent className="mt-4 text-sm text-muted-foreground border-t border-[#C5E7FF] pt-4">
-                            {item.expandedContent}
-                          </CollapsibleContent>
-                        </Collapsible>
-                      )}
-                    </div>
-                  </div>
+                    entry={item}
+                    isActive={index === activeIndex}
+                    isExpanded={item.id === expandedId}
+                    onClick={() => setActiveIndex(index)}
+                    onExpandToggle={() => setExpandedId(expandedId === item.id ? null : item.id)}
+                  />
                 ))}
               </div>
             </div>
@@ -214,6 +132,11 @@ const StadiumTimeline: React.FC<StadiumTimelineProps> = ({ items }) => {
             />
           ))}
         </div>
+
+        {/* Expanded Content Section */}
+        <TimelineExpandedContent 
+          entry={items.find(item => item.id === expandedId) || null} 
+        />
       </Container>
     </Section>
   );

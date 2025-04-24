@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -86,7 +85,7 @@ const SpainParkPage: React.FC = () => {
     }
   ];
 
-  // Section configuration - can be moved to a separate file or fetched from an API
+  // Section configuration
   const pageSections: SectionConfig[] = [
     { 
       id: 'hero', 
@@ -141,21 +140,22 @@ const SpainParkPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <>
       <Helmet>
         <title>Spain Park | Banks o' Dee FC</title>
         <meta name="description" content="Explore Spain Park, the home ground of Banks o' Dee Football Club - a state-of-the-art facility in Aberdeen, Scotland." />
       </Helmet>
       
-      <Header />
-      
-      <main className="flex-grow pt-20">
-        {/* Render sections based on configuration */}
-        {pageSections.map(section => renderSection(section))}
-      </main>
-      
-      <Footer />
-    </div>
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        
+        <main className="flex-grow pt-16">
+          {pageSections.map(section => renderSection(section))}
+        </main>
+        
+        <Footer />
+      </div>
+    </>
   );
 };
 
