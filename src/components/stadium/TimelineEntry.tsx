@@ -39,23 +39,25 @@ const TimelineEntry: React.FC<TimelineEntryProps> = ({
         <h4 className="text-sm font-semibold mb-2 text-dark-gray">
           {entry.title}
         </h4>
-        <p className="text-sm text-gray mb-2">
+        <p className="text-sm text-gray mb-4">
           {entry.description}
         </p>
         
         {entry.expandedContent && (
-          <button
-            onClick={onExpandToggle}
-            className="text-sm text-primary hover:text-primary/80 underline transition-colors flex items-center justify-center gap-1 mb-1"
-          >
-            {isExpanded ? 'Read less' : 'Read more'}
-            <ChevronDown
-              className={cn(
-                "h-4 w-4 transition-transform duration-300",
-                isExpanded && "rotate-180"
-              )}
-            />
-          </button>
+          <div className="flex justify-center">
+            <button
+              onClick={onExpandToggle}
+              className="text-sm text-primary hover:text-primary/80 underline transition-colors flex items-center gap-1 mb-2"
+            >
+              {isExpanded ? 'Read less' : 'Read more'}
+              <ChevronDown
+                className={cn(
+                  "h-4 w-4 transition-transform duration-300",
+                  isExpanded && "rotate-180"
+                )}
+              />
+            </button>
+          </div>
         )}
       </div>
     </div>

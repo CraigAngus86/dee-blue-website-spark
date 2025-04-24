@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { getStadiumImage } from '@/lib/image';
+import { cn } from "@/lib/utils";
 
 interface StadiumHeroProps {
   title: string;
@@ -13,16 +13,21 @@ const StadiumHero: React.FC<StadiumHeroProps> = ({
   subtitle,
   imagePath
 }) => {
-  // Use the provided image path or get a default stadium image
   const heroImage = imagePath || '/assets/images/stadium/Spain Park.jpg';
+  const fallbackImage = "https://images.unsplash.com/photo-1472396961693-142e6e269027";
+  
+  const handleImageError = (e: React.SyntheticEvent<HTMLDivElement, Event>) => {
+    const element = e.currentTarget;
+    element.style.backgroundImage = `url(${fallbackImage})`;
+  };
 
   return (
     <div className="relative h-[70vh] md:h-[60vh] sm:h-[50vh] min-h-[300px] w-full">
       <div 
         className="absolute inset-0 bg-cover bg-center z-0" 
         style={{ backgroundImage: `url(${heroImage})` }}
+        onError={handleImageError}
       >
-        {/* Gradient overlay for better text readability */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#00105A]/80 via-[#00105A]/50 to-[#00105A]/30 z-10"></div>
       </div>
       
@@ -31,7 +36,6 @@ const StadiumHero: React.FC<StadiumHeroProps> = ({
           {title}
         </h1>
         
-        {/* Gold accent line below headline */}
         <div className="w-32 h-1 bg-accent mb-6"></div>
         
         <p className="text-lg md:text-xl text-white/90 max-w-2xl font-inter">

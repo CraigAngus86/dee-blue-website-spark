@@ -11,12 +11,11 @@ interface FacilityCardProps {
 }
 
 const FacilityCard: React.FC<FacilityCardProps> = ({ icon, title, description }) => (
-  <CardNew elevation="sm" hoverEffect className="flex-1 min-w-[220px]">
-    <CardNewContent className="p-4 flex flex-col h-full">
-      <div className="text-primary mb-2">{icon}</div>
-      <CardNewTitle className="text-base mb-1">{title}</CardNewTitle>
-      <CardNewDescription className="text-xs flex-grow">{description}</CardNewDescription>
-      <a href="/contact" className="text-xs text-primary hover:text-primary/80 font-medium mt-2 inline-block">Contact for Booking →</a>
+  <CardNew elevation="sm" hoverEffect className="flex-1 min-w-[220px] max-w-[280px]">
+    <CardNewContent className="p-4 flex flex-col items-center h-full">
+      <div className="text-primary mb-3 flex justify-center">{icon}</div>
+      <CardNewTitle className="text-base mb-2 text-center">{title}</CardNewTitle>
+      <CardNewDescription className="text-xs text-center">{description}</CardNewDescription>
     </CardNewContent>
   </CardNew>
 );
@@ -46,22 +45,22 @@ const StadiumFacilities: React.FC = () => {
   ];
 
   return (
-    <section className="bg-[#F4F7FB] py-12">
+    <section className="bg-[#F4F7FB] py-16">
       <div className="max-w-7xl mx-auto px-4">
         <h2 className="text-3xl font-bold text-center uppercase text-[#00105A] mb-3">Stadium Facilities</h2>
         <p className="text-center text-dark-gray mb-8 max-w-2xl mx-auto">
           Spain Park offers modern facilities for sports, events, and business use.
         </p>
         
-        <div className="flex flex-wrap gap-4 justify-center">
+        <div className="flex flex-wrap gap-6 justify-center mb-8">
           {facilities.map((facility, index) => (
             <FacilityCard key={index} {...facility} />
           ))}
         </div>
         
-        <div className="flex justify-center mt-8">
+        <div className="flex justify-center">
           <ButtonNew href="/contact" variant="accent" size="lg">
-            Contact Us About Facilities
+            Contact Us for Bookings
           </ButtonNew>
         </div>
       </div>
