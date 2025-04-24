@@ -156,28 +156,6 @@ const SpainParkPage: React.FC = () => {
         <Header />
         
         <main className="flex-grow">
-          {/* Hero Section */}
-          <div className="relative h-[40vh] min-h-[300px] w-full bg-[#00105A]">
-            <div 
-              className="absolute inset-0 bg-cover bg-center z-0" 
-              style={{ 
-                backgroundImage: `url(/assets/images/stadium/Spain Park.jpg)`,
-                backgroundPosition: "center 30%"
-              }}
-            >
-              <div className="absolute inset-0 bg-[#00105A]/60 z-10"></div>
-            </div>
-            
-            <div className="relative z-20 h-full flex flex-col justify-center items-center text-center px-4 max-w-4xl mx-auto">
-              <h1 className="text-4xl md:text-5xl font-montserrat font-bold text-white mb-4">
-                Spain Park
-              </h1>
-              <p className="text-lg md:text-xl text-white/90 max-w-2xl font-inter">
-                Home of Banks o' Dee Football Club
-              </p>
-            </div>
-          </div>
-
           {pageSections.map(section => renderSection(section))}
         </main>
         
