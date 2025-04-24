@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Football, Dumbbell, Users, Building2 } from 'lucide-react';
+import { Target, Dumbbell, Users, Building2 } from 'lucide-react';
 
 interface FacilityCardProps {
   icon: React.ReactNode;
@@ -20,7 +20,7 @@ const FacilityCard: React.FC<FacilityCardProps> = ({ icon, title, description })
 const StadiumFacilities: React.FC = () => {
   const facilities = [
     {
-      icon: <Football className="w-8 h-8" />,
+      icon: <Target className="w-8 h-8" />,
       title: "Main Pitch",
       description: "State-of-the-art 3G synthetic surface, suitable for matches and training. Available for hire."
     },
