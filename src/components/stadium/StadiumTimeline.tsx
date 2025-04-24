@@ -63,16 +63,16 @@ const StadiumTimeline: React.FC<StadiumTimelineProps> = ({ items }) => {
   return (
     <Section background="light" spacing="sm">
       <Container>
-        <div className="text-center mb-6">
-          <Heading level={2} color="primary" className="mb-2">
+        <div className="text-center mb-4">
+          <Heading level={2} color="primary" className="mb-1.5">
             Stadium Timeline
           </Heading>
-          <Text size="large" className="max-w-3xl mx-auto">
+          <Text size="small" className="max-w-3xl mx-auto">
             Explore the history and development of Spain Park through the years
           </Text>
         </div>
         
-        <div className="mb-6">
+        <div className="mb-4">
           <TimelineImage 
             src={items[activeIndex].imageUrl} 
             alt={items[activeIndex].title} 
@@ -103,8 +103,8 @@ const StadiumTimeline: React.FC<StadiumTimelineProps> = ({ items }) => {
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
           >
-            <div className="relative py-4">
-              <div className="absolute top-[1.75rem] left-0 right-0 h-[1px] bg-[#C5E7FF]"></div>
+            <div className="relative py-3">
+              <div className="absolute top-[1.25rem] left-0 right-0 h-[0.5px] bg-[#C5E7FF]"></div>
               
               <div 
                 ref={timelineRef}
@@ -125,7 +125,7 @@ const StadiumTimeline: React.FC<StadiumTimelineProps> = ({ items }) => {
           </div>
         </div>
         
-        <div className="flex justify-center mt-6 md:hidden">
+        <div className="flex justify-center mt-3 md:hidden">
           {items.map((_, index) => (
             <button
               key={index}

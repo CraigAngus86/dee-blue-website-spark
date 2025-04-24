@@ -18,7 +18,7 @@ const TimelineImage: React.FC<TimelineImageProps> = ({ src, alt }) => {
   };
 
   return (
-    <div className="w-full relative overflow-hidden rounded-md shadow-sm transition-opacity duration-300">
+    <div className="w-full relative overflow-hidden rounded-md shadow-sm transition-opacity duration-300 mb-4"> {/* Added mb-4 */}
       <div className="absolute inset-0 bg-gradient-to-b from-primary/10 to-primary/30 z-10 pointer-events-none"></div>
       
       <ResponsiveImage 
@@ -26,7 +26,7 @@ const TimelineImage: React.FC<TimelineImageProps> = ({ src, alt }) => {
         alt={alt}
         aspectRatio="21/9"
         className={cn(
-          "w-full max-h-[300px]", // Reduced height
+          "w-full max-h-[180px]", // Reduced height from 300px to 180px
           isLoaded ? "opacity-100" : "opacity-0"
         )}
         onLoad={() => setIsLoaded(true)}
