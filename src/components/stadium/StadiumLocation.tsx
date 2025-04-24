@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { MapPin, Car, Bus, Phone } from 'lucide-react';
 import { CardNew, CardNewContent } from '@/components/ui/CardNew';
@@ -20,7 +21,7 @@ const StadiumLocation: React.FC = () => {
                   alt="Spain Park Location Map"
                   className="w-full h-full object-cover"
                 />
-                {/* Removed the yellow pins */}
+                {/* No pins added */}
               </div>
             </CardNew>
           </div>
