@@ -5,7 +5,6 @@ import { CardNew, CardNewContent } from '@/components/ui/CardNew';
 import { TooltipProvider, Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import Section from '@/components/ui/layout/Section';
 import Container from '@/components/ui/layout/Container';
-import Heading from '@/components/ui/typography/Heading';
 
 const StadiumLocation: React.FC = () => {
   return (
@@ -25,9 +24,9 @@ const StadiumLocation: React.FC = () => {
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <div className="absolute top-[60%] left-[65%] transform -translate-x-1/2 -translate-y-1/2">
-                        <div className="bg-accent p-3 rounded-full shadow-lg animate-pulse">
-                          <MapPin className="text-primary w-8 h-8" />
+                      <div className="absolute top-[52%] left-[68%] transform -translate-x-1/2 -translate-y-1/2">
+                        <div className="bg-yellow-500 p-3 rounded-full shadow-lg animate-pulse">
+                          <MapPin className="text-white w-8 h-8" />
                         </div>
                       </div>
                     </TooltipTrigger>
