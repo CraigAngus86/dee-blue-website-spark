@@ -3,7 +3,6 @@
  * Sponsor logo image utilities
  */
 import { sponsors } from "@/data/SponsorsData";
-import { Sponsor } from "@/lib/types";
 
 /**
  * Get a sponsor's logo path
@@ -27,7 +26,7 @@ export const getSponsorLogo = (
  * Get all sponsor logos
  */
 export const getAllSponsorLogos = (
-  tier?: Sponsor["tier"]
+  tier?: string
 ): string[] => {
   const filteredSponsors = tier 
     ? sponsors.filter(s => s.tier === tier) 

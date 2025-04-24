@@ -1,10 +1,8 @@
-
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import ResponsiveImage from "./ResponsiveImage";
 import { Sponsor } from "@/lib/types";
 import { getSponsorLogo } from "@/lib/image";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface SponsorLogoProps {
   sponsor: Sponsor;
@@ -13,7 +11,6 @@ interface SponsorLogoProps {
   className?: string;
   useContainer?: boolean;
   containerClassName?: string;
-  showTooltip?: boolean;
 }
 
 const SponsorLogo: React.FC<SponsorLogoProps> = ({
@@ -23,7 +20,6 @@ const SponsorLogo: React.FC<SponsorLogoProps> = ({
   className,
   useContainer = false,
   containerClassName,
-  showTooltip = false,
 }) => {
   // Define size classes
   const sizeClasses = {
@@ -44,38 +40,28 @@ const SponsorLogo: React.FC<SponsorLogoProps> = ({
     logoSrc = getSponsorLogo(sponsor.name);
   }
   
+  // Log the original logo source for debugging
+  console.log(`Original sponsor logo path for ${sponsor.name}:`, logoSrc);
+  
   // Create fallback URL for placeholder in case the image fails to load
   const [useFallback, setUseFallback] = useState(false);
-  const fallbackSrc = `https://placehold.co/400x200/${variant === 'light' ? 'FFFFFF' : '00105A'}/FFFFFF?text=${encodeURIComponent(sponsor.name)}`;
+  const fallbackSrc = `https://placehold.co/400x200/FFFFFF/00105A?text=${encodeURIComponent(sponsor.name)}`;
   
   // The logo component
   const Logo = (
     <ResponsiveImage
       src={useFallback ? fallbackSrc : logoSrc}
       alt={`${sponsor.name} logo`}
-      className={cn(sizeClasses[size], "w-auto object-contain", className)}
+      className={cn(sizeClasses[size], "w-auto", className)}
       objectFit="contain"
       loading="lazy"
+      onLoad={() => console.log(`Sponsor logo loaded: ${sponsor.name}`)}
       onError={() => {
         console.error(`Failed to load sponsor logo: ${sponsor.name} from ${logoSrc}`);
         setUseFallback(true);
       }}
     />
   );
-
-  // Wrap in Tooltip if requested
-  const LogoWithMaybeTooltip = showTooltip ? (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          {Logo}
-        </TooltipTrigger>
-        <TooltipContent>
-          <p>{sponsor.name}</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  ) : Logo;
 
   // Wrap logo in a container if requested
   if (useContainer) {
@@ -84,7 +70,7 @@ const SponsorLogo: React.FC<SponsorLogoProps> = ({
         "flex items-center justify-center p-4 bg-white rounded-md",
         containerClassName
       )}>
-        {LogoWithMaybeTooltip}
+        {Logo}
       </div>
     );
   }
@@ -97,15 +83,14 @@ const SponsorLogo: React.FC<SponsorLogoProps> = ({
         target="_blank" 
         rel="noopener noreferrer"
         className="inline-block"
-        title={sponsor.name}
       >
-        {LogoWithMaybeTooltip}
+        {Logo}
       </a>
     );
   }
 
   // Default return
-  return <div className="inline-block">{LogoWithMaybeTooltip}</div>;
+  return <div className="inline-block">{Logo}</div>;
 };
 
 export default SponsorLogo;
