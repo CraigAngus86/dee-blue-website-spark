@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Section from '@/components/ui/layout/Section';
@@ -62,10 +61,10 @@ const StadiumTimeline: React.FC<StadiumTimelineProps> = ({ items }) => {
   };
 
   return (
-    <Section background="light" spacing="lg">
+    <Section background="light" spacing="sm">
       <Container>
-        <div className="text-center mb-12">
-          <Heading level={2} color="primary" className="mb-4">
+        <div className="text-center mb-6">
+          <Heading level={2} color="primary" className="mb-2">
             Stadium Timeline
           </Heading>
           <Text size="large" className="max-w-3xl mx-auto">
@@ -73,8 +72,7 @@ const StadiumTimeline: React.FC<StadiumTimelineProps> = ({ items }) => {
           </Text>
         </div>
         
-        {/* Full-width timeline image */}
-        <div className="mb-10">
+        <div className="mb-6">
           <TimelineImage 
             src={items[activeIndex].imageUrl} 
             alt={items[activeIndex].title} 
@@ -105,13 +103,12 @@ const StadiumTimeline: React.FC<StadiumTimelineProps> = ({ items }) => {
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
           >
-            {/* Timeline Track */}
-            <div className="relative py-8">
-              <div className="absolute top-[2.5rem] left-0 right-0 h-1 bg-[#C5E7FF]"></div>
+            <div className="relative py-4">
+              <div className="absolute top-[1.75rem] left-0 right-0 h-[1px] bg-[#C5E7FF]"></div>
               
               <div 
                 ref={timelineRef}
-                className="flex space-x-4 md:space-x-8 overflow-x-auto pb-8 scrollbar-hide relative"
+                className="flex space-x-3 md:space-x-6 overflow-x-auto pb-4 scrollbar-hide relative"
               >
                 {items.map((item, index) => (
                   <TimelineEntry
@@ -128,7 +125,6 @@ const StadiumTimeline: React.FC<StadiumTimelineProps> = ({ items }) => {
           </div>
         </div>
         
-        {/* Indicator Dots (Mobile/Tablet) */}
         <div className="flex justify-center mt-6 md:hidden">
           {items.map((_, index) => (
             <button
@@ -142,7 +138,6 @@ const StadiumTimeline: React.FC<StadiumTimelineProps> = ({ items }) => {
           ))}
         </div>
 
-        {/* Expanded Content Section */}
         <TimelineExpandedContent 
           entry={items.find(item => item.id === expandedId) || null} 
         />
