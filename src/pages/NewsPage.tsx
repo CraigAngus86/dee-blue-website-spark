@@ -18,23 +18,23 @@ const NewsPage = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
-        <title>{currentArticle ? `${currentArticle.title} | Banks o' Dee News` : 'News | Banks o' Dee'}</title>
+        <title>{currentArticle ? `${currentArticle.title} | Banks o' Dee News` : "News | Banks o' Dee"}</title>
         
         {currentArticle && (
           <>
-            <meta name="description" content={currentArticle.excerpt || 'Banks o' Dee FC news article'} />
+            <meta name="description" content={currentArticle.excerpt || "Banks o' Dee FC news article"} />
             
             {/* Open Graph / Facebook */}
             <meta property="og:type" content="article" />
             <meta property="og:url" content={`${window.location.origin}/news?article=${currentArticle.id}`} />
             <meta property="og:title" content={currentArticle.title} />
-            <meta property="og:description" content={currentArticle.excerpt || 'Banks o' Dee FC news article'} />
+            <meta property="og:description" content={currentArticle.excerpt || "Banks o' Dee FC news article"} />
             <meta property="og:image" content={`${window.location.origin}${currentArticle.image}`} />
             
             {/* Twitter */}
             <meta name="twitter:card" content="summary_large_image" />
             <meta name="twitter:title" content={currentArticle.title} />
-            <meta name="twitter:description" content={currentArticle.excerpt || 'Banks o' Dee FC news article'} />
+            <meta name="twitter:description" content={currentArticle.excerpt || "Banks o' Dee FC news article"} />
             <meta name="twitter:image" content={`${window.location.origin}${currentArticle.image}`} />
           </>
         )}
