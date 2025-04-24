@@ -1,6 +1,8 @@
 
 import React from 'react';
 import { Target, Dumbbell, Users, Building2 } from 'lucide-react';
+import { ButtonNew } from '@/components/ui/ButtonNew';
+import { CardNew, CardNewContent, CardNewTitle, CardNewDescription } from '@/components/ui/CardNew';
 
 interface FacilityCardProps {
   icon: React.ReactNode;
@@ -9,50 +11,58 @@ interface FacilityCardProps {
 }
 
 const FacilityCard: React.FC<FacilityCardProps> = ({ icon, title, description }) => (
-  <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-    <div className="text-primary mb-4">{icon}</div>
-    <h3 className="text-lg font-bold font-montserrat text-primary mb-2">{title}</h3>
-    <p className="text-dark-gray text-sm mb-4">{description}</p>
-    <a href="/contact" className="text-sm text-primary hover:text-primary/80 font-medium">Contact for Booking →</a>
-  </div>
+  <CardNew elevation="sm" hoverEffect className="flex-1 min-w-[220px]">
+    <CardNewContent className="p-4 flex flex-col h-full">
+      <div className="text-primary mb-2">{icon}</div>
+      <CardNewTitle className="text-base mb-1">{title}</CardNewTitle>
+      <CardNewDescription className="text-xs flex-grow">{description}</CardNewDescription>
+      <a href="/contact" className="text-xs text-primary hover:text-primary/80 font-medium mt-2 inline-block">Contact for Booking →</a>
+    </CardNewContent>
+  </CardNew>
 );
 
 const StadiumFacilities: React.FC = () => {
   const facilities = [
     {
-      icon: <Target className="w-8 h-8" />,
+      icon: <Target className="w-6 h-6" />,
       title: "Main Pitch",
-      description: "State-of-the-art 3G synthetic surface, suitable for matches and training. Available for hire."
+      description: "State-of-the-art 3G synthetic surface for matches and training."
     },
     {
-      icon: <Dumbbell className="w-8 h-8" />,
+      icon: <Dumbbell className="w-6 h-6" />,
       title: "Gym",
-      description: "Modern equipment and facilities available to members and the public. Professional coaching available."
+      description: "Modern equipment and facilities available to members and public."
     },
     {
-      icon: <Users className="w-8 h-8" />,
+      icon: <Users className="w-6 h-6" />,
       title: "Hospitality Areas",
-      description: "Corporate and fan hospitality spaces for matchday and private events."
+      description: "Corporate and fan hospitality spaces for matchdays and events."
     },
     {
-      icon: <Building2 className="w-8 h-8" />,
+      icon: <Building2 className="w-6 h-6" />,
       title: "Meeting Spaces",
-      description: "Professional meeting rooms and conference facilities available for business use."
+      description: "Professional meeting rooms and facilities for business use."
     }
   ];
 
   return (
-    <section className="bg-[#F4F7FB] py-16">
+    <section className="bg-[#F4F7FB] py-12">
       <div className="max-w-7xl mx-auto px-4">
-        <h2 className="text-4xl font-bold text-center uppercase text-[#00105A] mb-3">Stadium Facilities</h2>
-        <p className="text-center text-dark-gray mb-10 max-w-2xl mx-auto">
+        <h2 className="text-3xl font-bold text-center uppercase text-[#00105A] mb-3">Stadium Facilities</h2>
+        <p className="text-center text-dark-gray mb-8 max-w-2xl mx-auto">
           Spain Park offers modern facilities for sports, events, and business use.
         </p>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+        <div className="flex flex-wrap gap-4 justify-center">
           {facilities.map((facility, index) => (
             <FacilityCard key={index} {...facility} />
           ))}
+        </div>
+        
+        <div className="flex justify-center mt-8">
+          <ButtonNew href="/contact" variant="accent" size="lg">
+            Contact Us About Facilities
+          </ButtonNew>
         </div>
       </div>
     </section>

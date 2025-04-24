@@ -24,34 +24,34 @@ const TimelineEntry: React.FC<TimelineEntryProps> = ({
       <button
         onClick={onClick}
         className={cn(
-          "w-3 h-3 rounded-full mb-1.5 transition-all duration-300 flex items-center justify-center", // Reduced size and spacing
+          "w-4 h-4 rounded-full mb-2 transition-all duration-300 flex items-center justify-center",
           isActive ? "bg-accent border border-accent scale-105" : "bg-white border border-[#C5E7FF]"
         )}
         aria-label={`Go to ${entry.year}: ${entry.title}`}
       >
-        {!isActive && <div className="w-1 h-1 rounded-full bg-[#00105A]" />} {/* Reduced dot size */}
+        {!isActive && <div className="w-2 h-2 rounded-full bg-[#00105A]" />}
       </button>
       
-      <div className="text-center w-[160px] md:w-[200px]"> {/* Reduced widths */}
-        <p className="text-sm font-bold text-primary mb-0.5"> {/* Reduced text and spacing */}
+      <div className="text-center w-[180px] md:w-[220px]">
+        <p className="text-sm font-bold text-primary mb-1">
           {entry.year}
         </p>
-        <h4 className="text-xs font-semibold mb-1 text-dark-gray"> {/* Reduced text and spacing */}
+        <h4 className="text-sm font-semibold mb-2 text-dark-gray">
           {entry.title}
         </h4>
-        <p className="text-xs text-gray line-clamp-2 mb-1"> {/* Reduced text and spacing */}
+        <p className="text-sm text-gray mb-2">
           {entry.description}
         </p>
         
         {entry.expandedContent && (
           <button
             onClick={onExpandToggle}
-            className="text-xs text-primary hover:text-primary/80 underline transition-colors flex items-center justify-center gap-0.5"
+            className="text-sm text-primary hover:text-primary/80 underline transition-colors flex items-center justify-center gap-1 mb-1"
           >
             {isExpanded ? 'Read less' : 'Read more'}
             <ChevronDown
               className={cn(
-                "h-2.5 w-2.5 transition-transform duration-300", // Reduced icon size
+                "h-4 w-4 transition-transform duration-300",
                 isExpanded && "rotate-180"
               )}
             />

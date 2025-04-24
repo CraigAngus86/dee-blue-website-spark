@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Section from '@/components/ui/layout/Section';
@@ -61,18 +62,18 @@ const StadiumTimeline: React.FC<StadiumTimelineProps> = ({ items }) => {
   };
 
   return (
-    <Section background="light" spacing="sm">
+    <Section background="light" spacing="md">
       <Container>
-        <div className="text-center mb-4">
-          <Heading level={2} color="primary" className="mb-1.5">
+        <div className="text-center mb-6">
+          <Heading level={2} color="primary" className="mb-2">
             Stadium Timeline
           </Heading>
-          <Text size="small" className="max-w-3xl mx-auto">
+          <Text size="medium" className="max-w-3xl mx-auto">
             Explore the history and development of Spain Park through the years
           </Text>
         </div>
         
-        <div className="mb-4">
+        <div className="mb-6">
           <TimelineImage 
             src={items[activeIndex].imageUrl} 
             alt={items[activeIndex].title} 
@@ -83,7 +84,7 @@ const StadiumTimeline: React.FC<StadiumTimelineProps> = ({ items }) => {
           <button 
             onClick={handlePrev}
             disabled={activeIndex === 0}
-            className="absolute left-0 top-1/2 transform -translate-y-16 z-10 bg-white/80 hover:bg-white text-primary p-2 rounded-full shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+            className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-white/80 hover:bg-white text-primary p-2 rounded-full shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
             aria-label="Previous timeline item"
           >
             <ChevronLeft className="h-5 w-5" />
@@ -92,7 +93,7 @@ const StadiumTimeline: React.FC<StadiumTimelineProps> = ({ items }) => {
           <button 
             onClick={handleNext}
             disabled={activeIndex === items.length - 1}
-            className="absolute right-0 top-1/2 transform -translate-y-16 z-10 bg-white/80 hover:bg-white text-primary p-2 rounded-full shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+            className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-white/80 hover:bg-white text-primary p-2 rounded-full shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
             aria-label="Next timeline item"
           >
             <ChevronRight className="h-5 w-5" />
@@ -103,12 +104,12 @@ const StadiumTimeline: React.FC<StadiumTimelineProps> = ({ items }) => {
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
           >
-            <div className="relative py-3">
-              <div className="absolute top-[1.25rem] left-0 right-0 h-[0.5px] bg-[#C5E7FF]"></div>
+            <div className="relative py-4">
+              <div className="absolute top-[1.75rem] left-0 right-0 h-[1px] bg-[#C5E7FF]"></div>
               
               <div 
                 ref={timelineRef}
-                className="flex space-x-3 md:space-x-6 overflow-x-auto pb-4 scrollbar-hide relative"
+                className="flex space-x-6 md:space-x-8 overflow-x-auto scrollbar-hide pb-4 relative hide-scrollbar"
               >
                 {items.map((item, index) => (
                   <TimelineEntry
@@ -125,11 +126,11 @@ const StadiumTimeline: React.FC<StadiumTimelineProps> = ({ items }) => {
           </div>
         </div>
         
-        <div className="flex justify-center mt-3 md:hidden">
+        <div className="flex justify-center mt-4 md:hidden">
           {items.map((_, index) => (
             <button
               key={index}
-              className={`w-2 h-2 mx-1 rounded-full ${
+              className={`w-3 h-3 mx-1 rounded-full ${
                 index === activeIndex ? 'bg-accent' : 'bg-[#C5E7FF]'
               }`}
               onClick={() => setActiveIndex(index)}
