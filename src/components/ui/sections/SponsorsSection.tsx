@@ -40,7 +40,7 @@ const SponsorsCarousel: React.FC = () => {
               key={index} 
               className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 p-1"
             >
-              <div className="bg-white shadow-sm rounded-md p-4 h-24 flex items-center justify-center">
+              <div className="bg-white shadow-sm rounded-md p-2 h-20 flex items-center justify-center">
                 <SponsorLogo 
                   sponsor={sponsor}
                   size="md"
@@ -80,7 +80,7 @@ const SponsorsSection: React.FC = () => {
           <h2 className="text-2xl md:text-3xl font-bold text-primary mb-2">Club Partners & Sponsors</h2>
         </div>
         
-        {/* Main Sponsor - 30% smaller */}
+        {/* Main Sponsor - 40% larger */}
         {mainSponsor && (
           <div className="mb-10">
             <h3 className="text-center text-lg font-semibold text-primary mb-2">
@@ -91,12 +91,12 @@ const SponsorsSection: React.FC = () => {
             </h3>
             <div className="flex justify-center">
               <div 
-                className="bg-gradient-to-b from-white to-[#f8f9fa] shadow-md rounded-md p-4 inline-flex items-center justify-center transition-transform duration-300 hover:shadow-lg"
-                style={{ maxWidth: "50%" }} // Reduced by 30% from previous 70%
+                className="bg-gradient-to-b from-white to-[#f8f9fa] shadow-md rounded-md p-3 inline-flex items-center justify-center transition-transform duration-300 hover:shadow-lg"
+                style={{ maxWidth: "70%" }} // Increased by 40% from previous 50%
               >
                 <SponsorLogo 
                   sponsor={mainSponsor} 
-                  size="lg"
+                  size="xl"
                 />
               </div>
             </div>
@@ -106,7 +106,7 @@ const SponsorsSection: React.FC = () => {
         {/* Secondary Sponsors Carousel */}
         <SponsorsCarousel />
         
-        {/* Partnership CTA - Simplified button */}
+        {/* Partnership CTA */}
         <div className="text-center mt-8 mb-4">
           <Button 
             className="bg-[#FFD700] text-primary hover:brightness-110 transition-all font-semibold text-base py-6 px-8 shadow-md"
