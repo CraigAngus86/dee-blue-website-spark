@@ -7,6 +7,7 @@ import Heading from '@/components/ui/typography/Heading';
 import Text from '@/components/ui/typography/Text';
 import TimelineEntry from './TimelineEntry';
 import TimelineExpandedContent from './TimelineExpandedContent';
+import TimelineImage from './TimelineImage';
 import type { TimelineEntry as TimelineEntryType } from '@/types/timeline';
 
 interface StadiumTimelineProps {
@@ -70,6 +71,14 @@ const StadiumTimeline: React.FC<StadiumTimelineProps> = ({ items }) => {
           <Text size="large" className="max-w-3xl mx-auto">
             Explore the history and development of Spain Park through the years
           </Text>
+        </div>
+        
+        {/* Full-width timeline image */}
+        <div className="mb-10">
+          <TimelineImage 
+            src={items[activeIndex].imageUrl} 
+            alt={items[activeIndex].title} 
+          />
         </div>
         
         <div className="relative">

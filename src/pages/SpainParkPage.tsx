@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -33,7 +34,7 @@ const SpainParkPage: React.FC = () => {
       title: 'Stadium Founding',
       description: 'Spain Park was established as the home ground for Banks o\' Dee FC, providing a permanent base for the club.',
       expandedContent: 'The decision to create Spain Park came after many years of the club playing at various locations around Aberdeen. The land was acquired through significant fundraising efforts by club supporters and the local community. The initial facilities were basic, with wooden stands and minimal amenities, but it represented a major milestone in establishing the club\'s identity and permanent home.',
-      imageUrl: 'https://images.unsplash.com/photo-1472396961693-142e6e269027'
+      imageUrl: 'https://images.unsplash.com/photo-1426604966848-d7adac402bff'
     },
     {
       id: '2',
@@ -41,7 +42,7 @@ const SpainParkPage: React.FC = () => {
       title: 'First Major Renovation',
       description: 'The stadium underwent its first significant upgrade with improved seating and facilities for supporters.',
       expandedContent: 'After nearly three decades with minimal changes, the 1976 renovations marked the first comprehensive upgrade to Spain Park. The wooden stands were replaced with more permanent structures, proper changing facilities were built for both home and away teams, and basic catering facilities were added. This renovation coincided with the club\'s increasing success in regional competitions and growing supporter base.',
-      imageUrl: 'https://images.unsplash.com/photo-1433086966358-54859d0ed716'
+      imageUrl: 'https://images.unsplash.com/photo-1488972685288-c3fd157d7c7a'
     },
     {
       id: '3',
@@ -65,7 +66,7 @@ const SpainParkPage: React.FC = () => {
       title: 'Synthetic Pitch Installation',
       description: 'The traditional grass surface was replaced with a state-of-the-art synthetic pitch.',
       expandedContent: 'The installation of the synthetic pitch in 2012 was a forward-thinking decision that significantly improved the playing surface\'s reliability and reduced maintenance costs. This upgrade allowed for more consistent playing conditions throughout the year and increased the facility\'s usage capacity for both matches and training sessions.',
-      imageUrl: 'https://images.unsplash.com/photo-1523712999610-f77fbcfc3843'
+      imageUrl: 'https://images.unsplash.com/photo-1459767129954-1b1c1f9b9ace'
     },
     {
       id: '6',

@@ -3,7 +3,6 @@ import React from 'react';
 import { cn } from "@/lib/utils";
 import { ChevronDown } from 'lucide-react';
 import { TimelineEntry as TimelineEntryType } from '@/types/timeline';
-import ResponsiveImage from '@/components/ui/image/ResponsiveImage';
 
 interface TimelineEntryProps {
   entry: TimelineEntryType;
