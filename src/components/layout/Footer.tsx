@@ -13,8 +13,8 @@ const Footer: React.FC = () => {
   const navLinks = [
     { name: 'News', path: '/news' },
     { name: 'Team and Management', path: '/team' },
-    { name: 'Match Centre', path: '/match-centre' },
-    { name: 'Stadium', path: '/stadium' },
+    { name: 'Match Centre', path: '/matches' },
+    { name: 'Spain Park', path: '/spainpark' },
     { name: 'Commercial Opportunities', path: '/commercial' },
   ];
 

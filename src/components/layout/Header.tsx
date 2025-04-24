@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu } from 'lucide-react';
@@ -25,8 +24,8 @@ const Header: React.FC<{ className?: string; transparent?: boolean }> = ({ class
             {[
               { name: 'News', path: '/news' },
               { name: 'Team and Management', path: '/team' },
-              { name: 'Match Centre', path: '/match-centre' },
-              { name: 'Spain Park', path: '/stadium' },
+              { name: 'Match Centre', path: '/matches' },
+              { name: 'Spain Park', path: '/spainpark' },
               { name: 'Commercial Opportunities', path: '/commercial' },
             ].map((item) => (
               <li key={item.name} className="h-full group relative mx-3">
@@ -62,7 +61,6 @@ const Header: React.FC<{ className?: string; transparent?: boolean }> = ({ class
         </div>
       </div>
       
-      {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <div className="lg:hidden absolute top-20 left-0 right-0 bg-primary shadow-lg animate-slide-in-right">
           <div className="container mx-auto px-4">
@@ -70,8 +68,8 @@ const Header: React.FC<{ className?: string; transparent?: boolean }> = ({ class
               {[
                 { name: 'News', path: '/news' },
                 { name: 'Team and Management', path: '/team' },
-                { name: 'Match Centre', path: '/match-centre' },
-                { name: 'Spain Park', path: '/stadium' },
+                { name: 'Match Centre', path: '/matches' },
+                { name: 'Spain Park', path: '/spainpark' },
                 { name: 'Commercial Opportunities', path: '/commercial' },
               ].map((item) => (
                 <div key={item.name}>

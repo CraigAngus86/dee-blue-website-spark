@@ -5,6 +5,7 @@ import Footer from "@/components/layout/Footer";
 import { Helmet } from 'react-helmet-async';
 import StadiumHero from '@/components/stadium/StadiumHero';
 import StadiumOverview from '@/components/stadium/StadiumOverview';
+import StadiumTimeline from '@/components/stadium/StadiumTimeline';
 
 // Section configuration type
 interface SectionConfig {
@@ -14,7 +15,69 @@ interface SectionConfig {
   data?: any; // Section-specific data
 }
 
+// Timeline data type
+interface TimelineEntry {
+  id: string;
+  year: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+}
+
 const SpainParkPage: React.FC = () => {
+  // Timeline data
+  const timelineData: TimelineEntry[] = [
+    {
+      id: '1',
+      year: '1948',
+      title: 'Stadium Founding',
+      description: 'Spain Park was established as the home ground for Banks o\' Dee FC, providing a permanent base for the club.',
+      imageUrl: '/placeholder.svg' // Use placeholder for now
+    },
+    {
+      id: '2',
+      year: '1976',
+      title: 'First Major Renovation',
+      description: 'The stadium underwent its first significant upgrade with improved seating and facilities for supporters.',
+      imageUrl: '/placeholder.svg'
+    },
+    {
+      id: '3',
+      year: '1992',
+      title: 'Floodlights Installation',
+      description: 'Floodlights were added to the stadium, allowing for evening matches and expanding the club\'s fixture capabilities.',
+      imageUrl: '/placeholder.svg'
+    },
+    {
+      id: '4',
+      year: '2005',
+      title: 'Main Stand Development',
+      description: 'A new main stand was constructed, increasing the seating capacity and providing improved views of the pitch.',
+      imageUrl: '/placeholder.svg'
+    },
+    {
+      id: '5',
+      year: '2012',
+      title: 'Synthetic Pitch Installation',
+      description: 'The traditional grass surface was replaced with a state-of-the-art synthetic pitch, reducing maintenance and improving playability in all weather conditions.',
+      imageUrl: '/placeholder.svg'
+    },
+    {
+      id: '6',
+      year: '2018',
+      title: '3G Surface Upgrade',
+      description: 'The pitch was upgraded to an advanced 3G synthetic surface, making Spain Park one of the most modern playing facilities in Scottish football.',
+      imageUrl: '/placeholder.svg'
+    },
+    {
+      id: '7',
+      year: '2022',
+      title: 'Hospitality Expansion',
+      description: 'New hospitality areas were developed to enhance the matchday experience for sponsors and supporters.',
+      imageUrl: '/placeholder.svg'
+    }
+  ];
+
   // Section configuration - can be moved to a separate file or fetched from an API
   const pageSections: SectionConfig[] = [
     { 
@@ -38,8 +101,15 @@ const SpainParkPage: React.FC = () => {
         location: "Aberdeen, Scotland"
       }
     },
+    { 
+      id: 'timeline', 
+      type: 'timeline', 
+      visible: true,
+      data: {
+        items: timelineData
+      }
+    },
     { id: 'gallery', type: 'gallery', visible: false },
-    { id: 'timeline', type: 'timeline', visible: false },
     { id: 'facilities', type: 'facilities', visible: false },
     { id: 'location', type: 'location', visible: false },
     { id: 'contact', type: 'contact', visible: false }
@@ -54,6 +124,8 @@ const SpainParkPage: React.FC = () => {
         return <StadiumHero key={section.id} {...section.data} />;
       case 'overview':
         return <StadiumOverview key={section.id} {...section.data} />;
+      case 'timeline':
+        return <StadiumTimeline key={section.id} {...section.data} />;
       // Additional section types will be added in future phases
       default:
         return null;
@@ -69,7 +141,7 @@ const SpainParkPage: React.FC = () => {
       
       <Header />
       
-      <main className="flex-grow">
+      <main className="flex-grow pt-20">
         {/* Render sections based on configuration */}
         {pageSections.map(section => renderSection(section))}
       </main>

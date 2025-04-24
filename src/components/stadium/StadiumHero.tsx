@@ -14,7 +14,7 @@ const StadiumHero: React.FC<StadiumHeroProps> = ({
   imagePath
 }) => {
   // Use the provided image path or get a default stadium image
-  const heroImage = imagePath || getStadiumImage('Spain Park.jpg');
+  const heroImage = imagePath || '/assets/images/stadium/Spain Park.jpg';
 
   return (
     <div className="relative h-[70vh] md:h-[60vh] sm:h-[50vh] min-h-[300px] w-full">
