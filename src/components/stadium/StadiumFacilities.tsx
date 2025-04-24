@@ -14,7 +14,7 @@ interface FacilityCardProps {
 }
 
 const FacilityCard: React.FC<FacilityCardProps> = ({ icon, title, description }) => (
-  <div className="bg-light-gray rounded-lg p-6 flex flex-col items-center text-center transition-transform hover:transform hover:scale-105">
+  <div className="bg-white rounded-lg p-6 flex flex-col items-center text-center transition-transform hover:transform hover:scale-105 shadow-sm border border-medium-gray/20">
     <div className="bg-primary/10 p-4 rounded-full mb-4">
       {React.cloneElement(icon as React.ReactElement, { className: "h-8 w-8 text-primary" })}
     </div>
@@ -48,7 +48,7 @@ const StadiumFacilities: React.FC = () => {
   ];
 
   return (
-    <Section background="white" spacing="lg">
+    <Section background="white" spacing="md">
       <Container>
         <div className="text-center mb-8">
           <Heading level={2} color="primary">Stadium Facilities</Heading>
@@ -57,7 +57,7 @@ const StadiumFacilities: React.FC = () => {
           </Text>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
           {facilities.map((facility, index) => (
             <FacilityCard key={index} {...facility} />
           ))}

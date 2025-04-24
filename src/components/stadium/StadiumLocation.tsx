@@ -3,11 +3,14 @@ import React from 'react';
 import { MapPin, Car, Bus, Phone } from 'lucide-react';
 import { CardNew, CardNewContent } from '@/components/ui/CardNew';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import Section from '@/components/ui/layout/Section';
+import Container from '@/components/ui/layout/Container';
+import Heading from '@/components/ui/typography/Heading';
 
 const StadiumLocation: React.FC = () => {
   return (
-    <section className="py-16">
-      <div className="max-w-7xl mx-auto px-4">
+    <Section background="light" spacing="md">
+      <Container>
         <h2 className="text-3xl font-bold text-center uppercase text-[#00105A] mb-8">Location & Directions</h2>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -47,7 +50,7 @@ const StadiumLocation: React.FC = () => {
                     <MapPin className="w-5 h-5 inline-block mr-2" />
                     Address
                   </h3>
-                  <p className="text-dark-gray text-left">
+                  <p className="text-dark-gray text-center">
                     Spain Park Stadium<br />
                     Victoria Road<br />
                     Aberdeen<br />
@@ -63,21 +66,21 @@ const StadiumLocation: React.FC = () => {
                   
                   <div className="space-y-4">
                     <div>
-                      <h4 className="font-bold text-dark-gray mb-2">By Car</h4>
-                      <p className="text-sm text-dark-gray">Located just off Victoria Road in Aberdeen. Free parking available on-site and in surrounding streets.</p>
+                      <h4 className="font-bold text-dark-gray mb-2 text-center">By Car</h4>
+                      <p className="text-sm text-dark-gray text-center">Located just off Victoria Road in Aberdeen. Free parking available on-site and in surrounding streets.</p>
                     </div>
                     
                     <div>
-                      <h4 className="font-bold text-dark-gray mb-2">
+                      <h4 className="font-bold text-dark-gray mb-2 text-center">
                         <Bus className="w-4 h-4 inline-block mr-1" />
                         Public Transport
                       </h4>
-                      <p className="text-sm text-dark-gray">Multiple bus routes stop within walking distance of the stadium. The nearest bus stop is on Victoria Road.</p>
+                      <p className="text-sm text-dark-gray text-center">Multiple bus routes stop within walking distance of the stadium. The nearest bus stop is on Victoria Road.</p>
                     </div>
                     
                     <div>
-                      <h4 className="font-bold text-dark-gray mb-2">Parking</h4>
-                      <p className="text-sm text-dark-gray">Free parking is available at the stadium with overflow parking available on adjacent streets.</p>
+                      <h4 className="font-bold text-dark-gray mb-2 text-center">Parking</h4>
+                      <p className="text-sm text-dark-gray text-center">Free parking is available at the stadium with overflow parking available on adjacent streets.</p>
                     </div>
                   </div>
                 </div>
@@ -87,14 +90,14 @@ const StadiumLocation: React.FC = () => {
                     <Phone className="w-4 h-4 inline-block mr-2" />
                     Contact
                   </h3>
-                  <p className="text-sm text-dark-gray mt-2 text-left">For inquiries about visiting or using Spain Park facilities, please call 01224 869010.</p>
+                  <p className="text-sm text-dark-gray mt-2 text-center">For inquiries about visiting or using Spain Park facilities, please call 01224 869010.</p>
                 </div>
               </CardNewContent>
             </CardNew>
           </div>
         </div>
-      </div>
-    </section>
+      </Container>
+    </Section>
   );
 };
 

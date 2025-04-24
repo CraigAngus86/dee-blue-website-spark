@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Section from '@/components/ui/layout/Section';
@@ -61,7 +62,7 @@ const StadiumTimeline: React.FC<StadiumTimelineProps> = ({ items }) => {
   };
 
   return (
-    <Section background="light" spacing="md" className="mb-24">
+    <Section background="light" spacing="md" className="mb-0">
       <Container>
         <div className="text-center mb-6">
           <Heading level={2} color="primary" className="mb-2">
@@ -81,7 +82,7 @@ const StadiumTimeline: React.FC<StadiumTimelineProps> = ({ items }) => {
             <button 
               onClick={handlePrev}
               disabled={activeIndex === 0}
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10 bg-white/80 hover:bg-white text-primary p-2 rounded-full shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+              className="absolute left-4 top-1/4 transform -translate-y-1/2 z-10 bg-white/80 hover:bg-white text-primary p-2 rounded-full shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
               aria-label="Previous timeline item"
             >
               <ChevronLeft className="h-5 w-5" />
@@ -90,7 +91,7 @@ const StadiumTimeline: React.FC<StadiumTimelineProps> = ({ items }) => {
             <button 
               onClick={handleNext}
               disabled={activeIndex === items.length - 1}
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 z-10 bg-white/80 hover:bg-white text-primary p-2 rounded-full shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+              className="absolute right-4 top-1/4 transform -translate-y-1/2 z-10 bg-white/80 hover:bg-white text-primary p-2 rounded-full shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
               aria-label="Next timeline item"
             >
               <ChevronRight className="h-5 w-5" />
