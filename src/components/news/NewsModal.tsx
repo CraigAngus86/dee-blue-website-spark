@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -116,8 +115,8 @@ const NewsModal: React.FC<NewsModalProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="w-[95vw] max-w-[1000px] max-h-[90vh] overflow-y-auto p-0">
-        <div className="flex justify-between items-center px-4 py-3 bg-gray-100">
-          <div className="flex items-center gap-5">
+        <div className="flex justify-between items-center px-4 py-2 bg-gray-100">
+          <div className="flex items-center gap-3">
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -125,9 +124,9 @@ const NewsModal: React.FC<NewsModalProps> = ({
                     onClick={shareOnTwitter}
                     variant="ghost"
                     size="icon"
-                    className="h-12 w-12 text-primary hover:text-primary-light hover:bg-gray-200"
+                    className="h-10 w-10 text-primary hover:text-primary-light hover:bg-gray-200"
                   >
-                    <Twitter className="h-7 w-7" />
+                    <Twitter className="h-5 w-5" />
                     <span className="sr-only">Share on Twitter</span>
                   </Button>
                 </TooltipTrigger>
@@ -144,9 +143,9 @@ const NewsModal: React.FC<NewsModalProps> = ({
                     onClick={shareOnFacebook}
                     variant="ghost"
                     size="icon"
-                    className="h-12 w-12 text-primary hover:text-primary-light hover:bg-gray-200"
+                    className="h-10 w-10 text-primary hover:text-primary-light hover:bg-gray-200"
                   >
-                    <Facebook className="h-7 w-7" />
+                    <Facebook className="h-5 w-5" />
                     <span className="sr-only">Share on Facebook</span>
                   </Button>
                 </TooltipTrigger>
@@ -163,9 +162,9 @@ const NewsModal: React.FC<NewsModalProps> = ({
                     onClick={shareOnLinkedIn}
                     variant="ghost"
                     size="icon"
-                    className="h-12 w-12 text-primary hover:text-primary-light hover:bg-gray-200"
+                    className="h-10 w-10 text-primary hover:text-primary-light hover:bg-gray-200"
                   >
-                    <Linkedin className="h-7 w-7" />
+                    <Linkedin className="h-5 w-5" />
                     <span className="sr-only">Share on LinkedIn</span>
                   </Button>
                 </TooltipTrigger>
@@ -182,9 +181,9 @@ const NewsModal: React.FC<NewsModalProps> = ({
                     onClick={shareViaEmail}
                     variant="ghost"
                     size="icon"
-                    className="h-12 w-12 text-primary hover:text-primary-light hover:bg-gray-200"
+                    className="h-10 w-10 text-primary hover:text-primary-light hover:bg-gray-200"
                   >
-                    <Mail className="h-7 w-7" />
+                    <Mail className="h-5 w-5" />
                     <span className="sr-only">Share via Email</span>
                   </Button>
                 </TooltipTrigger>
@@ -201,9 +200,9 @@ const NewsModal: React.FC<NewsModalProps> = ({
                     onClick={copyToClipboard}
                     variant="ghost"
                     size="icon"
-                    className="h-12 w-12 text-primary hover:text-primary-light hover:bg-gray-200"
+                    className="h-10 w-10 text-primary hover:text-primary-light hover:bg-gray-200"
                   >
-                    {isCopied ? <Check className="h-7 w-7" /> : <Copy className="h-7 w-7" />}
+                    {isCopied ? <Check className="h-5 w-5" /> : <Copy className="h-5 w-5" />}
                     <span className="sr-only">Copy Link</span>
                   </Button>
                 </TooltipTrigger>
@@ -213,16 +212,6 @@ const NewsModal: React.FC<NewsModalProps> = ({
               </Tooltip>
             </TooltipProvider>
           </div>
-
-          <Button
-            onClick={onClose}
-            variant="ghost"
-            size="icon"
-            className="h-12 w-12 text-gray-500 hover:text-gray-700 hover:bg-gray-200"
-          >
-            <X className="h-7 w-7" />
-            <span className="sr-only">Close</span>
-          </Button>
         </div>
 
         <div className="relative">
@@ -311,4 +300,3 @@ const NewsModal: React.FC<NewsModalProps> = ({
 };
 
 export default NewsModal;
-
