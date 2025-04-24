@@ -2,7 +2,7 @@
 import React from 'react';
 import { MapPin, Car, Bus, Phone } from 'lucide-react';
 import { CardNew, CardNewContent } from '@/components/ui/CardNew';
-import { Tooltip } from '@/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 const StadiumLocation: React.FC = () => {
   return (
@@ -20,13 +20,20 @@ const StadiumLocation: React.FC = () => {
                 >
                   <div className="absolute inset-0 bg-primary/20"></div>
                   
-                  <Tooltip content="Spain Park Stadium">
-                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                      <div className="bg-accent p-3 rounded-full shadow-lg animate-pulse">
-                        <MapPin className="text-primary w-8 h-8" />
-                      </div>
-                    </div>
-                  </Tooltip>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                          <div className="bg-accent p-3 rounded-full shadow-lg animate-pulse">
+                            <MapPin className="text-primary w-8 h-8" />
+                          </div>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        Spain Park Stadium
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
               </div>
             </CardNew>
