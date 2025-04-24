@@ -21,13 +21,13 @@ const SponsorLogo: React.FC<SponsorLogoProps> = ({
   useContainer = false,
   containerClassName,
 }) => {
-  // Define size classes with larger dimensions
+  // Define size classes
   const sizeClasses = {
-    xs: "h-8",
-    sm: "h-12",
-    md: "h-20",
-    lg: "h-24",
-    xl: "h-32 md:h-40", // Increased size for main sponsor
+    xs: "h-6",
+    sm: "h-10",
+    md: "h-16",
+    lg: "h-20",
+    xl: "h-24",
   };
 
   // Determine logo to use based on variant
@@ -52,11 +52,7 @@ const SponsorLogo: React.FC<SponsorLogoProps> = ({
     <ResponsiveImage
       src={useFallback ? fallbackSrc : logoSrc}
       alt={`${sponsor.name} logo`}
-      className={cn(
-        sizeClasses[size], 
-        "w-auto filter brightness-0 invert", // Makes logos white
-        className
-      )}
+      className={cn(sizeClasses[size], "w-auto", className)}
       objectFit="contain"
       loading="lazy"
       onLoad={() => console.log(`Sponsor logo loaded: ${sponsor.name}`)}

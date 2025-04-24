@@ -1,13 +1,10 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, Ticket } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import ClubLogo from "../ui/image/ClubLogo";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 const Header: React.FC<{ className?: string; transparent?: boolean }> = ({ className }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const isMobile = useIsMobile();
   
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-[#00105A] shadow-md h-20 flex items-center">
@@ -53,15 +50,7 @@ const Header: React.FC<{ className?: string; transparent?: boolean }> = ({ class
           </Link>
         </div>
         
-        <div className="lg:hidden flex items-center ml-auto gap-3">
-          <Link
-            to="/tickets"
-            className="flex items-center justify-center h-9 bg-accent hover:brightness-105 text-primary font-montserrat font-bold py-1 px-3 rounded transition-colors whitespace-nowrap shadow-md text-sm"
-            aria-label="Buy tickets"
-          >
-            <Ticket size={16} className="mr-1" /> Tickets
-          </Link>
-          
+        <div className="lg:hidden flex items-center ml-auto">
           <button 
             className="text-white hover:bg-white/20 transition-colors p-2 rounded-full"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
