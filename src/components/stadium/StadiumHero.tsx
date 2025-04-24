@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { cn } from "@/lib/utils";
 
 interface StadiumHeroProps {
@@ -16,18 +16,25 @@ const StadiumHero: React.FC<StadiumHeroProps> = ({
   const heroImage = imagePath || '/assets/images/stadium/Spain Park.jpg';
   const fallbackImage = "https://images.unsplash.com/photo-1472396961693-142e6e269027";
   
-  const handleImageError = (e: React.SyntheticEvent<HTMLDivElement, Event>) => {
-    const element = e.currentTarget;
-    element.style.backgroundImage = `url(${fallbackImage})`;
+  const [currentImage, setCurrentImage] = useState(heroImage);
+  
+  const handleImageError = () => {
+    console.error(`Failed to load stadium hero image: ${heroImage}`);
+    setCurrentImage(fallbackImage);
   };
 
   return (
     <div className="relative h-[70vh] md:h-[60vh] sm:h-[50vh] min-h-[300px] w-full">
       <div 
         className="absolute inset-0 bg-cover bg-center z-0" 
-        style={{ backgroundImage: `url(${heroImage})` }}
-        onError={handleImageError}
+        style={{ backgroundImage: `url(${currentImage})` }}
       >
+        <img 
+          src={currentImage} 
+          alt={title} 
+          className="hidden" 
+          onError={handleImageError} 
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-[#00105A]/80 via-[#00105A]/50 to-[#00105A]/30 z-10"></div>
       </div>
       

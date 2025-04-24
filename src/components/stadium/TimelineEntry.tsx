@@ -44,10 +44,10 @@ const TimelineEntry: React.FC<TimelineEntryProps> = ({
         </p>
         
         {entry.expandedContent && (
-          <div className="flex justify-center">
+          <div className="flex justify-center mt-2 mb-3">
             <button
               onClick={onExpandToggle}
-              className="text-sm text-primary hover:text-primary/80 underline transition-colors flex items-center gap-1 mb-2"
+              className="text-sm text-primary hover:text-primary/80 underline transition-colors flex items-center gap-1"
             >
               {isExpanded ? 'Read less' : 'Read more'}
               <ChevronDown

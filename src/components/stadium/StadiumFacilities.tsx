@@ -11,8 +11,8 @@ interface FacilityCardProps {
 }
 
 const FacilityCard: React.FC<FacilityCardProps> = ({ icon, title, description }) => (
-  <CardNew elevation="sm" hoverEffect className="flex-1 min-w-[220px] max-w-[280px]">
-    <CardNewContent className="p-4 flex flex-col items-center h-full">
+  <CardNew elevation="sm" hoverEffect className="flex-1 min-w-[220px] max-w-[280px] h-full">
+    <CardNewContent className="p-4 flex flex-col items-center justify-center h-full">
       <div className="text-primary mb-3 flex justify-center">{icon}</div>
       <CardNewTitle className="text-base mb-2 text-center">{title}</CardNewTitle>
       <CardNewDescription className="text-xs text-center">{description}</CardNewDescription>
@@ -52,7 +52,7 @@ const StadiumFacilities: React.FC = () => {
           Spain Park offers modern facilities for sports, events, and business use.
         </p>
         
-        <div className="flex flex-wrap gap-6 justify-center mb-8">
+        <div className="flex flex-wrap gap-6 justify-center mb-10">
           {facilities.map((facility, index) => (
             <FacilityCard key={index} {...facility} />
           ))}

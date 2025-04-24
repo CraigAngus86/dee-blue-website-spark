@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Section from '@/components/ui/layout/Section';
@@ -61,7 +62,7 @@ const StadiumTimeline: React.FC<StadiumTimelineProps> = ({ items }) => {
   };
 
   return (
-    <Section background="light" spacing="md" className="mb-16">
+    <Section background="light" spacing="md" className="mb-24">
       <Container>
         <div className="text-center mb-6">
           <Heading level={2} color="primary" className="mb-2">
