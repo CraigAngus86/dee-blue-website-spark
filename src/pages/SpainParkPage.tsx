@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -72,14 +73,16 @@ const SpainParkPage: React.FC = () => {
       year: '2018',
       title: '3G Surface Upgrade',
       description: 'The pitch was upgraded to an advanced 3G synthetic surface, making Spain Park one of the most modern playing facilities in Scottish football.',
-      imageUrl: '/placeholder.svg'
+      expandedContent: 'The 2018 upgrade to a 3G surface represented a significant investment in Spain Park\'s facilities. The advanced synthetic turf provided improved player safety, better ball control, and enhanced durability. This upgrade also met higher standards for competitive play, allowing the club to host a wider range of competitions and events throughout the year.',
+      imageUrl: '/assets/images/stadium/Spain Park.jpg'
     },
     {
       id: '7',
       year: '2022',
       title: 'Hospitality Expansion',
       description: 'New hospitality areas were developed to enhance the matchday experience for sponsors and supporters.',
-      imageUrl: '/placeholder.svg'
+      expandedContent: 'The hospitality expansion in 2022 marked the most recent major development at Spain Park. This project included the creation of premium seating areas, improved catering facilities, and dedicated spaces for sponsors and VIP guests. These enhancements have significantly improved the club\'s revenue generation capabilities while providing supporters with a more enjoyable matchday experience.',
+      imageUrl: '/assets/images/stadium/Spain Park.jpg'
     }
   ];
 
