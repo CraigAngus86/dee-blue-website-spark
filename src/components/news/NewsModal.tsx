@@ -1,9 +1,8 @@
-
 import React, { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, ChevronRight, X, Twitter, Facebook, Linkedin, Instagram, Mail, Copy, Check } from "lucide-react";
+import { ChevronLeft, ChevronRight, Twitter, Facebook, Linkedin, Mail, Copy, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import ResponsiveImage from "@/components/ui/image/ResponsiveImage";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -41,7 +40,6 @@ const NewsModal: React.FC<NewsModalProps> = ({
   
   if (!article) return null;
 
-  // Format date to more readable format
   const formatDate = (dateString?: string): string => {
     if (!dateString) return "";
     const options: Intl.DateTimeFormatOptions = {
@@ -58,7 +56,6 @@ const NewsModal: React.FC<NewsModalProps> = ({
     }
   };
 
-  // Generate slug from title for URL sharing
   const generateSlug = (title: string): string => {
     return title
       .toLowerCase()
@@ -67,14 +64,12 @@ const NewsModal: React.FC<NewsModalProps> = ({
       .trim();
   };
 
-  // Get current article URL for sharing
   const getArticleUrl = (): string => {
     const baseUrl = window.location.origin;
     const slug = generateSlug(article.title);
     return `${baseUrl}/news?article=${article.id}`;
   };
 
-  // Social sharing functions
   const shareOnTwitter = () => {
     const text = encodeURIComponent(article.title);
     const url = encodeURIComponent(getArticleUrl());
@@ -120,8 +115,7 @@ const NewsModal: React.FC<NewsModalProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="w-[95vw] max-w-[1000px] max-h-[90vh] overflow-y-auto p-0">
-        {/* Social Sharing Header Bar */}
-        <div className="flex justify-between items-center px-4 py-3 bg-gray-100 border-b border-gray-200">
+        <div className="flex justify-between items-center px-4 py-3 bg-gray-100">
           <div className="flex items-center gap-5">
             <TooltipProvider>
               <Tooltip>
@@ -130,9 +124,9 @@ const NewsModal: React.FC<NewsModalProps> = ({
                     onClick={shareOnTwitter}
                     variant="ghost"
                     size="icon"
-                    className="h-9 w-9 text-primary hover:text-primary-light hover:bg-gray-200"
+                    className="h-10 w-10 text-primary hover:text-primary-light hover:bg-gray-200"
                   >
-                    <Twitter className="h-5 w-5" />
+                    <Twitter className="h-6 w-6" />
                     <span className="sr-only">Share on Twitter</span>
                   </Button>
                 </TooltipTrigger>
@@ -149,9 +143,9 @@ const NewsModal: React.FC<NewsModalProps> = ({
                     onClick={shareOnFacebook}
                     variant="ghost"
                     size="icon"
-                    className="h-9 w-9 text-primary hover:text-primary-light hover:bg-gray-200"
+                    className="h-10 w-10 text-primary hover:text-primary-light hover:bg-gray-200"
                   >
-                    <Facebook className="h-5 w-5" />
+                    <Facebook className="h-6 w-6" />
                     <span className="sr-only">Share on Facebook</span>
                   </Button>
                 </TooltipTrigger>
@@ -168,9 +162,9 @@ const NewsModal: React.FC<NewsModalProps> = ({
                     onClick={shareOnLinkedIn}
                     variant="ghost"
                     size="icon"
-                    className="h-9 w-9 text-primary hover:text-primary-light hover:bg-gray-200"
+                    className="h-10 w-10 text-primary hover:text-primary-light hover:bg-gray-200"
                   >
-                    <Linkedin className="h-5 w-5" />
+                    <Linkedin className="h-6 w-6" />
                     <span className="sr-only">Share on LinkedIn</span>
                   </Button>
                 </TooltipTrigger>
@@ -184,31 +178,12 @@ const NewsModal: React.FC<NewsModalProps> = ({
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
-                    onClick={copyToClipboard}
-                    variant="ghost"
-                    size="icon"
-                    className="h-9 w-9 text-primary hover:text-primary-light hover:bg-gray-200"
-                  >
-                    <Instagram className="h-5 w-5" />
-                    <span className="sr-only">Copy Link for Instagram</span>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Copy Link for Instagram</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
                     onClick={shareViaEmail}
                     variant="ghost"
                     size="icon"
-                    className="h-9 w-9 text-primary hover:text-primary-light hover:bg-gray-200"
+                    className="h-10 w-10 text-primary hover:text-primary-light hover:bg-gray-200"
                   >
-                    <Mail className="h-5 w-5" />
+                    <Mail className="h-6 w-6" />
                     <span className="sr-only">Share via Email</span>
                   </Button>
                 </TooltipTrigger>
@@ -225,9 +200,9 @@ const NewsModal: React.FC<NewsModalProps> = ({
                     onClick={copyToClipboard}
                     variant="ghost"
                     size="icon"
-                    className="h-9 w-9 text-primary hover:text-primary-light hover:bg-gray-200"
+                    className="h-10 w-10 text-primary hover:text-primary-light hover:bg-gray-200"
                   >
-                    {isCopied ? <Check className="h-5 w-5" /> : <Copy className="h-5 w-5" />}
+                    {isCopied ? <Check className="h-6 w-6" /> : <Copy className="h-6 w-6" />}
                     <span className="sr-only">Copy Link</span>
                   </Button>
                 </TooltipTrigger>
@@ -242,16 +217,14 @@ const NewsModal: React.FC<NewsModalProps> = ({
             onClick={onClose}
             variant="ghost"
             size="icon"
-            className="h-9 w-9 text-gray-500 hover:text-gray-700 hover:bg-gray-200"
+            className="h-10 w-10 text-gray-500 hover:text-gray-700 hover:bg-gray-200"
           >
-            <X className="h-5 w-5" />
+            <X className="h-6 w-6" />
             <span className="sr-only">Close</span>
           </Button>
         </div>
 
-        {/* Header with Image and Title */}
         <div className="relative">
-          {/* Background Pattern */}
           <div 
             className="absolute inset-0 bg-repeat z-0" 
             style={{ 
@@ -261,7 +234,6 @@ const NewsModal: React.FC<NewsModalProps> = ({
             }}
           ></div>
 
-          {/* Featured Image */}
           <div className="relative aspect-[2/1] w-full">
             <ResponsiveImage
               src={article.image}
@@ -270,19 +242,17 @@ const NewsModal: React.FC<NewsModalProps> = ({
               aspectRatio="2/1"
               objectFit="cover"
             />
-            {/* Gradient Overlay */}
             <div 
               className="absolute inset-0 bg-gradient-to-t from-[#00105A]/90 via-[#00105A]/70 to-[#00105A]/30"
             ></div>
 
-            {/* Title and Metadata Overlay */}
             <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 z-10">
               <h2 className="text-2xl md:text-4xl font-bold text-white mb-3 font-montserrat">
                 {article.title}
               </h2>
               <div className="flex flex-wrap items-center gap-3 text-white/80">
                 {article.category && (
-                  <Badge variant="secondary" className="text-xs">
+                  <Badge variant="secondary" className="text-xs bg-[#C5E7FF] text-[#00105A]">
                     {article.category}
                   </Badge>
                 )}
@@ -295,16 +265,13 @@ const NewsModal: React.FC<NewsModalProps> = ({
           </div>
         </div>
 
-        {/* Article Content */}
         <div className="p-6 md:p-8">
-          {/* Article excerpt as intro paragraph */}
           {article.excerpt && (
             <p className="text-lg font-medium text-gray-700 mb-6">
               {article.excerpt}
             </p>
           )}
           
-          {/* Full article content */}
           {article.content ? (
             <div 
               className="prose prose-lg max-w-none prose-headings:font-montserrat prose-headings:text-primary prose-p:text-gray-700 prose-p:leading-relaxed prose-img:rounded-lg"
@@ -316,7 +283,6 @@ const NewsModal: React.FC<NewsModalProps> = ({
             </p>
           )}
 
-          {/* Navigation Between Articles */}
           <div className="mt-8 flex justify-between border-t border-gray-200 pt-6">
             <Button
               onClick={onPrevious}
