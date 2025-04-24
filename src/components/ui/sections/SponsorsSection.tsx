@@ -39,12 +39,12 @@ const SponsorsSection: React.FC = () => {
   
   return (
     <Section 
-      className="relative bg-[#1A1F2C] overflow-hidden"
+      className="relative bg-[#F1F1F1] overflow-hidden"
       spacing="xl"
     >
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-16">
-          <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">Our Partners</h2>
+          <h2 className="text-2xl md:text-3xl font-bold text-[#00105A] mb-2">Our Partners</h2>
         </div>
         
         {/* Main Sponsor */}
@@ -72,7 +72,7 @@ const SponsorsSection: React.FC = () => {
         {/* Partnership CTA */}
         <div className="text-center">
           <Button 
-            className="bg-white text-[#1A1F2C] hover:bg-white/90 transition-all font-semibold text-base py-6 px-8"
+            className="bg-[#00105A] text-white hover:bg-[#00105A]/90 transition-all font-semibold text-base py-6 px-8"
           >
             Become Our Partner
             <ExternalLink size={16} className="ml-2" />
