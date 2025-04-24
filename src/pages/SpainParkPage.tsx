@@ -6,6 +6,7 @@ import StadiumHero from '@/components/stadium/StadiumHero';
 import StadiumOverview from '@/components/stadium/StadiumOverview';
 import StadiumTimeline from '@/components/stadium/StadiumTimeline';
 
+// Section configuration type
 interface SectionConfig {
   id: string;
   type: 'hero' | 'overview' | 'gallery' | 'timeline' | 'facilities' | 'location' | 'contact';
@@ -13,6 +14,7 @@ interface SectionConfig {
   data?: any; // Section-specific data
 }
 
+// Timeline data type
 interface TimelineEntry {
   id: string;
   year: string;
@@ -23,6 +25,7 @@ interface TimelineEntry {
 }
 
 const SpainParkPage: React.FC = () => {
+  // Timeline data
   const timelineData: TimelineEntry[] = [
     {
       id: '1',
@@ -82,6 +85,7 @@ const SpainParkPage: React.FC = () => {
     }
   ];
 
+  // Section configuration
   const pageSections: SectionConfig[] = [
     { 
       id: 'hero', 
@@ -118,6 +122,7 @@ const SpainParkPage: React.FC = () => {
     { id: 'contact', type: 'contact', visible: false }
   ];
 
+  // Render a section based on its type
   const renderSection = (section: SectionConfig) => {
     if (!section.visible) return null;
 
@@ -128,6 +133,7 @@ const SpainParkPage: React.FC = () => {
         return <StadiumOverview key={section.id} {...section.data} />;
       case 'timeline':
         return <StadiumTimeline key={section.id} {...section.data} />;
+      // Additional section types will be added in future phases
       default:
         return null;
     }
