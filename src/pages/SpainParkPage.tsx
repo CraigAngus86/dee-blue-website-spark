@@ -5,7 +5,6 @@ import { Helmet } from 'react-helmet-async';
 import StadiumHero from '@/components/stadium/StadiumHero';
 import StadiumOverview from '@/components/stadium/StadiumOverview';
 import StadiumTimeline from '@/components/stadium/StadiumTimeline';
-import CloudinaryImage from '@/components/ui/image/CloudinaryImage';
 
 interface SectionConfig {
   id: string;
@@ -145,16 +144,6 @@ const SpainParkPage: React.FC = () => {
         <Header />
         
         <main className="flex-grow pt-16">
-          <div className="mb-8">
-            <CloudinaryImage 
-              publicId="cld-sample-5"
-              alt="Sample Cloudinary Image"
-              width={800}
-              height={600}
-              className="rounded-lg shadow-md"
-            />
-          </div>
-          
           {pageSections.map(section => renderSection(section))}
         </main>
         
