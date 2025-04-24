@@ -38,9 +38,9 @@ const SponsorsCarousel: React.FC = () => {
           {secondarySponsors.map((sponsor, index) => (
             <CarouselItem 
               key={index} 
-              className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 p-1"
+              className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 p-2"
             >
-              <div className="bg-white shadow-sm rounded-md p-2 h-20 flex items-center justify-center">
+              <div className="flex items-center justify-center h-24">
                 <SponsorLogo 
                   sponsor={sponsor}
                   size="md"
@@ -80,7 +80,7 @@ const SponsorsSection: React.FC = () => {
           <h2 className="text-2xl md:text-3xl font-bold text-primary mb-2">Club Partners & Sponsors</h2>
         </div>
         
-        {/* Main Sponsor - 40% larger */}
+        {/* Main Sponsor */}
         {mainSponsor && (
           <div className="mb-10">
             <h3 className="text-center text-lg font-semibold text-primary mb-2">
@@ -91,8 +91,8 @@ const SponsorsSection: React.FC = () => {
             </h3>
             <div className="flex justify-center">
               <div 
-                className="bg-gradient-to-b from-white to-[#f8f9fa] shadow-md rounded-md p-3 inline-flex items-center justify-center transition-transform duration-300 hover:shadow-lg"
-                style={{ maxWidth: "70%" }} // Increased by 40% from previous 50%
+                className="inline-flex items-center justify-center transition-transform duration-300"
+                style={{ maxWidth: "70%" }}
               >
                 <SponsorLogo 
                   sponsor={mainSponsor} 
