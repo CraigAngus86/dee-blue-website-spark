@@ -35,7 +35,7 @@ const FixtureCard = ({ fixture }: FixtureCardProps) => {
   const availabilityStatus = Math.random() > 0.7 ? 'limited' : 'good';
 
   return (
-    <CardNew elevation="sm" className="w-[300px] md:w-full flex-shrink-0">
+    <CardNew elevation="sm" className="h-full">
       <CardNewContent>
         <div className="space-y-4">
           <div className="space-y-2">

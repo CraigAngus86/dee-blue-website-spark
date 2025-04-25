@@ -5,7 +5,7 @@ import Layout from '@/components/layout/Layout';
 import CommercialHeroSection from '@/components/commercial/CommercialHeroSection';
 import WhyPartnerSection from '@/components/commercial/WhyPartnerSection';
 import SponsorshipTiersSection from '@/components/commercial/sponsorship/SponsorshipTiersSection';
-import ComparisonSection from '@/components/commercial/comparison/ComparisonSection';
+import MatchDayHospitalitySection from '@/components/commercial/hospitality/MatchDayHospitalitySection';
 import UpcomingFixturesSection from '@/components/commercial/fixtures/UpcomingFixturesSection';
 import ContactDownloadSection from '@/components/commercial/contact/ContactDownloadSection';
 
@@ -22,15 +22,11 @@ const CommercialOpportunitiesPage: React.FC = () => {
       <Layout>
         <CommercialHeroSection />
         
-        <div className="space-y-16 md:space-y-24">
+        <div className="space-y-12">
           <WhyPartnerSection />
-          
           <SponsorshipTiersSection />
-          
-          <ComparisonSection />
-          
+          <MatchDayHospitalitySection />
           <UpcomingFixturesSection />
-          
           <ContactDownloadSection />
         </div>
       </Layout>

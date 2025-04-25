@@ -7,65 +7,33 @@ import Text from '@/components/ui/typography/Text';
 import { ButtonNew } from '@/components/ui/ButtonNew';
 import SponsorshipTier from './SponsorshipTier';
 import SponsorshipCard from './SponsorshipCard';
-import { premiumSponsorship, additionalSponsorship, fanzoneSponsorship } from './sponsorshipData';
+import { additionalSponsorship } from './sponsorshipData';
 
 const SponsorshipTiersSection = () => {
   return (
-    <Section background="light" spacing="xl" id="sponsorship-options">
+    <Section background="light" spacing="md" id="sponsorship-options">
       <Container>
-        <div className="max-w-3xl mx-auto text-center mb-12">
-          <Heading level={2} color="primary" className="mb-6">
+        <div className="max-w-3xl mx-auto text-center mb-8">
+          <Heading level={2} color="primary" className="mb-4">
             Sponsorship Opportunities
           </Heading>
-          <Text size="large" color="default">
-            Explore our range of sponsorship packages designed to provide maximum visibility 
-            and value for your brand. From matchday experiences to long-term partnerships, 
-            we offer flexible options to suit your objectives and budget.
+          <Text size="medium" color="default">
+            Connect your brand with Banks o' Dee FC through our range of non-matchday 
+            sponsorship packages designed to provide year-round exposure and brand association.
           </Text>
         </div>
 
-        {/* Premium Sponsorships */}
-        <SponsorshipTier
-          title="Premium Sponsorships"
-          description="Our premium packages offer exclusive matchday experiences and maximum brand exposure."
-          className="mb-16"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {premiumSponsorship.map((item) => (
-              <SponsorshipCard key={item.title} {...item} />
-            ))}
-          </div>
-        </SponsorshipTier>
-
-        {/* Additional Sponsorship Options */}
-        <SponsorshipTier
-          title="Additional Sponsorship Options"
-          description="Choose from our range of targeted sponsorship opportunities."
-          className="mb-16"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {additionalSponsorship.map((item) => (
-              <SponsorshipCard key={item.title} {...item} />
-            ))}
-          </div>
-        </SponsorshipTier>
-
-        {/* Fanzone Sponsorship */}
-        <SponsorshipTier
-          title="Fanzone Experience"
-          description="Create memorable experiences for fans before and after matches."
-          className="mb-16"
-        >
-          <div className="max-w-2xl mx-auto">
-            <SponsorshipCard {...fanzoneSponsorship} />
-          </div>
-        </SponsorshipTier>
+        {/* Additional Sponsorship Options - limit to one row */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {additionalSponsorship.slice(0, 3).map((item) => (
+            <SponsorshipCard key={item.title} {...item} />
+          ))}
+        </div>
 
         {/* CTA Section */}
-        <div className="text-center mt-16">
-          <Text size="large" color="default" className="mb-6">
-            Ready to discuss sponsorship opportunities? Our commercial team is here to help 
-            create a package that meets your objectives.
+        <div className="text-center mt-12">
+          <Text size="medium" color="default" className="mb-4">
+            Looking to explore our sponsorship opportunities further? Our commercial team is here to help.
           </Text>
           <ButtonNew
             variant="primary"

@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { cn } from "@/lib/utils";
+import { getStadiumImage } from '@/lib/image';
 
 interface CommercialHeroProps {
   title?: string;
@@ -13,8 +14,9 @@ const CommercialHeroSection: React.FC<CommercialHeroProps> = ({
   subtitle = "Partner with Banks o' Dee FC",
   imagePath
 }) => {
-  const heroImage = imagePath || 'https://images.unsplash.com/photo-1516731415730-0c262b3ab218';
-  const fallbackImage = "https://images.unsplash.com/photo-1472396961693-142e6e269027";
+  // Use a stadium image instead of generic nature image
+  const heroImage = imagePath || getStadiumImage('Spain Park.jpg');
+  const fallbackImage = "https://images.unsplash.com/photo-1516731415730-0c262b3ab218";
   
   const [currentImage, setCurrentImage] = React.useState(heroImage);
   
@@ -24,7 +26,7 @@ const CommercialHeroSection: React.FC<CommercialHeroProps> = ({
   };
 
   return (
-    <div className="relative h-[70vh] md:h-[60vh] sm:h-[50vh] min-h-[300px] w-full">
+    <div className="relative h-[60vh] md:h-[50vh] sm:h-[40vh] min-h-[300px] w-full">
       <div 
         className="absolute inset-0 bg-cover bg-center z-0" 
         style={{ backgroundImage: `url(${currentImage})` }}
