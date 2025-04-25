@@ -8,6 +8,7 @@ import SponsorshipTiersSection from '@/components/commercial/sponsorship/Sponsor
 import ComparisonSection from '@/components/commercial/comparison/ComparisonSection';
 import UpcomingFixturesSection from '@/components/commercial/fixtures/UpcomingFixturesSection';
 import ContactDownloadSection from '@/components/commercial/contact/ContactDownloadSection';
+import { Separator } from "@/components/ui/separator";
 
 const CommercialOpportunitiesPage: React.FC = () => {
   return (
@@ -21,11 +22,22 @@ const CommercialOpportunitiesPage: React.FC = () => {
       </Helmet>
       <Layout>
         <CommercialHeroSection />
-        <IntroSection />
-        <SponsorshipTiersSection />
-        <UpcomingFixturesSection />
-        <ComparisonSection />
-        <ContactDownloadSection />
+        <div className="space-y-24 md:space-y-32 mb-24">
+          <IntroSection />
+          <SponsorshipTiersSection />
+          <div className="relative">
+            <Separator className="absolute top-0 left-0 right-0 bg-gray-200" />
+            <UpcomingFixturesSection />
+          </div>
+          <div className="relative">
+            <Separator className="absolute top-0 left-0 right-0 bg-gray-200" />
+            <ComparisonSection />
+          </div>
+          <div className="relative">
+            <Separator className="absolute top-0 left-0 right-0 bg-gray-200" />
+            <ContactDownloadSection />
+          </div>
+        </div>
       </Layout>
     </>
   );
