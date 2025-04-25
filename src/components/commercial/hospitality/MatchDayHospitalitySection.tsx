@@ -3,7 +3,6 @@ import React from 'react';
 import Container from '@/components/ui/layout/Container';
 import Section from '@/components/ui/layout/Section';
 import Heading from '@/components/ui/typography/Heading';
-import Text from '@/components/ui/typography/Text';
 import SponsorshipCard from '../sponsorship/SponsorshipCard';
 import { premiumSponsorship, fanzoneSponsorship } from '../sponsorship/sponsorshipData';
 import ComparisonTable from '../comparison/ComparisonTable';
@@ -11,6 +10,8 @@ import { comparisonData, packagePrices } from '../comparison/comparisonData';
 import HoverEffect from '@/components/ui/animations/HoverEffect';
 
 const MatchDayHospitalitySection = () => {
+  const allHospitalityOptions = [...premiumSponsorship, fanzoneSponsorship];
+
   return (
     <Section background="white" spacing="md" id="matchday-hospitality">
       <Container>
@@ -21,7 +22,7 @@ const MatchDayHospitalitySection = () => {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          {premiumSponsorship.map((item) => (
+          {allHospitalityOptions.map((item) => (
             <HoverEffect key={item.title} effect="lift" duration="fast">
               <SponsorshipCard 
                 key={item.title} 
