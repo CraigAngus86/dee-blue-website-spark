@@ -6,6 +6,7 @@ import CommercialHeroSection from '@/components/commercial/CommercialHeroSection
 import IntroSection from '@/components/commercial/IntroSection';
 import SponsorshipTiersSection from '@/components/commercial/sponsorship/SponsorshipTiersSection';
 import ComparisonSection from '@/components/commercial/comparison/ComparisonSection';
+import UpcomingFixturesSection from '@/components/commercial/fixtures/UpcomingFixturesSection';
 
 const CommercialOpportunitiesPage: React.FC = () => {
   return (
@@ -21,6 +22,7 @@ const CommercialOpportunitiesPage: React.FC = () => {
         <CommercialHeroSection />
         <IntroSection />
         <SponsorshipTiersSection />
+        <UpcomingFixturesSection />
         <ComparisonSection />
         <div id="contact" className="py-12">
           {/* Contact form will go here */}
