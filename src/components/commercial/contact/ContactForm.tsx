@@ -38,7 +38,7 @@ const ContactForm = () => {
       interest: "",
       otherInterest: "",
       message: "",
-      gdprConsent: false,
+      gdprConsent: false, // This was causing the error
     },
   });
 
