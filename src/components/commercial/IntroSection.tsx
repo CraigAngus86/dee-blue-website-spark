@@ -18,9 +18,9 @@ const USPCard = ({ icon, title, description }: USPCardProps) => (
     <div className="p-6 flex flex-col gap-4">
       <div className="text-primary">{icon}</div>
       <div>
-        <Text as="h3" size="large" weight="semibold" color="primary" className="mb-2">
+        <Heading level={3} color="primary" className="mb-2">
           {title}
-        </Text>
+        </Heading>
         <Text color="default">
           {description}
         </Text>
