@@ -18,12 +18,9 @@ const MatchDayHospitalitySection = () => {
           <Heading level={2} color="primary" className="mb-4">
             Match Day Hospitality
           </Heading>
-          <Text color="muted" className="mb-6">
-            Enhance your match day experience with our premium hospitality packages
-          </Text>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           {premiumSponsorship.map((item) => (
             <HoverEffect key={item.title} effect="lift" duration="fast">
               <SponsorshipCard 
@@ -34,13 +31,6 @@ const MatchDayHospitalitySection = () => {
               />
             </HoverEffect>
           ))}
-          <HoverEffect effect="lift" duration="fast">
-            <SponsorshipCard 
-              {...fanzoneSponsorship} 
-              hideViewDetails 
-              compact
-            />
-          </HoverEffect>
         </div>
       </Container>
       

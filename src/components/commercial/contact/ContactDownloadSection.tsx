@@ -23,41 +23,36 @@ const ContactDownloadSection = () => {
               </Heading>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Card className="p-4">
-                  <CardContent className="p-2">
+                  <CardContent className="p-2 text-center">
                     <Heading level={4} color="primary" className="mb-2">
                       Brian Winton
                     </Heading>
                     <Text color="muted" className="mb-2">Commercial Director</Text>
-                    <Text className="flex items-center gap-2"><span className="font-semibold">Email:</span> commercial@banksofdee.co.uk</Text>
-                    <Text className="flex items-center gap-2"><span className="font-semibold">Phone:</span> 07123 456789</Text>
+                    <Text className="flex items-center justify-center gap-2"><span className="font-semibold">Email:</span> commercial@banksofdee.co.uk</Text>
+                    <Text className="flex items-center justify-center gap-2"><span className="font-semibold">Phone:</span> 07123 456789</Text>
                   </CardContent>
                 </Card>
                 
                 <Card className="p-4">
-                  <CardContent className="p-2">
+                  <CardContent className="p-2 text-center">
                     <Heading level={4} color="primary" className="mb-2">
                       Craig Angus
                     </Heading>
                     <Text color="muted" className="mb-2">Sponsorship Coordinator</Text>
-                    <Text className="flex items-center gap-2"><span className="font-semibold">Email:</span> sponsorship@banksofdee.co.uk</Text>
-                    <Text className="flex items-center gap-2"><span className="font-semibold">Phone:</span> 07987 654321</Text>
+                    <Text className="flex items-center justify-center gap-2"><span className="font-semibold">Email:</span> sponsorship@banksofdee.co.uk</Text>
+                    <Text className="flex items-center justify-center gap-2"><span className="font-semibold">Phone:</span> 07987 654321</Text>
                   </CardContent>
                 </Card>
               </div>
               
-              <div className="mt-8 bg-primary/5 p-6 rounded-lg text-center">
-                <Heading level={4} color="primary" className="mb-3">
-                  Download Our Sponsorship Brochure
-                </Heading>
-                <Text className="mb-4">
-                  Get detailed information about all our sponsorship opportunities in our comprehensive brochure.
-                </Text>
+              <div className="mt-8">
                 <ButtonNew 
                   variant="primary" 
                   size="lg"
                   iconLeft={<Download size={18} />}
+                  className="w-full justify-center py-6 text-lg"
                 >
-                  Download Brochure (PDF)
+                  Download our Sponsorship Brochure
                 </ButtonNew>
               </div>
             </div>

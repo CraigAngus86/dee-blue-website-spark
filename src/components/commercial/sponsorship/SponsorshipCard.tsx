@@ -26,7 +26,7 @@ const SponsorshipCard: React.FC<SponsorshipCardProps> = ({
 }) => {
   return (
     <CardNew elevation="md" className={cn("h-full flex flex-col", className)}>
-      <CardNewMedia aspectRatio={compact ? "4/3" : "16/9"}>
+      <CardNewMedia aspectRatio="4/3">
         <img 
           src={image} 
           alt={`${title} sponsorship option`}
@@ -34,10 +34,10 @@ const SponsorshipCard: React.FC<SponsorshipCardProps> = ({
         />
       </CardNewMedia>
       <CardNewContent className={cn(
-        "flex flex-col h-full",
+        "flex flex-col flex-grow",
         compact ? "p-3" : "p-6"
       )}>
-        <div className="space-y-1.5">
+        <div className="space-y-1">
           <Heading level={5} color="primary" className={cn(
             compact ? "text-base" : "text-xl"
           )}>
@@ -47,14 +47,14 @@ const SponsorshipCard: React.FC<SponsorshipCardProps> = ({
             size={compact ? "medium" : "large"} 
             weight="semibold" 
             color="primary"
-            className="block text-primary"
+            className="block"
           >
             {price}
           </Text>
           <Text 
             size="small"
             color="default"
-            className="line-clamp-2"
+            className="line-clamp-2 text-gray-600"
           >
             {description}
           </Text>
