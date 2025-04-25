@@ -7,16 +7,12 @@ import DownloadBrochure from './DownloadBrochure';
 
 const ContactDownloadSection = () => {
   return (
-    <Section background="light" spacing="xl" id="contact">
+    <Section background="light" spacing="md" id="contact">
       <Container>
         <div className="bg-white p-6 sm:p-8 rounded-lg shadow-md">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div className="bg-primary/5 p-6 rounded-lg h-full">
-              <ContactForm />
-            </div>
-            <div className="h-full">
-              <DownloadBrochure />
-            </div>
+          <div className="space-y-8">
+            <ContactForm />
+            <DownloadBrochure />
           </div>
         </div>
       </Container>

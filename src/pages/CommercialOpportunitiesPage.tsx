@@ -22,7 +22,7 @@ const CommercialOpportunitiesPage: React.FC = () => {
       <Layout>
         <CommercialHeroSection />
         
-        <div className="space-y-12">
+        <div className="space-y-8 md:space-y-12">
           <WhyPartnerSection />
           <SponsorshipTiersSection />
           <MatchDayHospitalitySection />

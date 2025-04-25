@@ -16,7 +16,7 @@ const UpcomingFixturesSection = () => {
   return (
     <Section background="light" spacing="md" id="upcoming-fixtures">
       <Container>
-        <div className="max-w-3xl mx-auto text-center mb-8">
+        <div className="max-w-3xl mx-auto text-center mb-6">
           <Heading level={2} color="primary" className="mb-3">
             Upcoming Hospitality Opportunities
           </Heading>
@@ -26,33 +26,36 @@ const UpcomingFixturesSection = () => {
           </Text>
         </div>
 
-        <div className="relative mb-8">
+        <div className="relative mb-6">
           <Carousel
             className="w-full"
             opts={{
               align: "start",
-              loop: false,
+              loop: true,
+              dragFree: true
             }}
           >
-            <CarouselContent>
+            <CarouselContent className="-ml-4">
               {upcomingFixtures.slice(0, 6).map((fixture) => (
-                <CarouselItem key={fixture.id} className="sm:basis-1/2 lg:basis-1/3 pl-4">
+                <CarouselItem key={fixture.id} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3">
                   <FixtureCard fixture={fixture} />
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious className="hidden md:flex left-2 bg-white hover:bg-gray-100" />
-            <CarouselNext className="hidden md:flex right-2 bg-white hover:bg-gray-100" />
+            <div className="hidden md:block">
+              <CarouselPrevious className="left-0 bg-white hover:bg-gray-100" />
+              <CarouselNext className="right-0 bg-white hover:bg-gray-100" />
+            </div>
           </Carousel>
+        </div>
           
-          <div className="mt-6 text-center">
-            <Button asChild>
-              <a href="/matches" className="inline-flex items-center">
-                View All Fixtures
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </a>
-            </Button>
-          </div>
+        <div className="text-center">
+          <Button variant="outline" asChild>
+            <a href="/matches" className="inline-flex items-center font-semibold">
+              View All Fixtures
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </a>
+          </Button>
         </div>
       </Container>
     </Section>
