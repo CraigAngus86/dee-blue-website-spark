@@ -13,34 +13,26 @@ const MatchDayHospitalitySection = () => {
   return (
     <Section background="white" spacing="md" id="matchday-hospitality">
       <Container>
-        <div className="max-w-3xl mx-auto text-center mb-8">
-          <Heading level={2} color="primary" className="mb-4">
-            Match Day Hospitality
-          </Heading>
-          <Text size="medium" color="default" className="mb-4">
-            Elevate your match day experience with our premium hospitality packages. 
-            Perfect for entertaining clients, rewarding staff, or enjoying a special day with family and friends.
-          </Text>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           {premiumSponsorship.map((item) => (
             <SponsorshipCard 
               key={item.title} 
               {...item} 
               hideViewDetails 
+              compact
             />
           ))}
           <SponsorshipCard 
             {...fanzoneSponsorship} 
             hideViewDetails 
+            compact
           />
         </div>
-        
-        <div className="bg-light-gray p-4 rounded-lg">
-          <ComparisonTable data={comparisonData} prices={packagePrices} />
-        </div>
       </Container>
+      
+      <div className="bg-primary/5 px-4 py-6 rounded-lg">
+        <ComparisonTable data={comparisonData} prices={packagePrices} />
+      </div>
     </Section>
   );
 };

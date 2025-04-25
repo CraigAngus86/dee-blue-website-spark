@@ -1,12 +1,9 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { cn } from '@/lib/utils';
 import { CardNew, CardNewContent, CardNewMedia } from '@/components/ui/CardNew';
 import Heading from '@/components/ui/typography/Heading';
 import Text from '@/components/ui/typography/Text';
-import { ButtonNew } from '@/components/ui/ButtonNew';
-import { ChevronDown, ChevronUp } from 'lucide-react';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
 interface SponsorshipCardProps {
   title: string;
@@ -16,67 +13,52 @@ interface SponsorshipCardProps {
   image: string;
   className?: string;
   hideViewDetails?: boolean;
+  compact?: boolean;
 }
 
 const SponsorshipCard: React.FC<SponsorshipCardProps> = ({
   title,
   price,
   description,
-  benefits,
   image,
   className,
-  hideViewDetails = false
+  compact = false
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
   return (
     <CardNew elevation="md" className={cn("h-full flex flex-col", className)}>
-      <CardNewMedia aspectRatio="16/9">
+      <CardNewMedia aspectRatio={compact ? "4/3" : "16/9"}>
         <img 
           src={image} 
           alt={`${title} sponsorship option`}
           className="w-full h-full object-cover"
         />
       </CardNewMedia>
-      <CardNewContent className="flex flex-col h-full">
-        <div className="space-y-4 flex-grow">
-          <Heading level={4} color="primary">
+      <CardNewContent className={cn(
+        "flex flex-col h-full",
+        compact ? "p-4" : "p-6"
+      )}>
+        <div className="space-y-2">
+          <Heading level={4} color="primary" className={cn(
+            compact ? "text-lg" : "text-xl"
+          )}>
             {title}
           </Heading>
-          <Text size="large" weight="semibold" color="primary">
+          <Text 
+            size={compact ? "medium" : "large"} 
+            weight="semibold" 
+            color="primary"
+            className="text-secondary"
+          >
             {price}
           </Text>
-          <Text size="medium" color="default">
+          <Text 
+            size={compact ? "small" : "medium"} 
+            color="default"
+            className="line-clamp-2"
+          >
             {description}
           </Text>
         </div>
-        
-        {!hideViewDetails && (
-          <Collapsible open={isOpen} onOpenChange={setIsOpen} className="mt-4">
-            <CollapsibleContent className="mb-4">
-              <div className="space-y-2">
-                <Text weight="semibold" color="primary">Key Benefits:</Text>
-                <ul className="list-disc list-inside space-y-2">
-                  {benefits.map((benefit, index) => (
-                    <li key={index}>
-                      <Text size="small" color="default">{benefit}</Text>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </CollapsibleContent>
-
-            <CollapsibleTrigger asChild>
-              <ButtonNew 
-                variant="secondary" 
-                className="w-full mt-auto"
-                iconRight={isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-              >
-                {isOpen ? 'Hide Details' : 'View Details'}
-              </ButtonNew>
-            </CollapsibleTrigger>
-          </Collapsible>
-        )}
       </CardNewContent>
     </CardNew>
   );
