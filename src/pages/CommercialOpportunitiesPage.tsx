@@ -3,12 +3,11 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import Layout from '@/components/layout/Layout';
 import CommercialHeroSection from '@/components/commercial/CommercialHeroSection';
-import IntroSection from '@/components/commercial/IntroSection';
+import WhyPartnerSection from '@/components/commercial/WhyPartnerSection';
 import SponsorshipTiersSection from '@/components/commercial/sponsorship/SponsorshipTiersSection';
 import ComparisonSection from '@/components/commercial/comparison/ComparisonSection';
 import UpcomingFixturesSection from '@/components/commercial/fixtures/UpcomingFixturesSection';
 import ContactDownloadSection from '@/components/commercial/contact/ContactDownloadSection';
-import { Separator } from "@/components/ui/separator";
 
 const CommercialOpportunitiesPage: React.FC = () => {
   return (
@@ -22,21 +21,17 @@ const CommercialOpportunitiesPage: React.FC = () => {
       </Helmet>
       <Layout>
         <CommercialHeroSection />
-        <div className="space-y-24 md:space-y-32 mb-24">
-          <IntroSection />
+        
+        <div className="space-y-16 md:space-y-24">
+          <WhyPartnerSection />
+          
           <SponsorshipTiersSection />
-          <div className="relative">
-            <Separator className="absolute top-0 left-0 right-0 bg-gray-200" />
-            <UpcomingFixturesSection />
-          </div>
-          <div className="relative">
-            <Separator className="absolute top-0 left-0 right-0 bg-gray-200" />
-            <ComparisonSection />
-          </div>
-          <div className="relative">
-            <Separator className="absolute top-0 left-0 right-0 bg-gray-200" />
-            <ContactDownloadSection />
-          </div>
+          
+          <ComparisonSection />
+          
+          <UpcomingFixturesSection />
+          
+          <ContactDownloadSection />
         </div>
       </Layout>
     </>

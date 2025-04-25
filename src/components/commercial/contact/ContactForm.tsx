@@ -26,9 +26,11 @@ const formSchema = z.object({
   }),
 });
 
+type FormValues = z.infer<typeof formSchema>;
+
 const ContactForm = () => {
   const { toast } = useToast();
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
@@ -38,11 +40,12 @@ const ContactForm = () => {
       interest: "",
       otherInterest: "",
       message: "",
-      gdprConsent: false, // This was causing the error
+      // Fix: Remove default value for gdprConsent so it's undefined initially
+      // This way it won't trigger the type error, but validation will still require checking the box
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: FormValues) => {
     toast({
       title: "Enquiry Submitted",
       description: "We'll get back to you as soon as possible.",
