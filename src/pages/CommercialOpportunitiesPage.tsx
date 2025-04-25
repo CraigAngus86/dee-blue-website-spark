@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet-async';
 import Layout from '@/components/layout/Layout';
 import CommercialHeroSection from '@/components/commercial/CommercialHeroSection';
 import IntroSection from '@/components/commercial/IntroSection';
+import SponsorshipTiersSection from '@/components/commercial/sponsorship/SponsorshipTiersSection';
 
 const CommercialOpportunitiesPage: React.FC = () => {
   return (
@@ -18,9 +19,7 @@ const CommercialOpportunitiesPage: React.FC = () => {
       <Layout>
         <CommercialHeroSection />
         <IntroSection />
-        <div id="sponsorship-options" className="py-12">
-          {/* Sponsorship options section will go here */}
-        </div>
+        <SponsorshipTiersSection />
         <div id="contact" className="py-12">
           {/* Contact form will go here */}
         </div>
