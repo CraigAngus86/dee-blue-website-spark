@@ -15,6 +15,7 @@ interface SponsorshipCardProps {
   benefits: string[];
   image: string;
   className?: string;
+  hideViewDetails?: boolean;
 }
 
 const SponsorshipCard: React.FC<SponsorshipCardProps> = ({
@@ -23,7 +24,8 @@ const SponsorshipCard: React.FC<SponsorshipCardProps> = ({
   description,
   benefits,
   image,
-  className
+  className,
+  hideViewDetails = false
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -49,30 +51,32 @@ const SponsorshipCard: React.FC<SponsorshipCardProps> = ({
           </Text>
         </div>
         
-        <Collapsible open={isOpen} onOpenChange={setIsOpen} className="mt-4">
-          <CollapsibleContent className="mb-4">
-            <div className="space-y-2">
-              <Text weight="semibold" color="primary">Key Benefits:</Text>
-              <ul className="list-disc list-inside space-y-2">
-                {benefits.map((benefit, index) => (
-                  <li key={index}>
-                    <Text size="small" color="default">{benefit}</Text>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </CollapsibleContent>
+        {!hideViewDetails && (
+          <Collapsible open={isOpen} onOpenChange={setIsOpen} className="mt-4">
+            <CollapsibleContent className="mb-4">
+              <div className="space-y-2">
+                <Text weight="semibold" color="primary">Key Benefits:</Text>
+                <ul className="list-disc list-inside space-y-2">
+                  {benefits.map((benefit, index) => (
+                    <li key={index}>
+                      <Text size="small" color="default">{benefit}</Text>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </CollapsibleContent>
 
-          <CollapsibleTrigger asChild>
-            <ButtonNew 
-              variant="secondary" 
-              className="w-full mt-auto"
-              iconRight={isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-            >
-              {isOpen ? 'Hide Details' : 'View Details'}
-            </ButtonNew>
-          </CollapsibleTrigger>
-        </Collapsible>
+            <CollapsibleTrigger asChild>
+              <ButtonNew 
+                variant="secondary" 
+                className="w-full mt-auto"
+                iconRight={isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+              >
+                {isOpen ? 'Hide Details' : 'View Details'}
+              </ButtonNew>
+            </CollapsibleTrigger>
+          </Collapsible>
+        )}
       </CardNewContent>
     </CardNew>
   );

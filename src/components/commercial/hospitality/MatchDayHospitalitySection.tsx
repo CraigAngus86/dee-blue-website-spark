@@ -25,23 +25,20 @@ const MatchDayHospitalitySection = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           {premiumSponsorship.map((item) => (
-            <SponsorshipCard key={item.title} {...item} />
+            <SponsorshipCard 
+              key={item.title} 
+              {...item} 
+              hideViewDetails 
+            />
           ))}
+          <SponsorshipCard 
+            {...fanzoneSponsorship} 
+            hideViewDetails 
+          />
         </div>
         
-        <div className="mt-16">
-          <div className="text-center mb-6">
-            <Heading level={3} color="primary">
-              Compare Hospitality Packages
-            </Heading>
-            <Text size="small" color="default" className="mt-2">
-              See which package best suits your needs
-            </Text>
-          </div>
-          
-          <div className="bg-light-gray p-4 rounded-lg">
-            <ComparisonTable data={comparisonData} prices={packagePrices} />
-          </div>
+        <div className="bg-light-gray p-4 rounded-lg">
+          <ComparisonTable data={comparisonData} prices={packagePrices} />
         </div>
       </Container>
     </Section>
