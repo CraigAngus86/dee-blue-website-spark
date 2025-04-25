@@ -23,7 +23,7 @@ import {
 } from '@/mock-data/fixturesData';
 
 const MatchCentre = () => {
-  const [selectedSeason, setSelectedSeason] = useState<string>('2024/25');
+  const [selectedSeason, setSelectedSeason] = useState<string>('2025/26');
   const [selectedMonth, setSelectedMonth] = useState<string>('all');
   const [selectedCompetitions, setSelectedCompetitions] = useState<string[]>([]);
   const [selectedTab, setSelectedTab] = useState<string>('fixtures');
