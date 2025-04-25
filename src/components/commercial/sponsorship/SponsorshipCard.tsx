@@ -35,11 +35,11 @@ const SponsorshipCard: React.FC<SponsorshipCardProps> = ({
       </CardNewMedia>
       <CardNewContent className={cn(
         "flex flex-col h-full",
-        compact ? "p-4" : "p-6"
+        compact ? "p-3" : "p-6"
       )}>
-        <div className="space-y-2">
-          <Heading level={4} color="primary" className={cn(
-            compact ? "text-lg" : "text-xl"
+        <div className="space-y-1.5">
+          <Heading level={5} color="primary" className={cn(
+            compact ? "text-base" : "text-xl"
           )}>
             {title}
           </Heading>
@@ -47,12 +47,12 @@ const SponsorshipCard: React.FC<SponsorshipCardProps> = ({
             size={compact ? "medium" : "large"} 
             weight="semibold" 
             color="primary"
-            className="text-secondary"
+            className="block text-primary"
           >
             {price}
           </Text>
           <Text 
-            size={compact ? "small" : "medium"} 
+            size="small"
             color="default"
             className="line-clamp-2"
           >

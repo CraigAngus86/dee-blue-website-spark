@@ -40,8 +40,6 @@ const ContactForm = () => {
       interest: "",
       otherInterest: "",
       message: "",
-      // Fix: Remove default value for gdprConsent so it's undefined initially
-      // This way it won't trigger the type error, but validation will still require checking the box
     },
   });
 
@@ -54,7 +52,7 @@ const ContactForm = () => {
   };
 
   return (
-    <div className="bg-white p-6 md:p-8 rounded-lg shadow-md">
+    <div>
       <Heading level={2} color="primary" className="mb-4">
         Interested in Partnering With Us?
       </Heading>
@@ -64,96 +62,13 @@ const ContactForm = () => {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Name *</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="company"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Company *</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email *</FormLabel>
-                <FormControl>
-                  <Input type="email" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="phone"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Phone (optional)</FormLabel>
-                <FormControl>
-                  <Input type="tel" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="interest"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Interest *</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select your interest" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="match-day">Match Day Sponsorship</SelectItem>
-                    <SelectItem value="matchball">Matchball Sponsorship</SelectItem>
-                    <SelectItem value="perimeter">Perimeter Sponsorship Boards</SelectItem>
-                    <SelectItem value="player">Player Sponsorship</SelectItem>
-                    <SelectItem value="hospitality">Standard Match Day Hospitality</SelectItem>
-                    <SelectItem value="fanzone">Fanzone Entertainment</SelectItem>
-                    <SelectItem value="other">Other (please specify)</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {form.watch("interest") === "other" && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormField
               control={form.control}
-              name="otherInterest"
+              name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Please specify *</FormLabel>
+                  <FormLabel>Name *</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -161,13 +76,102 @@ const ContactForm = () => {
                 </FormItem>
               )}
             />
-          )}
+
+            <FormField
+              control={form.control}
+              name="company"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Company *</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email *</FormLabel>
+                  <FormControl>
+                    <Input type="email" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Phone (optional)</FormLabel>
+                  <FormControl>
+                    <Input type="tel" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <FormField
+              control={form.control}
+              name="interest"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Interest *</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select your interest" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="match-day">Match Day Sponsorship</SelectItem>
+                      <SelectItem value="matchball">Matchball Sponsorship</SelectItem>
+                      <SelectItem value="perimeter">Perimeter Sponsorship Boards</SelectItem>
+                      <SelectItem value="player">Player Sponsorship</SelectItem>
+                      <SelectItem value="hospitality">Standard Match Day Hospitality</SelectItem>
+                      <SelectItem value="fanzone">Fanzone Entertainment</SelectItem>
+                      <SelectItem value="other">Other (please specify)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {form.watch("interest") === "other" && (
+              <FormField
+                control={form.control}
+                name="otherInterest"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Please specify *</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+          </div>
 
           <FormField
             control={form.control}
             name="message"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="md:col-span-2">
                 <FormLabel>Message (optional)</FormLabel>
                 <FormControl>
                   <Textarea rows={4} {...field} />
