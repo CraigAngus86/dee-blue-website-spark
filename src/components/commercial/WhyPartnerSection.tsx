@@ -35,14 +35,13 @@ const WhyPartnerSection = () => {
       <Container>
         <div className="text-center mb-8">
           <Heading level={2} color="primary">Why Partner With Banks o' Dee FC</Heading>
-          <Text size="large" className="max-w-3xl mx-auto mt-4">
+          <Text size="medium" className="max-w-3xl mx-auto mt-4">
             Partnering with Banks o' Dee FC offers excellent exposure for your business
             through one of Aberdeen's most progressive football clubs, connecting you with
             a passionate community of supporters.
           </Text>
         </div>
 
-        {/* Benefit cards - using the same styling as StadiumOverview */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
           {benefitCards.map((card, index) => (
             <div key={index} className="bg-light-gray rounded-lg p-6 flex flex-col items-center text-center transition-transform hover:transform hover:scale-105">
@@ -50,7 +49,7 @@ const WhyPartnerSection = () => {
                 {card.icon}
               </div>
               <Heading level={3} color="primary" className="mb-2">{card.title}</Heading>
-              <Text size="default" color="default">{card.description}</Text>
+              <Text size="small" color="default">{card.description}</Text>
             </div>
           ))}
         </div>
