@@ -1,10 +1,12 @@
+
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Menu } from 'lucide-react';
 import ClubLogo from "../ui/image/ClubLogo";
 
 const Header: React.FC<{ className?: string; transparent?: boolean }> = ({ className }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
   
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-[#00105A] shadow-md h-20 flex items-center">
@@ -31,11 +33,15 @@ const Header: React.FC<{ className?: string; transparent?: boolean }> = ({ class
               <li key={item.name} className="h-full group relative mx-3">
                 <Link
                   to={item.path}
-                  className="flex items-center h-full px-3 text-white font-montserrat font-bold text-sm tracking-wider hover:text-secondary transition-colors whitespace-nowrap"
+                  className={`flex items-center h-full px-3 text-white font-montserrat font-bold text-sm tracking-wider hover:text-secondary transition-colors whitespace-nowrap ${
+                    location.pathname === item.path ? "text-[#33C3F0]" : ""
+                  }`}
                 >
                   {item.name}
                 </Link>
-                <div className="absolute bottom-0 left-0 w-full h-[2px] bg-[#33C3F0] scale-x-0 transition-transform duration-200 origin-bottom-left group-hover:scale-x-100"></div>
+                <div className={`absolute bottom-0 left-0 w-full h-[2px] bg-[#33C3F0] ${
+                  location.pathname === item.path ? "scale-x-100" : "scale-x-0"
+                } transition-transform duration-200 origin-bottom-left group-hover:scale-x-100`}></div>
               </li>
             ))}
           </ul>
@@ -75,7 +81,9 @@ const Header: React.FC<{ className?: string; transparent?: boolean }> = ({ class
                 <div key={item.name}>
                   <Link
                     to={item.path}
-                    className="font-montserrat font-bold text-base text-white hover:text-secondary px-2 py-2 flex items-center justify-between tracking-wider"
+                    className={`font-montserrat font-bold text-base ${
+                      location.pathname === item.path ? "text-secondary" : "text-white"
+                    } hover:text-secondary px-2 py-2 flex items-center justify-between tracking-wider`}
                   >
                     {item.name}
                   </Link>
