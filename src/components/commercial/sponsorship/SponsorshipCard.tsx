@@ -28,7 +28,7 @@ const SponsorshipCard: React.FC<SponsorshipCardProps> = ({
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <CardNew elevation="md" className={cn("h-full", className)}>
+    <CardNew elevation="md" className={cn("h-full flex flex-col", className)}>
       <CardNewMedia aspectRatio="16/9">
         <img 
           src={image} 
@@ -36,42 +36,43 @@ const SponsorshipCard: React.FC<SponsorshipCardProps> = ({
           className="w-full h-full object-cover"
         />
       </CardNewMedia>
-      <CardNewContent>
-        <div className="space-y-4">
+      <CardNewContent className="flex flex-col h-full">
+        <div className="space-y-4 flex-grow">
           <Heading level={4} color="primary">
             {title}
           </Heading>
           <Text size="large" weight="semibold" color="primary">
             {price}
           </Text>
-          <Text color="default">
+          <Text size="medium" color="default">
             {description}
           </Text>
-          
-          <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-            <CollapsibleTrigger asChild>
-              <ButtonNew 
-                variant="secondary" 
-                className="w-full"
-                iconRight={isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-              >
-                {isOpen ? 'Hide Details' : 'View Details'}
-              </ButtonNew>
-            </CollapsibleTrigger>
-            <CollapsibleContent className="mt-4">
-              <div className="space-y-2">
-                <Text weight="semibold" color="primary">Key Benefits:</Text>
-                <ul className="list-disc list-inside space-y-2">
-                  {benefits.map((benefit, index) => (
-                    <li key={index}>
-                      <Text color="default">{benefit}</Text>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </CollapsibleContent>
-          </Collapsible>
         </div>
+        
+        <Collapsible open={isOpen} onOpenChange={setIsOpen} className="mt-4">
+          <CollapsibleContent className="mb-4">
+            <div className="space-y-2">
+              <Text weight="semibold" color="primary">Key Benefits:</Text>
+              <ul className="list-disc list-inside space-y-2">
+                {benefits.map((benefit, index) => (
+                  <li key={index}>
+                    <Text size="small" color="default">{benefit}</Text>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </CollapsibleContent>
+
+          <CollapsibleTrigger asChild>
+            <ButtonNew 
+              variant="secondary" 
+              className="w-full mt-auto"
+              iconRight={isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+            >
+              {isOpen ? 'Hide Details' : 'View Details'}
+            </ButtonNew>
+          </CollapsibleTrigger>
+        </Collapsible>
       </CardNewContent>
     </CardNew>
   );
