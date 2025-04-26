@@ -96,7 +96,7 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
     onLoad?.();
   };
 
-  const handleImageError = () => {
+  const handleImageLoadError = () => {
     console.error(`Failed to load image: ${src}`);
     setImageSrc(createPlaceholder(width || 400, height || 300, alt));
     onError?.();
@@ -127,7 +127,7 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
           "transition-opacity duration-300"
         )}
         onLoad={handleLoad}
-        onError={handleImageError}
+        onError={handleImageLoadError}
       />
     </div>
   );

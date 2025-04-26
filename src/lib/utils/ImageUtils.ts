@@ -3,6 +3,7 @@
  */
 
 import { toast } from "sonner";
+import { cloudinary } from "@/lib/cloudinary";
 
 export type ImageSize = "xs" | "sm" | "md" | "lg" | "xl" | number;
 export type ImageVariant = "rect" | "square" | "circle";
@@ -61,18 +62,6 @@ export const handleImageError = (
 };
 
 /**
- * Generate srcSet for responsive images - will be enhanced with Cloudinary
- */
-export const generateSrcSet = (
-  basePath: string,
-  sizes: { [key: string]: string }
-): string => {
-  return Object.entries(sizes)
-    .map(([size, dimensions]) => `${basePath}/${dimensions} ${size}w`)
-    .join(", ");
-};
-
-/**
  * Map size string to pixel values - used across components
  */
 export const mapSizeToPixels = (size: ImageSize): number => {
@@ -88,34 +77,47 @@ export const mapSizeToPixels = (size: ImageSize): number => {
 };
 
 /**
- * Prepare for Cloudinary transformation parameters
+ * Transform image URL with Cloudinary parameters
  */
 export const transformImage = (url: string, options: ImageTransformOptions): string => {
-  // Currently returns original URL - will be replaced with Cloudinary transform
-  console.log("Image transform options logged for future Cloudinary integration:", options);
-  return url;
+  try {
+    const imageUrl = cloudinary.url(url);
+    if (options.width) imageUrl.width(options.width);
+    if (options.height) imageUrl.height(options.height);
+    if (options.quality) imageUrl.quality(options.quality);
+    if (options.format) imageUrl.format(options.format);
+    return imageUrl.toURL();
+  } catch (error) {
+    console.warn('Cloudinary transform failed, using original URL:', error);
+    return url;
+  }
 };
 
-// Category-specific image resolvers that will be enhanced with Cloudinary
-export const resolveClubLogo = (variant: ImageVariant, background: ImageBackground): string => {
+// Category-specific image resolvers
+export const getClubLogo = (variant: ImageVariant, background: ImageBackground): string => {
   const logoName = background === "light" ? "BOD_Logo_White_square.png" : "BOD_Logo_Navy_square.png";
   return resolveImagePath(logoName, "logos");
 };
 
-export const resolveCompetitorLogo = (teamName: string): string => {
-  // Normalize team name
+export const getCompetitorLogo = (teamName: string): string => {
   const normalizedName = teamName.replace(" FC", "").split(" ")[0].toLowerCase();
-  const path = `${normalizedName}.png`;
-  return resolveImagePath(path, "competitors");
+  return resolveImagePath(`${normalizedName}.png`, "competitors");
 };
 
-export const resolvePlayerImage = (playerId: string | number, type: string = "headshot"): string => {
+export const getPlayerImage = (playerId: string | number, type: string = "headshot"): string => {
   return resolveImagePath(`${playerId}_${type}.jpg`, "players");
 };
 
-export const resolveNewsImage = (index: number | string): string => {
+export const getNewsImage = (index: number | string): string => {
   const imageIndex = typeof index === "string" ? parseInt(index, 10) : index;
   return resolveImagePath(`News${imageIndex + 1}.jpg`, "news");
+};
+
+export const getStadiumImage = (
+  filename: string = "Spain Park.jpg",
+  view: 'aerial' | 'main' | 'pitch' | 'facilities' | 'other' = 'main'
+): string => {
+  return resolveImagePath(filename, "stadium");
 };
 
 // Export types for strict type checking
