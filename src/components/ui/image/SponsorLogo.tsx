@@ -50,6 +50,7 @@ const SponsorLogo: React.FC<SponsorLogoProps> = ({
         height={dimensions.height}
         className={cn("w-auto max-h-full", className)}
         onError={() => toast.error(`Failed to load sponsor logo: ${sponsor.name}`)}
+        unoptimized // Add for external logos that may not need optimization
       />
     </div>
   );

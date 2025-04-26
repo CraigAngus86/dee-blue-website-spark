@@ -57,6 +57,7 @@ const CompetitorLogo: React.FC<CompetitorLogoProps> = ({
           height={actualSize}
           className="object-contain"
           onError={() => toast.error(`Failed to load competitor logo: ${name}`)}
+          unoptimized // Add this for external images or logos that might not need optimization
         />
       </div>
       

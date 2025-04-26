@@ -3,6 +3,7 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { ImagePaths } from "@/lib/constants/imagePaths";
+import { toast } from "sonner";
 
 interface TeamImageProps {
   filename: string;
@@ -70,6 +71,8 @@ const TeamImage: React.FC<TeamImageProps> = ({
           fill
           className="object-cover"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          onError={() => toast.error(`Failed to load team image: ${filename}`)}
+          quality={80}
         />
       </div>
       

@@ -63,6 +63,7 @@ const StadiumImage: React.FC<StadiumImageProps> = ({
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           onError={() => toast.error(`Failed to load stadium image: ${filename}`)}
           priority={view === "main"}
+          quality={80} // Add quality parameter for better image optimization
         />
       </div>
 
