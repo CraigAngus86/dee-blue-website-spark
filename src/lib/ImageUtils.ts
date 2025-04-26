@@ -1,5 +1,4 @@
 
-import { getPlaceholderImage } from './image/imageBase';
 import { cloudinary } from './cloudinary';
 import { type AspectRatio, type ObjectFit } from '@/components/ui/image/ResponsiveImage';
 
@@ -18,6 +17,21 @@ interface ResponsiveImageOptions {
   height?: number;
   quality?: number;
 }
+
+/**
+ * Creates a placeholder image URL for when actual images are not available
+ */
+export const getPlaceholderImageUrl = (
+  width = 400, 
+  height = 300, 
+  text = "Image"
+): string => {
+  // Generate a placeholder URL with size and text
+  return `https://placehold.co/${width}x${height}/CCCCCC/333333?text=${encodeURIComponent(text)}`;
+};
+
+// For backward compatibility
+export const getPlaceholderImage = getPlaceholderImageUrl;
 
 export const getOptimizedImageUrl = (
   src: string,
@@ -44,14 +58,6 @@ export const generateResponsiveSrcSet = (
     .join(', ');
 };
 
-export const getPlaceholderImageUrl = (
-  width = 400,
-  height = 300,
-  text = "Image"
-): string => {
-  return getPlaceholderImage(width, height, text);
-};
-
 // Utility for handling image errors
 export const handleImageError = (
   originalSrc: string,
@@ -60,7 +66,7 @@ export const handleImageError = (
 ): string => {
   console.error(`Failed to load image: ${originalSrc}`);
   onError?.();
-  return fallbackSrc || getPlaceholderImage();
+  return fallbackSrc || getPlaceholderImageUrl();
 };
 
 // Asset path helpers

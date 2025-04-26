@@ -1,5 +1,5 @@
 
-import { getPlaceholderImage } from "./imageBase";
+import { getPlaceholderImageUrl } from "./imageBase";
 
 /**
  * Get competition image with proper path
@@ -9,5 +9,5 @@ export const getCompetitionImage = (
   type: 'trophy' | 'logo' | 'winners' | 'other' = 'logo'
 ): string => {
   // No competition images available yet, use placeholder
-  return getPlaceholderImage(400, 400, `Competition: ${filename}`);
+  return getPlaceholderImageUrl(400, 400, `Competition: ${filename}`);
 };

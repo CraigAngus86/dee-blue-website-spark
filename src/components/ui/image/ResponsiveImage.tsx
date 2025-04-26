@@ -1,7 +1,7 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import { getOptimizedImageUrl, generateResponsiveSrcSet, handleImageError } from "@/lib/imageUtils";
+import { getOptimizedImageUrl, generateResponsiveSrcSet, handleImageError } from "@/lib/ImageUtils";
 
 type AspectRatio = "1/1" | "16/9" | "4/3" | "2/1" | "3/2" | "3/4" | "1" | string;
 type ObjectFit = "cover" | "contain" | "fill" | "none" | "scale-down";

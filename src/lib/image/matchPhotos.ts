@@ -1,6 +1,6 @@
 
 import { MatchPhoto } from "../types";
-import { getPlaceholderImage } from "./imageBase";
+import { getPlaceholderImageUrl } from "./imageBase";
 
 /**
  * Get match photos for a specific match
@@ -19,8 +19,8 @@ export const getMatchPhotos = (
       category: 'action',
     },
     {
-      src: getPlaceholderImage(800, 600, `Fans at ${matchDate}`),
-      thumbnail: getPlaceholderImage(300, 300, `Fans`),
+      src: getPlaceholderImageUrl(800, 600, `Fans at ${matchDate}`),
+      thumbnail: getPlaceholderImageUrl(300, 300, `Fans`),
       alt: "Fans cheering",
       caption: "Fans cheering at Spain Park",
       category: 'fans',
