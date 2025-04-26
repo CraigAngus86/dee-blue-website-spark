@@ -31,6 +31,11 @@ export interface MatchPhoto {
   caption?: string;
   matchId: string;
   date: string;
+  src?: string;
+  alt?: string;
+  thumbnail?: string;
+  category?: string;
+  credit?: string;
 }
 
 export interface Sponsor {
@@ -39,6 +44,7 @@ export interface Sponsor {
   logo: string;
   website?: string;
   tier: string;
+  logoLight?: string;
 }
 
 export interface Competitor {
@@ -46,6 +52,7 @@ export interface Competitor {
   name: string;
   logo: string;
   shortName?: string;
+  website?: string;
 }
 
 export interface LeagueTableData {
