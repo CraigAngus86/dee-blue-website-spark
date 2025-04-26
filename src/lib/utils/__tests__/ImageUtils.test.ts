@@ -1,5 +1,5 @@
 
-import {
+import { 
   resolveImagePath,
   createPlaceholder,
   handleImageError,
@@ -13,6 +13,9 @@ import {
   getTeamImage,
   getMatchDayImage,
 } from '../ImageUtils';
+
+// Import Jest testing functions
+import { describe, it, expect } from '@jest/globals';
 
 describe('Image Utilities', () => {
   describe('resolveImagePath', () => {
