@@ -1,9 +1,7 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
 import NewsHero from "@/components/news/NewsHero";
 import NewsGrid from "@/components/news/NewsGrid";
 import { newsArticles } from "@/mock-data/newsData";
@@ -16,7 +14,7 @@ const NewsPage = () => {
   const currentArticle = articleId ? newsArticles.find(article => article.id === parseInt(articleId, 10)) : null;
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <>
       <Helmet>
         <title>{currentArticle ? `${currentArticle.title} | Banks o' Dee News` : "News | Banks o' Dee"}</title>
         
@@ -40,15 +38,11 @@ const NewsPage = () => {
         )}
       </Helmet>
       
-      <Header />
-      <main className="flex-grow">
-        <NewsHero />
-        <div className="container mx-auto px-4 py-12">
-          <NewsGrid />
-        </div>
-      </main>
-      <Footer />
-    </div>
+      <NewsHero />
+      <div className="container mx-auto px-4 py-12">
+        <NewsGrid />
+      </div>
+    </>
   );
 };
 
