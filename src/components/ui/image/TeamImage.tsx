@@ -1,7 +1,5 @@
-
 import React from "react";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
 import { ImagePaths } from "@/lib/constants/imagePaths";
 import { toast } from "sonner";
 
@@ -109,14 +107,12 @@ const TeamImage: React.FC<TeamImageProps> = ({
         typeof rounded === 'string' ? roundedClasses[rounded as keyof typeof roundedClasses] : rounded && "rounded",
         typeof shadow === 'string' ? shadowClasses[shadow as keyof typeof shadowClasses] : shadow && "shadow"
       )}>
-        <Image
+        <img
           src={imagePath}
           alt={alt}
-          fill
-          className="object-cover"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          className="w-full h-full object-cover"
+          loading="lazy"
           onError={() => toast.error(`Failed to load team image: ${filename}`)}
-          quality={80}
         />
       </div>
       

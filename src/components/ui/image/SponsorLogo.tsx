@@ -1,6 +1,5 @@
 import React from "react";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
 import { Sponsor } from "@/lib/types";
 import { ImagePaths } from "@/lib/constants/imagePaths";
 import { toast } from "sonner";
@@ -77,14 +76,14 @@ const SponsorLogo: React.FC<SponsorLogoProps> = ({
   // Construct the logo component
   const Logo = (
     <div className={cn("relative", dimensions.height && `h-[${dimensions.height}px]`)}>
-      <Image
+      <img
         src={logoSrc}
         alt={`${sponsor.name} logo`}
         width={dimensions.width}
         height={dimensions.height}
         className={cn("w-auto max-h-full", className)}
         onError={() => toast.error(`Failed to load sponsor logo: ${sponsor.name}`)}
-        unoptimized // Add for external logos that may not need optimization
+        loading="lazy"
       />
     </div>
   );

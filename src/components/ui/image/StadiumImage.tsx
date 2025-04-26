@@ -1,7 +1,5 @@
-
 import React from "react";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
 import { ImagePaths } from "@/lib/constants/imagePaths";
 import { toast } from "sonner";
 
@@ -97,15 +95,12 @@ const StadiumImage: React.FC<StadiumImageProps> = ({
         typeof rounded === 'string' ? roundedClasses[rounded as keyof typeof roundedClasses] : rounded && "rounded",
         typeof shadow === 'string' ? shadowClasses[shadow as keyof typeof shadowClasses] : shadow && "shadow"
       )}>
-        <Image
+        <img
           src={imagePath}
           alt={alt}
-          fill
-          className="object-cover"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          className="w-full h-full object-cover"
           onError={() => toast.error(`Failed to load stadium image: ${filename}`)}
-          priority={view === "main"}
-          quality={80} // Add quality parameter for better image optimization
+          loading={view === "main" ? "eager" : "lazy"}
         />
       </div>
 
