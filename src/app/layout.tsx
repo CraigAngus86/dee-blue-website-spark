@@ -1,0 +1,21 @@
+
+import React from 'react';
+import { HelmetProvider } from 'react-helmet-async';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
+import { Toaster } from '@/components/ui/toaster';
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <HelmetProvider>
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-grow">
+          {children}
+        </main>
+        <Footer />
+        <Toaster />
+      </div>
+    </HelmetProvider>
+  );
+}
