@@ -10,7 +10,6 @@ import CommercialOpportunitiesPage from '@/pages/CommercialOpportunitiesPage';
 import MatchCentre from '@/pages/MatchCentre';
 import NotFound from '@/pages/NotFound';
 import { configureImageService } from '@/lib/config/imageConfig';
-import './App.css';
 
 function App() {
   useEffect(() => {
