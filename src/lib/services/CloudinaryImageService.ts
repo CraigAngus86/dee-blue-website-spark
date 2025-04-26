@@ -1,6 +1,6 @@
-
 import { cloudinary } from '../cloudinary';
 import { ImageService, ImageOptimizationOptions, ImageTransformations } from './ImageService';
+import { setImageService } from './imageServiceUtils';
 
 /**
  * Cloudinary-specific configuration options

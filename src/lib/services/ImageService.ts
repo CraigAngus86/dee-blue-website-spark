@@ -72,6 +72,8 @@ export interface ImageTransformations {
   saturation?: number;
   /** Brightness adjustment (-100 to 100) */
   brightness?: number;
+  /** Quality (1-100) */
+  quality?: number;
   /** Border options */
   border?: {
     width: number;
@@ -138,20 +140,5 @@ export class DefaultImageService implements ImageService {
   }
 }
 
-// Singleton instance for the current image service
-let currentService: ImageService = new DefaultImageService();
-
-/**
- * Get the current image service instance
- * @returns The current image service
- */
-export const getImageService = (): ImageService => currentService;
-
-/**
- * Set a new image service implementation
- * This will be used when integrating with Cloudinary or other services
- * @param service - The image service implementation to use
- */
-export const setImageService = (service: ImageService) => {
-  currentService = service;
-};
+// Re-export image service functions
+export { getImageService, setImageService } from './imageServiceUtils';
