@@ -228,6 +228,3 @@ export const getTeamImage = (index: number): string => {
 export const getMatchDayImage = (index: number = 1): string => {
   return resolveImagePath(`MatchDay${index}.jpg`, "matchday");
 };
-
-// Export types for strict type checking
-export type { ImageTransformOptions };
