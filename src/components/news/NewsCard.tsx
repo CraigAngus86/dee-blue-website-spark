@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from "react";
@@ -6,21 +7,22 @@ import ResponsiveImage from "@/components/ui/image/ResponsiveImage";
 import { CardNew } from "@/components/ui/CardNew";
 import HoverEffect from "@/components/ui/animations/HoverEffect";
 
-interface NewsCardProps {
-  image: string;
+interface Article {
+  id: number;
   title: string;
-  category?: string;
+  image: string;
   date?: string;
   excerpt?: string;
+}
+
+interface NewsCardProps {
+  article: Article;
   isFeatured?: boolean;
   onClick?: () => void;
 }
 
 const NewsCard: React.FC<NewsCardProps> = ({
-  image,
-  title,
-  date,
-  excerpt,
+  article,
   isFeatured = false,
   onClick,
 }) => {
@@ -37,8 +39,8 @@ const NewsCard: React.FC<NewsCardProps> = ({
             isFeatured ? "aspect-[2/1]" : "aspect-square"
           )}>
             <ResponsiveImage
-              src={image}
-              alt={title}
+              src={article.image}
+              alt={article.title}
               className="w-full h-full transform transition-transform duration-500 group-hover:scale-105"
               aspectRatio={isFeatured ? "2/1" : "1/1"}
               objectFit="cover"
@@ -51,12 +53,12 @@ const NewsCard: React.FC<NewsCardProps> = ({
               "font-montserrat font-bold text-white mb-2 line-clamp-3",
               isFeatured ? "text-2xl md:text-3xl" : "text-lg"
             )}>
-              {title}
+              {article.title}
             </h3>
 
-            {date && (
+            {article.date && (
               <span className="text-white/70 text-sm">
-                {date}
+                {article.date}
               </span>
             )}
           </div>
