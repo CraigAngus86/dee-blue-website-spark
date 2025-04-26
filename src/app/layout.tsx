@@ -11,13 +11,17 @@ import '../App.css';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <HelmetProvider>
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        {children}
-        <Footer />
-        <Toaster />
-      </div>
-    </HelmetProvider>
+    <html lang="en">
+      <body>
+        <HelmetProvider>
+          <div className="min-h-screen flex flex-col">
+            <Header />
+            {children}
+            <Footer />
+            <Toaster />
+          </div>
+        </HelmetProvider>
+      </body>
+    </html>
   );
 }
