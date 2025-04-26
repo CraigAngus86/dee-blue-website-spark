@@ -10,6 +10,7 @@ import MatchCentre from './pages/MatchCentre';
 import SpainParkPage from './pages/SpainParkPage';
 import CommercialOpportunitiesPage from './pages/CommercialOpportunitiesPage';
 import NotFound from './pages/NotFound';
+import SystemDiagrams from './docs/SystemDiagrams';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="/matches" element={<MatchCentre />} />
           <Route path="/spainpark" element={<SpainParkPage />} />
           <Route path="/commercial" element={<CommercialOpportunitiesPage />} />
+          <Route path="/docs/system-diagrams" element={<SystemDiagrams />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <Toaster />
