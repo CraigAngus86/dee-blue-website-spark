@@ -149,3 +149,4 @@ Use `<Grid>` component with these props:
 - **lg**: 1024px and up
 - **xl**: 1280px and up
 - **2xl**: 1536px and up
+
