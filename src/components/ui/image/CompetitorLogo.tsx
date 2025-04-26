@@ -1,7 +1,9 @@
+
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { getCompetitorLogo } from '@/lib/image/competitorLogos';
-import ResponsiveImage from './ResponsiveImage';
+import Image from "next/image";
+import { ImagePaths } from '@/lib/constants/imagePaths';
+import { toast } from "sonner";
 
 interface CompetitorLogoProps {
   name: string;
@@ -24,10 +26,8 @@ const CompetitorLogo: React.FC<CompetitorLogoProps> = ({
   showName = false,
   href,
 }) => {
-  // Get logo path - use logoSrc if provided, otherwise get from utility
-  const logoPath = logoSrc || getCompetitorLogo(name, variant);
+  const logoPath = logoSrc || `${ImagePaths.competitors.base}/${name}.png`;
   
-  // Map sizes to pixel values
   const sizeMap = {
     xs: 16,
     sm: 24,
@@ -36,15 +36,13 @@ const CompetitorLogo: React.FC<CompetitorLogoProps> = ({
     xl: 64,
   };
   
-  // Determine actual size in pixels
   const actualSize = typeof size === 'number' ? size : sizeMap[size];
   
-  // Create the logo component
   const LogoComponent = (
     <>
       <div 
         className={cn(
-          "flex items-center justify-center overflow-hidden",
+          "relative overflow-hidden",
           containerClassName
         )}
         style={{
@@ -52,13 +50,13 @@ const CompetitorLogo: React.FC<CompetitorLogoProps> = ({
           height: `${actualSize}px`,
         }}
       >
-        <ResponsiveImage
+        <Image
           src={logoPath}
           alt={`${name} logo`}
-          className="w-full h-full"
-          objectFit="contain"
-          onLoad={() => console.log(`Competitor logo loaded: ${name}`)}
-          onError={() => console.error(`Failed to load competitor logo: ${name}`)}
+          width={actualSize}
+          height={actualSize}
+          className="object-contain"
+          onError={() => toast.error(`Failed to load competitor logo: ${name}`)}
         />
       </div>
       
@@ -70,7 +68,6 @@ const CompetitorLogo: React.FC<CompetitorLogoProps> = ({
     </>
   );
   
-  // If href is provided, wrap in an anchor tag
   if (href) {
     return (
       <a 
@@ -83,7 +80,6 @@ const CompetitorLogo: React.FC<CompetitorLogoProps> = ({
     );
   }
   
-  // Otherwise, return in a div
   return (
     <div className={cn("inline-flex flex-col items-center", className)}>
       {LogoComponent}

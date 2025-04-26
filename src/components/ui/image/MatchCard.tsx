@@ -1,6 +1,6 @@
-
 import React from "react";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 import CompetitorLogo from "./CompetitorLogo";
 
 interface MatchCardProps {
@@ -61,11 +61,10 @@ const MatchCard: React.FC<MatchCardProps> = ({
         <div className="flex items-center justify-between my-5">
           {/* Home Team */}
           <div className="flex flex-col items-center text-center w-1/3">
-            <div className="bg-white p-2 rounded-full shadow-md inline-flex items-center justify-center">
+            <div className="bg-white p-2 rounded-full shadow-md inline-flex items-center justify-center w-16 h-16 relative">
               <CompetitorLogo
                 name={homeTeam}
-                size="md"
-                className="w-16 h-16"
+                size="lg"
               />
             </div>
             <span className="mt-3 font-medium text-primary text-sm">
@@ -90,11 +89,10 @@ const MatchCard: React.FC<MatchCardProps> = ({
 
           {/* Away Team */}
           <div className="flex flex-col items-center text-center w-1/3">
-            <div className="bg-white p-2 rounded-full shadow-md inline-flex items-center justify-center">
+            <div className="bg-white p-2 rounded-full shadow-md inline-flex items-center justify-center w-16 h-16 relative">
               <CompetitorLogo
                 name={awayTeam}
-                size="md"
-                className="w-16 h-16"
+                size="lg"
               />
             </div>
             <span className="mt-3 font-medium text-primary text-sm">
@@ -115,7 +113,7 @@ const MatchCard: React.FC<MatchCardProps> = ({
           {time && (
             <span className="flex items-center">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0111.314 0z" />
               </svg>
               {time}
             </span>

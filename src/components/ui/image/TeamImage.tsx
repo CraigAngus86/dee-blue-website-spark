@@ -1,7 +1,8 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import ResponsiveImage from "./ResponsiveImage";
+import Image from "next/image";
+import { ImagePaths } from "@/lib/constants/imagePaths";
 
 interface TeamImageProps {
   filename: string;
@@ -28,7 +29,6 @@ const TeamImage: React.FC<TeamImageProps> = ({
   caption,
   credit,
 }) => {
-  // Map size to actual dimensions
   const sizeMap = {
     small: "max-w-md",
     medium: "max-w-2xl",
@@ -36,19 +36,43 @@ const TeamImage: React.FC<TeamImageProps> = ({
     full: "w-full",
   };
 
-  // Construct the image path
-  const imagePath = `/src/assets/images/team/${filename}`;
+  const roundedClasses = {
+    true: "rounded",
+    sm: "rounded-sm",
+    md: "rounded-md",
+    lg: "rounded-lg",
+    full: "rounded-full",
+  };
+
+  const shadowClasses = {
+    true: "shadow",
+    sm: "shadow-sm",
+    md: "shadow-md",
+    lg: "shadow-lg",
+  };
+
+  const imagePath = `${ImagePaths.team.base}/${filename}`;
+  
+  const [width, height] = aspectRatio.split('/').map(Number);
+  const aspectRatioClass = `aspect-[${width}/${height}]`;
 
   return (
     <figure className={cn("my-4", sizeMap[size], className)}>
-      <ResponsiveImage
-        src={imagePath}
-        alt={alt}
-        aspectRatio={aspectRatio}
-        rounded={rounded}
-        shadow={shadow}
-        className="w-full"
-      />
+      <div className={cn(
+        "relative overflow-hidden",
+        aspectRatioClass,
+        typeof rounded === 'string' ? roundedClasses[rounded as keyof typeof roundedClasses] : rounded && "rounded",
+        typeof shadow === 'string' ? shadowClasses[shadow as keyof typeof shadowClasses] : shadow && "shadow"
+      )}>
+        <Image
+          src={imagePath}
+          alt={alt}
+          fill
+          className="object-cover"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        />
+      </div>
+      
       {(caption || credit) && (
         <figcaption className="mt-2 text-sm text-gray">
           {caption && <span>{caption}</span>}

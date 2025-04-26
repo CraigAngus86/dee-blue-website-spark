@@ -1,13 +1,15 @@
-import React, { useState } from "react";
+
+import React from "react";
 import { cn } from "@/lib/utils";
-import ResponsiveImage from "./ResponsiveImage";
-import { getStadiumImage } from "@/lib/image";
+import Image from "next/image";
+import { ImagePaths } from "@/lib/constants/imagePaths";
+import { toast } from "sonner";
 
 interface StadiumImageProps {
   filename: string;
   alt: string;
   view?: "aerial" | "main" | "pitch" | "facilities" | "other";
-  aspectRatio?: string; 
+  aspectRatio?: string;
   className?: string;
   rounded?: boolean | "sm" | "md" | "lg" | "full";
   shadow?: boolean | "sm" | "md" | "lg";
@@ -26,30 +28,44 @@ const StadiumImage: React.FC<StadiumImageProps> = ({
   caption,
   credit,
 }) => {
-  // Get the stadium image path using imageUtils
-  const imagePath = getStadiumImage(filename, view);
-  console.log("Stadium image path:", imagePath);
-  
-  // Fallback to a placeholder if the image fails to load
-  const fallbackImage = "https://placehold.co/1200x800/CCCCCC/333333?text=Stadium+Image";
-  const [imageSrc, setImageSrc] = useState(imagePath);
+  const imagePath = `${ImagePaths.stadium.base}/${filename}`;
+  const [width, height] = aspectRatio.split('/').map(Number);
+  const aspectRatioClass = `aspect-[${width}/${height}]`;
 
-  const handleError = () => {
-    console.error(`Failed to load stadium image: ${imagePath}`);
-    setImageSrc(fallbackImage);
+  const roundedClasses = {
+    true: "rounded",
+    sm: "rounded-sm",
+    md: "rounded-md",
+    lg: "rounded-lg",
+    full: "rounded-full",
+  };
+
+  const shadowClasses = {
+    true: "shadow",
+    sm: "shadow-sm",
+    md: "shadow-md",
+    lg: "shadow-lg",
   };
 
   return (
     <figure className={cn("my-4", className)}>
-      <ResponsiveImage
-        src={imageSrc}
-        alt={alt}
-        aspectRatio={aspectRatio}
-        rounded={rounded}
-        shadow={shadow}
-        className="w-full"
-        onError={handleError}
-      />
+      <div className={cn(
+        "relative overflow-hidden",
+        aspectRatioClass,
+        typeof rounded === 'string' ? roundedClasses[rounded as keyof typeof roundedClasses] : rounded && "rounded",
+        typeof shadow === 'string' ? shadowClasses[shadow as keyof typeof shadowClasses] : shadow && "shadow"
+      )}>
+        <Image
+          src={imagePath}
+          alt={alt}
+          fill
+          className="object-cover"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          onError={() => toast.error(`Failed to load stadium image: ${filename}`)}
+          priority={view === "main"}
+        />
+      </div>
+
       {(caption || credit) && (
         <figcaption className="mt-2 text-sm text-gray">
           {caption && <span>{caption}</span>}

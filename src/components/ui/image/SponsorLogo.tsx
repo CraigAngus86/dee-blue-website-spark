@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+
+import React from "react";
 import { cn } from "@/lib/utils";
-import ResponsiveImage from "./ResponsiveImage";
+import Image from "next/image";
 import { Sponsor } from "@/lib/types";
-import { getSponsorLogo } from "@/lib/image";
+import { ImagePaths } from "@/lib/constants/imagePaths";
+import { toast } from "sonner";
 
 interface SponsorLogoProps {
   sponsor: Sponsor;
@@ -21,49 +23,37 @@ const SponsorLogo: React.FC<SponsorLogoProps> = ({
   useContainer = false,
   containerClassName,
 }) => {
-  // Define size classes
   const sizeClasses = {
-    xs: "h-6",
-    sm: "h-10",
-    md: "h-16",
-    lg: "h-20",
-    xl: "h-24",
+    xs: { height: 24, width: 80 },
+    sm: { height: 40, width: 120 },
+    md: { height: 64, width: 180 },
+    lg: { height: 80, width: 240 },
+    xl: { height: 96, width: 300 },
   };
 
-  // Determine logo to use based on variant
+  const dimensions = sizeClasses[size];
+
   let logoSrc = variant === "light" && sponsor.logoLight 
     ? sponsor.logoLight 
     : sponsor.logo;
   
-  // If no logo is provided, use the imageUtils function to get a logo by name
   if (!logoSrc) {
-    logoSrc = getSponsorLogo(sponsor.name);
+    logoSrc = `${ImagePaths.sponsors.base}/${sponsor.name.toLowerCase().replace(/\s+/g, '-')}.png`;
   }
-  
-  // Log the original logo source for debugging
-  console.log(`Original sponsor logo path for ${sponsor.name}:`, logoSrc);
-  
-  // Create fallback URL for placeholder in case the image fails to load
-  const [useFallback, setUseFallback] = useState(false);
-  const fallbackSrc = `https://placehold.co/400x200/FFFFFF/00105A?text=${encodeURIComponent(sponsor.name)}`;
-  
-  // The logo component
+
   const Logo = (
-    <ResponsiveImage
-      src={useFallback ? fallbackSrc : logoSrc}
-      alt={`${sponsor.name} logo`}
-      className={cn(sizeClasses[size], "w-auto", className)}
-      objectFit="contain"
-      loading="lazy"
-      onLoad={() => console.log(`Sponsor logo loaded: ${sponsor.name}`)}
-      onError={() => {
-        console.error(`Failed to load sponsor logo: ${sponsor.name} from ${logoSrc}`);
-        setUseFallback(true);
-      }}
-    />
+    <div className={cn("relative", dimensions.height && `h-[${dimensions.height}px]`)}>
+      <Image
+        src={logoSrc}
+        alt={`${sponsor.name} logo`}
+        width={dimensions.width}
+        height={dimensions.height}
+        className={cn("w-auto max-h-full", className)}
+        onError={() => toast.error(`Failed to load sponsor logo: ${sponsor.name}`)}
+      />
+    </div>
   );
 
-  // Wrap logo in a container if requested
   if (useContainer) {
     return (
       <div className={cn(
@@ -75,7 +65,6 @@ const SponsorLogo: React.FC<SponsorLogoProps> = ({
     );
   }
 
-  // Wrap in link if website is provided
   if (sponsor.website) {
     return (
       <a 
@@ -89,7 +78,6 @@ const SponsorLogo: React.FC<SponsorLogoProps> = ({
     );
   }
 
-  // Default return
   return <div className="inline-block">{Logo}</div>;
 };
 
