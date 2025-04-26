@@ -1,3 +1,4 @@
+
 import { 
   resolveImagePath,
   createPlaceholder,
@@ -13,8 +14,8 @@ import {
   getMatchDayImage,
 } from '../ImageUtils';
 
-// Use standard Jest global imports
-import { describe, it, expect } from 'jest-globals';
+// Use Vitest imports instead of Jest
+import { describe, it, expect } from 'vitest';
 
 describe('Image Utilities', () => {
   describe('resolveImagePath', () => {
@@ -93,3 +94,4 @@ describe('Image Utilities', () => {
     });
   });
 });
+
