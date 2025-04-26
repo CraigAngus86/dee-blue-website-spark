@@ -1,4 +1,6 @@
 
+'use client';
+
 import React from 'react';
 import HeroSection from "@/components/ui/hero/HeroSection";
 import OverlappingNewsCards from "@/components/ui/sections/OverlappingNewsCards";

@@ -1,4 +1,6 @@
 
+'use client';
+
 import React from 'react';
 import { HelmetProvider } from 'react-helmet-async';
 import Header from '@/components/layout/Header';
@@ -10,9 +12,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <HelmetProvider>
       <div className="min-h-screen flex flex-col">
         <Header />
-        <main className="flex-grow">
-          {children}
-        </main>
+        {children}
         <Footer />
         <Toaster />
       </div>

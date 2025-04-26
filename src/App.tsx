@@ -1,3 +1,4 @@
+
 import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import RootLayout from './app/layout';
