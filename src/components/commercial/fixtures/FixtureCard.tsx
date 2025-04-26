@@ -32,7 +32,10 @@ const AvailabilityBadge = ({ status }: { status: 'good' | 'limited' | 'soldout' 
 
 const FixtureCard = ({ fixture }: FixtureCardProps) => {
   const availabilityStatus = Math.random() > 0.7 ? 'limited' : 'good';
-
+  
+  // Parse date safely
+  const matchDate = fixture.date ? new Date(fixture.date) : new Date();
+  
   return (
     <CardNew elevation="sm" className="h-full flex flex-col">
       <CardNewContent>
@@ -41,7 +44,7 @@ const FixtureCard = ({ fixture }: FixtureCardProps) => {
             <div className="flex items-center text-gray-500 space-x-2">
               <Calendar className="h-4 w-4" />
               <span className="text-sm">
-                {format(new Date(fixture.date), 'EEE, MMM d, yyyy')} at {fixture.time}
+                {format(matchDate, 'EEE, MMM d, yyyy')} at {fixture.time}
               </span>
             </div>
             

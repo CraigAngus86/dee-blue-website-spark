@@ -43,6 +43,9 @@ const SystemDiagrams: React.FC = () => {
                 <TabsTrigger value="contribution-workflow" className="px-4 py-2">
                   Contribution Workflow
                 </TabsTrigger>
+                <TabsTrigger value="data-model" className="px-4 py-2">
+                  Data Model
+                </TabsTrigger>
               </TabsList>
               <TabsContent value="component-hierarchy">
                 <ComponentHierarchy />
@@ -55,6 +58,49 @@ const SystemDiagrams: React.FC = () => {
               </TabsContent>
               <TabsContent value="contribution-workflow">
                 <ContributionWorkflow />
+              </TabsContent>
+              <TabsContent value="data-model">
+                <div className="p-4">
+                  <Heading level={2} className="mb-4">Database Schema - Match System</Heading>
+                  <div className="overflow-auto border rounded-md p-4 bg-gray-50 mb-8">
+                    <pre className="text-xs md:text-sm font-mono">
+                      {`
+# Banks o' Dee FC Database Schema
+
+## Season & Competition Management
+┌─────────────────┐       ┌─────────────────┐       ┌─────────────────┐
+│     season      │       │season_competition│       │   competition   │
+├─────────────────┤       ├─────────────────┤       ├─────────────────┤
+│ id              │       │ id              │       │ id              │
+│ name            │╠══════╣ season_id       │╠══════╣ name            │
+│ start_date      │       │ competition_id  │       │ logo            │
+│ end_date        │       │                 │       │                 │
+│ is_current      │       │                 │       │                 │
+│ status          │       │                 │       │                 │
+└─────────────────┘       └─────────────────┘       └─────────────────┘
+
+## Match Management
+┌─────────────────┐       ┌─────────────────┐       ┌─────────────────┐
+│      match      │       │      team       │       │  league_table   │
+├─────────────────┤       ├─────────────────┤       ├─────────────────┤
+│ id              │       │ id              │       │ id              │
+│ season_comp_id  │╠══════╣ name            │╠══════╣ season_comp_id  │
+│ home_team_id    │       │ logo            │       │ team_id         │
+│ away_team_id    │       │                 │       │ position        │
+│ match_date      │       └─────────────────┘       │ played          │
+│ match_time      │                                 │ won             │
+│ venue           │                                 │ drawn           │
+│ status          │                                 │ lost            │
+│ is_completed    │                                 │ goals_for       │
+│ home_score      │                                 │ goals_against   │
+│ away_score      │                                 │ goal_difference │
+│ ticket_link     │                                 │ points          │
+│ match_report    │                                 │ form            │
+└─────────────────┘                                 └─────────────────┘
+`}
+                    </pre>
+                  </div>
+                </div>
               </TabsContent>
             </Tabs>
           </Card>
@@ -80,6 +126,11 @@ const SystemDiagrams: React.FC = () => {
               <li>
                 <Text>
                   <span className="font-semibold">Contribution Workflow:</span> Visualizes the development process from code submission through CI/CD pipeline to deployment.
+                </Text>
+              </li>
+              <li>
+                <Text>
+                  <span className="font-semibold">Data Model:</span> Depicts the database schema showing relationships between key entities like seasons, competitions, matches, and teams.
                 </Text>
               </li>
             </ul>
