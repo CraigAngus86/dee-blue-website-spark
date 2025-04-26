@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import ResponsiveImage from "@/components/ui/image/ResponsiveImage";
 import { CardNew } from "@/components/ui/CardNew";
 import HoverEffect from "@/components/ui/animations/HoverEffect";
+import { ChevronRight } from "lucide-react";
 
 interface NewsCardProps {
   article: {

@@ -1,15 +1,7 @@
-'use client';
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import { Player } from "@/lib/types";
-import OptimizedImage from "@/components/ui/image/OptimizedImage";
 import HoverEffect from "@/components/ui/animations/HoverEffect";
-
-interface PlayerCardProps {
-  player: Player;
-  className?: string;
-}
 
 const PlayerCard: React.FC<PlayerCardProps> = ({ player, className }) => {
   return (
@@ -25,10 +17,11 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, className }) => {
         {/* Player image */}
         <div className="relative z-10 h-full flex flex-col">
           <div className="flex-grow flex items-end justify-center pt-4">
-            <OptimizedImage 
+            <img 
               src={player.image} 
               alt={player.name}
               className="max-h-[400px] w-auto object-contain mix-blend-luminosity"
+              loading="lazy"
             />
           </div>
           

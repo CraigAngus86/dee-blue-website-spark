@@ -31,12 +31,14 @@ const OverlappingNewsCards: React.FC<OverlappingNewsCardsProps> = ({
           {displayArticles.map(article => (
             <NewsCard
               key={article.id}
-              image={article.image}
-              title={article.title}
-              category={article.category}
-              timestamp={article.timestamp}
-              excerpt={article.excerpt}
-              className="shadow-md"
+              article={{
+                title: article.title,
+                image: article.image,
+                category: article.category,
+                timestamp: article.date || '',
+                excerpt: article.excerpt,
+                url: `/news/${article.id}`
+              }}
             />
           ))}
         </div>
