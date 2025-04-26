@@ -1,9 +1,33 @@
-
 import React from "react";
 import { cn } from "@/lib/utils";
-import ResponsiveImage from "./ResponsiveImage";
 import { MatchPhoto } from "@/lib/types";
+import ResponsiveImage from "./ResponsiveImage";
 
+/**
+ * MatchDayImage component displays match day photos with optional modal view
+ * @component
+ * 
+ * @param {Object} props - Component props
+ * @param {MatchPhoto} props.photo - Match photo object containing src and metadata
+ * @param {() => void} [props.onClick] - Optional click handler for modal view
+ * @param {'thumbnail' | 'full'} [props.size='full'] - Size variant of the image
+ * @param {string} [props.className] - Additional CSS classes
+ * 
+ * @requires ResponsiveImage component
+ * @requires MatchPhoto type definition
+ * 
+ * @example
+ * ```tsx
+ * <MatchDayImage
+ *   photo={matchPhoto}
+ *   size="thumbnail"
+ *   onClick={() => setModalOpen(true)}
+ * />
+ * ```
+ * 
+ * @limitation
+ * Thumbnail generation is done client-side and may impact performance with many images
+ */
 interface MatchDayImageProps {
   photo: MatchPhoto;
   onClick?: () => void;

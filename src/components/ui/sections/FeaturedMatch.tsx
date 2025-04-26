@@ -1,4 +1,3 @@
-
 import React from "react";
 import MatchCard from "@/components/ui/image/MatchCard";
 import { getUpcomingFixtures } from "@/mock-data/fixturesData";
@@ -8,6 +7,25 @@ interface FeaturedMatchProps {
   maxMatches?: number;
 }
 
+/**
+ * FeaturedMatch component displays upcoming match information in a prominent way
+ * @component
+ * 
+ * @param {Object} props - Component props
+ * @param {string} [props.className] - Additional CSS classes
+ * @param {number} [props.maxMatches=3] - Maximum number of matches to display
+ * 
+ * @requires MatchCard component
+ * @requires getUpcomingFixtures from fixturesData
+ * 
+ * @example
+ * ```tsx
+ * <FeaturedMatch maxMatches={2} />
+ * ```
+ * 
+ * @limitation
+ * Currently only supports a fixed number of matches and doesn't handle timezone differences
+ */
 const FeaturedMatch: React.FC<FeaturedMatchProps> = ({
   className,
   maxMatches = 3

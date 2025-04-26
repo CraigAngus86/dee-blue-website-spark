@@ -1,3 +1,24 @@
+/**
+ * SponsorsSection component displays a carousel of sponsor logos and partnership information
+ * @component
+ * 
+ * @description
+ * Renders a section containing the main sponsor showcase and a carousel of secondary sponsors.
+ * Also includes a call-to-action for potential new partners.
+ * 
+ * @requires Carousel from shadcn/ui
+ * @requires SponsorLogo component
+ * @requires sponsors data from SponsorsData
+ * 
+ * @example
+ * ```tsx
+ * <SponsorsSection />
+ * ```
+ * 
+ * @limitation
+ * - Carousel auto-play might need to be paused when the tab is not visible
+ * - Mobile responsiveness may need adjustment for very small screens
+ */
 
 import React from "react";
 import Section from "@/components/ui/layout/Section";

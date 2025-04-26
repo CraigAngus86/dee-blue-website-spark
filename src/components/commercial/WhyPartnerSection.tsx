@@ -1,3 +1,19 @@
+/**
+ * WhyPartnerSection component showcases benefits of partnering with the club
+ * @component
+ * 
+ * @description
+ * Displays key partnership benefits and value propositions using cards with icons.
+ * Each card represents a distinct advantage of partnering with Banks o' Dee FC.
+ * 
+ * @requires lucide-react for icons
+ * @requires Container and Section layout components
+ * 
+ * @example
+ * ```tsx
+ * <WhyPartnerSection />
+ * ```
+ */
 
 import React from 'react';
 import Container from '@/components/ui/layout/Container';

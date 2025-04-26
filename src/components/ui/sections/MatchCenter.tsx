@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import { getMatchCenterMatches } from "@/mock-data/fixturesData";
@@ -6,6 +5,28 @@ import Container from "@/components/ui/layout/Container";
 import SectionHeader from "@/components/ui/sections/SectionHeader";
 import MatchCarousel from "@/components/ui/match/MatchCarousel";
 import LeagueTableWidget from "@/components/ui/match/LeagueTableWidget";
+
+/**
+ * MatchCenter component displays match information and league standings
+ * @component
+ * 
+ * @description
+ * Central hub for match-related information including upcoming fixtures,
+ * recent results, and current league position.
+ * 
+ * @requires MatchCarousel component
+ * @requires LeagueTableWidget component
+ * @requires getMatchCenterMatches from fixturesData
+ * 
+ * @example
+ * ```tsx
+ * <MatchCenter />
+ * ```
+ * 
+ * @limitation
+ * - Real-time updates not yet implemented
+ * - Limited to displaying a fixed number of matches
+ */
 
 const MatchCenter: React.FC = () => {
   // Get matches from both seasons
