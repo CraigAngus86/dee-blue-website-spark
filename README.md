@@ -1,73 +1,104 @@
-# Welcome to your Lovable project
 
-## Project info
+# Banks o' Dee FC Website
 
-**URL**: https://lovable.dev/projects/20495ae9-c470-4c0a-a74d-95ca21b203f6
+## Overview
+Official website for Banks o' Dee Football Club, built with React and preparing for migration to Next.js. This project serves as the digital home for the club, providing news, match information, and commercial opportunities.
 
-## How can I edit this code?
-
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/20495ae9-c470-4c0a-a74d-95ca21b203f6) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+## Project Structure
+```
+├── public/           # Static assets and images
+├── src/
+│   ├── components/  # Reusable UI components
+│   │   ├── layout/  # Layout components
+│   │   ├── ui/     # Generic UI components
+│   │   └── [...]/  # Feature-specific components
+│   ├── lib/        # Utility functions and hooks
+│   ├── pages/      # Route components (Next.js structure)
+│   └── styles/     # Global styles and themes
 ```
 
-**Edit a file directly in GitHub**
+## Tech Stack
+- **Frontend Framework**: React with TypeScript
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS
+- **UI Components**: shadcn/ui
+- **State Management**: React Query
+- **Routing**: React Router (transitioning to Next.js)
+- **Backend Integration**: Supabase
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Getting Started
 
-**Use GitHub Codespaces**
+### Prerequisites
+- Node.js 18+ (recommended: use nvm)
+- npm 9+
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Local Development Setup
+1. Clone the repository
+   ```bash
+   git clone <YOUR_GIT_URL>
+   cd <YOUR_PROJECT_NAME>
+   ```
 
-## What technologies are used for this project?
+2. Install dependencies
+   ```bash
+   npm install
+   ```
 
-This project is built with:
+3. Start the development server
+   ```bash
+   npm run dev
+   ```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+4. Open http://localhost:8080 in your browser
 
-## How can I deploy this project?
+## Next.js Migration Plan
 
-Simply open [Lovable](https://lovable.dev/projects/20495ae9-c470-4c0a-a74d-95ca21b203f6) and click on Share -> Publish.
+This project is being prepared for migration to Next.js. Key aspects of the migration:
 
-## Can I connect a custom domain to my Lovable project?
+### Current Status
+- Directory structure aligned with Next.js conventions
+- Components organized for easy migration
+- Pages structured following Next.js routing patterns
 
-Yes it is!
+### Migration Phases
+1. **Phase 1 (Current)**: 
+   - Preparatory restructuring
+   - Documentation updates
+   - Component isolation
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+2. **Phase 2 (Upcoming)**:
+   - Next.js project setup
+   - Route migration
+   - Static asset transfer
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+3. **Phase 3**:
+   - Server-side rendering implementation
+   - API route migration
+   - Performance optimization
+
+## Development Guidelines
+
+### Code Style
+- Use TypeScript for all new components
+- Follow existing component patterns
+- Implement responsive designs
+- Use Tailwind CSS for styling
+- Create focused, reusable components
+
+### Testing
+- Write unit tests for new components
+- Test responsive behavior
+- Verify accessibility compliance
+
+## Available Scripts
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run test` - Run test suite
+
+## Contributing
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for detailed contribution guidelines.
+
+## Support
+For questions or issues, please open a GitHub issue or contact the development team.
+
