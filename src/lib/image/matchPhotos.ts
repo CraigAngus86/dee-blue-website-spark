@@ -1,6 +1,5 @@
-
 import { MatchPhoto } from "../types";
-import { getPlaceholderImageUrl } from "./imageBase";
+import { getPlaceholderImageUrl } from "../ImageUtils";
 
 /**
  * Get match photos for a specific match

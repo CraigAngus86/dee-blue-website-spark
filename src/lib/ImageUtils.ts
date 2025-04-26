@@ -1,6 +1,9 @@
 
+/**
+ * Core image utility functions and re-exports
+ */
+
 import { cloudinary } from './cloudinary';
-import { type AspectRatio, type ObjectFit } from '@/components/ui/image/ResponsiveImage';
 
 interface ImageOptimizationOptions {
   width?: number;
@@ -11,8 +14,8 @@ interface ImageOptimizationOptions {
 
 interface ResponsiveImageOptions {
   src: string;
-  aspectRatio?: AspectRatio;
-  objectFit?: ObjectFit;
+  aspectRatio?: string;
+  objectFit?: "cover" | "contain" | "fill" | "none" | "scale-down";
   width?: number;
   height?: number;
   quality?: number;
@@ -26,26 +29,21 @@ export const getPlaceholderImageUrl = (
   height = 300, 
   text = "Image"
 ): string => {
-  // Generate a placeholder URL with size and text
   return `https://placehold.co/${width}x${height}/CCCCCC/333333?text=${encodeURIComponent(text)}`;
 };
 
-// For backward compatibility
+// For backward compatibility only - will be deprecated
 export const getPlaceholderImage = getPlaceholderImageUrl;
 
 export const getOptimizedImageUrl = (
   src: string,
   options: ImageOptimizationOptions = {}
 ): string => {
-  // If it's an external URL, return as is
   if (src.startsWith('http')) {
     return src;
   }
-
-  // If it's a local asset, prepare for Cloudinary later
-  const baseUrl = src.startsWith('/') ? src.slice(1) : src;
   
-  // Currently return the original URL, but structured for Cloudinary
+  const baseUrl = src.startsWith('/') ? src.slice(1) : src;
   return `/${baseUrl}`;
 };
 
@@ -58,7 +56,6 @@ export const generateResponsiveSrcSet = (
     .join(', ');
 };
 
-// Utility for handling image errors
 export const handleImageError = (
   originalSrc: string,
   fallbackSrc?: string,
@@ -69,7 +66,6 @@ export const handleImageError = (
   return fallbackSrc || getPlaceholderImageUrl();
 };
 
-// Asset path helpers
 export const getAssetPath = (category: string, filename: string): string => {
   return `/assets/images/${category}/${filename}`;
 };
@@ -79,7 +75,7 @@ export const getImagePath = (path: string): string => {
   return path.startsWith('/') ? path : `/assets/images/${path}`;
 };
 
-// Re-export existing specialized image utilities
+// Re-export specialized image utilities
 export * from './image/clubLogo';
 export * from './image/matchPhotos';
 export * from './image/newsImages';

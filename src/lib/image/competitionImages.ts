@@ -1,5 +1,4 @@
-
-import { getPlaceholderImageUrl } from "./imageBase";
+import { getPlaceholderImageUrl } from "../ImageUtils";
 
 /**
  * Get competition image with proper path
