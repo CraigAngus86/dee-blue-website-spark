@@ -1,6 +1,5 @@
 import React from "react";
 import { cn } from "@/lib/utils";
-import ResponsiveImage from "@/components/ui/image/ResponsiveImage";
 import { CardNew } from "@/components/ui/CardNew";
 import HoverEffect from "@/components/ui/animations/HoverEffect";
 import { ChevronRight } from "lucide-react";
@@ -37,12 +36,11 @@ const NewsCard: React.FC<NewsCardProps> = ({
             "relative flex-grow",
             isFeatured ? "aspect-[2/1]" : "aspect-square"
           )}>
-            <ResponsiveImage
+            <img
               src={article.image}
               alt={article.title}
-              className="w-full h-full transform transition-transform duration-500 group-hover:scale-105"
-              aspectRatio={isFeatured ? "2/1" : "1/1"}
-              objectFit="cover"
+              className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-105"
+              loading="lazy"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#00105A]/90 via-[#00105A]/50 to-transparent" />
           </div>

@@ -1,7 +1,13 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
+import { Player } from "@/lib/types";
 import HoverEffect from "@/components/ui/animations/HoverEffect";
+
+interface PlayerCardProps {
+  player: Player;
+  className?: string;
+}
 
 const PlayerCard: React.FC<PlayerCardProps> = ({ player, className }) => {
   return (
