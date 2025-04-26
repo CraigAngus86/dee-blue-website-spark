@@ -11,7 +11,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import Heading from '@/components/ui/typography/Heading';
-import { ContactFormData, submitContactForm } from '@/app/actions/contact';
+import { contactFormSchema, type ContactFormData } from '@/lib/schemas/contactSchema';
+import { submitContactForm } from '@/app/actions/contact';
 
 const ContactForm = () => {
   const { toast } = useToast();

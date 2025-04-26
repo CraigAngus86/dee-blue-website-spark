@@ -1,21 +1,8 @@
 
 'use server';
 
-import { z } from 'zod';
+import { contactFormSchema, type ContactFormData } from '@/lib/schemas/contactSchema';
 import { supabase } from '@/integrations/supabase/client';
-
-const contactFormSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
-  company: z.string().min(2, { message: "Company name must be at least 2 characters." }),
-  email: z.string().email({ message: "Please enter a valid email address." }),
-  phone: z.string().optional(),
-  message: z.string().optional(),
-  gdprConsent: z.literal(true, {
-    errorMap: () => ({ message: "You must agree to the privacy policy." }),
-  }),
-});
-
-export type ContactFormData = z.infer<typeof contactFormSchema>;
 
 export async function submitContactForm(formData: ContactFormData) {
   try {
@@ -39,9 +26,7 @@ export async function submitContactForm(formData: ContactFormData) {
     console.error('Error submitting contact form:', error);
     return { 
       success: false, 
-      error: error instanceof z.ZodError 
-        ? error.errors[0].message 
-        : 'Failed to submit form. Please try again.' 
+      error: error instanceof Error ? error.message : 'Failed to submit form. Please try again.' 
     };
   }
 }
