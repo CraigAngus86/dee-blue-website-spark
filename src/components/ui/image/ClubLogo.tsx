@@ -19,7 +19,6 @@ const ClubLogo: React.FC<ClubLogoProps> = ({
 }) => {
   const [fallbackLoaded, setFallbackLoaded] = useState(false);
 
-  // Map sizes to fixed height values
   const sizeValues = {
     xs: 20,
     sm: 24,
@@ -28,15 +27,13 @@ const ClubLogo: React.FC<ClubLogoProps> = ({
     xl: 48,
   };
 
-  // Determine the height based on size prop
   const height = typeof size === "number" 
     ? size 
     : sizeValues[size];
 
-  // Use the correct logo file paths directly
   const logoPath = background === "light"
-    ? getClubLogo("BOD_Logo_White_square.png")
-    : getClubLogo("BOD_Logo_Navy_square.png");
+    ? getClubLogo("BOD_Logo_White_square.png", variant)
+    : getClubLogo("BOD_Logo_Navy_square.png", variant);
   
   return (
     <div
@@ -58,7 +55,6 @@ const ClubLogo: React.FC<ClubLogoProps> = ({
         onLoad={() => console.log("Club logo loaded successfully")}
         onError={() => {
           console.error("Failed to load club logo:", logoPath);
-          // Fall back to placeholder if the logo fails to load
           if (!fallbackLoaded) {
             setFallbackLoaded(true);
             toast.error("Could not load club logo");

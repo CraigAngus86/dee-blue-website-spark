@@ -21,5 +21,6 @@ export {
   getPlayerImage,
   getNewsImage,
   getStadiumImage,
+  getTeamImage,
+  getMatchDayImage,
 } from './utils/ImageUtils';
-

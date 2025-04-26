@@ -25,7 +25,7 @@ const CompetitorLogo: React.FC<CompetitorLogoProps> = ({
   href,
 }) => {
   // Get logo path - use logoSrc if provided, otherwise get from utility
-  const logoPath = logoSrc || getCompetitorLogo(name, variant);
+  const logoPath = logoSrc || getCompetitorLogo(name);
   
   // Map sizes to pixel values
   const sizeMap = {

@@ -78,13 +78,12 @@ export const transformImage = (url: string, options: ImageTransformOptions): str
 };
 
 // Category-specific image resolvers
-export const getClubLogo = (variant: ImageVariant, background: ImageBackground): string => {
-  const logoName = background === "light" ? "BOD_Logo_White_square.png" : "BOD_Logo_Navy_square.png";
-  return resolveImagePath(logoName, "logos");
+export const getClubLogo = (filename: string, variant: ImageVariant = "rect"): string => {
+  return resolveImagePath(filename, "logos");
 };
 
 export const getCompetitorLogo = (teamName: string): string => {
-  const normalizedName = teamName.replace(" FC", "").split(" ")[0].toLowerCase();
+  const normalizedName = teamName.toLowerCase();
   return resolveImagePath(`${normalizedName}.png`, "competitors");
 };
 
@@ -102,6 +101,14 @@ export const getStadiumImage = (
   view: 'aerial' | 'main' | 'pitch' | 'facilities' | 'other' = 'main'
 ): string => {
   return resolveImagePath(filename, "stadium");
+};
+
+export const getTeamImage = (index: number): string => {
+  return resolveImagePath(`Squad${index + 1}.jpg`, "team");
+};
+
+export const getMatchDayImage = (index: number = 1): string => {
+  return resolveImagePath(`MatchDay${index}.jpg`, "matchday");
 };
 
 // Export types for strict type checking
