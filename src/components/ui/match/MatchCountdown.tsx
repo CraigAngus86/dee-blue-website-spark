@@ -1,5 +1,3 @@
-'use client';
-
 import React, { useState, useEffect } from 'react';
 import { Calendar, Trophy } from 'lucide-react';
 import { ButtonNew } from "@/components/ui/ButtonNew";
