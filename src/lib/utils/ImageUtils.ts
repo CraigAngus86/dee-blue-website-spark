@@ -81,12 +81,16 @@ export const mapSizeToPixels = (size: ImageSize): number => {
  */
 export const transformImage = (url: string, options: ImageTransformOptions): string => {
   try {
-    const imageUrl = cloudinary.url(url);
-    if (options.width) imageUrl.width(options.width);
-    if (options.height) imageUrl.height(options.height);
-    if (options.quality) imageUrl.quality(options.quality);
-    if (options.format) imageUrl.format(options.format);
-    return imageUrl.toURL();
+    // Create a Cloudinary URL from the provided URL string
+    const publicId = url.replace(/^.*[\\\/]/, '').split('.')[0]; // Extract the file name without extension
+    return cloudinary.image(publicId)
+      .setDeliveryType('upload')
+      .toURL({
+        width: options.width,
+        height: options.height,
+        quality: options.quality,
+        format: options.format
+      });
   } catch (error) {
     console.warn('Cloudinary transform failed, using original URL:', error);
     return url;
