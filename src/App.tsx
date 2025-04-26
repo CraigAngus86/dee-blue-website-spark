@@ -1,6 +1,8 @@
 
-import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
+import { Toaster } from "@/components/ui/toaster";
+
 import HomePage from './pages/HomePage';
 import NewsPage from './pages/NewsPage';
 import TeamAndManagement from './pages/TeamAndManagement';
@@ -8,8 +10,6 @@ import MatchCentre from './pages/MatchCentre';
 import SpainParkPage from './pages/SpainParkPage';
 import CommercialOpportunitiesPage from './pages/CommercialOpportunitiesPage';
 import NotFound from './pages/NotFound';
-import { HelmetProvider } from 'react-helmet-async';
-import { Toaster } from "@/components/ui/toaster";
 
 function App() {
   return (
