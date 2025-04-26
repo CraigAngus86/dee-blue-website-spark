@@ -1,4 +1,3 @@
-
 import { 
   resolveImagePath,
   createPlaceholder,
@@ -14,8 +13,8 @@ import {
   getMatchDayImage,
 } from '../ImageUtils';
 
-// Import Jest testing functions
-import { describe, it, expect } from '@jest/globals';
+// Use standard Jest global imports
+import { describe, it, expect } from 'jest-globals';
 
 describe('Image Utilities', () => {
   describe('resolveImagePath', () => {
