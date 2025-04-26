@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import LeagueTableWidget from '../sections/LeagueTableWidget';
+import LeagueTableWidget from './LeagueTableWidget';
 import LoadingState from '../common/LoadingState';
 
 interface LeagueTableProps {
