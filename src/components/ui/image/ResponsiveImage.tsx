@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import { getOptimizedImageUrl, generateResponsiveSrcSet, handleImageError } from "@/lib/ImageUtils";
 
@@ -36,6 +36,9 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
   rounded,
   shadow,
 }) => {
+  const [isLoading, setIsLoading] = useState(!priority);
+  const [hasError, setHasError] = useState(false);
+
   const aspectRatioClasses = {
     "1/1": "aspect-square",
     "16/9": "aspect-video",
@@ -88,10 +91,12 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
   const srcSet = generateResponsiveSrcSet(src);
 
   const handleLoadError = () => {
+    setHasError(true);
     handleImageError(src, undefined, onError);
   };
 
   const handleLoad = () => {
+    setIsLoading(false);
     console.info(`Successfully loaded image: ${src}`);
     onLoad?.();
   };
@@ -111,6 +116,16 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
       )}
       style={Object.keys(sizeStyle).length > 0 ? sizeStyle : undefined}
     >
+      {isLoading && !hasError && (
+        <div className="absolute inset-0 bg-gray-100 animate-pulse" />
+      )}
+
+      {hasError && (
+        <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
+          <span className="text-gray-400 text-sm">Failed to load image</span>
+        </div>
+      )}
+
       <img
         src={optimizedSrc}
         srcSet={srcSet}
@@ -120,9 +135,10 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
         className={cn(
           "w-full h-full",
           objectFitClasses[objectFit],
-          "transition-opacity duration-300"
+          "transition-opacity duration-300",
+          isLoading ? "opacity-0" : "opacity-100"
         )}
-        onLoad={onLoad}
+        onLoad={handleLoad}
         onError={handleLoadError}
       />
     </div>
