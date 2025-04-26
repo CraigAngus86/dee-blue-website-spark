@@ -35,22 +35,14 @@ export const resolveImagePath = (path: string, category?: string): string => {
 /**
  * Generate placeholder for failed images or loading states
  */
-export const createPlaceholder = (
-  width = 400,
-  height = 300,
-  text = "Image"
-): string => {
+export const createPlaceholder = (width = 400, height = 300, text = "Image"): string => {
   return `https://placehold.co/${width}x${height}/EEEEEE/333333?text=${encodeURIComponent(text)}`;
 };
 
 /**
  * Handle image loading errors with consistent fallback
  */
-export const handleImageError = (
-  imagePath: string,
-  elementId?: string,
-  fallbackUrl?: string
-): void => {
+export const handleImageError = (imagePath: string, elementId?: string, fallbackUrl?: string): void => {
   console.error(`Failed to load image: ${imagePath}`);
   if (elementId) {
     const imgElement = document.getElementById(elementId) as HTMLImageElement;
@@ -81,16 +73,27 @@ export const mapSizeToPixels = (size: ImageSize): number => {
  */
 export const transformImage = (url: string, options: ImageTransformOptions): string => {
   try {
-    // Create a Cloudinary URL from the provided URL string
-    const publicId = url.replace(/^.*[\\\/]/, '').split('.')[0]; // Extract the file name without extension
-    return cloudinary.image(publicId)
-      .setDeliveryType('upload')
-      .toURL({
-        width: options.width,
-        height: options.height,
-        quality: options.quality,
-        format: options.format
-      });
+    // Extract the file name without extension
+    const publicId = url.replace(/^.*[\\\/]/, '').split('.')[0];
+    
+    const cldImage = cloudinary.image(publicId)
+      .setDeliveryType('upload');
+    
+    // Apply transformations if provided
+    if (options.width) {
+      cldImage.resize(`w_${options.width}`);
+    }
+    if (options.height) {
+      cldImage.resize(`h_${options.height}`);
+    }
+    if (options.quality) {
+      cldImage.quality(`q_${options.quality}`);
+    }
+    if (options.format) {
+      cldImage.format(options.format);
+    }
+    
+    return cldImage.toURL();
   } catch (error) {
     console.warn('Cloudinary transform failed, using original URL:', error);
     return url;

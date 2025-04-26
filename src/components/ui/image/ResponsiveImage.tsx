@@ -1,11 +1,6 @@
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
-import { 
-  resolveImagePath, 
-  handleImageError, 
-  createPlaceholder,
-  type ImageFit 
-} from "@/lib/utils/ImageUtils";
+import { resolveImagePath, handleImageError, createPlaceholder, transformImage } from "@/lib/utils/ImageUtils";
 
 type AspectRatio = "1/1" | "16/9" | "4/3" | "2/1" | "3/2" | "3/4" | "1" | string;
 type ObjectFit = "cover" | "contain" | "fill" | "none" | "scale-down";
@@ -41,7 +36,10 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
   rounded,
   shadow,
 }) => {
-  const [imageSrc, setImageSrc] = useState(resolveImagePath(src));
+  const [imageSrc, setImageSrc] = useState(() => {
+    const resolvedPath = resolveImagePath(src);
+    return transformImage(resolvedPath, { width, height });
+  });
 
   const aspectRatioClasses = {
     "1/1": "aspect-square",
@@ -98,7 +96,8 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
 
   const handleImageLoadError = () => {
     console.error(`Failed to load image: ${src}`);
-    setImageSrc(createPlaceholder(width || 400, height || 300, alt));
+    const fallback = createPlaceholder(width || 400, height || 300, alt);
+    setImageSrc(fallback);
     onError?.();
   };
 
