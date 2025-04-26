@@ -1,8 +1,12 @@
 
-import { getImageService, type ImageOptimizationOptions } from './services/ImageService';
+import { getImageService, type ImageOptimizationOptions, type ImageTransformations } from './services/ImageService';
 
 /**
  * Core image utility functions and re-exports
+ * 
+ * This module provides unified access to image utilities throughout the application.
+ * It abstracts the underlying image service implementation, allowing for easy switching
+ * between different providers (e.g., local, Cloudinary).
  */
 
 /**
@@ -10,6 +14,7 @@ import { getImageService, type ImageOptimizationOptions } from './services/Image
  * @param width - Width of the placeholder image
  * @param height - Height of the placeholder image
  * @param text - Text to display on the placeholder
+ * @returns URL for the placeholder image
  */
 export const getPlaceholderImageUrl = (
   width = 400, 
@@ -26,6 +31,7 @@ export const getPlaceholderImage = getPlaceholderImageUrl;
  * Optimizes an image URL based on provided options
  * @param src - Source URL of the image
  * @param options - Optimization options including width, height, quality, and format
+ * @returns Optimized image URL
  */
 export const getOptimizedImageUrl = (
   src: string,
@@ -38,6 +44,7 @@ export const getOptimizedImageUrl = (
  * Generates a responsive srcSet string for different viewport sizes
  * @param src - Source URL of the image
  * @param breakpoints - Array of viewport widths to generate srcSet for
+ * @returns A string containing the srcSet attribute value
  */
 export const generateResponsiveSrcSet = (
   src: string,
@@ -51,6 +58,7 @@ export const generateResponsiveSrcSet = (
  * @param originalSrc - Original source URL that failed
  * @param fallbackSrc - Optional fallback URL to use
  * @param onError - Optional callback for error handling
+ * @returns A fallback image URL
  */
 export const handleImageError = (
   originalSrc: string,
@@ -61,9 +69,23 @@ export const handleImageError = (
 };
 
 /**
+ * Applies transformations to an image
+ * @param src - Source URL of the image
+ * @param transformations - Transformation options to apply
+ * @returns URL with transformations applied
+ */
+export const transformImage = (
+  src: string,
+  transformations: ImageTransformations
+): string => {
+  return getImageService().transform(src, transformations);
+};
+
+/**
  * Constructs an asset path for the given category and filename
  * @param category - Asset category (e.g., 'players', 'teams')
  * @param filename - Name of the file
+ * @returns Complete asset path
  */
 export const getAssetPath = (category: string, filename: string): string => {
   return `/assets/images/${category}/${filename}`;
@@ -72,10 +94,44 @@ export const getAssetPath = (category: string, filename: string): string => {
 /**
  * Normalizes an image path to ensure proper format
  * @param path - Raw image path
+ * @returns Normalized image path
  */
 export const getImagePath = (path: string): string => {
   if (path.startsWith('http')) return path;
   return path.startsWith('/') ? path : `/assets/images/${path}`;
+};
+
+/**
+ * Generates an image URL optimized for a specific device pixel ratio
+ * @param src - Source URL of the image
+ * @param width - Base width in pixels
+ * @param pixelRatio - Device pixel ratio (1, 2, 3)
+ * @returns Optimized image URL for the given device pixel ratio
+ */
+export const getPixelRatioImageUrl = (
+  src: string,
+  width: number,
+  pixelRatio = 1
+): string => {
+  const scaledWidth = Math.round(width * pixelRatio);
+  return getOptimizedImageUrl(src, { width: scaledWidth });
+};
+
+/**
+ * Creates a blurred thumbnail URL for lazy loading
+ * @param src - Source URL of the image
+ * @param width - Width of the thumbnail
+ * @returns URL for a small, blurred thumbnail image
+ */
+export const getBlurredThumbnailUrl = (
+  src: string,
+  width = 20
+): string => {
+  return transformImage(src, {
+    width,
+    blur: 200,
+    quality: 30
+  });
 };
 
 // Re-export specialized image utilities

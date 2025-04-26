@@ -1,6 +1,14 @@
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { getOptimizedImageUrl, generateResponsiveSrcSet, handleImageError } from "@/lib/ImageUtils";
+import { 
+  getOptimizedImageUrl, 
+  generateResponsiveSrcSet, 
+  handleImageError, 
+  getBlurredThumbnailUrl,
+  transformImage
+} from "@/lib/ImageUtils";
+import { imageConfig } from "@/lib/config/imageConfig";
 
 type AspectRatio = "1/1" | "16/9" | "4/3" | "2/1" | "3/2" | "3/4" | "1" | string;
 type ObjectFit = "cover" | "contain" | "fill" | "none" | "scale-down";
@@ -19,8 +27,25 @@ interface ResponsiveImageProps {
   onError?: () => void;
   rounded?: boolean | "sm" | "md" | "lg" | "full" | string;
   shadow?: boolean | "sm" | "md" | "lg" | string;
+  quality?: number;
+  blurhash?: boolean;
+  transforms?: {
+    blur?: number;
+    grayscale?: boolean;
+    sepia?: boolean;
+    brightness?: number;
+    crop?: 'fill' | 'fit' | 'crop';
+    gravity?: 'center' | 'north' | 'south' | 'east' | 'west' | 'auto';
+  };
 }
 
+/**
+ * ResponsiveImage component with enhanced features:
+ * - Responsive srcSet generation
+ * - Lazy loading with blur-up technique
+ * - Image transformation support
+ * - Error handling with fallbacks
+ */
 const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
   src,
   alt,
@@ -35,9 +60,26 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
   onError,
   rounded,
   shadow,
+  quality,
+  blurhash = false,
+  transforms,
 }) => {
   const [isLoading, setIsLoading] = useState(!priority);
   const [hasError, setHasError] = useState(false);
+  const [imgSrc, setImgSrc] = useState<string>(src);
+  const [blurSrc, setBlurSrc] = useState<string | undefined>(undefined);
+
+  // Generate blur placeholder if needed
+  useEffect(() => {
+    if (blurhash && !priority && src) {
+      try {
+        const thumbnailSrc = getBlurredThumbnailUrl(src);
+        setBlurSrc(thumbnailSrc);
+      } catch (error) {
+        console.warn("Failed to generate blur thumbnail:", error);
+      }
+    }
+  }, [src, blurhash, priority]);
 
   const aspectRatioClasses = {
     "1/1": "aspect-square",
@@ -87,20 +129,49 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
       ? shadowClasses.true 
       : '';
 
-  const optimizedSrc = getOptimizedImageUrl(src, { width, height });
-  const srcSet = generateResponsiveSrcSet(src);
+  // Apply transformations if specified
+  let processedSrc = src;
+  if (transforms && Object.keys(transforms).length > 0) {
+    try {
+      processedSrc = transformImage(src, {
+        blur: transforms.blur,
+        effect: [
+          transforms.grayscale && 'grayscale',
+          transforms.sepia && 'sepia',
+          transforms.brightness && `brightness:${transforms.brightness}`
+        ].filter(Boolean).join(':'),
+        crop: transforms.crop,
+        gravity: transforms.gravity
+      });
+    } catch (error) {
+      console.warn("Failed to apply image transformations:", error);
+    }
+  }
 
+  // Get optimized image URL
+  const optimizedSrc = getOptimizedImageUrl(processedSrc, { 
+    width, 
+    height, 
+    quality: quality || imageConfig.defaultQuality 
+  });
+  
+  // Generate responsive srcSet
+  const srcSet = generateResponsiveSrcSet(processedSrc);
+
+  // Handle image load errors
   const handleLoadError = () => {
     setHasError(true);
-    handleImageError(src, undefined, onError);
+    setImgSrc(handleImageError(src, undefined, onError));
   };
 
+  // Handle image load success
   const handleLoad = () => {
     setIsLoading(false);
     console.info(`Successfully loaded image: ${src}`);
     onLoad?.();
   };
 
+  // Set dimension styles
   const sizeStyle: React.CSSProperties = {};
   if (height) sizeStyle.height = `${height}px`;
   if (width) sizeStyle.width = `${width}px`;
@@ -116,16 +187,29 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
       )}
       style={Object.keys(sizeStyle).length > 0 ? sizeStyle : undefined}
     >
-      {isLoading && !hasError && (
+      {/* Blur placeholder while loading */}
+      {isLoading && !hasError && blurSrc && (
+        <img
+          src={blurSrc}
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 w-full h-full object-cover blur-sm scale-110"
+        />
+      )}
+      
+      {/* Loading skeleton */}
+      {isLoading && !hasError && !blurSrc && (
         <div className="absolute inset-0 bg-gray-100 animate-pulse" />
       )}
 
+      {/* Error state */}
       {hasError && (
         <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
           <span className="text-gray-400 text-sm">Failed to load image</span>
         </div>
       )}
 
+      {/* Main image */}
       <img
         src={optimizedSrc}
         srcSet={srcSet}
