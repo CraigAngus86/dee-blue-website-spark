@@ -1,14 +1,18 @@
+import { getImageService, type ImageOptimizationOptions, type ImageTransformations } from './services/ImageService';
 
 /**
- * Core image utility functions and re-exports
- * @module ImageUtils
- * 
- * This module provides unified access to image utilities throughout the application.
- * It abstracts the underlying image service implementation, allowing for easy switching
- * between different providers (e.g., local, Cloudinary).
+ * Normalizes an image path to ensure proper format for Next.js Image component
  */
-
-import { getImageService, type ImageOptimizationOptions, type ImageTransformations } from './services/ImageService';
+export const getImagePath = (path: string): string => {
+  // Handle absolute URLs
+  if (path.startsWith('http')) return path;
+  
+  // Handle data URLs and GIFs
+  if (path.startsWith('data:') || path.endsWith('.gif')) return path;
+  
+  // Handle assets from the public directory
+  return path.startsWith('/') ? path : `/assets/images/${path}`;
+};
 
 /**
  * Creates a placeholder image URL for when actual images are not available
@@ -114,16 +118,6 @@ export const getAssetPath = (category: string, filename: string): string => {
 };
 
 /**
- * Normalizes an image path to ensure proper format
- * @param path - Raw image path
- * @returns Normalized image path
- */
-export const getImagePath = (path: string): string => {
-  if (path.startsWith('http')) return path;
-  return path.startsWith('/') ? path : `/assets/images/${path}`;
-};
-
-/**
  * Generates an image URL optimized for a specific device pixel ratio
  * @param src - Source URL of the image
  * @param width - Base width in pixels
@@ -154,6 +148,35 @@ export const getBlurredThumbnailUrl = (
     blur: 200,
     quality: 30
   });
+};
+
+/**
+ * Get optimized image dimensions based on container size and device
+ */
+export const getOptimizedImageDimensions = (
+  containerWidth: number,
+  aspectRatio: number = 16/9
+): { width: number; height: number } => {
+  const sizes = [640, 750, 828, 1080, 1200, 1920, 2048];
+  const optimalWidth = sizes.find(size => size >= containerWidth) || sizes[sizes.length - 1];
+  const height = Math.round(optimalWidth / aspectRatio);
+  
+  return { width: optimalWidth, height };
+};
+
+/**
+ * Generates a base64 blur data URL for Next.js Image placeholder
+ */
+export const getBlurDataUrl = async (src: string): Promise<string> => {
+  try {
+    const response = await fetch(src);
+    const buffer = await response.arrayBuffer();
+    const base64 = Buffer.from(buffer).toString('base64');
+    return `data:image/jpeg;base64,${base64}`;
+  } catch (error) {
+    console.error('Failed to generate blur data URL:', error);
+    return '';
+  }
 };
 
 // Re-export specialized image utilities

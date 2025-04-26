@@ -1,6 +1,8 @@
+
 'use client';
 
 import React from "react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { useImageLazyLoad } from "@/hooks/useImageLazyLoad";
 
@@ -22,15 +24,6 @@ interface ResponsiveImageProps {
   rounded?: boolean | "sm" | "md" | "lg" | "full" | string;
   shadow?: boolean | "sm" | "md" | "lg" | string;
   quality?: number;
-  blurhash?: boolean;
-  transforms?: {
-    blur?: number;
-    grayscale?: boolean;
-    sepia?: boolean;
-    brightness?: number;
-    crop?: 'fill' | 'fit' | 'crop';
-    gravity?: 'center' | 'north' | 'south' | 'east' | 'west' | 'auto';
-  };
 }
 
 const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
@@ -47,9 +40,7 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
   onError,
   rounded,
   shadow,
-  quality,
-  blurhash = false,
-  transforms,
+  quality = 75,
 }) => {
   const {
     imageRef,
@@ -69,14 +60,6 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
     "3/2": "aspect-[3/2]",
     "3/4": "aspect-[3/4]",
     "1": "aspect-square",
-  };
-
-  const objectFitClasses = {
-    cover: "object-cover",
-    contain: "object-contain",
-    fill: "object-fill",
-    none: "object-none",
-    "scale-down": "object-scale-down",
   };
 
   const roundedClasses = {
@@ -109,13 +92,25 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
       ? shadowClasses.true 
       : '';
 
-  const handleImageLoad = () => {
-    handleLoad();
-    onLoad?.();
-  };
-
   // Determine if we should start loading the image
   const shouldLoad = priority || isInView;
+
+  // Calculate dimensions based on aspect ratio if not provided
+  const getImageDimensions = () => {
+    if (width && height) return { width, height };
+    
+    // Default dimensions based on common use cases
+    const defaultWidth = 1200;
+    const [w, h] = aspectRatio.split('/').map(Number);
+    const calculatedHeight = defaultWidth * (h / w);
+    
+    return {
+      width: defaultWidth,
+      height: calculatedHeight,
+    };
+  };
+
+  const dimensions = getImageDimensions();
 
   return (
     <div
@@ -136,19 +131,30 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
         <div className="absolute inset-0 bg-gray-100 animate-pulse" />
       )}
 
-      <img
+      <Image
         ref={imageRef}
         src={shouldLoad ? src : ''}
         alt={alt}
-        className={cn(
-          "w-full h-full",
-          objectFitClasses[objectFit],
-          "transition-opacity duration-300",
-          isLoaded ? "opacity-100" : "opacity-0"
-        )}
+        width={dimensions.width}
+        height={dimensions.height}
+        quality={quality}
+        priority={priority}
         loading={loading || (priority ? "eager" : "lazy")}
-        onLoad={handleImageLoad}
+        className={cn(
+          "transition-opacity duration-300",
+          isLoaded ? "opacity-100" : "opacity-0",
+          objectFit === "cover" && "object-cover",
+          objectFit === "contain" && "object-contain",
+          objectFit === "fill" && "object-fill",
+          objectFit === "none" && "object-none",
+          objectFit === "scale-down" && "object-scale-down"
+        )}
+        onLoad={() => {
+          handleLoad();
+          onLoad?.();
+        }}
         onError={onError}
+        unoptimized={src.startsWith('data:') || src.endsWith('.gif')}
       />
     </div>
   );
