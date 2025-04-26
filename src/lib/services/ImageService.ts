@@ -1,4 +1,3 @@
-
 /**
  * Image Service Interface
  * Defines the contract for image optimization and transformation services
@@ -52,20 +51,27 @@ export interface ImageOptimizationOptions {
   format?: 'webp' | 'jpg' | 'png' | 'avif';
 }
 
-/**
- * Options for image transformations
- */
 export interface ImageTransformations {
+  /** Width in pixels */
+  width?: number;
+  /** Height in pixels */
+  height?: number;
   /** Crop mode */
   crop?: 'fill' | 'fit' | 'crop' | 'scale';
   /** Gravity/focus point for cropping */
   gravity?: 'center' | 'north' | 'south' | 'east' | 'west' | 'auto';
   /** Background color when padding is required */
   background?: string;
-  /** Apply image effects */
+  /** Image effects: grayscale, sepia, etc */
   effect?: string;
   /** Blur amount (1-2000) */
   blur?: number;
+  /** Contrast adjustment (-100 to 100) */
+  contrast?: number;
+  /** Saturation adjustment (-100 to 100) */
+  saturation?: number;
+  /** Brightness adjustment (-100 to 100) */
+  brightness?: number;
   /** Border options */
   border?: {
     width: number;
@@ -96,16 +102,39 @@ export class DefaultImageService implements ImageService {
       .join(', ');
   }
 
+  transform(src: string, transformations: ImageTransformations): string {
+    const params: string[] = [];
+    
+    if (transformations.width) params.push(`w_${transformations.width}`);
+    if (transformations.height) params.push(`h_${transformations.height}`);
+    if (transformations.crop) params.push(`c_${transformations.crop}`);
+    if (transformations.gravity) params.push(`g_${transformations.gravity}`);
+    if (transformations.effect) params.push(`e_${transformations.effect}`);
+    if (transformations.blur) params.push(`e_blur:${transformations.blur}`);
+    if (transformations.contrast) params.push(`e_contrast:${transformations.contrast}`);
+    if (transformations.saturation) params.push(`e_saturation:${transformations.saturation}`);
+    if (transformations.brightness) params.push(`e_brightness:${transformations.brightness}`);
+    if (transformations.radius) params.push(`r_${transformations.radius}`);
+    if (transformations.rotate) params.push(`a_${transformations.rotate}`);
+    
+    if (transformations.border) {
+      params.push(`bo_${transformations.border.width}px_solid_${transformations.border.color.replace('#', '')}`);
+    }
+    
+    if (transformations.additionalParams) {
+      Object.entries(transformations.additionalParams).forEach(([key, value]) => {
+        params.push(`${key}_${value}`);
+      });
+    }
+    
+    const transformString = params.length > 0 ? `${params.join(',')}` : '';
+    return transformString ? `${src}?tr=${transformString}` : src;
+  }
+
   handleError(src: string, fallbackSrc?: string, onError?: () => void): string {
     console.error(`Failed to load image: ${src}`);
     onError?.();
     return fallbackSrc || `https://placehold.co/400x300?text=${encodeURIComponent('Image not found')}`;
-  }
-  
-  transform(src: string, transformations: ImageTransformations): string {
-    // Basic implementation for default service (no transformations applied)
-    console.warn('Image transformations not supported in DefaultImageService');
-    return this.getOptimizedUrl(src);
   }
 }
 
