@@ -1,6 +1,5 @@
 
 import React from "react";
-import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { useImageLazyLoad } from "@/hooks/useImageLazyLoad";
 
@@ -38,7 +37,6 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
   onError,
   rounded,
   shadow,
-  quality = 75,
 }) => {
   const {
     imageRef,
@@ -89,21 +87,6 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
       ? shadowClasses.true 
       : '';
 
-  const getImageDimensions = () => {
-    if (width && height) return { width, height };
-    
-    const defaultWidth = 1200;
-    const [w, h] = aspectRatio.split('/').map(Number);
-    const calculatedHeight = defaultWidth * (h / w);
-    
-    return {
-      width: defaultWidth,
-      height: calculatedHeight,
-    };
-  };
-
-  const dimensions = getImageDimensions();
-
   return (
     <div
       className={cn(
@@ -122,17 +105,15 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
         <div className="absolute inset-0 bg-gray-100 animate-pulse" />
       )}
 
-      <Image
+      <img
         ref={imageRef}
         src={src}
         alt={alt}
-        width={dimensions.width}
-        height={dimensions.height}
-        quality={quality}
-        priority={priority}
+        width={width}
+        height={height}
         loading={loading || (priority ? "eager" : "lazy")}
         className={cn(
-          "transition-opacity duration-300",
+          "transition-opacity duration-300 h-full w-full",
           isLoaded ? "opacity-100" : "opacity-0",
           objectFit === "cover" && "object-cover",
           objectFit === "contain" && "object-contain",
@@ -145,8 +126,6 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
           onLoad?.();
         }}
         onError={onError}
-        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-        unoptimized={src.startsWith('data:') || src.endsWith('.gif')}
       />
     </div>
   );

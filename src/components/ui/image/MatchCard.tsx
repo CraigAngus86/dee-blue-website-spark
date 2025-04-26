@@ -1,6 +1,5 @@
 import React from "react";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
 import CompetitorLogo from "./CompetitorLogo";
 
 interface MatchCardProps {
@@ -33,7 +32,6 @@ const MatchCard: React.FC<MatchCardProps> = ({
   matchReportLink = "#",
   className,
 }) => {
-  // Determine if Banks o' Dee is home or away
   const isBodHome = homeTeam.toLowerCase().includes("banks") || homeTeam.toLowerCase().includes("bod");
 
   return (
@@ -72,7 +70,7 @@ const MatchCard: React.FC<MatchCardProps> = ({
             </span>
           </div>
 
-          {/* Score or VS - Enhanced presentation */}
+          {/* Score or VS */}
           <div className="text-center w-1/3 px-2">
             {status === "completed" && result ? (
               <div className="text-3xl font-bold">
@@ -101,7 +99,7 @@ const MatchCard: React.FC<MatchCardProps> = ({
           </div>
         </div>
 
-        {/* Date, Time, Venue with improved spacing and icons */}
+        {/* Date, Time, Venue */}
         <div className="flex flex-wrap items-center justify-center gap-3 text-gray-500 text-sm my-5 bg-gray-50 py-3 px-4 rounded-md">
           <span className="flex items-center">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -128,7 +126,7 @@ const MatchCard: React.FC<MatchCardProps> = ({
           </span>
         </div>
 
-        {/* Action Button with improved styling */}
+        {/* Action Button */}
         <div className="mt-5">
           {status === "upcoming" ? (
             <a

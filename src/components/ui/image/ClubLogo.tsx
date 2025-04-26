@@ -1,6 +1,5 @@
 
 import React, { useState } from "react";
-import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -28,7 +27,7 @@ const ClubLogo: React.FC<ClubLogoProps> = ({
   };
 
   const height = typeof size === "number" ? size : sizeValues[size];
-  const width = height; // Square aspect ratio for logos
+  const width = height;
 
   const logoPath = background === "light"
     ? "/assets/images/logos/BOD_Logo_White_square.png"
@@ -45,19 +44,19 @@ const ClubLogo: React.FC<ClubLogoProps> = ({
         width: `${width}px`
       }}
     >
-      <Image
+      <img
         src={logoPath}
         alt="Banks o' Dee FC"
         width={width}
         height={height}
         className="h-full w-auto object-contain"
+        loading="eager"
         onError={() => {
           if (!fallbackLoaded) {
             setFallbackLoaded(true);
             toast.error("Could not load club logo");
           }
         }}
-        priority={true}
       />
     </div>
   );

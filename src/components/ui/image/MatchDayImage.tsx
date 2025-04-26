@@ -1,6 +1,5 @@
 
 import React from "react";
-import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { MatchPhoto } from "@/lib/types";
 
@@ -42,16 +41,13 @@ const MatchDayImage: React.FC<MatchDayImageProps> = ({
         "relative",
         size === "thumbnail" ? "aspect-square" : "aspect-[3/2]"
       )}>
-        <Image
+        <img
           src={formattedSrc}
           alt={photo.alt || "Match day photo"}
-          className="object-cover rounded-md"
-          fill
-          sizes={size === "thumbnail" 
-            ? "300px"
-            : "(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
-          }
-          quality={80}
+          width={dimensions.width}
+          height={dimensions.height}
+          className="object-cover rounded-md w-full h-full"
+          loading="lazy"
           onLoad={() => console.log(`Matchday image loaded: ${formattedSrc}`)}
           onError={() => console.error(`Failed to load matchday image: ${formattedSrc}`)}
         />
