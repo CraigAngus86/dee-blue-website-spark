@@ -1,10 +1,8 @@
-
 /**
  * Core image utilities that will later be integrated with Cloudinary
  */
 
 import { toast } from "sonner";
-import { cloudinary } from "@/lib/cloudinary";
 
 export type ImageSize = "xs" | "sm" | "md" | "lg" | "xl" | number;
 export type ImageVariant = "rect" | "square" | "circle";
@@ -70,35 +68,13 @@ export const mapSizeToPixels = (size: ImageSize): number => {
 };
 
 /**
- * Transform image URL with Cloudinary parameters
+ * Transform image URL with transformation parameters
+ * TODO: This will be replaced with Cloudinary implementation in the future
  */
 export const transformImage = (url: string, options: ImageTransformOptions): string => {
-  try {
-    // Extract the file name without extension
-    const publicId = url.replace(/^.*[\\\/]/, '').split('.')[0];
-    
-    const cldImage = cloudinary.image(publicId)
-      .setDeliveryType('upload');
-    
-    // Apply transformations if provided using the correct transformation API
-    if (options.width) {
-      cldImage.resize().width(options.width);
-    }
-    if (options.height) {
-      cldImage.resize().height(options.height);
-    }
-    if (options.quality) {
-      cldImage.quality(options.quality);
-    }
-    if (options.format) {
-      cldImage.format(options.format);
-    }
-    
-    return cldImage.toURL();
-  } catch (error) {
-    console.warn('Cloudinary transform failed, using original URL:', error);
-    return url;
-  }
+  // For now, just return the original URL
+  // This will be replaced with Cloudinary implementation later
+  return url;
 };
 
 // Category-specific image resolvers
