@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from "react";
@@ -44,7 +43,6 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
 }) => {
   const {
     imageRef,
-    isInView,
     isLoaded,
     handleLoad
   } = useImageLazyLoad({
@@ -92,11 +90,9 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
       ? shadowClasses.true 
       : '';
 
-  // Calculate dimensions based on aspect ratio if not provided
   const getImageDimensions = () => {
     if (width && height) return { width, height };
     
-    // Default dimensions based on common use cases
     const defaultWidth = 1200;
     const [w, h] = aspectRatio.split('/').map(Number);
     const calculatedHeight = defaultWidth * (h / w);
@@ -123,7 +119,6 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
         width: typeof width === 'number' ? `${width}px` : 'auto'
       }}
     >
-      {/* Loading skeleton */}
       {!isLoaded && (
         <div className="absolute inset-0 bg-gray-100 animate-pulse" />
       )}
@@ -151,6 +146,7 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
           onLoad?.();
         }}
         onError={onError}
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         unoptimized={src.startsWith('data:') || src.endsWith('.gif')}
       />
     </div>

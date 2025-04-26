@@ -1,89 +1,31 @@
 
 import React from 'react';
-import ResponsiveImage from '@/components/ui/image/ResponsiveImage';
-import OptimizedImage from '@/components/ui/image/OptimizedImage';
-import { getOptimizedImageUrl, transformImage } from '@/lib/ImageUtils';
+import ResponsiveImage from '../components/ui/image/ResponsiveImage';
 
-/**
- * Comprehensive examples of image components and utilities
- */
-const ImageExamples: React.FC = () => {
-  // Basic responsive image
-  const BasicExample = () => (
-    <ResponsiveImage
-      src="/assets/images/news/News1.jpg"
-      alt="Basic example"
-      aspectRatio="16/9"
-      className="w-full"
-    />
-  );
-
-  // Lazy loaded image with blur-up
-  const LazyLoadExample = () => (
-    <ResponsiveImage
-      src="/assets/images/team/Squad1.jpg"
-      alt="Lazy loaded example"
-      blurhash={true}
-      loading="lazy"
-    />
-  );
-
-  // Image with transformations
-  const TransformationExample = () => (
-    <OptimizedImage
-      src="/assets/images/players/headshot_dummy.jpg"
-      alt="Transformed image"
-      transforms={{
-        grayscale: true,
-        blur: 5,
-        brightness: 110
-      }}
-    />
-  );
-
+const ImageExamples = () => {
   return (
-    <div className="space-y-8 p-6">
-      <section>
-        <h2 className="text-xl font-bold mb-4">Basic Responsive Image</h2>
-        <BasicExample />
-        <pre className="mt-4 bg-gray-100 p-4 rounded">
-          {`<ResponsiveImage
-  src="/assets/images/news/News1.jpg"
-  alt="Basic example"
-  aspectRatio="16/9"
-  className="w-full"
-/>`}
-        </pre>
-      </section>
-
-      <section>
-        <h2 className="text-xl font-bold mb-4">Lazy Loading with Blur-up</h2>
-        <LazyLoadExample />
-        <pre className="mt-4 bg-gray-100 p-4 rounded">
-          {`<ResponsiveImage
-  src="/assets/images/team/Squad1.jpg"
-  alt="Lazy loaded example"
-  blurhash={true}
-  loading="lazy"
-/>`}
-        </pre>
-      </section>
-
-      <section>
-        <h2 className="text-xl font-bold mb-4">Image Transformations</h2>
-        <TransformationExample />
-        <pre className="mt-4 bg-gray-100 p-4 rounded">
-          {`<OptimizedImage
-  src="/assets/images/players/headshot_dummy.jpg"
-  alt="Transformed image"
-  transforms={{
-    grayscale: true,
-    blur: 5,
-    brightness: 110
-  }}
-/>`}
-        </pre>
-      </section>
+    <div className="space-y-4">
+      {/* Basic usage */}
+      <ResponsiveImage
+        src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b"
+        alt="Example image"
+        loading="lazy"
+      />
+      
+      {/* With custom dimensions */}
+      <ResponsiveImage
+        src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d"
+        alt="Example image with custom dimensions"
+        width={800}
+        height={600}
+      />
+      
+      {/* With different aspect ratio */}
+      <ResponsiveImage
+        src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6"
+        alt="Example image with 4:3 ratio"
+        aspectRatio="4/3"
+      />
     </div>
   );
 };
