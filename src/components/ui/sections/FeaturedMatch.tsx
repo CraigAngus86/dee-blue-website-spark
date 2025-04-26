@@ -23,13 +23,13 @@ const FeaturedMatch: React.FC<FeaturedMatchProps> = ({
       <div className="p-4 space-y-4">
         {matches.map((match, index) => (
           <div 
-            key={index} 
+            key={match.id} 
             className={`${index > 0 ? 'mt-5 pt-5 border-t border-white/10' : ''}`}
           >
             <MatchCard
               homeTeam={match.homeTeam}
               awayTeam={match.awayTeam}
-              competition={match.round ? `${match.competition} - ${match.round}` : match.competition}
+              competition={match.competition}
               date={match.date}
               time={match.time}
               venue={match.venue}

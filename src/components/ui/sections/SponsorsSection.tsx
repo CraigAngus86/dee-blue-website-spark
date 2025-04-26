@@ -3,7 +3,7 @@ import React from "react";
 import Section from "@/components/ui/layout/Section";
 import SponsorLogo from "@/components/ui/image/SponsorLogo";
 import { Button } from "@/components/ui/button";
-import { getMainSponsor, getSponsorsByTier } from "@/data/SponsorsData";
+import { sponsors } from "@/data/SponsorsData";
 import { ExternalLink } from "lucide-react";
 import {
   Carousel,
@@ -15,11 +15,7 @@ import {
 
 const SponsorsCarousel: React.FC = () => {
   // Get secondary sponsors
-  const secondarySponsors = [
-    ...getSponsorsByTier("platinum"),
-    ...getSponsorsByTier("gold"),
-    ...getSponsorsByTier("silver")
-  ];
+  const secondarySponsors = sponsors.filter(s => s.tier !== 'main');
 
   return (
     <div className="mb-10">
@@ -60,7 +56,7 @@ const SponsorsCarousel: React.FC = () => {
 
 const SponsorsSection: React.FC = () => {
   // Get main sponsor
-  const mainSponsor = getMainSponsor();
+  const mainSponsor = sponsors.find(s => s.tier === 'main');
   
   return (
     <Section 
@@ -92,7 +88,7 @@ const SponsorsSection: React.FC = () => {
             <div className="flex justify-center">
               <div 
                 className="bg-gradient-to-b from-white to-[#f8f9fa] shadow-md rounded-md p-4 inline-flex items-center justify-center transition-transform duration-300 hover:shadow-lg"
-                style={{ maxWidth: "50%" }} // Reduced by 30% from previous 70%
+                style={{ maxWidth: "50%" }}
               >
                 <SponsorLogo 
                   sponsor={mainSponsor} 
