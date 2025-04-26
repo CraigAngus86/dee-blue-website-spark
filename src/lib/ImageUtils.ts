@@ -1,20 +1,25 @@
 
-import { getImageService, type ImageOptimizationOptions, type ImageTransformations } from './services/ImageService';
-
 /**
  * Core image utility functions and re-exports
+ * @module ImageUtils
  * 
  * This module provides unified access to image utilities throughout the application.
  * It abstracts the underlying image service implementation, allowing for easy switching
  * between different providers (e.g., local, Cloudinary).
  */
 
+import { getImageService, type ImageOptimizationOptions, type ImageTransformations } from './services/ImageService';
+
 /**
  * Creates a placeholder image URL for when actual images are not available
- * @param width - Width of the placeholder image
- * @param height - Height of the placeholder image
+ * @param width - Width of the placeholder image in pixels
+ * @param height - Height of the placeholder image in pixels
  * @param text - Text to display on the placeholder
  * @returns URL for the placeholder image
+ * @example
+ * ```typescript
+ * const placeholderUrl = getPlaceholderImageUrl(400, 300, "Loading...");
+ * ```
  */
 export const getPlaceholderImageUrl = (
   width = 400, 
@@ -32,6 +37,14 @@ export const getPlaceholderImage = getPlaceholderImageUrl;
  * @param src - Source URL of the image
  * @param options - Optimization options including width, height, quality, and format
  * @returns Optimized image URL
+ * @example
+ * ```typescript
+ * const optimizedUrl = getOptimizedImageUrl("/images/photo.jpg", {
+ *   width: 800,
+ *   height: 600,
+ *   quality: 80
+ * });
+ * ```
  */
 export const getOptimizedImageUrl = (
   src: string,
@@ -73,6 +86,15 @@ export const handleImageError = (
  * @param src - Source URL of the image
  * @param transformations - Transformation options to apply
  * @returns URL with transformations applied
+ * @example
+ * ```typescript
+ * const transformedUrl = transformImage("/images/photo.jpg", {
+ *   effect: "grayscale",
+ *   blur: 5,
+ *   crop: "fill",
+ *   gravity: "center"
+ * });
+ * ```
  */
 export const transformImage = (
   src: string,
