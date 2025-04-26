@@ -21,6 +21,7 @@ const ResultsList: React.FC<ResultsListProps> = ({
   
   React.useEffect(() => {
     const loadResults = async () => {
+      // Pass the selected season to get the correct results
       const results = await getResults(selectedSeason);
       setAllRecentResults(results);
       setIsLoading(false);

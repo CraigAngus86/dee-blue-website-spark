@@ -626,22 +626,6 @@ export const allFixtures: Match[] = [
   }
 ];
 
-// Update the April 12, 2025 match to show a 1-1 draw as requested
-const forresMatchIndex = allFixtures.findIndex(
-  match => match.date === "2025-04-12" && 
-  match.homeTeam === "Forres Mechanics" && 
-  match.awayTeam === "Banks o' Dee"
-);
-
-if (forresMatchIndex !== -1) {
-  allFixtures[forresMatchIndex].result = {
-    homeScore: 1,
-    awayScore: 1
-  };
-  allFixtures[forresMatchIndex].isCompleted = true;
-  allFixtures[forresMatchIndex].status = "finished";
-}
-
 // Export available seasons
 export const getAvailableSeasons = () => {
   return ['2024/25', '2025/26'];
@@ -693,9 +677,18 @@ export const getMatchesByMonth = (matches: Match[]) => {
   return matchesByMonth;
 };
 
-// Get all fixtures (from all seasons)
-export const getAllFixtures = () => {
-  return [...allFixtures, ...fixtures2025_26];
+// Get all fixtures (filtered by season if provided)
+export const getAllFixtures = (season?: string) => {
+  if (season === '2025/26') {
+    // For 2025/26, return only upcoming fixtures from that season
+    return fixtures2025_26.filter(match => !match.isCompleted);
+  } else if (season === '2024/25') {
+    // For 2024/25, return only upcoming fixtures from that season
+    return allFixtures.filter(match => !match.isCompleted);
+  }
+  
+  // If no season specified, return all upcoming fixtures from both seasons
+  return [...allFixtures, ...fixtures2025_26].filter(match => !match.isCompleted);
 };
 
 // Helper function to get fixtures by season
@@ -711,7 +704,7 @@ const getFixturesBySeason = (season: string): Match[] => {
 
 // Helper function to get completed matches (results)
 export const getResults = (season?: string) => {
-  const fixtures = season ? getFixturesBySeason(season) : getAllFixtures();
+  const fixtures = season ? getFixturesBySeason(season) : [...allFixtures, ...fixtures2025_26];
   return fixtures
     .filter(match => match.isCompleted)
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
@@ -719,7 +712,7 @@ export const getResults = (season?: string) => {
 
 // Helper function to get upcoming fixtures
 export const getUpcomingFixtures = (season?: string) => {
-  const fixtures = season ? getFixturesBySeason(season) : getAllFixtures();
+  const fixtures = season ? getFixturesBySeason(season) : [...allFixtures, ...fixtures2025_26];
   return fixtures
     .filter(match => !match.isCompleted)
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());

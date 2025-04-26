@@ -5,7 +5,7 @@ import { getMatchCenterMatches } from '@/mock-data/fixturesData';
 import Container from "@/components/ui/layout/Container";
 import SectionHeader from "@/components/ui/sections/SectionHeader";
 import MatchCarousel from "@/components/ui/match/MatchCarousel";
-import LeagueTableWidget from "@/components/ui/match/LeagueTableWidget";
+import LeaguePositionStrip from "@/components/ui/sections/LeaguePositionStrip";
 
 const MatchCenter: React.FC = () => {
   const [matches, setMatches] = React.useState([]);
@@ -44,7 +44,14 @@ const MatchCenter: React.FC = () => {
           <MatchCarousel matches={matches} isLoading={isLoading} />
         </div>
         
-        <LeagueTableWidget />
+        <div className="px-4 md:px-6 pb-6">
+          <h3 className="text-lg font-semibold mb-4">League Position</h3>
+          <LeaguePositionStrip 
+            position={3}
+            points={72}
+            form={['W', 'W', 'L', 'W', 'W']}
+          />
+        </div>
       </div>
     </Container>
   );

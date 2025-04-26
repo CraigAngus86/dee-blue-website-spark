@@ -21,13 +21,14 @@ const FixturesList: React.FC<FixturesListProps> = ({
   
   useEffect(() => {
     const loadFixtures = async () => {
-      const fixtures = await getAllFixtures();
+      // Pass the selected season to get the correct fixtures
+      const fixtures = await getAllFixtures(selectedSeason);
       setAllUpcomingFixtures(fixtures);
       setIsLoading(false);
     };
     
     loadFixtures();
-  }, []);
+  }, [selectedSeason]);
 
   const filteredFixtures = useMemo(() => {
     let filtered = allUpcomingFixtures;
