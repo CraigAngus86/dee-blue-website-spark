@@ -1,6 +1,7 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
+import ResponsiveImage from "./ResponsiveImage";
 import { MatchPhoto } from "@/lib/types";
 
 interface MatchDayImageProps {
@@ -16,17 +17,15 @@ const MatchDayImage: React.FC<MatchDayImageProps> = ({
   size = "full",
   className,
 }) => {
+  // Use the src directly from the photo object
   const imageSrc = size === "thumbnail" ? (photo.thumbnail || photo.src) : photo.src;
   
+  // For URLs that don't start with http or /, make sure to add the correct path prefix
   const formattedSrc = imageSrc.startsWith('http') || imageSrc.startsWith('/') 
     ? imageSrc 
     : `/assets/images/matchday/${imageSrc}`;
   
   console.log(`Rendering matchday image: ${formattedSrc}`);
-  
-  const dimensions = size === "thumbnail" 
-    ? { width: 300, height: 300 }
-    : { width: 1200, height: 800 };
   
   return (
     <div 
@@ -37,22 +36,16 @@ const MatchDayImage: React.FC<MatchDayImageProps> = ({
       )}
       onClick={onClick}
     >
-      <div className={cn(
-        "relative",
-        size === "thumbnail" ? "aspect-square" : "aspect-[3/2]"
-      )}>
-        <img
-          src={formattedSrc}
-          alt={photo.alt || "Match day photo"}
-          width={dimensions.width}
-          height={dimensions.height}
-          className="object-cover rounded-md w-full h-full"
-          loading="lazy"
-          onLoad={() => console.log(`Matchday image loaded: ${formattedSrc}`)}
-          onError={() => console.error(`Failed to load matchday image: ${formattedSrc}`)}
-        />
-      </div>
-      
+      <ResponsiveImage
+        src={formattedSrc}
+        alt={photo.alt || "Match day photo"}
+        rounded="md"
+        shadow="sm"
+        className="w-full h-full object-cover"
+        aspectRatio={size === "thumbnail" ? "1" : undefined}
+        onLoad={() => console.log(`Matchday image loaded: ${formattedSrc}`)}
+        onError={() => console.error(`Failed to load matchday image: ${formattedSrc}`)}
+      />
       {size === "full" && photo.caption && (
         <div className="mt-2 text-sm text-gray">
           <p>{photo.caption}</p>

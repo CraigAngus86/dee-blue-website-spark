@@ -1,9 +1,7 @@
-
-'use client';
-
-import React, { useState } from 'react';
+import React from 'react';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -11,14 +9,24 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import Heading from '@/components/ui/typography/Heading';
-import { contactFormSchema, type ContactFormData } from '@/lib/schemas/contactSchema';
+
+const formSchema = z.object({
+  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
+  company: z.string().min(2, { message: "Company name must be at least 2 characters." }),
+  email: z.string().email({ message: "Please enter a valid email address." }),
+  phone: z.string().optional(),
+  message: z.string().optional(),
+  gdprConsent: z.literal(true, {
+    errorMap: () => ({ message: "You must agree to the privacy policy." }),
+  }),
+});
+
+type FormValues = z.infer<typeof formSchema>;
 
 const ContactForm = () => {
   const { toast } = useToast();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  
-  const form = useForm<ContactFormData>({
-    resolver: zodResolver(contactFormSchema),
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
       company: "",
@@ -28,32 +36,12 @@ const ContactForm = () => {
     },
   });
 
-  const onSubmit = async (values: ContactFormData) => {
-    setIsSubmitting(true);
-    
-    try {
-      // In a real app, this would be an API call
-      // For now, we'll simulate a successful submission
-      console.log("Form submitted with values:", values);
-      
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      toast({
-        title: "Enquiry Submitted",
-        description: "We'll get back to you as soon as possible.",
-      });
-      form.reset();
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      toast({
-        title: "Error",
-        description: "Failed to submit form. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+  const onSubmit = async (values: FormValues) => {
+    toast({
+      title: "Enquiry Submitted",
+      description: "We'll get back to you as soon as possible.",
+    });
+    console.log(values);
   };
 
   return (
@@ -159,12 +147,8 @@ const ContactForm = () => {
                 </FormItem>
               )}
             />
-            <Button 
-              type="submit" 
-              className="w-full bg-primary text-white hover:bg-primary-dark"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? 'Sending...' : 'Send Enquiry'}
+            <Button type="submit" className="w-full bg-primary text-white hover:bg-primary-dark">
+              Send Enquiry
             </Button>
           </div>
         </form>

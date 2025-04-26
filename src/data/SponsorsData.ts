@@ -1,62 +1,56 @@
-import { Sponsor } from '@/lib/types';
-import { v4 as uuidv4 } from 'uuid';
 
+import { Sponsor } from "@/lib/types";
+
+// Reference actual uploaded files where available
 export const sponsors: Sponsor[] = [
   {
-    id: uuidv4(),
-    name: "Global Energy Group",
-    logo: "/assets/images/sponsors/Global.png",
-    logoLight: "/assets/images/sponsors/Global-Light.png",
-    website: "https://www.gegroup.com",
-    tier: "platinum"
+    name: "AD23",
+    logo: "/assets/images/sponsors/AD23.jpg",
+    logoLight: "/assets/images/sponsors/AD23.jpg",
+    website: "https://ad23.com",
+    tier: "main",
   },
   {
-    id: uuidv4(),
-    name: "CNR International",
-    logo: "/assets/images/sponsors/CNR.png",
-    website: "https://www.cnrinternational.com",
-    tier: "platinum"
+    name: "BJK Winton Properties",
+    logo: "/assets/images/sponsors/BJK Winton copy.jpg",
+    website: "https://bjkwinton.com",
+    tier: "platinum",
   },
   {
-    id: uuidv4(),
-    name: "Kerr Miller",
-    logo: "/assets/images/sponsors/KerrMiller.png",
-    website: "https://www.kerrmiller.co.uk",
-    tier: "gold"
+    name: "PCL Live AV",
+    logo: "/assets/images/sponsors/Global.png", // Using available image
+    website: "https://pcllive.com",
+    tier: "gold",
   },
   {
-    id: uuidv4(),
-    name: "Malcolm Allan",
-    logo: "/assets/images/sponsors/MalcolmAllan.png",
-    website: "https://www.malcolmallan.co.uk",
-    tier: "gold"
+    name: "ADX",
+    logo: "/assets/images/sponsors/GDI.jpeg", // Using available image
+    website: "https://adx.com",
+    tier: "gold",
   },
   {
-    id: uuidv4(),
-    name: "Richard Irvin",
-    logo: "/assets/images/sponsors/RichardIrvin.png",
-    website: "https://www.richard-irvin.com",
-    tier: "silver"
+    name: "Saltire Energy",
+    logo: "/assets/images/sponsors/saltire.jpg",
+    website: "https://saltire-energy.com",
+    tier: "silver",
   },
   {
-    id: uuidv4(),
-    name: "James Jamieson",
-    logo: "/assets/images/sponsors/JamesJamieson.png",
-    website: "https://www.jamesjamieson.co.uk",
-    tier: "silver"
-  },
-  {
-    id: uuidv4(),
-    name: "Aiberdeen Taxis",
-    logo: "/assets/images/sponsors/AiberdeenTaxis.png",
-    website: "https://aiberdeentaxis.com",
-    tier: "bronze"
-  },
-  {
-    id: uuidv4(),
-    name: "GTG Training",
-    logo: "/assets/images/sponsors/GTG.png",
-    website: "https://www.gtgtraining.co.uk",
-    tier: "bronze"
-  },
+    name: "Three60", 
+    logo: "/assets/images/sponsors/Three60 copy.jpg",
+    website: "https://three60energy.com",
+    tier: "bronze",
+  }
 ];
+
+export const getMainSponsor = (): Sponsor | undefined => {
+  return sponsors.find(sponsor => sponsor.tier === 'main');
+};
+
+export const getSponsorsByTier = (tier: Sponsor['tier']): Sponsor[] => {
+  return sponsors.filter(sponsor => sponsor.tier === tier);
+};
+
+export const getAllSponsorsExcept = (tier?: Sponsor['tier']): Sponsor[] => {
+  if (!tier) return sponsors;
+  return sponsors.filter(sponsor => sponsor.tier !== tier);
+};

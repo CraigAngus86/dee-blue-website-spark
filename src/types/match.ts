@@ -1,25 +1,21 @@
 
 export interface Match {
   id: string;
+  competition: string;
+  round?: string;
   date: string;
   time: string;
   homeTeam: string;
   awayTeam: string;
-  score?: string;
-  competition: string;
-  location: string;
-  venue?: string;
-  report?: string;
-  attendance?: number;
-  homeLogo?: string;
-  awayLogo?: string;
-  round?: string;
+  venue: string; // Making venue required
+  status: string;
+  homeScore?: number;
+  awayScore?: number;
+  isCompleted?: boolean;
   ticketLink?: string;
-  status: 'upcoming' | 'live' | 'finished';
+  matchReportLink?: string;
   result?: {
     homeScore: number;
     awayScore: number;
   };
-  isCompleted?: boolean;
 }
-

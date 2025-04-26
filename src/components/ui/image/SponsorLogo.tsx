@@ -1,48 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import { cn } from "@/lib/utils";
+import ResponsiveImage from "./ResponsiveImage";
 import { Sponsor } from "@/lib/types";
-import { ImagePaths } from "@/lib/constants/imagePaths";
-import { toast } from "sonner";
+import { getSponsorLogo } from "@/lib/image";
 
-/**
- * Props for the SponsorLogo component
- */
 interface SponsorLogoProps {
-  /** Sponsor data object containing name, logo paths, and website */
   sponsor: Sponsor;
-  /** Visual variant - dark for colored backgrounds, light for dark backgrounds */
   variant?: "dark" | "light";
-  /** Size of the logo */
   size?: "xs" | "sm" | "md" | "lg" | "xl";
-  /** Additional CSS classes */
   className?: string;
-  /** Whether to display the logo in a container */
   useContainer?: boolean;
-  /** Additional CSS classes for the container */
   containerClassName?: string;
 }
 
-/**
- * SponsorLogo component displays a sponsor's logo with consistent styling.
- * 
- * @component
- * @example
- * ```tsx
- * // Basic usage
- * <SponsorLogo 
- *   sponsor={sponsorData}
- *   size="md"
- * />
- * 
- * // With light variant in container
- * <SponsorLogo 
- *   sponsor={sponsorData}
- *   variant="light"
- *   size="lg"
- *   useContainer={true}
- * />
- * ```
- */
 const SponsorLogo: React.FC<SponsorLogoProps> = ({
   sponsor,
   variant = "dark",
@@ -51,44 +21,49 @@ const SponsorLogo: React.FC<SponsorLogoProps> = ({
   useContainer = false,
   containerClassName,
 }) => {
-  // Map size strings to dimensions for consistent sizing
+  // Define size classes
   const sizeClasses = {
-    xs: { height: 24, width: 80 },
-    sm: { height: 40, width: 120 },
-    md: { height: 64, width: 180 },
-    lg: { height: 80, width: 240 },
-    xl: { height: 96, width: 300 },
+    xs: "h-6",
+    sm: "h-10",
+    md: "h-16",
+    lg: "h-20",
+    xl: "h-24",
   };
 
-  // Get dimensions based on selected size
-  const dimensions = sizeClasses[size];
-
-  // Use light variant logo if available and requested, otherwise use default logo
+  // Determine logo to use based on variant
   let logoSrc = variant === "light" && sponsor.logoLight 
     ? sponsor.logoLight 
     : sponsor.logo;
   
-  // Fallback to a constructed path if no logo is provided
+  // If no logo is provided, use the imageUtils function to get a logo by name
   if (!logoSrc) {
-    logoSrc = `${ImagePaths.sponsors.base}/${sponsor.name.toLowerCase().replace(/\s+/g, '-')}.png`;
+    logoSrc = getSponsorLogo(sponsor.name);
   }
-
-  // Construct the logo component
+  
+  // Log the original logo source for debugging
+  console.log(`Original sponsor logo path for ${sponsor.name}:`, logoSrc);
+  
+  // Create fallback URL for placeholder in case the image fails to load
+  const [useFallback, setUseFallback] = useState(false);
+  const fallbackSrc = `https://placehold.co/400x200/FFFFFF/00105A?text=${encodeURIComponent(sponsor.name)}`;
+  
+  // The logo component
   const Logo = (
-    <div className={cn("relative", dimensions.height && `h-[${dimensions.height}px]`)}>
-      <img
-        src={logoSrc}
-        alt={`${sponsor.name} logo`}
-        width={dimensions.width}
-        height={dimensions.height}
-        className={cn("w-auto max-h-full", className)}
-        onError={() => toast.error(`Failed to load sponsor logo: ${sponsor.name}`)}
-        loading="lazy"
-      />
-    </div>
+    <ResponsiveImage
+      src={useFallback ? fallbackSrc : logoSrc}
+      alt={`${sponsor.name} logo`}
+      className={cn(sizeClasses[size], "w-auto", className)}
+      objectFit="contain"
+      loading="lazy"
+      onLoad={() => console.log(`Sponsor logo loaded: ${sponsor.name}`)}
+      onError={() => {
+        console.error(`Failed to load sponsor logo: ${sponsor.name} from ${logoSrc}`);
+        setUseFallback(true);
+      }}
+    />
   );
 
-  // If useContainer is true, wrap the logo in a container
+  // Wrap logo in a container if requested
   if (useContainer) {
     return (
       <div className={cn(
@@ -100,7 +75,7 @@ const SponsorLogo: React.FC<SponsorLogoProps> = ({
     );
   }
 
-  // If sponsor has a website, wrap the logo in a link
+  // Wrap in link if website is provided
   if (sponsor.website) {
     return (
       <a 
@@ -114,7 +89,7 @@ const SponsorLogo: React.FC<SponsorLogoProps> = ({
     );
   }
 
-  // Otherwise, return the logo in a simple div
+  // Default return
   return <div className="inline-block">{Logo}</div>;
 };
 

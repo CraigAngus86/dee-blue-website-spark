@@ -1,4 +1,5 @@
-import { getPlaceholderImageUrl } from "../ImageUtils";
+
+import { getPlaceholderImage } from "./imageBase";
 
 /**
  * Get competitor logo with proper path
@@ -47,5 +48,6 @@ export const getCompetitorLogo = (
   }
   
   // Fallback to placeholder if no match is found
-  return getPlaceholderImageUrl(200, 200, teamName);
+  return getPlaceholderImage(200, 200, teamName);
 };
+

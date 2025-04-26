@@ -1,7 +1,6 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import { useImageLazyLoad } from "@/hooks/useImageLazyLoad";
 
 type AspectRatio = "1/1" | "16/9" | "4/3" | "2/1" | "3/2" | "3/4" | "1" | string;
 type ObjectFit = "cover" | "contain" | "fill" | "none" | "scale-down";
@@ -20,7 +19,6 @@ interface ResponsiveImageProps {
   onError?: () => void;
   rounded?: boolean | "sm" | "md" | "lg" | "full" | string;
   shadow?: boolean | "sm" | "md" | "lg" | string;
-  quality?: number;
 }
 
 const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
@@ -38,15 +36,7 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
   rounded,
   shadow,
 }) => {
-  const {
-    imageRef,
-    isLoaded,
-    handleLoad
-  } = useImageLazyLoad({
-    threshold: 0.1,
-    rootMargin: '50px'
-  });
-
+  // Standard aspect ratio classes
   const aspectRatioClasses = {
     "1/1": "aspect-square",
     "16/9": "aspect-video",
@@ -57,6 +47,15 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
     "1": "aspect-square",
   };
 
+  const objectFitClasses = {
+    cover: "object-cover",
+    contain: "object-contain",
+    fill: "object-fill",
+    none: "object-none",
+    "scale-down": "object-scale-down",
+  };
+
+  // Round corner classes
   const roundedClasses = {
     true: "rounded",
     sm: "rounded-sm",
@@ -65,6 +64,7 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
     full: "rounded-full",
   };
 
+  // Shadow classes
   const shadowClasses = {
     true: "shadow",
     sm: "shadow-sm",
@@ -72,20 +72,38 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
     lg: "shadow-lg",
   };
 
+  // Determine aspect ratio class (use dynamic aspect ratio if not in standard list)
   const aspectRatioClass = aspectRatioClasses[aspectRatio as keyof typeof aspectRatioClasses] || 
     (aspectRatio ? `aspect-[${aspectRatio}]` : undefined);
 
+  // Get rounded class if applicable
   const roundedClass = typeof rounded === 'string' && rounded in roundedClasses 
     ? roundedClasses[rounded as keyof typeof roundedClasses]
     : rounded === true 
       ? roundedClasses.true 
       : '';
 
+  // Get shadow class if applicable
   const shadowClass = typeof shadow === 'string' && shadow in shadowClasses 
     ? shadowClasses[shadow as keyof typeof shadowClasses]
     : shadow === true 
       ? shadowClasses.true 
       : '';
+
+  const handleLoad = () => {
+    console.info(`Successfully loaded image: ${src}`);
+    onLoad?.();
+  };
+
+  const handleError = () => {
+    console.error(`Failed to load image: ${src}`);
+    onError?.();
+  };
+
+  // Define style object for width and height if provided
+  const sizeStyle: React.CSSProperties = {};
+  if (height) sizeStyle.height = `${height}px`;
+  if (width) sizeStyle.width = `${width}px`;
 
   return (
     <div
@@ -96,36 +114,19 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
         shadowClass,
         className
       )}
-      style={{ 
-        height: typeof height === 'number' ? `${height}px` : 'auto',
-        width: typeof width === 'number' ? `${width}px` : 'auto'
-      }}
+      style={Object.keys(sizeStyle).length > 0 ? sizeStyle : undefined}
     >
-      {!isLoaded && (
-        <div className="absolute inset-0 bg-gray-100 animate-pulse" />
-      )}
-
       <img
-        ref={imageRef}
         src={src}
         alt={alt}
-        width={width}
-        height={height}
         loading={loading || (priority ? "eager" : "lazy")}
         className={cn(
-          "transition-opacity duration-300 h-full w-full",
-          isLoaded ? "opacity-100" : "opacity-0",
-          objectFit === "cover" && "object-cover",
-          objectFit === "contain" && "object-contain",
-          objectFit === "fill" && "object-fill",
-          objectFit === "none" && "object-none",
-          objectFit === "scale-down" && "object-scale-down"
+          "w-full h-full",
+          objectFitClasses[objectFit],
+          "transition-opacity duration-300"
         )}
-        onLoad={() => {
-          handleLoad();
-          onLoad?.();
-        }}
-        onError={onError}
+        onLoad={handleLoad}
+        onError={handleError}
       />
     </div>
   );

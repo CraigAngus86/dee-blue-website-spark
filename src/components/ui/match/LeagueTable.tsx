@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import LeagueTableWidget from '../sections/LeagueTableWidget';
 import LoadingState from '../common/LoadingState';
@@ -31,4 +32,3 @@ const LeagueTable: React.FC<LeagueTableProps> = ({ selectedSeason = "2024/25" })
 };
 
 export default React.memo(LeagueTable);
-

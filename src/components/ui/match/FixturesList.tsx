@@ -1,10 +1,8 @@
-
-'use client';
-
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
+import { Match } from '@/types/match';
 import MatchCardNew from '../image/MatchCardNew';
+import { getUpcomingFixtures, getMatchesByMonth } from '@/mock-data/fixturesData';
 import LoadingState from '../common/LoadingState';
-import { getMatchesByMonth } from '@/mock-data/fixturesData';
 
 interface FixturesListProps {
   selectedCompetitions?: string[];
@@ -17,65 +15,60 @@ const FixturesList: React.FC<FixturesListProps> = ({
   selectedMonth = 'all',
   selectedSeason = '2024/25'
 }) => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [fixtures, setFixtures] = useState([]);
-  const [fixturesByMonth, setFixturesByMonth] = useState<Record<string, any[]>>({});
-  const [sortedMonths, setSortedMonths] = useState<string[]>([]);
-
+  const [allUpcomingFixtures, setAllUpcomingFixtures] = useState<Match[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  
   useEffect(() => {
-    const fetchFixtures = async () => {
+    const loadFixtures = () => {
+      setIsLoading(true);
       try {
-        // In a real app, this would be an API call
-        // For now, we'll import from mock data
-        const { matches } = require('@/mock-data/fixturesData').fixturesData;
-        
-        let filteredFixtures = matches;
-        
-        if (selectedCompetitions.length > 0) {
-          filteredFixtures = filteredFixtures.filter(fixture => 
-            selectedCompetitions.some(comp => fixture.competition.includes(comp))
-          );
-        }
-        
-        if (selectedMonth && selectedMonth !== 'all') {
-          filteredFixtures = filteredFixtures.filter(fixture => {
-            const date = new Date(fixture.date);
-            const monthYear = date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
-            return monthYear === selectedMonth;
-          });
-        }
-        
-        setFixtures(filteredFixtures);
-        
-        const fixturesByMonthData = getMatchesByMonth(
-          [...filteredFixtures].sort((a, b) => {
-            return new Date(a.date).getTime() - new Date(b.date).getTime();
-          })
-        );
-        
-        setFixturesByMonth(fixturesByMonthData);
-        
-        const months = Object.keys(fixturesByMonthData).sort((a, b) => {
-          const dateA = new Date(fixturesByMonthData[a][0]?.date || '');
-          const dateB = new Date(fixturesByMonthData[b][0]?.date || '');
-          return dateA.getTime() - dateB.getTime();
-        });
-        
-        setSortedMonths(months);
-        
-        // Simulate loading delay
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 300);
+        const fixtures = getUpcomingFixtures(selectedSeason);
+        setAllUpcomingFixtures(fixtures);
       } catch (error) {
-        console.error('Error fetching fixtures:', error);
+        console.error("Error loading fixtures:", error);
+      } finally {
         setIsLoading(false);
       }
     };
-
-    setIsLoading(true);
-    fetchFixtures();
+    
+    loadFixtures();
   }, [selectedCompetitions, selectedMonth, selectedSeason]);
+  
+  const filteredFixtures = useMemo(() => {
+    let filtered = allUpcomingFixtures;
+    
+    if (selectedCompetitions.length > 0) {
+      filtered = filtered.filter(fixture => 
+        selectedCompetitions.some(comp => fixture.competition.includes(comp))
+      );
+    }
+    
+    if (selectedMonth && selectedMonth !== 'all') {
+      filtered = filtered.filter(fixture => {
+        const date = new Date(fixture.date);
+        const monthYear = date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+        return monthYear === selectedMonth;
+      });
+    }
+    
+    return filtered;
+  }, [allUpcomingFixtures, selectedCompetitions, selectedMonth]);
+  
+  const fixturesByMonthData = useMemo(() => {
+    const sortedFixtures = [...filteredFixtures].sort((a, b) => {
+      return new Date(a.date).getTime() - new Date(b.date).getTime();
+    });
+    
+    return getMatchesByMonth(sortedFixtures);
+  }, [filteredFixtures]);
+  
+  const sortedMonths = useMemo(() => {
+    return Object.keys(fixturesByMonthData).sort((a, b) => {
+      const dateA = new Date(fixturesByMonthData[a][0]?.date || '');
+      const dateB = new Date(fixturesByMonthData[b][0]?.date || '');
+      return dateA.getTime() - dateB.getTime();
+    });
+  }, [fixturesByMonthData]);
 
   if (isLoading) {
     return <LoadingState count={2} />;
@@ -88,7 +81,7 @@ const FixturesList: React.FC<FixturesListProps> = ({
           <div key={month}>
             <h3 className="text-lg font-semibold text-gray-600 mb-4">{month}</h3>
             <div className="grid gap-4">
-              {fixturesByMonth[month].map((match) => (
+              {fixturesByMonthData[month].map((match) => (
                 <MatchCardNew
                   key={match.id}
                   match={match}
@@ -107,4 +100,4 @@ const FixturesList: React.FC<FixturesListProps> = ({
   );
 };
 
-export default FixturesList;
+export default React.memo(FixturesList);

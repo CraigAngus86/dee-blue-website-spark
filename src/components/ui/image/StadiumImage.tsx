@@ -1,57 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import { cn } from "@/lib/utils";
-import { ImagePaths } from "@/lib/constants/imagePaths";
-import { toast } from "sonner";
+import ResponsiveImage from "./ResponsiveImage";
+import { getStadiumImage } from "@/lib/image";
 
-/**
- * Props for the StadiumImage component
- */
 interface StadiumImageProps {
-  /** Filename of the stadium image */
   filename: string;
-  /** Alternative text for accessibility */
   alt: string;
-  /** Type of stadium view being shown */
   view?: "aerial" | "main" | "pitch" | "facilities" | "other";
-  /** Aspect ratio of the image in the format "width/height" */
-  aspectRatio?: string;
-  /** Additional CSS classes */
+  aspectRatio?: string; 
   className?: string;
-  /** Border radius styling */
   rounded?: boolean | "sm" | "md" | "lg" | "full";
-  /** Shadow styling */
   shadow?: boolean | "sm" | "md" | "lg";
-  /** Optional caption for the image */
   caption?: string;
-  /** Optional photo credit information */
   credit?: string;
 }
 
-/**
- * StadiumImage component displays images of Spain Park stadium with consistent styling.
- * 
- * @component
- * @example
- * ```tsx
- * // Basic usage
- * <StadiumImage
- *   filename="Spain Park.jpg"
- *   alt="Spain Park Stadium"
- * />
- * 
- * // With custom styling and caption
- * <StadiumImage
- *   filename="Spain Park.jpg"
- *   alt="Aerial view of Spain Park"
- *   view="aerial"
- *   aspectRatio="21/9"
- *   rounded="lg"
- *   shadow="lg"
- *   caption="Spain Park Stadium - Home of Banks o' Dee FC"
- *   credit="John Smith Photography"
- * />
- * ```
- */
 const StadiumImage: React.FC<StadiumImageProps> = ({
   filename,
   alt,
@@ -63,47 +26,30 @@ const StadiumImage: React.FC<StadiumImageProps> = ({
   caption,
   credit,
 }) => {
-  // Construct the full image path
-  const imagePath = `${ImagePaths.stadium.base}/${filename}`;
+  // Get the stadium image path using imageUtils
+  const imagePath = getStadiumImage(filename, view);
+  console.log("Stadium image path:", imagePath);
   
-  // Parse the aspect ratio values
-  const [width, height] = aspectRatio.split('/').map(Number);
-  const aspectRatioClass = `aspect-[${width}/${height}]`;
+  // Fallback to a placeholder if the image fails to load
+  const fallbackImage = "https://placehold.co/1200x800/CCCCCC/333333?text=Stadium+Image";
+  const [imageSrc, setImageSrc] = useState(imagePath);
 
-  // Map of rounded corner variants to their corresponding classes
-  const roundedClasses = {
-    true: "rounded",
-    sm: "rounded-sm",
-    md: "rounded-md",
-    lg: "rounded-lg",
-    full: "rounded-full",
-  };
-
-  // Map of shadow variants to their corresponding classes
-  const shadowClasses = {
-    true: "shadow",
-    sm: "shadow-sm",
-    md: "shadow-md",
-    lg: "shadow-lg",
+  const handleError = () => {
+    console.error(`Failed to load stadium image: ${imagePath}`);
+    setImageSrc(fallbackImage);
   };
 
   return (
     <figure className={cn("my-4", className)}>
-      <div className={cn(
-        "relative overflow-hidden",
-        aspectRatioClass,
-        typeof rounded === 'string' ? roundedClasses[rounded as keyof typeof roundedClasses] : rounded && "rounded",
-        typeof shadow === 'string' ? shadowClasses[shadow as keyof typeof shadowClasses] : shadow && "shadow"
-      )}>
-        <img
-          src={imagePath}
-          alt={alt}
-          className="w-full h-full object-cover"
-          onError={() => toast.error(`Failed to load stadium image: ${filename}`)}
-          loading={view === "main" ? "eager" : "lazy"}
-        />
-      </div>
-
+      <ResponsiveImage
+        src={imageSrc}
+        alt={alt}
+        aspectRatio={aspectRatio}
+        rounded={rounded}
+        shadow={shadow}
+        className="w-full"
+        onError={handleError}
+      />
       {(caption || credit) && (
         <figcaption className="mt-2 text-sm text-gray">
           {caption && <span>{caption}</span>}

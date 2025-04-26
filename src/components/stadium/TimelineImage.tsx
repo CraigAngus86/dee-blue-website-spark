@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { cn } from "@/lib/utils";
 import ResponsiveImage from '@/components/ui/image/ResponsiveImage';
-import { getFallbackImage } from '@/lib/image/fallback';
 
 interface TimelineImageProps {
   src: string;
@@ -15,7 +14,7 @@ const TimelineImage: React.FC<TimelineImageProps> = ({ src, alt }) => {
 
   const handleError = () => {
     console.error(`Failed to load timeline image: ${src}`);
-    setImageSrc(getFallbackImage('stadium'));
+    setImageSrc("https://images.unsplash.com/photo-1506744038136-46273834b3fb");
   };
 
   return (

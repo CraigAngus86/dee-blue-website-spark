@@ -1,6 +1,3 @@
-
-'use client';
-
 import React, { useState } from 'react';
 import { ChevronRight, Search } from 'lucide-react';
 import Header from '@/components/layout/Header';

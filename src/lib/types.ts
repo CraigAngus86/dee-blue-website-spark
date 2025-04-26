@@ -1,79 +1,65 @@
-export interface Match {
-  id: string;
-  date: string;
-  time: string;
-  homeTeam: string;
-  awayTeam: string;
-  score?: string;
-  competition: string;
-  location: string;
-  report?: string;
-  attendance?: number;
-  homeLogo?: string;
-  awayLogo?: string;
-}
-
-export interface NewsArticle {
-  id: number;
-  title: string;
-  date: string;
-  author: string;
-  content: string;
-  image: string;
-  category: string;
-  tags: string[];
-  excerpt: string;
-}
-
-export interface MatchPhoto {
-  id: string;
-  url: string;
+export interface ImageAsset {
+  src: string;
+  alt: string;
+  width?: number;
+  height?: number;
   caption?: string;
-  matchId: string;
-  date: string;
-  src?: string;
-  alt?: string;
-  thumbnail?: string;
-  category?: string;
   credit?: string;
+  tags?: string[];
+  category?: string;
+  date?: string;
+  match?: string;
 }
 
 export interface Sponsor {
-  id: string;
   name: string;
   logo: string;
-  website?: string;
-  tier: string;
   logoLight?: string;
+  website?: string;
+  tier: 'main' | 'platinum' | 'gold' | 'silver' | 'bronze' | 'partner';
 }
 
 export interface Competitor {
-  id: string;
   name: string;
   logo: string;
   shortName?: string;
   website?: string;
+  logoVariant?: 'rect' | 'square' | 'circle';
 }
 
-export interface LeagueTableData {
-  position: number;
-  team: string;
-  played: number;
-  won: number;
-  drawn: number;
-  lost: number;
-  goalsFor: number;
-  goalsAgainst: number;
-  points: number;
-  form: string[];
-  goalDifference?: number;
+export interface MatchPhoto {
+  src: string;
+  thumbnail: string;
+  alt: string;
+  caption?: string;
+  credit?: string;
+  category?: 'action' | 'fans' | 'pre-match' | 'post-match' | 'highlights';
+  featured?: boolean;
+}
+
+export interface Match {
+  id: string;
+  date: string;
+  competition: string;
+  home: {
+    team: string;
+    logo: string;
+    score?: number;
+  };
+  away: {
+    team: string;
+    logo: string;
+    score?: number;
+  };
+  venue: string;
+  status: 'scheduled' | 'live' | 'completed' | 'postponed';
+  photos?: MatchPhoto[];
 }
 
 export interface PlayerStats {
-  goals?: number;
-  assists?: number;
-  appearances?: number;
-  cleanSheets?: number;
+  appearances: number;
+  goals: number;
+  assists: number;
 }
 
 export interface Player {
@@ -81,9 +67,8 @@ export interface Player {
   name: string;
   firstName?: string;
   lastName?: string;
-  position?: string;
-  number?: number;
+  position: string;
+  image: string;
   isAcademy?: boolean;
-  image?: string;
   stats?: PlayerStats;
 }

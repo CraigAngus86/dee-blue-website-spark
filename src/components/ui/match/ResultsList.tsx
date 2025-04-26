@@ -1,10 +1,8 @@
-
-'use client';
-
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
+import { Match } from '@/types/match';
 import MatchCardNew from '../image/MatchCardNew';
+import { getResults, getMatchesByMonth } from '@/mock-data/fixturesData';
 import LoadingState from '../common/LoadingState';
-import { getMatchesByMonth } from '@/mock-data/fixturesData';
 
 interface ResultsListProps {
   selectedCompetitions?: string[];
@@ -17,65 +15,60 @@ const ResultsList: React.FC<ResultsListProps> = ({
   selectedMonth = 'all',
   selectedSeason = '2024/25'
 }) => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [results, setResults] = useState([]);
-  const [resultsByMonth, setResultsByMonth] = useState<Record<string, any[]>>({});
-  const [sortedMonths, setSortedMonths] = useState<string[]>([]);
-
+  const [allRecentResults, setAllRecentResults] = useState<Match[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  
   useEffect(() => {
-    const fetchResults = async () => {
+    const loadResults = () => {
+      setIsLoading(true);
       try {
-        // In a real app, this would be an API call
-        // For now, we'll import from mock data
-        const { results } = require('@/mock-data/fixturesData').resultsData;
-        
-        let filteredResults = results;
-        
-        if (selectedCompetitions.length > 0) {
-          filteredResults = filteredResults.filter(result => 
-            selectedCompetitions.some(comp => result.competition.includes(comp))
-          );
-        }
-        
-        if (selectedMonth && selectedMonth !== 'all') {
-          filteredResults = filteredResults.filter(result => {
-            const date = new Date(result.date);
-            const monthYear = date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
-            return monthYear === selectedMonth;
-          });
-        }
-        
-        setResults(filteredResults);
-        
-        const resultsByMonthData = getMatchesByMonth(
-          [...filteredResults].sort((a, b) => {
-            return new Date(b.date).getTime() - new Date(a.date).getTime();
-          })
-        );
-        
-        setResultsByMonth(resultsByMonthData);
-        
-        const months = Object.keys(resultsByMonthData).sort((a, b) => {
-          const dateA = new Date(resultsByMonthData[a][0]?.date || '');
-          const dateB = new Date(resultsByMonthData[b][0]?.date || '');
-          return dateB.getTime() - dateA.getTime();
-        });
-        
-        setSortedMonths(months);
-        
-        // Simulate loading delay
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 300);
+        const results = getResults(selectedSeason);
+        setAllRecentResults(results);
       } catch (error) {
-        console.error('Error fetching results:', error);
+        console.error("Error loading results:", error);
+      } finally {
         setIsLoading(false);
       }
     };
-
-    setIsLoading(true);
-    fetchResults();
+    
+    loadResults();
   }, [selectedCompetitions, selectedMonth, selectedSeason]);
+  
+  const filteredResults = useMemo(() => {
+    let filtered = allRecentResults;
+    
+    if (selectedCompetitions.length > 0) {
+      filtered = filtered.filter(result => 
+        selectedCompetitions.some(comp => result.competition.includes(comp))
+      );
+    }
+    
+    if (selectedMonth && selectedMonth !== 'all') {
+      filtered = filtered.filter(result => {
+        const date = new Date(result.date);
+        const monthYear = date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+        return monthYear === selectedMonth;
+      });
+    }
+    
+    return filtered;
+  }, [allRecentResults, selectedCompetitions, selectedMonth]);
+  
+  const resultsByMonthData = useMemo(() => {
+    const sortedResults = [...filteredResults].sort((a, b) => {
+      return new Date(b.date).getTime() - new Date(a.date).getTime();
+    });
+    
+    return getMatchesByMonth(sortedResults);
+  }, [filteredResults]);
+  
+  const sortedMonths = useMemo(() => {
+    return Object.keys(resultsByMonthData).sort((a, b) => {
+      const dateA = new Date(resultsByMonthData[a][0]?.date || '');
+      const dateB = new Date(resultsByMonthData[b][0]?.date || '');
+      return dateB.getTime() - dateA.getTime();
+    });
+  }, [resultsByMonthData]);
 
   if (isLoading) {
     return <LoadingState count={2} />;
@@ -88,7 +81,7 @@ const ResultsList: React.FC<ResultsListProps> = ({
           <div key={month}>
             <h3 className="text-lg font-semibold text-gray-600 mb-4">{month}</h3>
             <div className="grid gap-4">
-              {resultsByMonth[month].map((match) => (
+              {resultsByMonthData[month].map((match) => (
                 <MatchCardNew
                   key={match.id}
                   match={match}
@@ -107,4 +100,4 @@ const ResultsList: React.FC<ResultsListProps> = ({
   );
 };
 
-export default ResultsList;
+export default React.memo(ResultsList);

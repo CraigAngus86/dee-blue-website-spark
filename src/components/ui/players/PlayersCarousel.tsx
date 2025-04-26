@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
 import PlayerCard from "./PlayerCard";
@@ -33,4 +34,3 @@ const PlayersCarousel: React.FC<PlayersCarouselProps> = ({ players }) => {
 };
 
 export default PlayersCarousel;
-
