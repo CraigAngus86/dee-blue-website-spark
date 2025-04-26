@@ -10,6 +10,7 @@ import Layout from '@/components/layout/Layout';
 import ComponentHierarchy from './ComponentHierarchy';
 import DataFlowDiagram from './DataFlowDiagram';
 import RoutingMap from './RoutingMap';
+import ContributionWorkflow from './ContributionWorkflow';
 
 /**
  * SystemDiagrams shows all the application architecture diagrams in a tabbed interface
@@ -23,7 +24,7 @@ const SystemDiagrams: React.FC = () => {
           <div className="max-w-4xl mx-auto mb-8 text-center">
             <Heading level={1} className="mb-4">Banks o' Dee FC System Architecture</Heading>
             <Text size="large" className="text-gray-600">
-              Visual documentation of the application's structure, data flow, and routing.
+              Visual documentation of the application's structure, data flow, routing, and development workflows.
             </Text>
           </div>
           
@@ -39,6 +40,9 @@ const SystemDiagrams: React.FC = () => {
                 <TabsTrigger value="routing-map" className="px-4 py-2">
                   Routing Map
                 </TabsTrigger>
+                <TabsTrigger value="contribution-workflow" className="px-4 py-2">
+                  Contribution Workflow
+                </TabsTrigger>
               </TabsList>
               <TabsContent value="component-hierarchy">
                 <ComponentHierarchy />
@@ -48,6 +52,9 @@ const SystemDiagrams: React.FC = () => {
               </TabsContent>
               <TabsContent value="routing-map">
                 <RoutingMap />
+              </TabsContent>
+              <TabsContent value="contribution-workflow">
+                <ContributionWorkflow />
               </TabsContent>
             </Tabs>
           </Card>
@@ -68,6 +75,11 @@ const SystemDiagrams: React.FC = () => {
               <li>
                 <Text>
                   <span className="font-semibold">Routing Map:</span> Displays the application's routing structure, showing the relationship between routes and the components they render.
+                </Text>
+              </li>
+              <li>
+                <Text>
+                  <span className="font-semibold">Contribution Workflow:</span> Visualizes the development process from code submission through CI/CD pipeline to deployment.
                 </Text>
               </li>
             </ul>

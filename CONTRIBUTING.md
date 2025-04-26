@@ -41,6 +41,57 @@ Follow conventional commits:
 4. Request review from maintainers
 5. Address review feedback
 
+## CI/CD Workflow
+
+Our project uses GitHub Actions to automate testing and deployment processes:
+
+### CI Workflow
+Every pull request and push to main/development branches undergoes:
+- TypeScript type checking
+- ESLint checking
+- Build verification
+- Test execution
+
+### PR Validation
+Each pull request is validated for:
+- Semantic PR title (using conventional commits format)
+- Reasonable size (fewer than 500 changed files)
+- Security checks on dependencies
+
+### Workflow Diagram
+
+```
+  Developer                     GitHub                        Reviewers
+┌─────────────┐     ┌────────────────────────────┐     ┌───────────────────┐
+│ 1. Fork &   │     │ 4. Automated CI            │     │ 6. Code Review    │
+│    Clone    │     │    - Type Check            │     │    - Functionality│
+│             │────►│    - Lint                  │────►│    - Best Practices│
+│ 2. Create   │     │    - Build                 │     │    - Readability  │
+│    Branch   │     │    - Tests                 │     │                   │
+│             │     │    - PR Size Check         │     └─────────┬─────────┘
+│ 3. Submit   │     │    - PR Title Check        │               │
+│    PR       │     │    - Dependency Security   │               │
+└─────────────┘     └────────────────────────────┘               │
+        ▲                                                        │
+        │                                                        ▼
+        │            ┌────────────────────────────┐     ┌───────────────────┐
+        └────────────┤ 7. Address Feedback        │◄────┤ 5. Request Changes│
+                     │                            │     │    or Approve     │
+                     └─────────────┬──────────────┘     └───────────────────┘
+                                   │
+                                   ▼
+                     ┌────────────────────────────┐
+                     │ 8. Merge to Main Branch    │
+                     │                            │
+                     └─────────────┬──────────────┘
+                                   │
+                                   ▼
+                     ┌────────────────────────────┐
+                     │ 9. Automatic Deployment    │
+                     │    (based on branch)       │
+                     └────────────────────────────┘
+```
+
 ## Code Style Guidelines
 
 ### TypeScript
