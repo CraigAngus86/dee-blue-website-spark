@@ -1,0 +1,43 @@
+
+name: PR Checks
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  check-pr:
+    name: Check PR Title and Size
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Check PR Title
+      uses: amannn/action-semantic-pull-request@v5
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        types: |
+          feat
+          fix
+          docs
+          style
+          refactor
+          perf
+          test
+          build
+          ci
+          chore
+          revert
+
+    - name: Check PR Size
+      run: |
+        git fetch origin ${{ github.base_ref }}
+        CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }} HEAD | wc -l)
+        if [ $CHANGED_FILES -gt 500 ]; then
+          echo "PR contains too many changed files ($CHANGED_FILES). Please keep changes focused and under 500 files."
+          exit 1
+        fi
