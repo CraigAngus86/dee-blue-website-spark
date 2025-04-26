@@ -1,6 +1,6 @@
-
 import React from "react";
 import { cn } from "@/lib/utils";
+import { getOptimizedImageUrl, handleImageError } from "@/lib/ImageUtils";
 
 interface OptimizedImageProps {
   src: string;
@@ -38,30 +38,36 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   onLoad,
   onError,
 }) => {
+  const optimizedSrc = getOptimizedImageUrl(src, { width, height });
+  
+  const handleLoadError = () => {
+    handleImageError(src, undefined, onError);
+  };
+
   const imageStyle = {
     objectFit,
     aspectRatio,
   };
 
-  const imageProps = {
-    src,
-    alt,
-    srcSet,
-    sizes,
-    width,
-    height,
-    loading: priority ? "eager" : loading,
-    style: aspectRatio ? imageStyle : {},
-    onLoad,
-    onError,
-    className: cn(
-      "max-w-full",
-      fill && "absolute inset-0 h-full w-full",
-      className
-    ),
-  };
-
-  return <img {...imageProps} />;
+  return (
+    <img
+      src={optimizedSrc}
+      srcSet={srcSet}
+      sizes={sizes}
+      alt={alt}
+      width={width}
+      height={height}
+      loading={priority ? "eager" : loading}
+      style={aspectRatio ? imageStyle : {}}
+      onLoad={onLoad}
+      onError={handleLoadError}
+      className={cn(
+        "max-w-full",
+        fill && "absolute inset-0 h-full w-full",
+        className
+      )}
+    />
+  );
 };
 
 export default OptimizedImage;

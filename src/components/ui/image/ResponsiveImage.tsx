@@ -1,6 +1,6 @@
-
 import React from "react";
 import { cn } from "@/lib/utils";
+import { getOptimizedImageUrl, generateResponsiveSrcSet, handleImageError } from "@/lib/ImageUtils";
 
 type AspectRatio = "1/1" | "16/9" | "4/3" | "2/1" | "3/2" | "3/4" | "1" | string;
 type ObjectFit = "cover" | "contain" | "fill" | "none" | "scale-down";
@@ -36,7 +36,6 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
   rounded,
   shadow,
 }) => {
-  // Standard aspect ratio classes
   const aspectRatioClasses = {
     "1/1": "aspect-square",
     "16/9": "aspect-video",
@@ -55,7 +54,6 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
     "scale-down": "object-scale-down",
   };
 
-  // Round corner classes
   const roundedClasses = {
     true: "rounded",
     sm: "rounded-sm",
@@ -64,7 +62,6 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
     full: "rounded-full",
   };
 
-  // Shadow classes
   const shadowClasses = {
     true: "shadow",
     sm: "shadow-sm",
@@ -72,35 +69,33 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
     lg: "shadow-lg",
   };
 
-  // Determine aspect ratio class (use dynamic aspect ratio if not in standard list)
   const aspectRatioClass = aspectRatioClasses[aspectRatio as keyof typeof aspectRatioClasses] || 
     (aspectRatio ? `aspect-[${aspectRatio}]` : undefined);
 
-  // Get rounded class if applicable
   const roundedClass = typeof rounded === 'string' && rounded in roundedClasses 
     ? roundedClasses[rounded as keyof typeof roundedClasses]
     : rounded === true 
       ? roundedClasses.true 
       : '';
 
-  // Get shadow class if applicable
   const shadowClass = typeof shadow === 'string' && shadow in shadowClasses 
     ? shadowClasses[shadow as keyof typeof shadowClasses]
     : shadow === true 
       ? shadowClasses.true 
       : '';
 
+  const optimizedSrc = getOptimizedImageUrl(src, { width, height });
+  const srcSet = generateResponsiveSrcSet(src);
+
+  const handleLoadError = () => {
+    handleImageError(src, undefined, onError);
+  };
+
   const handleLoad = () => {
     console.info(`Successfully loaded image: ${src}`);
     onLoad?.();
   };
 
-  const handleError = () => {
-    console.error(`Failed to load image: ${src}`);
-    onError?.();
-  };
-
-  // Define style object for width and height if provided
   const sizeStyle: React.CSSProperties = {};
   if (height) sizeStyle.height = `${height}px`;
   if (width) sizeStyle.width = `${width}px`;
@@ -117,7 +112,9 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
       style={Object.keys(sizeStyle).length > 0 ? sizeStyle : undefined}
     >
       <img
-        src={src}
+        src={optimizedSrc}
+        srcSet={srcSet}
+        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
         alt={alt}
         loading={loading || (priority ? "eager" : "lazy")}
         className={cn(
@@ -125,8 +122,8 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
           objectFitClasses[objectFit],
           "transition-opacity duration-300"
         )}
-        onLoad={handleLoad}
-        onError={handleError}
+        onLoad={onLoad}
+        onError={handleLoadError}
       />
     </div>
   );
