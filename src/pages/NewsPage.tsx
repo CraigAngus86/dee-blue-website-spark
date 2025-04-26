@@ -1,12 +1,13 @@
+'use client';
 
 import React, { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import NewsHero from "@/components/news/NewsHero";
 import NewsGrid from "@/components/news/NewsGrid";
-import { useLocation } from 'react-router-dom';
 import { newsArticles } from "@/mock-data/newsData";
-import { Helmet } from 'react-helmet-async';
 
 const NewsPage = () => {
   const location = useLocation();
