@@ -1,6 +1,7 @@
+
 import React from "react";
 import { cn } from "@/lib/utils";
-import { getOptimizedImageUrl, handleImageError } from "@/lib/ImageUtils";
+import { getOptimizedImageUrl, handleImageError } from "@/lib/imageUtils";
 
 interface OptimizedImageProps {
   src: string;
