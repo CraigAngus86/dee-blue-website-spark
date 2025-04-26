@@ -1,7 +1,9 @@
 
+'use client';
+
 import React, { useState } from "react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
-import ResponsiveImage from "./ResponsiveImage";
 import { toast } from "sonner";
 
 interface ClubLogoProps {
@@ -19,7 +21,6 @@ const ClubLogo: React.FC<ClubLogoProps> = ({
 }) => {
   const [fallbackLoaded, setFallbackLoaded] = useState(false);
 
-  // Map sizes to fixed height values
   const sizeValues = {
     xs: 20,
     sm: 24,
@@ -28,12 +29,9 @@ const ClubLogo: React.FC<ClubLogoProps> = ({
     xl: 48,
   };
 
-  // Determine the height based on size prop
-  const height = typeof size === "number" 
-    ? size 
-    : sizeValues[size];
+  const height = typeof size === "number" ? size : sizeValues[size];
+  const width = height; // Square aspect ratio for logos
 
-  // Use the correct logo file paths directly
   const logoPath = background === "light"
     ? "/assets/images/logos/BOD_Logo_White_square.png"
     : "/assets/images/logos/BOD_Logo_Navy_square.png";
@@ -45,25 +43,23 @@ const ClubLogo: React.FC<ClubLogoProps> = ({
         className
       )}
       style={{ 
-        height: typeof height === 'number' ? `${height}px` : 'auto',
-        width: "auto" 
+        height: `${height}px`,
+        width: `${width}px`
       }}
     >
-      <ResponsiveImage
+      <Image
         src={logoPath}
         alt="Banks o' Dee FC"
-        className="h-full w-auto"
-        objectFit="contain"
+        width={width}
         height={height}
-        onLoad={() => console.log("Club logo loaded successfully")}
+        className="h-full w-auto object-contain"
         onError={() => {
-          console.error("Failed to load club logo:", logoPath);
-          // Fall back to placeholder if the logo fails to load
           if (!fallbackLoaded) {
             setFallbackLoaded(true);
             toast.error("Could not load club logo");
           }
         }}
+        priority={true}
       />
     </div>
   );

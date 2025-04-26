@@ -1,13 +1,13 @@
 
+'use client';
+
 import React, { useState } from "react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { getOptimizedImageUrl, handleImageError, transformImage } from "@/lib/ImageUtils";
 
 interface OptimizedImageProps {
   src: string;
   alt: string;
-  srcSet?: string;
-  sizes?: string;
   width?: number;
   height?: number;
   aspectRatio?: string;
@@ -18,25 +18,13 @@ interface OptimizedImageProps {
   loading?: "eager" | "lazy";
   onLoad?: () => void;
   onError?: () => void;
-  transforms?: {
-    blur?: number;
-    grayscale?: boolean;
-    brightness?: number;
-    crop?: 'fill' | 'fit' | 'crop' | 'scale';
-    radius?: number | 'max';
-  };
+  quality?: number;
 }
 
-/**
- * Optimized image component with best practices for performance
- * and advanced transformation capabilities
- */
 const OptimizedImage: React.FC<OptimizedImageProps> = ({
   src,
   alt,
-  srcSet,
-  sizes,
-  width,
+  width = 1200,
   height,
   aspectRatio,
   fill = false,
@@ -46,44 +34,30 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   loading = "lazy",
   onLoad,
   onError,
-  transforms
+  quality = 75,
 }) => {
   const [hasLoaded, setHasLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
-  
-  // Apply transformations if needed
-  let processedSrc = src;
-  if (transforms && Object.keys(transforms).length > 0) {
-    try {
-      processedSrc = transformImage(src, {
-        blur: transforms.blur,
-        effect: transforms.grayscale ? 'grayscale' : undefined,
-        additionalParams: transforms.brightness 
-          ? { e_brightness: transforms.brightness.toString() } 
-          : undefined,
-        crop: transforms.crop,
-        radius: transforms.radius
-      });
-    } catch (error) {
-      console.warn("Failed to apply image transformations:", error);
-    }
-  }
-  
-  const optimizedSrc = getOptimizedImageUrl(processedSrc, { width, height });
+
+  // Calculate height if not provided using aspect ratio
+  const calculateDimensions = () => {
+    if (height) return { width, height };
+    if (!aspectRatio) return { width, height: width };
+    
+    const [w, h] = aspectRatio.split('/').map(Number);
+    return { width, height: width * (h / w) };
+  };
+
+  const dimensions = calculateDimensions();
   
   const handleLoadError = () => {
     setHasError(true);
-    handleImageError(src, undefined, onError);
+    onError?.();
   };
   
   const handleLoadSuccess = () => {
     setHasLoaded(true);
     onLoad?.();
-  };
-
-  const imageStyle = {
-    objectFit,
-    aspectRatio,
   };
 
   return (
@@ -93,36 +67,42 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
       fill ? "h-full w-full" : "",
       className
     )}>
-      {/* Loading indicator */}
       {!hasLoaded && !hasError && (
         <div className="absolute inset-0 bg-gray-100 animate-pulse" />
       )}
       
-      {/* Error state */}
       {hasError && (
         <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
           <span className="text-gray-400 text-sm">Failed to load image</span>
         </div>
       )}
       
-      <img
-        src={optimizedSrc}
-        srcSet={srcSet}
-        sizes={sizes}
+      <Image
+        src={src}
         alt={alt}
-        width={width}
-        height={height}
+        width={fill ? undefined : dimensions.width}
+        height={fill ? undefined : dimensions.height}
+        quality={quality}
+        priority={priority}
+        fill={fill}
         loading={priority ? "eager" : loading}
-        style={aspectRatio ? imageStyle : {}}
-        onLoad={handleLoadSuccess}
-        onError={handleLoadError}
         className={cn(
           "max-w-full",
           fill && "absolute inset-0 h-full w-full",
           hasLoaded ? "opacity-100" : "opacity-0",
           "transition-opacity duration-300",
-          className
+          objectFit === "contain" && "object-contain",
+          objectFit === "cover" && "object-cover",
+          objectFit === "fill" && "object-fill",
+          objectFit === "none" && "object-none",
+          objectFit === "scale-down" && "object-scale-down"
         )}
+        sizes={fill 
+          ? "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          : undefined
+        }
+        onLoad={handleLoadSuccess}
+        onError={handleLoadError}
       />
     </div>
   );

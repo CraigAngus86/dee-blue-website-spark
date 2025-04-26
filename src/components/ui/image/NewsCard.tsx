@@ -1,7 +1,9 @@
 
+'use client';
+
 import React from "react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
-import ResponsiveImage from "./ResponsiveImage";
 import { ChevronRight } from "lucide-react";
 
 interface NewsCardProps {
@@ -38,14 +40,16 @@ const NewsCard: React.FC<NewsCardProps> = ({
         className
       )}
     >
-      {/* Image Container */}
       <div className="relative overflow-hidden">
         {hasLogo ? (
           <div className="relative bg-primary aspect-[16/9] flex items-center justify-center">
-            <img
+            <Image
               src="/assets/images/logos/BOD_Logo_White_square.png"
               alt="Banks o' Dee FC"
-              className="w-24 h-24 opacity-90"
+              width={96}
+              height={96}
+              className="opacity-90"
+              priority={false}
             />
             {logoOverlayText && (
               <div className="absolute inset-0 flex items-center justify-center">
@@ -56,16 +60,18 @@ const NewsCard: React.FC<NewsCardProps> = ({
             )}
           </div>
         ) : (
-          <div className="aspect-[16/9]">
-            <ResponsiveImage
+          <div className="relative aspect-[16/9]">
+            <Image
               src={image}
               alt={title}
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
+              quality={75}
             />
           </div>
         )}
 
-        {/* Category Badge */}
         {category && (
           <div className="absolute top-4 left-4">
             <span className={cn(
