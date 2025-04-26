@@ -1,6 +1,5 @@
-
 import { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import RootLayout from './app/layout';
 import HomePage from '@/components/pages/home/HomePage';
 import NewsPage from '@/pages/NewsPage';
@@ -20,7 +19,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route element={<RootLayout />}>
+        <Route element={<RootLayout><Outlet /></RootLayout>}>
           <Route path="/" element={<HomePage />} />
           <Route path="/news" element={<NewsPage />} />
           <Route path="/team-and-management" element={<TeamAndManagement />} />

@@ -8,6 +8,7 @@ import GradientSeparator from "@/components/ui/separators/GradientSeparator";
 import FadeIn from "@/components/ui/animations/FadeIn";
 import MatchCenter from "@/components/ui/sections/MatchCenter";
 import PlayersSection from "@/components/ui/sections/PlayersSection";
+import Section from "@/components/ui/layout/Section";
 import { getNewsImage } from "@/lib/image";
 import { newsArticles } from "@/mock-data/newsData";
 
