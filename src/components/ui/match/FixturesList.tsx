@@ -1,10 +1,9 @@
-'use client';
 
-import React, { useEffect, useState, useMemo } from 'react';
-import { Match } from '@/types/match';
+import React, { Suspense } from 'react';
 import MatchCardNew from '../image/MatchCardNew';
-import { getUpcomingFixtures, getMatchesByMonth } from '@/mock-data/fixturesData';
+import { getFixtures } from '@/lib/server/getFixtures';
 import LoadingState from '../common/LoadingState';
+import { getMatchesByMonth } from '@/mock-data/fixturesData';
 
 interface FixturesListProps {
   selectedCompetitions?: string[];
@@ -12,69 +11,40 @@ interface FixturesListProps {
   selectedSeason?: string;
 }
 
-const FixturesList: React.FC<FixturesListProps> = ({ 
+async function FixturesContent({ 
   selectedCompetitions = [],
   selectedMonth = 'all',
   selectedSeason = '2024/25'
-}) => {
-  const [allUpcomingFixtures, setAllUpcomingFixtures] = useState<Match[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+}) {
+  const { matches } = await getFixtures('fixtures', selectedSeason);
   
-  useEffect(() => {
-    const loadFixtures = () => {
-      setIsLoading(true);
-      try {
-        const fixtures = getUpcomingFixtures(selectedSeason);
-        setAllUpcomingFixtures(fixtures);
-      } catch (error) {
-        console.error("Error loading fixtures:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    loadFixtures();
-  }, [selectedCompetitions, selectedMonth, selectedSeason]);
+  let filteredFixtures = matches;
   
-  const filteredFixtures = useMemo(() => {
-    let filtered = allUpcomingFixtures;
-    
-    if (selectedCompetitions.length > 0) {
-      filtered = filtered.filter(fixture => 
-        selectedCompetitions.some(comp => fixture.competition.includes(comp))
-      );
-    }
-    
-    if (selectedMonth && selectedMonth !== 'all') {
-      filtered = filtered.filter(fixture => {
-        const date = new Date(fixture.date);
-        const monthYear = date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
-        return monthYear === selectedMonth;
-      });
-    }
-    
-    return filtered;
-  }, [allUpcomingFixtures, selectedCompetitions, selectedMonth]);
-  
-  const fixturesByMonthData = useMemo(() => {
-    const sortedFixtures = [...filteredFixtures].sort((a, b) => {
-      return new Date(a.date).getTime() - new Date(b.date).getTime();
-    });
-    
-    return getMatchesByMonth(sortedFixtures);
-  }, [filteredFixtures]);
-  
-  const sortedMonths = useMemo(() => {
-    return Object.keys(fixturesByMonthData).sort((a, b) => {
-      const dateA = new Date(fixturesByMonthData[a][0]?.date || '');
-      const dateB = new Date(fixturesByMonthData[b][0]?.date || '');
-      return dateA.getTime() - dateB.getTime();
-    });
-  }, [fixturesByMonthData]);
-
-  if (isLoading) {
-    return <LoadingState count={2} />;
+  if (selectedCompetitions.length > 0) {
+    filteredFixtures = filteredFixtures.filter(fixture => 
+      selectedCompetitions.some(comp => fixture.competition.includes(comp))
+    );
   }
+  
+  if (selectedMonth && selectedMonth !== 'all') {
+    filteredFixtures = filteredFixtures.filter(fixture => {
+      const date = new Date(fixture.date);
+      const monthYear = date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+      return monthYear === selectedMonth;
+    });
+  }
+  
+  const fixturesByMonthData = getMatchesByMonth(
+    [...filteredFixtures].sort((a, b) => {
+      return new Date(a.date).getTime() - new Date(b.date).getTime();
+    })
+  );
+  
+  const sortedMonths = Object.keys(fixturesByMonthData).sort((a, b) => {
+    const dateA = new Date(fixturesByMonthData[a][0]?.date || '');
+    const dateB = new Date(fixturesByMonthData[b][0]?.date || '');
+    return dateA.getTime() - dateB.getTime();
+  });
 
   return (
     <div className="space-y-8">
@@ -100,6 +70,12 @@ const FixturesList: React.FC<FixturesListProps> = ({
       )}
     </div>
   );
-};
+}
 
-export default React.memo(FixturesList);
+export default function FixturesList(props: FixturesListProps) {
+  return (
+    <Suspense fallback={<LoadingState count={2} />}>
+      <FixturesContent {...props} />
+    </Suspense>
+  );
+}
