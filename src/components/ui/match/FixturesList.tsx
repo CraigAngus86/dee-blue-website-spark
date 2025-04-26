@@ -28,7 +28,7 @@ const FixturesList: React.FC<FixturesListProps> = ({
     
     loadFixtures();
   }, []);
-  
+
   const filteredFixtures = useMemo(() => {
     let filtered = allUpcomingFixtures;
     

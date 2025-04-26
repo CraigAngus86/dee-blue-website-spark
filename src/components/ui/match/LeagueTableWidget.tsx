@@ -1,7 +1,4 @@
-
 import React from "react";
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
 import CompetitorLogo from "../image/CompetitorLogo";
 import { 
   Table,
@@ -11,22 +8,7 @@ import {
   TableRow,
   TableCell
 } from "@/components/ui/table";
-import LoadingState from "../common/LoadingState";
-
-interface LeagueStanding {
-  position: number;
-  team: string; 
-  played: number;
-  won: number;
-  drawn: number;
-  lost: number;
-  goalsFor: number;
-  goalsAgainst: number;
-  goalDifference: number;
-  points: number;
-  form: string[];
-  logo: string;
-}
+import { leagueTableData } from "@/mock-data/fixturesData";
 
 interface LeagueTableWidgetProps {
   className?: string;
@@ -37,7 +19,6 @@ const LeagueTableWidget: React.FC<LeagueTableWidgetProps> = ({
   className, 
   season = "2024/25" 
 }) => {
-  // Map form results to colors and styles
   const formColors: Record<string, string> = {
     W: "bg-green-500 text-white",
     D: "bg-amber-400 text-white",
@@ -45,98 +26,12 @@ const LeagueTableWidget: React.FC<LeagueTableWidgetProps> = ({
     "-": "bg-gray-300 text-gray-600"
   };
   
-  const { data: tableData = [], isLoading } = useQuery({
-    queryKey: ['leagueTable', season],
-    queryFn: async (): Promise<LeagueStanding[]> => {
-      // Get highland league competition ID
-      const { data: hlCompetition } = await supabase
-        .from('competitions')
-        .select('id')
-        .or('name.eq.Highland Football League,name.eq.Highland League')
-        .single();
-      
-      if (!hlCompetition) {
-        throw new Error('Highland League competition not found');
-      }
-      
-      // Get season ID for the specified season
-      const { data: seasonData } = await supabase
-        .from('season')
-        .select('id')
-        .eq('name', season)
-        .single();
-      
-      if (!seasonData) {
-        throw new Error(`Season ${season} not found`);
-      }
-      
-      // Get season_competition ID
-      const { data: seasonCompetition } = await supabase
-        .from('season_competition')
-        .select('id')
-        .eq('season_id', seasonData.id)
-        .eq('competition_id', hlCompetition.id)
-        .single();
-      
-      if (!seasonCompetition) {
-        throw new Error(`League table not found for season ${season}`);
-      }
-      
-      // Get league table data
-      const { data, error } = await supabase
-        .from('league_table')
-        .select(`
-          position,
-          played,
-          won,
-          drawn,
-          lost,
-          goals_for,
-          goals_against,
-          goal_difference,
-          points,
-          form,
-          team:team_id(name, logo)
-        `)
-        .eq('season_competition_id', seasonCompetition.id)
-        .order('position', { ascending: true });
-      
-      if (error) {
-        console.error('Error fetching league table:', error);
-        throw error;
-      }
-      
-      if (!data || data.length === 0) {
-        // Fall back to the highland_league_table for this season if no data in league_table
-        console.log('Falling back to highland_league_table');
-        return getEmptyLeagueTable();
-      }
-      
-      // Transform the data to match our component expectations
-      return data.map(row => ({
-        position: row.position,
-        team: row.team.name,
-        played: row.played,
-        won: row.won,
-        drawn: row.drawn,
-        lost: row.lost,
-        goalsFor: row.goals_for,
-        goalsAgainst: row.goals_against,
-        goalDifference: row.goal_difference,
-        points: row.points,
-        form: row.form || ['-', '-', '-', '-', '-'],
-        logo: row.team.logo || ''
-      }));
-    }
-  });
-  
-  if (isLoading) {
-    return <LoadingState />;
-  }
+  const tableData = season === "2025/26" 
+    ? getEmptyLeagueTable() 
+    : leagueTableData;
   
   return (
     <div className={`${className}`}>
-      {/* Modern table design */}
       <div className="bg-white rounded-lg overflow-hidden shadow-sm mb-4">
         <Table>
           <TableHeader>
@@ -200,7 +95,6 @@ const LeagueTableWidget: React.FC<LeagueTableWidgetProps> = ({
         </Table>
       </div>
       
-      {/* League positions key */}
       <div className="text-sm text-gray-600 space-y-1 px-4">
         <div>Position 1: Champion Play-off</div>
         <div>Position 18: Relegation Play-off</div>
@@ -209,7 +103,6 @@ const LeagueTableWidget: React.FC<LeagueTableWidgetProps> = ({
   );
 };
 
-// Function to create an empty league table for start of season
 function getEmptyLeagueTable() {
   // All teams in alphabetical order
   const teams = [
