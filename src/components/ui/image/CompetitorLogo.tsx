@@ -1,6 +1,6 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { getCompetitorLogo } from '@/lib/image/competitorLogos';
+import { getCompetitorLogo } from '@/lib/imageUtils';
 import ResponsiveImage from './ResponsiveImage';
 
 interface CompetitorLogoProps {

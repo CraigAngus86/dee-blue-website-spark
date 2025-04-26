@@ -1,7 +1,7 @@
-
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import ResponsiveImage from "./ResponsiveImage";
+import { getClubLogo } from "@/lib/imageUtils";
 import { toast } from "sonner";
 
 interface ClubLogoProps {
@@ -35,8 +35,8 @@ const ClubLogo: React.FC<ClubLogoProps> = ({
 
   // Use the correct logo file paths directly
   const logoPath = background === "light"
-    ? "/assets/images/logos/BOD_Logo_White_square.png"
-    : "/assets/images/logos/BOD_Logo_Navy_square.png";
+    ? getClubLogo("BOD_Logo_White_square.png")
+    : getClubLogo("BOD_Logo_Navy_square.png");
   
   return (
     <div

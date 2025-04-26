@@ -1,4 +1,4 @@
-import { getTeamImage, getMatchDayImage, getStadiumImage } from '@/lib/image';
+import { getTeamImage, getMatchDayImage, getStadiumImage } from '@/lib/imageUtils';
 
 export const matchDayGallery = [
   {

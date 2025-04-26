@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
-import { resolveImagePath, handleImageError, createPlaceholder, transformImage } from "@/lib/utils/ImageUtils";
+import { resolveImagePath, handleImageError, createPlaceholder, transformImage } from "@/lib/imageUtils";
 
 type AspectRatio = "1/1" | "16/9" | "4/3" | "2/1" | "3/2" | "3/4" | "1" | string;
 type ObjectFit = "cover" | "contain" | "fill" | "none" | "scale-down";
