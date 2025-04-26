@@ -1,3 +1,4 @@
+
 /**
  * Core image utilities that will later be integrated with Cloudinary
  */
@@ -79,15 +80,15 @@ export const transformImage = (url: string, options: ImageTransformOptions): str
     const cldImage = cloudinary.image(publicId)
       .setDeliveryType('upload');
     
-    // Apply transformations if provided
+    // Apply transformations if provided using the correct transformation API
     if (options.width) {
-      cldImage.resize(`w_${options.width}`);
+      cldImage.resize().width(options.width);
     }
     if (options.height) {
-      cldImage.resize(`h_${options.height}`);
+      cldImage.resize().height(options.height);
     }
     if (options.quality) {
-      cldImage.quality(`q_${options.quality}`);
+      cldImage.quality(options.quality);
     }
     if (options.format) {
       cldImage.format(options.format);
