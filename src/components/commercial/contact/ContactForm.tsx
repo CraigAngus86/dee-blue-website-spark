@@ -1,7 +1,9 @@
+
+'use client';
+
 import React from 'react';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -9,24 +11,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import Heading from '@/components/ui/typography/Heading';
-
-const formSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
-  company: z.string().min(2, { message: "Company name must be at least 2 characters." }),
-  email: z.string().email({ message: "Please enter a valid email address." }),
-  phone: z.string().optional(),
-  message: z.string().optional(),
-  gdprConsent: z.literal(true, {
-    errorMap: () => ({ message: "You must agree to the privacy policy." }),
-  }),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+import { ContactFormData, submitContactForm } from '@/app/actions/contact';
 
 const ContactForm = () => {
   const { toast } = useToast();
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<ContactFormData>({
+    resolver: zodResolver(contactFormSchema),
     defaultValues: {
       name: "",
       company: "",
@@ -36,12 +26,22 @@ const ContactForm = () => {
     },
   });
 
-  const onSubmit = async (values: FormValues) => {
-    toast({
-      title: "Enquiry Submitted",
-      description: "We'll get back to you as soon as possible.",
-    });
-    console.log(values);
+  const onSubmit = async (values: ContactFormData) => {
+    const result = await submitContactForm(values);
+    
+    if (result.success) {
+      toast({
+        title: "Enquiry Submitted",
+        description: "We'll get back to you as soon as possible.",
+      });
+      form.reset();
+    } else {
+      toast({
+        title: "Error",
+        description: result.error || "Failed to submit form. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
