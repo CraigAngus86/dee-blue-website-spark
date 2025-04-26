@@ -272,3 +272,27 @@ export const getAvailableCompetitions = () => {
 export const getAvailableSeasons = () => {
   return ['2024/25', '2025/26'];
 };
+
+export const getUpcomingFixtures = () => {
+  return fixturesData.matches.slice(0, 3);
+};
+
+export const getMatchCenterMatches = () => {
+  return fixturesData.matches.slice(0, 5);
+};
+
+export const leagueTableData: LeagueTableData[] = [
+  {
+    position: 1,
+    team: "Banks o' Dee",
+    played: 15,
+    won: 12,
+    drawn: 2,
+    lost: 1,
+    goalsFor: 45,
+    goalsAgainst: 12,
+    points: 38,
+    form: ["W", "W", "D", "W", "W"]
+  },
+  // ... Add more teams as needed
+];
