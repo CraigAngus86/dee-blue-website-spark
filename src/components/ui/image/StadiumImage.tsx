@@ -5,18 +5,55 @@ import Image from "next/image";
 import { ImagePaths } from "@/lib/constants/imagePaths";
 import { toast } from "sonner";
 
+/**
+ * Props for the StadiumImage component
+ */
 interface StadiumImageProps {
+  /** Filename of the stadium image */
   filename: string;
+  /** Alternative text for accessibility */
   alt: string;
+  /** Type of stadium view being shown */
   view?: "aerial" | "main" | "pitch" | "facilities" | "other";
+  /** Aspect ratio of the image in the format "width/height" */
   aspectRatio?: string;
+  /** Additional CSS classes */
   className?: string;
+  /** Border radius styling */
   rounded?: boolean | "sm" | "md" | "lg" | "full";
+  /** Shadow styling */
   shadow?: boolean | "sm" | "md" | "lg";
+  /** Optional caption for the image */
   caption?: string;
+  /** Optional photo credit information */
   credit?: string;
 }
 
+/**
+ * StadiumImage component displays images of Spain Park stadium with consistent styling.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * // Basic usage
+ * <StadiumImage
+ *   filename="Spain Park.jpg"
+ *   alt="Spain Park Stadium"
+ * />
+ * 
+ * // With custom styling and caption
+ * <StadiumImage
+ *   filename="Spain Park.jpg"
+ *   alt="Aerial view of Spain Park"
+ *   view="aerial"
+ *   aspectRatio="21/9"
+ *   rounded="lg"
+ *   shadow="lg"
+ *   caption="Spain Park Stadium - Home of Banks o' Dee FC"
+ *   credit="John Smith Photography"
+ * />
+ * ```
+ */
 const StadiumImage: React.FC<StadiumImageProps> = ({
   filename,
   alt,
@@ -28,10 +65,14 @@ const StadiumImage: React.FC<StadiumImageProps> = ({
   caption,
   credit,
 }) => {
+  // Construct the full image path
   const imagePath = `${ImagePaths.stadium.base}/${filename}`;
+  
+  // Parse the aspect ratio values
   const [width, height] = aspectRatio.split('/').map(Number);
   const aspectRatioClass = `aspect-[${width}/${height}]`;
 
+  // Map of rounded corner variants to their corresponding classes
   const roundedClasses = {
     true: "rounded",
     sm: "rounded-sm",
@@ -40,6 +81,7 @@ const StadiumImage: React.FC<StadiumImageProps> = ({
     full: "rounded-full",
   };
 
+  // Map of shadow variants to their corresponding classes
   const shadowClasses = {
     true: "shadow",
     sm: "shadow-sm",

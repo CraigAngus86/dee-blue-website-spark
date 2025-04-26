@@ -1,4 +1,3 @@
-
 import React from "react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
@@ -6,15 +5,45 @@ import { Sponsor } from "@/lib/types";
 import { ImagePaths } from "@/lib/constants/imagePaths";
 import { toast } from "sonner";
 
+/**
+ * Props for the SponsorLogo component
+ */
 interface SponsorLogoProps {
+  /** Sponsor data object containing name, logo paths, and website */
   sponsor: Sponsor;
+  /** Visual variant - dark for colored backgrounds, light for dark backgrounds */
   variant?: "dark" | "light";
+  /** Size of the logo */
   size?: "xs" | "sm" | "md" | "lg" | "xl";
+  /** Additional CSS classes */
   className?: string;
+  /** Whether to display the logo in a container */
   useContainer?: boolean;
+  /** Additional CSS classes for the container */
   containerClassName?: string;
 }
 
+/**
+ * SponsorLogo component displays a sponsor's logo with consistent styling.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * // Basic usage
+ * <SponsorLogo 
+ *   sponsor={sponsorData}
+ *   size="md"
+ * />
+ * 
+ * // With light variant in container
+ * <SponsorLogo 
+ *   sponsor={sponsorData}
+ *   variant="light"
+ *   size="lg"
+ *   useContainer={true}
+ * />
+ * ```
+ */
 const SponsorLogo: React.FC<SponsorLogoProps> = ({
   sponsor,
   variant = "dark",
@@ -23,6 +52,7 @@ const SponsorLogo: React.FC<SponsorLogoProps> = ({
   useContainer = false,
   containerClassName,
 }) => {
+  // Map size strings to dimensions for consistent sizing
   const sizeClasses = {
     xs: { height: 24, width: 80 },
     sm: { height: 40, width: 120 },
@@ -31,16 +61,20 @@ const SponsorLogo: React.FC<SponsorLogoProps> = ({
     xl: { height: 96, width: 300 },
   };
 
+  // Get dimensions based on selected size
   const dimensions = sizeClasses[size];
 
+  // Use light variant logo if available and requested, otherwise use default logo
   let logoSrc = variant === "light" && sponsor.logoLight 
     ? sponsor.logoLight 
     : sponsor.logo;
   
+  // Fallback to a constructed path if no logo is provided
   if (!logoSrc) {
     logoSrc = `${ImagePaths.sponsors.base}/${sponsor.name.toLowerCase().replace(/\s+/g, '-')}.png`;
   }
 
+  // Construct the logo component
   const Logo = (
     <div className={cn("relative", dimensions.height && `h-[${dimensions.height}px]`)}>
       <Image
@@ -55,6 +89,7 @@ const SponsorLogo: React.FC<SponsorLogoProps> = ({
     </div>
   );
 
+  // If useContainer is true, wrap the logo in a container
   if (useContainer) {
     return (
       <div className={cn(
@@ -66,6 +101,7 @@ const SponsorLogo: React.FC<SponsorLogoProps> = ({
     );
   }
 
+  // If sponsor has a website, wrap the logo in a link
   if (sponsor.website) {
     return (
       <a 
@@ -79,6 +115,7 @@ const SponsorLogo: React.FC<SponsorLogoProps> = ({
     );
   }
 
+  // Otherwise, return the logo in a simple div
   return <div className="inline-block">{Logo}</div>;
 };
 

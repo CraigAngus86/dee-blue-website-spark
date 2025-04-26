@@ -1,73 +1,80 @@
-# Welcome to your Lovable project
 
-## Project info
+# Banks o' Dee FC Website
+
+## Project Overview
+This is the official website for Banks o' Dee Football Club, a Highland League football club based in Aberdeen, Scotland. The website provides fans and visitors with essential information about the club, including news, fixtures, team information, and commercial opportunities.
+
+## Project Info
 
 **URL**: https://lovable.dev/projects/20495ae9-c470-4c0a-a74d-95ca21b203f6
 
-## How can I edit this code?
+## Tech Stack
+This project is built with:
 
-There are several ways of editing your application.
+- React
+- TypeScript
+- Vite (build tool)
+- Tailwind CSS (styling)
+- shadcn/ui (component library)
+- Supabase (backend services)
 
-**Use Lovable**
+## Key Features
+- News & updates
+- Match fixtures and results
+- Team & player information
+- Stadium information (Spain Park)
+- Commercial & sponsorship information
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/20495ae9-c470-4c0a-a74d-95ca21b203f6) and start prompting.
+## Getting Started
 
-Changes made via Lovable will be committed automatically to this repo.
+### Prerequisites
+- Node.js 18+ - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- npm 8+
 
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+### Local Development
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# Clone the repository
+git clone <repository-url>
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Navigate to project directory
+cd banks-o-dee-fc
 
-# Step 3: Install the necessary dependencies.
-npm i
+# Install dependencies
+npm install
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start the development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The development server will start at `http://localhost:5173`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Available Scripts
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build locally
+- `npm run lint` - Run ESLint
+- `npm run typecheck` - Run TypeScript type checking
 
-**Use GitHub Codespaces**
+## Project Structure
+- `/src` - Source code
+  - `/components` - Reusable UI components
+  - `/pages` - Page components
+  - `/lib` - Utility functions and shared logic
+  - `/hooks` - Custom React hooks
+  - `/data` - Static data and mock data
+  - `/docs` - Documentation files
+  - `/assets` - Static assets like images
+  - `/styles` - Global styles
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Deployment
+The site is deployed using Lovable's publishing feature. 
 
-## What technologies are used for this project?
+## Planned Migration
+This project is planned for migration to Next.js in the future. Documentation related to this transition can be found in `ARCHITECTURE.md`.
 
-This project is built with:
+## Contributing
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines on how to contribute to this project.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/20495ae9-c470-4c0a-a74d-95ca21b203f6) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes it is!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## License
+© 2025 Banks o' Dee FC. All rights reserved.
