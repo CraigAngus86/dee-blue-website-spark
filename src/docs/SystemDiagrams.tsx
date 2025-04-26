@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Tab, Tabs } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import Container from "@/components/ui/layout/Container";
 import Section from '@/components/ui/layout/Section';
@@ -29,28 +29,26 @@ const SystemDiagrams: React.FC = () => {
           
           <Card className="p-6 bg-white shadow-md">
             <Tabs defaultValue="component-hierarchy" className="space-y-6">
-              <div className="flex justify-center overflow-auto pb-2 border-b">
-                <Tab value="component-hierarchy" className="px-4 py-2">
+              <TabsList className="flex justify-center overflow-auto pb-2 border-b">
+                <TabsTrigger value="component-hierarchy" className="px-4 py-2">
                   Component Hierarchy
-                </Tab>
-                <Tab value="data-flow" className="px-4 py-2">
+                </TabsTrigger>
+                <TabsTrigger value="data-flow" className="px-4 py-2">
                   Data Flow
-                </Tab>
-                <Tab value="routing-map" className="px-4 py-2">
+                </TabsTrigger>
+                <TabsTrigger value="routing-map" className="px-4 py-2">
                   Routing Map
-                </Tab>
-              </div>
-              <div className="pt-2">
-                <div data-value="component-hierarchy">
-                  <ComponentHierarchy />
-                </div>
-                <div data-value="data-flow">
-                  <DataFlowDiagram />
-                </div>
-                <div data-value="routing-map">
-                  <RoutingMap />
-                </div>
-              </div>
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="component-hierarchy">
+                <ComponentHierarchy />
+              </TabsContent>
+              <TabsContent value="data-flow">
+                <DataFlowDiagram />
+              </TabsContent>
+              <TabsContent value="routing-map">
+                <RoutingMap />
+              </TabsContent>
             </Tabs>
           </Card>
           
