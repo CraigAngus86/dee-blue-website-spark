@@ -1,4 +1,3 @@
-
 # Banks o' Dee FC - Design System
 
 ## Color Palette
@@ -63,63 +62,82 @@ Use the `<Heading>` component with these props:
 - `color`: "default" | "primary" | "secondary" | "accent" | "white"
 - `weight`: "light" | "regular" | "medium" | "semibold" | "bold" (defaults to "bold")
 
-## Components
+## Image Guidelines
+
+### Responsive Images
+Use the `ResponsiveImage` component for all images to ensure proper handling across devices:
+
+```typescript
+import { ResponsiveImage } from '@/components/ui/image/ResponsiveImage';
+
+<ResponsiveImage
+  src={imageUrl}
+  alt="Descriptive alt text"
+  aspectRatio="16/9"  // or "1/1", "4/3", etc.
+  objectFit="cover"   // or "contain", "fill"
+  className="rounded-lg"
+/>
+```
+
+### Image Best Practices
+1. **Always use responsive images** - Never use raw `<img>` tags
+2. **Provide meaningful alt text** - Essential for accessibility
+3. **Use appropriate aspect ratios** - Common ratios:
+   - 16/9 for hero images and news
+   - 1/1 for profile pictures and logos
+   - 4/3 for general content images
+4. **Optimize image loading** with:
+   - Proper sizing
+   - Lazy loading for below-fold images
+   - WebP format when possible
+   - Blur placeholder for large images
+
+### Asset Organization
+- Club logos: `/assets/images/logos/`
+- Player photos: `/assets/images/players/`
+- Stadium images: `/assets/images/stadium/`
+- News images: `/assets/images/news/`
+- Team photos: `/assets/images/team/`
+- Sponsor logos: `/assets/images/sponsors/`
+
+### Image Components
+1. **ClubLogo**
+   - Use for official club branding
+   - Supports light/dark variants
+   - Available in multiple sizes
+
+2. **PlayerImage**
+   - Optimized for player profiles
+   - Consistent aspect ratio
+   - Fallback placeholder
+
+3. **SponsorLogo**
+   - Maintain sponsor brand guidelines
+   - Support for different tiers
+   - Container options
+
+## Component Guidelines
 
 ### Buttons
-Use `<ButtonNew>` component with these props:
-- `variant`: "primary" | "secondary" | "tertiary" | "accent" | "outline" | "ghost"
-- `size`: "sm" | "md" | "lg" | "xl"
-- `iconLeft`: React node for left icon
-- `iconRight`: React node for right icon
-- `fullWidth`: boolean
-- `loading`: boolean
-- `disabled`: boolean
+- Use `ButtonNew` component for all buttons
+- Follow color hierarchy:
+  - Primary: Deep navy for main actions
+  - Secondary: Light blue for alternative actions
+  - Accent: Gold for special CTAs
+- Include loading states for async actions
+- Add icons using Lucide React
 
 ### Cards
-Use `<CardNew>` component with these props:
-- `variant`: "default" | "bordered" | "elevated" | "interactive"
-- `padding`: "none" | "sm" | "md" | "lg"
-- `className`: additional tailwind classes
+- Consistent padding (p-4 or p-6)
+- Rounded corners (rounded-lg)
+- Optional hover states
+- Shadow variants for elevation
 
-### Section
-Use `<Section>` component with these props:
-- `background`: "white" | "light" | "primary" | "primary-gradient" | "accent-gradient"
-- `spacing`: "sm" | "md" | "lg" | "xl"
-- `animate`: boolean
-- `className`: additional tailwind classes
-
-### Hero Sections
-Two main hero components:
-
-1. `<MainHero>` - Full-height hero for homepage and key landing pages
-   - `backgroundSrc`: image path
-   - `backgroundAlt`: alt text
-   - `overlayColor`: "primary" | "dark" | "gradient"
-   - `overlayOpacity`: "light" | "medium" | "heavy"
-   - `contentPosition`: "center" | "left" | "right"
-
-2. `<SectionHero>` - Banner-style hero for section pages
-   - `backgroundSrc`: image path
-   - `backgroundAlt`: alt text
-   - `overlayColor`: "primary" | "dark" | "gradient"
-   - `overlayOpacity`: "light" | "medium" | "heavy"
-   - `title`: string
-   - `subtitle`: string (optional)
-   - `breadcrumbs`: Array of {label: string, href: string}
-
-## Layout
-
-### Container
-Use `<Container>` component with these props:
-- `size`: "sm" | "md" | "lg" | "xl" | "full"
-- `className`: additional tailwind classes
-
-### Grid
-Use `<Grid>` component with these props:
-- `columns`: object with responsive column counts {default: number, sm?: number, md?: number, lg?: number, xl?: number}
-- `gap`: "none" | "sm" | "md" | "lg"
-- `animate`: boolean
-- `className`: additional tailwind classes
+### Layout
+- Use Container for max-width constraints
+- Implement responsive grids
+- Maintain consistent spacing
+- Follow mobile-first approach
 
 ## Shadows
 - **Shadow SM**: `var(--shadow-sm)` - Subtle shadow for small elements
@@ -149,3 +167,35 @@ Use `<Grid>` component with these props:
 - **lg**: 1024px and up
 - **xl**: 1280px and up
 - **2xl**: 1536px and up
+
+## Accessibility Guidelines
+1. **Color Contrast**
+   - Maintain WCAG AA standard (4.5:1 for normal text)
+   - Use contrast checker for color combinations
+   - Provide sufficient contrast for interactive elements
+
+2. **Typography**
+   - Minimum text size of 16px for body text
+   - Clear hierarchy with proper heading levels
+   - Adequate line height for readability
+
+3. **Interactive Elements**
+   - Clear focus states
+   - Proper aria-labels
+   - Keyboard navigation support
+
+## Performance Optimization
+1. **Image Loading**
+   - Implement lazy loading
+   - Use appropriate image sizes
+   - Optimize image formats
+
+2. **Component Loading**
+   - Code splitting for large components
+   - Lazy loading for below-fold content
+   - Proper suspense boundaries
+
+3. **Asset Management**
+   - Minimize bundle sizes
+   - Optimize resource loading
+   - Implement proper caching strategies
