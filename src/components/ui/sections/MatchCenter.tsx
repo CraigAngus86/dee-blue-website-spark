@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import { getMatchCenterMatches } from '@/mock-data/fixturesData';
@@ -6,7 +5,6 @@ import Container from "@/components/ui/layout/Container";
 import SectionHeader from "@/components/ui/sections/SectionHeader";
 import MatchCarousel from "@/components/ui/match/MatchCarousel";
 import Text from "@/components/ui/typography/Text";
-import { Clock, MapPin } from "lucide-react";
 
 const MatchCenter: React.FC = () => {
   const [matches, setMatches] = React.useState([]);
@@ -45,7 +43,6 @@ const MatchCenter: React.FC = () => {
           <MatchCarousel matches={matches} isLoading={isLoading} />
         </div>
         
-        {/* League Table Section */}
         <div className="px-4 sm:px-6 pb-6">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-bold text-primary">Highland League Table</h3>
@@ -59,7 +56,6 @@ const MatchCenter: React.FC = () => {
           </div>
           
           <div className="flex items-center p-4 rounded-md bg-white border border-gray-100">
-            {/* Position and team name */}
             <div className="flex items-center mr-8">
               <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white text-xl font-bold mr-4">
                 3
@@ -69,33 +65,27 @@ const MatchCenter: React.FC = () => {
               </div>
             </div>
             
-            {/* Stats */}
             <div className="flex items-center space-x-8 ml-auto">
-              {/* Points */}
               <div className="text-center px-4">
-                <Text as="div" size="xl" weight="bold" color="primary">72</Text>
+                <Text as="div" size="large" weight="bold" color="primary">72</Text>
                 <Text as="div" size="xs" color="muted">POINTS</Text>
               </div>
               
-              {/* Won */}
               <div className="text-center px-4 hidden md:block">
                 <Text as="div" size="large" weight="medium" color="primary">22</Text>
                 <Text as="div" size="xs" color="muted">WON</Text>
               </div>
               
-              {/* Drawn */}
               <div className="text-center px-4 hidden md:block">
                 <Text as="div" size="large" weight="medium" color="primary">6</Text>
                 <Text as="div" size="xs" color="muted">DRAWN</Text>
               </div>
               
-              {/* Lost */}
               <div className="text-center px-4 hidden md:block">
                 <Text as="div" size="large" weight="medium" color="primary">6</Text>
                 <Text as="div" size="xs" color="muted">LOST</Text>
               </div>
               
-              {/* Form */}
               <div className="flex flex-col items-center">
                 <div className="flex space-x-1.5">
                   <div className="w-7 h-7 rounded-full bg-green-500 text-white text-sm flex items-center justify-center font-semibold">W</div>
