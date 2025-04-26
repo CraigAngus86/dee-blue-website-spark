@@ -1,3 +1,4 @@
+'use client';
 
 import React from "react";
 import { cn } from "@/lib/utils";
@@ -31,7 +32,6 @@ const NewsCard: React.FC<NewsCardProps> = ({
         onClick={onClick}
       >
         <div className="relative flex-grow flex flex-col">
-          {/* Image container with full height */}
           <div className={cn(
             "relative flex-grow",
             isFeatured ? "aspect-[2/1]" : "aspect-square"
@@ -46,7 +46,6 @@ const NewsCard: React.FC<NewsCardProps> = ({
             <div className="absolute inset-0 bg-gradient-to-t from-[#00105A]/90 via-[#00105A]/50 to-transparent" />
           </div>
 
-          {/* Content overlay */}
           <div className="absolute inset-0 flex flex-col justify-end p-6">
             <h3 className={cn(
               "font-montserrat font-bold text-white mb-2 line-clamp-3",
