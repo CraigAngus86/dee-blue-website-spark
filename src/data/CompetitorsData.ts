@@ -1,125 +1,131 @@
-
-import { Competitor } from "@/lib/types";
-import { getCompetitorLogo, getPlaceholderImageUrl } from "@/lib/image";
+import { Competitor } from '@/lib/types';
+import { v4 as uuidv4 } from 'uuid';
 
 export const competitors: Competitor[] = [
   {
-    name: "Brechin City FC",
-    logo: "/assets/images/competitors/Brechin.png",
-    shortName: "Brechin",
-    website: "https://www.brechincity.com"
+    id: uuidv4(),
+    name: "Aberdeen",
+    logo: "/assets/images/competitors/Aberdeen.png",
+    shortName: "ABD",
+    website: "https://www.afc.co.uk"
   },
   {
-    name: "Brora Rangers FC",
-    logo: "/assets/images/competitors/Brora.png",
-    shortName: "Brora",
-    website: "https://www.brorarangers.football"
+    id: uuidv4(),
+    name: "Banks o' Dee",
+    logo: "/assets/images/club-logo-rect.png",
+    shortName: "BOD",
+    website: "https://www.banksodee.co.uk"
   },
   {
-    name: "Buckie Thistle FC",
-    logo: "/assets/images/competitors/Buckie.png",
-    shortName: "Buckie",
-    website: "https://www.buckiethistle.com"
+    id: uuidv4(),
+    name: "Brora Rangers",
+    logo: "/assets/images/competitors/BroraRangers.png",
+    shortName: "BRR",
+    website: "https://www.brorarangers.co.uk/"
   },
   {
-    name: "Clachnacuddin FC",
-    logo: "/assets/images/competitors/Clach.png",
-    shortName: "Clach",
-    website: "https://www.clachfc.com"
+    id: uuidv4(),
+    name: "Buckie Thistle",
+    logo: "/assets/images/competitors/BuckieThistle.png",
+    shortName: "BUC",
+    website: "https://www.buckiethistle.com/"
   },
   {
-    name: "Deveronvale FC",
+    id: uuidv4(),
+    name: "Clachnacuddin",
+    logo: "/assets/images/competitors/Clachnacuddin.png",
+    shortName: "CLA",
+    website: "https://www.clachfc.com/"
+  },
+  {
+    id: uuidv4(),
+    name: "Deveronvale",
     logo: "/assets/images/competitors/Deveronvale.png",
-    shortName: "Vale",
-    website: "https://www.deveronvale.co.uk"
+    shortName: "DEV",
+    website: "http://www.deveronvale.co.uk/"
   },
   {
-    name: "Formartine United FC",
-    logo: "/assets/images/competitors/Formartine.png",
-    shortName: "Formartine",
-    website: "https://www.formartineunitedfc.co.uk"
+    id: uuidv4(),
+    name: "Formartine United",
+    logo: "/assets/images/competitors/FormartineUnited.png",
+    shortName: "FOR",
+    website: "https://www.formartineunited.com/"
   },
   {
-    name: "Forres Mechanics FC",
-    logo: "/assets/images/competitors/Forres.png",
-    shortName: "Forres",
-    website: "https://www.forresmechanics.net"
+    id: uuidv4(),
+    name: "Forres Mechanics",
+    logo: "/assets/images/competitors/ForresMechanics.png",
+    shortName: "FRR",
+    website: "https://www.forresmechanics.com/"
   },
   {
-    name: "Fraserburgh FC",
+    id: uuidv4(),
+    name: "Fraserburgh",
     logo: "/assets/images/competitors/Fraserburgh.png",
-    shortName: "Broch",
-    website: "https://www.fraserburghfc.co.uk"
+    shortName: "FRA",
+    website: "https://www.fraserburghfc.co.uk/"
   },
   {
-    name: "Huntly FC",
+    id: uuidv4(),
+    name: "Huntly",
     logo: "/assets/images/competitors/Huntly.png",
-    shortName: "Huntly",
-    website: "https://www.huntlyfc.co.uk"
+    shortName: "HUN",
+    website: "https://www.huntlyfc.co.uk/"
   },
   {
-    name: "Keith FC",
+    id: uuidv4(),
+    name: "Inverurie Loco Works",
+    logo: "/assets/images/competitors/InverurieLocoWorks.png",
+    shortName: "INV",
+    website: "https://www.inverurielocoworksfc.co.uk/"
+  },
+  {
+    id: uuidv4(),
+    name: "Keith",
     logo: "/assets/images/competitors/Keith.png",
-    shortName: "Keith",
-    website: "https://www.keithfc.com"
+    shortName: "KEI",
+    website: "https://www.keithfc.co.uk/"
+  },
+   {
+    id: uuidv4(),
+    name: "Lossiemouth",
+    logo: "/assets/images/competitors/Lossiemouth.png",
+    shortName: "LOS",
+    website: "https://www.lossiemouthfc.co.uk/"
   },
   {
-    name: "Inverurie Loco Works FC",
-    logo: "/assets/images/competitors/Locos.png",
-    shortName: "Locos",
-    website: "https://www.inverurielocoworks.co.uk"
+    id: uuidv4(),
+    name: "Nairn County",
+    logo: "/assets/images/competitors/NairnCounty.png",
+    shortName: "NAI",
+    website: "https://www.nairncountyfc.co.uk/"
   },
   {
-    name: "Lossiemouth FC",
-    logo: "/assets/images/competitors/Lossie.png",
-    shortName: "Lossie",
-    website: "https://www.lossiemouthfc.club"
-  },
-  {
-    name: "Nairn County FC",
-    logo: "/assets/images/competitors/Nairn.png",
-    shortName: "Nairn",
-    website: "https://www.nairncountyfc.co.uk"
-  },
-  {
-    name: "Rothes FC",
+    id: uuidv4(),
+    name: "Rothes",
     logo: "/assets/images/competitors/Rothes.png",
-    shortName: "Rothes",
-    website: "https://www.rothesfc.co.uk"
+    shortName: "ROT",
+    website: "https://www.rothesafc.co.uk/"
   },
   {
-    name: "Strathspey Thistle FC",
-    logo: "/assets/images/competitors/Strathspey.png",
-    shortName: "Strathspey",
-    website: "https://www.strathspeythistlefc.co.uk"
+    id: uuidv4(),
+    name: "Strathspey Thistle",
+    logo: "/assets/images/competitors/StrathspeyThistle.png",
+    shortName: "STR",
+    website: "https://www.strathspeythistlefc.co.uk/"
   },
   {
-    name: "Turriff United FC",
-    logo: "/assets/images/competitors/Turriff.png",
-    shortName: "Turriff",
-    website: "https://www.turriffunitedfc.co.uk"
+    id: uuidv4(),
+    name: "Turriff United",
+    logo: "/assets/images/competitors/TurriffUnited.png",
+    shortName: "TUR",
+    website: "https://www.turriffunited.co.uk/"
   },
   {
-    name: "Wick Academy FC",
-    logo: "/assets/images/competitors/Wick.png",
-    shortName: "Wick",
-    website: "https://www.wickacademyfc.co.uk"
+    id: uuidv4(),
+    name: "Wick Academy",
+    logo: "/assets/images/competitors/WickAcademy.png",
+    shortName: "WIC",
+    website: "https://www.wickacademyfc.co.uk/"
   }
 ];
-
-/**
- * Get competitor info by name
- */
-export const getCompetitorByName = (name: string): Competitor | undefined => {
-  return competitors.find(
-    (c) => c.name.toLowerCase() === name.toLowerCase() || 
-           c.shortName?.toLowerCase() === name.toLowerCase()
-  );
-};
-
-/**
- * Get all competitors
- */
-export const getAllCompetitors = (): Competitor[] => {
-  return competitors;
-};

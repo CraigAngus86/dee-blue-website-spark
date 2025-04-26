@@ -15,5 +15,11 @@ export interface Match {
   awayLogo?: string;
   round?: string;
   ticketLink?: string;
-  status?: 'upcoming' | 'live' | 'finished';
+  status: 'upcoming' | 'live' | 'finished';
+  result?: {
+    homeScore: number;
+    awayScore: number;
+  };
+  isCompleted?: boolean;
 }
+

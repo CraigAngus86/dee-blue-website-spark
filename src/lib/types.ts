@@ -66,6 +66,7 @@ export interface LeagueTableData {
   goalsAgainst: number;
   points: number;
   form: string[];
+  goalDifference?: number;
 }
 
 export interface PlayerStats {

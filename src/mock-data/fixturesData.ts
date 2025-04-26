@@ -12,6 +12,7 @@ export const fixturesData = {
       venue: 'Spain Park',
       status: 'upcoming',
       score: null,
+      isCompleted: false
     },
     {
       id: '2',
@@ -24,6 +25,7 @@ export const fixturesData = {
       venue: 'Spain Park',
       status: 'upcoming',
       score: null,
+      isCompleted: false
     },
     {
       id: '3',
@@ -36,6 +38,7 @@ export const fixturesData = {
       venue: 'Spain Park',
       status: 'upcoming',
       score: null,
+      isCompleted: false
     },
     {
       id: '4',
@@ -48,6 +51,7 @@ export const fixturesData = {
       venue: 'Spain Park',
       status: 'upcoming',
       score: null,
+      isCompleted: false
     },
     {
       id: '5',
@@ -60,6 +64,7 @@ export const fixturesData = {
       venue: 'Spain Park',
       status: 'upcoming',
       score: null,
+      isCompleted: false
     },
     {
       id: '6',
@@ -72,6 +77,7 @@ export const fixturesData = {
       venue: 'Spain Park',
       status: 'upcoming',
       score: null,
+      isCompleted: false
     },
     {
       id: '7',
@@ -84,6 +90,7 @@ export const fixturesData = {
       venue: 'Spain Park',
       status: 'upcoming',
       score: null,
+      isCompleted: false
     },
     {
       id: '8',
@@ -96,6 +103,7 @@ export const fixturesData = {
       venue: 'Spain Park',
       status: 'upcoming',
       score: null,
+      isCompleted: false
     },
     {
       id: '9',
@@ -108,6 +116,7 @@ export const fixturesData = {
       venue: 'Spain Park',
       status: 'upcoming',
       score: null,
+      isCompleted: false
     },
     {
       id: '10',
@@ -120,6 +129,7 @@ export const fixturesData = {
       venue: 'Spain Park',
       status: 'upcoming',
       score: null,
+      isCompleted: false
     },
     {
       id: '11',
@@ -132,6 +142,7 @@ export const fixturesData = {
       venue: 'Spain Park',
       status: 'upcoming',
       score: null,
+      isCompleted: false
     },
     {
       id: '12',
@@ -144,6 +155,7 @@ export const fixturesData = {
       venue: 'Spain Park',
       status: 'upcoming',
       score: null,
+      isCompleted: false
     },
     {
       id: '13',
@@ -156,6 +168,7 @@ export const fixturesData = {
       venue: 'Spain Park',
       status: 'upcoming',
       score: null,
+      isCompleted: false
     },
     {
       id: '14',
@@ -168,6 +181,7 @@ export const fixturesData = {
       venue: 'Spain Park',
       status: 'upcoming',
       score: null,
+      isCompleted: false
     },
     {
       id: '15',
@@ -180,6 +194,7 @@ export const fixturesData = {
       venue: 'Spain Park',
       status: 'upcoming',
       score: null,
+      isCompleted: false
     },
     {
       id: '16',
@@ -192,6 +207,7 @@ export const fixturesData = {
       venue: 'Spain Park',
       status: 'upcoming',
       score: null,
+      isCompleted: false
     },
     {
       id: '17',
@@ -204,75 +220,118 @@ export const fixturesData = {
       venue: 'Spain Park',
       status: 'upcoming',
       score: null,
-    },
+      isCompleted: false
+    }
   ]
 };
 
 export const resultsData = {
   results: [
     {
-      "id": "101",
-      "date": "2024-07-15T15:00:00",
-      "homeTeam": "Banks o' Dee",
-      "awayTeam": "Inverurie Haughs",
-      "competition": "Highland League",
-      "location": "Spain Park",
-      "score": "2-1"
+      id: "101",
+      date: "2024-07-15T15:00:00",
+      homeTeam: "Banks o' Dee",
+      awayTeam: "Inverurie Haughs",
+      competition: "Highland League",
+      location: "Spain Park",
+      status: "finished",
+      isCompleted: true,
+      score: "2-1",
+      result: {
+        homeScore: 2,
+        awayScore: 1
+      }
     },
     {
-      "id": "102",
-      "date": "2024-07-22T15:00:00",
-      "homeTeam": "Banks o' Dee",
-      "awayTeam": "Formartine",
-      "competition": "Highland League",
-      "location": "Spain Park",
-      "score": "1-1"
+      id: "102",
+      date: "2024-07-22T15:00:00",
+      homeTeam: "Banks o' Dee",
+      awayTeam: "Formartine",
+      competition: "Highland League",
+      location: "Spain Park",
+      status: "finished",
+      isCompleted: true,
+      score: "1-1",
+      result: {
+        homeScore: 1,
+        awayScore: 1
+      }
     },
     {
-      "id": "103",
-      "date": "2024-07-29T15:00:00",
-      "homeTeam": "Banks o' Dee",
-      "awayTeam": "Fraserburgh",
-      "competition": "Highland League",
-      "location": "Spain Park",
-      "score": "3-2"
+      id: "103",
+      date: "2024-07-29T15:00:00",
+      homeTeam: "Banks o' Dee",
+      awayTeam: "Fraserburgh",
+      competition: "Highland League",
+      location: "Spain Park",
+      status: "finished",
+      isCompleted: true,
+      score: "3-2",
+      result: {
+        homeScore: 3,
+        awayScore: 2
+      }
     },
     {
-      "id": "104",
-      "date": "2024-08-05T15:00:00",
-      "homeTeam": "Banks o' Dee",
-      "awayTeam": "Buckie Thistle",
-      "competition": "Highland League",
-      "location": "Spain Park",
-      "score": "0-0"
+      id: "104",
+      date: "2024-08-05T15:00:00",
+      homeTeam: "Banks o' Dee",
+      awayTeam: "Buckie Thistle",
+      competition: "Highland League",
+      location: "Spain Park",
+      status: "finished",
+      isCompleted: true,
+      score: "0-0",
+      result: {
+        homeScore: 0,
+        awayScore: 0
+      }
     },
     {
-      "id": "105",
-      "date": "2024-08-12T15:00:00",
-      "homeTeam": "Banks o' Dee",
-      "awayTeam": "Brora Rangers",
-      "competition": "Highland League",
-      "location": "Spain Park",
-      "score": "2-0"
+      id: "105",
+      date: "2024-08-12T15:00:00",
+      homeTeam: "Banks o' Dee",
+      awayTeam: "Brora Rangers",
+      competition: "Highland League",
+      location: "Spain Park",
+      status: "finished",
+      isCompleted: true,
+      score: "2-0",
+      result: {
+        homeScore: 2,
+        awayScore: 0
+      }
     },
     {
-      "id": "106",
-      "date": "2024-08-19T15:00:00",
-      "homeTeam": "Banks o' Dee",
-      "awayTeam": "Clachnacuddin",
-      "competition": "Highland League",
-      "location": "Spain Park",
-      "score": "1-0"
+      id: "106",
+      date: "2024-08-19T15:00:00",
+      homeTeam: "Banks o' Dee",
+      awayTeam: "Clachnacuddin",
+      competition: "Highland League",
+      location: "Spain Park",
+      status: "finished",
+      isCompleted: true,
+      score: "1-0",
+      result: {
+        homeScore: 1,
+        awayScore: 0
+      }
     },
     {
-      "id": "107",
-      "date": "2024-08-26T15:00:00",
-      "homeTeam": "Banks o' Dee",
-      "awayTeam": "Lossiemouth",
-      "competition": "Highland League",
-      "location": "Spain Park",
-      "score": "4-1"
-    },
+      id: "107",
+      date: "2024-08-26T15:00:00",
+      homeTeam: "Banks o' Dee",
+      awayTeam: "Lossiemouth",
+      competition: "Highland League",
+      location: "Spain Park",
+      status: "finished",
+      isCompleted: true,
+      score: "4-1",
+      result: {
+        homeScore: 4,
+        awayScore: 1
+      }
+    }
   ]
 };
 
