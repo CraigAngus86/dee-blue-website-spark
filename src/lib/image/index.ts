@@ -1,5 +1,5 @@
 
-export * from "./imageBase";
+export * from "../ImageUtils";
 export * from "./clubLogo";
 export * from "./matchPhotos";
 export * from "./newsImages";
