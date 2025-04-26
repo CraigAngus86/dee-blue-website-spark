@@ -92,9 +92,6 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
       ? shadowClasses.true 
       : '';
 
-  // Determine if we should start loading the image
-  const shouldLoad = priority || isInView;
-
   // Calculate dimensions based on aspect ratio if not provided
   const getImageDimensions = () => {
     if (width && height) return { width, height };
@@ -133,7 +130,7 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
 
       <Image
         ref={imageRef}
-        src={shouldLoad ? src : ''}
+        src={src}
         alt={alt}
         width={dimensions.width}
         height={dimensions.height}
