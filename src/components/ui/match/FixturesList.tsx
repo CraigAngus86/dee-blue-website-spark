@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useEffect, useState, useMemo } from 'react';
 import { Match } from '@/types/match';
 import MatchCardNew from '../image/MatchCardNew';

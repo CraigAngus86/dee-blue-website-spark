@@ -1,7 +1,7 @@
 
 'use client';
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import HeroSection from "@/components/ui/hero/HeroSection";
 import OverlappingNewsCards from "@/components/ui/sections/OverlappingNewsCards";
 import FanZoneSection from "@/components/ui/sections/FanZoneSection";
@@ -11,6 +11,7 @@ import FadeIn from "@/components/ui/animations/FadeIn";
 import MatchCenter from "@/components/ui/sections/MatchCenter";
 import PlayersSection from "@/components/ui/sections/PlayersSection";
 import Section from "@/components/ui/layout/Section";
+import LoadingState from "@/components/ui/common/LoadingState";
 import { getNewsImage } from "@/lib/image";
 import { newsArticles } from "@/mock-data/newsData";
 
@@ -32,7 +33,9 @@ const HomePage: React.FC = () => {
         
         <div className="py-12">
           <FadeIn>
-            <OverlappingNewsCards articles={newsArticles} count={6} />
+            <Suspense fallback={<LoadingState variant="skeleton" count={3} />}>
+              <OverlappingNewsCards articles={newsArticles} count={6} />
+            </Suspense>
           </FadeIn>
         </div>
         
@@ -40,19 +43,25 @@ const HomePage: React.FC = () => {
         
         <Section background="light" spacing="lg">
           <FadeIn>
-            <MatchCenter />
+            <Suspense fallback={<LoadingState variant="skeleton" count={2} />}>
+              <MatchCenter />
+            </Suspense>
           </FadeIn>
         </Section>
         
         <GradientSeparator />
         
         <div className="py-12">
-          <FanZoneSection />
+          <Suspense fallback={<LoadingState variant="spinner" />}>
+            <FanZoneSection />
+          </Suspense>
         </div>
         
         <GradientSeparator />
         
-        <PlayersSection />
+        <Suspense fallback={<LoadingState variant="skeleton" count={4} />}>
+          <PlayersSection />
+        </Suspense>
         
         <GradientSeparator />
         

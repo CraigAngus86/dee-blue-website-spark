@@ -1,3 +1,4 @@
+'use client';
 
 import React from "react";
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
