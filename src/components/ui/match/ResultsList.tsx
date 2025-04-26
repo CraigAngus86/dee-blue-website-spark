@@ -1,10 +1,9 @@
-'use client';
 
-import React, { useEffect, useState, useMemo } from 'react';
-import { Match } from '@/types/match';
+import React, { Suspense } from 'react';
 import MatchCardNew from '../image/MatchCardNew';
-import { getResults, getMatchesByMonth } from '@/mock-data/fixturesData';
+import { getFixtures } from '@/lib/server/getFixtures';
 import LoadingState from '../common/LoadingState';
+import { getMatchesByMonth } from '@/mock-data/fixturesData';
 
 interface ResultsListProps {
   selectedCompetitions?: string[];
@@ -12,69 +11,40 @@ interface ResultsListProps {
   selectedSeason?: string;
 }
 
-const ResultsList: React.FC<ResultsListProps> = ({ 
+async function ResultsContent({ 
   selectedCompetitions = [],
   selectedMonth = 'all',
   selectedSeason = '2024/25'
-}) => {
-  const [allRecentResults, setAllRecentResults] = useState<Match[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+}) {
+  const { matches } = await getFixtures('results', selectedSeason);
   
-  useEffect(() => {
-    const loadResults = () => {
-      setIsLoading(true);
-      try {
-        const results = getResults(selectedSeason);
-        setAllRecentResults(results);
-      } catch (error) {
-        console.error("Error loading results:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    loadResults();
-  }, [selectedCompetitions, selectedMonth, selectedSeason]);
+  let filteredResults = matches;
   
-  const filteredResults = useMemo(() => {
-    let filtered = allRecentResults;
-    
-    if (selectedCompetitions.length > 0) {
-      filtered = filtered.filter(result => 
-        selectedCompetitions.some(comp => result.competition.includes(comp))
-      );
-    }
-    
-    if (selectedMonth && selectedMonth !== 'all') {
-      filtered = filtered.filter(result => {
-        const date = new Date(result.date);
-        const monthYear = date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
-        return monthYear === selectedMonth;
-      });
-    }
-    
-    return filtered;
-  }, [allRecentResults, selectedCompetitions, selectedMonth]);
-  
-  const resultsByMonthData = useMemo(() => {
-    const sortedResults = [...filteredResults].sort((a, b) => {
-      return new Date(b.date).getTime() - new Date(a.date).getTime();
-    });
-    
-    return getMatchesByMonth(sortedResults);
-  }, [filteredResults]);
-  
-  const sortedMonths = useMemo(() => {
-    return Object.keys(resultsByMonthData).sort((a, b) => {
-      const dateA = new Date(resultsByMonthData[a][0]?.date || '');
-      const dateB = new Date(resultsByMonthData[b][0]?.date || '');
-      return dateB.getTime() - dateA.getTime();
-    });
-  }, [resultsByMonthData]);
-
-  if (isLoading) {
-    return <LoadingState count={2} />;
+  if (selectedCompetitions.length > 0) {
+    filteredResults = filteredResults.filter(result => 
+      selectedCompetitions.some(comp => result.competition.includes(comp))
+    );
   }
+  
+  if (selectedMonth && selectedMonth !== 'all') {
+    filteredResults = filteredResults.filter(result => {
+      const date = new Date(result.date);
+      const monthYear = date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+      return monthYear === selectedMonth;
+    });
+  }
+  
+  const resultsByMonthData = getMatchesByMonth(
+    [...filteredResults].sort((a, b) => {
+      return new Date(b.date).getTime() - new Date(a.date).getTime();
+    })
+  );
+  
+  const sortedMonths = Object.keys(resultsByMonthData).sort((a, b) => {
+    const dateA = new Date(resultsByMonthData[a][0]?.date || '');
+    const dateB = new Date(resultsByMonthData[b][0]?.date || '');
+    return dateB.getTime() - dateA.getTime();
+  });
 
   return (
     <div className="space-y-8">
@@ -100,6 +70,12 @@ const ResultsList: React.FC<ResultsListProps> = ({
       )}
     </div>
   );
-};
+}
 
-export default React.memo(ResultsList);
+export default function ResultsList(props: ResultsListProps) {
+  return (
+    <Suspense fallback={<LoadingState count={2} />}>
+      <ResultsContent {...props} />
+    </Suspense>
+  );
+}
