@@ -1,8 +1,8 @@
 
+import { newsArticles } from '@/mock-data/newsData';
+
 export async function getNews() {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/news`);
-  if (!response.ok) {
-    throw new Error('Failed to fetch news');
-  }
-  return response.json();
+  // In a production app, this would be an API call
+  // For now, we'll use mock data directly
+  return { articles: newsArticles };
 }

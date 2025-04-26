@@ -1,7 +1,7 @@
 
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -12,10 +12,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import Heading from '@/components/ui/typography/Heading';
 import { contactFormSchema, type ContactFormData } from '@/lib/schemas/contactSchema';
-import { submitContactForm } from '@/app/actions/contact';
 
 const ContactForm = () => {
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
   const form = useForm<ContactFormData>({
     resolver: zodResolver(contactFormSchema),
     defaultValues: {
@@ -28,20 +29,30 @@ const ContactForm = () => {
   });
 
   const onSubmit = async (values: ContactFormData) => {
-    const result = await submitContactForm(values);
+    setIsSubmitting(true);
     
-    if (result.success) {
+    try {
+      // In a real app, this would be an API call
+      // For now, we'll simulate a successful submission
+      console.log("Form submitted with values:", values);
+      
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
       toast({
         title: "Enquiry Submitted",
         description: "We'll get back to you as soon as possible.",
       });
       form.reset();
-    } else {
+    } catch (error) {
+      console.error("Error submitting form:", error);
       toast({
         title: "Error",
-        description: result.error || "Failed to submit form. Please try again.",
+        description: "Failed to submit form. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -148,8 +159,12 @@ const ContactForm = () => {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full bg-primary text-white hover:bg-primary-dark">
-              Send Enquiry
+            <Button 
+              type="submit" 
+              className="w-full bg-primary text-white hover:bg-primary-dark"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Sending...' : 'Send Enquiry'}
             </Button>
           </div>
         </form>

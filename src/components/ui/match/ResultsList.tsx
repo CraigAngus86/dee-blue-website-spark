@@ -1,7 +1,8 @@
 
-import React, { Suspense } from 'react';
+'use client';
+
+import React, { useState, useEffect } from 'react';
 import MatchCardNew from '../image/MatchCardNew';
-import { getFixtures } from '@/lib/server/getFixtures';
 import LoadingState from '../common/LoadingState';
 import { getMatchesByMonth } from '@/mock-data/fixturesData';
 
@@ -11,40 +12,74 @@ interface ResultsListProps {
   selectedSeason?: string;
 }
 
-async function ResultsContent({ 
+const ResultsList: React.FC<ResultsListProps> = ({ 
   selectedCompetitions = [],
   selectedMonth = 'all',
   selectedSeason = '2024/25'
-}) {
-  const { matches } = await getFixtures('results', selectedSeason);
-  
-  let filteredResults = matches;
-  
-  if (selectedCompetitions.length > 0) {
-    filteredResults = filteredResults.filter(result => 
-      selectedCompetitions.some(comp => result.competition.includes(comp))
-    );
+}) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [results, setResults] = useState([]);
+  const [resultsByMonth, setResultsByMonth] = useState<Record<string, any[]>>({});
+  const [sortedMonths, setSortedMonths] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchResults = async () => {
+      try {
+        // In a real app, this would be an API call
+        // For now, we'll import from mock data
+        const { results } = require('@/mock-data/fixturesData').resultsData;
+        
+        let filteredResults = results;
+        
+        if (selectedCompetitions.length > 0) {
+          filteredResults = filteredResults.filter(result => 
+            selectedCompetitions.some(comp => result.competition.includes(comp))
+          );
+        }
+        
+        if (selectedMonth && selectedMonth !== 'all') {
+          filteredResults = filteredResults.filter(result => {
+            const date = new Date(result.date);
+            const monthYear = date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+            return monthYear === selectedMonth;
+          });
+        }
+        
+        setResults(filteredResults);
+        
+        const resultsByMonthData = getMatchesByMonth(
+          [...filteredResults].sort((a, b) => {
+            return new Date(b.date).getTime() - new Date(a.date).getTime();
+          })
+        );
+        
+        setResultsByMonth(resultsByMonthData);
+        
+        const months = Object.keys(resultsByMonthData).sort((a, b) => {
+          const dateA = new Date(resultsByMonthData[a][0]?.date || '');
+          const dateB = new Date(resultsByMonthData[b][0]?.date || '');
+          return dateB.getTime() - dateA.getTime();
+        });
+        
+        setSortedMonths(months);
+        
+        // Simulate loading delay
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 300);
+      } catch (error) {
+        console.error('Error fetching results:', error);
+        setIsLoading(false);
+      }
+    };
+
+    setIsLoading(true);
+    fetchResults();
+  }, [selectedCompetitions, selectedMonth, selectedSeason]);
+
+  if (isLoading) {
+    return <LoadingState count={2} />;
   }
-  
-  if (selectedMonth && selectedMonth !== 'all') {
-    filteredResults = filteredResults.filter(result => {
-      const date = new Date(result.date);
-      const monthYear = date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
-      return monthYear === selectedMonth;
-    });
-  }
-  
-  const resultsByMonthData = getMatchesByMonth(
-    [...filteredResults].sort((a, b) => {
-      return new Date(b.date).getTime() - new Date(a.date).getTime();
-    })
-  );
-  
-  const sortedMonths = Object.keys(resultsByMonthData).sort((a, b) => {
-    const dateA = new Date(resultsByMonthData[a][0]?.date || '');
-    const dateB = new Date(resultsByMonthData[b][0]?.date || '');
-    return dateB.getTime() - dateA.getTime();
-  });
 
   return (
     <div className="space-y-8">
@@ -53,7 +88,7 @@ async function ResultsContent({
           <div key={month}>
             <h3 className="text-lg font-semibold text-gray-600 mb-4">{month}</h3>
             <div className="grid gap-4">
-              {resultsByMonthData[month].map((match) => (
+              {resultsByMonth[month].map((match) => (
                 <MatchCardNew
                   key={match.id}
                   match={match}
@@ -70,12 +105,6 @@ async function ResultsContent({
       )}
     </div>
   );
-}
+};
 
-export default function ResultsList(props: ResultsListProps) {
-  return (
-    <Suspense fallback={<LoadingState count={2} />}>
-      <ResultsContent {...props} />
-    </Suspense>
-  );
-}
+export default ResultsList;
