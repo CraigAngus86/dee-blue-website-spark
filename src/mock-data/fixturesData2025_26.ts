@@ -1,7 +1,8 @@
+
 import { Match } from "@/types/match";
 
 export const fixtures2025_26: Match[] = [
-  // July 2025
+  // JULY 2025
   {
     "id": "1",
     "competition": "Pre-Season Friendly",

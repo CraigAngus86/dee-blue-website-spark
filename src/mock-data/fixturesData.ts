@@ -17,7 +17,7 @@ export const allFixtures: Match[] = [
     homeTeam: "Formartine United",
     awayTeam: "Banks o' Dee",
     venue: "North Lodge Park",
-    status: "completed",
+    status: "finished",
     isCompleted: true,
     result: {
       homeScore: 0,
@@ -32,7 +32,7 @@ export const allFixtures: Match[] = [
     homeTeam: "Banks o' Dee",
     awayTeam: "Aberdeen",
     venue: "Spain Park",
-    status: "completed",
+    status: "finished",
     isCompleted: true,
     result: {
       homeScore: 1,
@@ -49,7 +49,7 @@ export const allFixtures: Match[] = [
     homeTeam: "Banks o' Dee",
     awayTeam: "Lossiemouth",
     venue: "Spain Park",
-    status: "completed",
+    status: "finished",
     isCompleted: true,
     result: {
       homeScore: 0,
@@ -64,7 +64,7 @@ export const allFixtures: Match[] = [
     homeTeam: "Keith",
     awayTeam: "Banks o' Dee",
     venue: "Kynoch Park",
-    status: "completed",
+    status: "finished",
     isCompleted: true,
     result: {
       homeScore: 1,
@@ -79,7 +79,7 @@ export const allFixtures: Match[] = [
     homeTeam: "Banks o' Dee",
     awayTeam: "Nairn County",
     venue: "Spain Park",
-    status: "completed",
+    status: "finished",
     isCompleted: true,
     result: {
       homeScore: 4,
@@ -94,7 +94,7 @@ export const allFixtures: Match[] = [
     homeTeam: "Elgin City",
     awayTeam: "Banks o' Dee",
     venue: "Borough Briggs",
-    status: "completed",
+    status: "finished",
     isCompleted: true,
     result: {
       homeScore: 2,
@@ -109,7 +109,7 @@ export const allFixtures: Match[] = [
     homeTeam: "Banks o' Dee",
     awayTeam: "Inverurie Loco Works",
     venue: "Spain Park",
-    status: "completed",
+    status: "finished",
     isCompleted: true,
     result: {
       homeScore: 1,
@@ -124,7 +124,7 @@ export const allFixtures: Match[] = [
     homeTeam: "Fraserburgh",
     awayTeam: "Banks o' Dee",
     venue: "Bellslea Park",
-    status: "completed",
+    status: "finished",
     isCompleted: true,
     result: {
       homeScore: 1,
@@ -139,7 +139,7 @@ export const allFixtures: Match[] = [
     homeTeam: "Banks o' Dee",
     awayTeam: "Huntly",
     venue: "Spain Park",
-    status: "completed",
+    status: "finished",
     isCompleted: true,
     result: {
       homeScore: 2,
@@ -154,7 +154,7 @@ export const allFixtures: Match[] = [
     homeTeam: "Wick Academy",
     awayTeam: "Banks o' Dee",
     venue: "Harmsworth Park",
-    status: "completed",
+    status: "finished",
     isCompleted: true,
     result: {
       homeScore: 1,
@@ -171,7 +171,7 @@ export const allFixtures: Match[] = [
     homeTeam: "Banks o' Dee",
     awayTeam: "Deveronvale",
     venue: "Spain Park",
-    status: "completed",
+    status: "finished",
     isCompleted: true,
     result: {
       homeScore: 1,
@@ -186,7 +186,7 @@ export const allFixtures: Match[] = [
     homeTeam: "Buckie Thistle",
     awayTeam: "Banks o' Dee",
     venue: "Victoria Park",
-    status: "completed",
+    status: "finished",
     isCompleted: true,
     result: {
       homeScore: 0,
@@ -201,7 +201,7 @@ export const allFixtures: Match[] = [
     homeTeam: "Banks o' Dee",
     awayTeam: "Brechin City",
     venue: "Spain Park",
-    status: "completed",
+    status: "finished",
     isCompleted: true,
     result: {
       homeScore: 1,
@@ -216,7 +216,7 @@ export const allFixtures: Match[] = [
     homeTeam: "Clachnacuddin",
     awayTeam: "Banks o' Dee",
     venue: "Grant Street Park",
-    status: "completed",
+    status: "finished",
     isCompleted: true,
     result: {
       homeScore: 0,
@@ -231,7 +231,7 @@ export const allFixtures: Match[] = [
     homeTeam: "Gala Fairydean Rovers",
     awayTeam: "Banks o' Dee",
     venue: "Netherdale",
-    status: "completed",
+    status: "finished",
     isCompleted: true,
     result: {
       homeScore: 0,
@@ -248,7 +248,7 @@ export const allFixtures: Match[] = [
     homeTeam: "Strathspey Thistle",
     awayTeam: "Banks o' Dee",
     venue: "Seafield Park",
-    status: "completed",
+    status: "finished",
     isCompleted: true,
     result: {
       homeScore: 1,
@@ -263,7 +263,7 @@ export const allFixtures: Match[] = [
     homeTeam: "Banks o' Dee",
     awayTeam: "Rothes",
     venue: "Spain Park",
-    status: "completed",
+    status: "finished",
     isCompleted: true,
     result: {
       homeScore: 7,
@@ -278,7 +278,7 @@ export const allFixtures: Match[] = [
     homeTeam: "Turriff United",
     awayTeam: "Banks o' Dee",
     venue: "The Haughs",
-    status: "completed",
+    status: "finished",
     isCompleted: true,
     result: {
       homeScore: 0,
@@ -293,7 +293,7 @@ export const allFixtures: Match[] = [
     homeTeam: "East Fife",
     awayTeam: "Banks o' Dee",
     venue: "Bayview Stadium",
-    status: "completed",
+    status: "finished",
     isCompleted: true,
     result: {
       homeScore: 0,
@@ -310,7 +310,7 @@ export const allFixtures: Match[] = [
     homeTeam: "Banks o' Dee",
     awayTeam: "Brora Rangers",
     venue: "Spain Park",
-    status: "completed",
+    status: "finished",
     isCompleted: true,
     result: {
       homeScore: 0,
@@ -325,7 +325,7 @@ export const allFixtures: Match[] = [
     homeTeam: "Banks o' Dee",
     awayTeam: "Formartine United",
     venue: "Spain Park",
-    status: "completed",
+    status: "finished",
     isCompleted: true,
     result: {
       homeScore: 1,
@@ -340,7 +340,7 @@ export const allFixtures: Match[] = [
     homeTeam: "Banks o' Dee",
     awayTeam: "Hamilton Academical",
     venue: "Spain Park",
-    status: "completed",
+    status: "finished",
     isCompleted: true,
     result: {
       homeScore: 1,
@@ -357,7 +357,7 @@ export const allFixtures: Match[] = [
     homeTeam: "Banks o' Dee",
     awayTeam: "Keith",
     venue: "Spain Park",
-    status: "completed",
+    status: "finished",
     isCompleted: true,
     result: {
       homeScore: 5,
@@ -372,7 +372,7 @@ export const allFixtures: Match[] = [
     homeTeam: "Nairn County",
     awayTeam: "Banks o' Dee",
     venue: "Station Park",
-    status: "completed",
+    status: "finished",
     isCompleted: true,
     result: {
       homeScore: 1,
@@ -387,7 +387,7 @@ export const allFixtures: Match[] = [
     homeTeam: "Inverurie Loco Works",
     awayTeam: "Banks o' Dee",
     venue: "Harlaw Park",
-    status: "completed",
+    status: "finished",
     isCompleted: true,
     result: {
       homeScore: 0,
@@ -404,7 +404,7 @@ export const allFixtures: Match[] = [
     homeTeam: "Banks o' Dee",
     awayTeam: "Wick Academy",
     venue: "Spain Park",
-    status: "completed",
+    status: "finished",
     isCompleted: true,
     result: {
       homeScore: 4,
@@ -419,7 +419,7 @@ export const allFixtures: Match[] = [
     homeTeam: "Deveronvale",
     awayTeam: "Banks o' Dee",
     venue: "Princess Royal Park",
-    status: "completed",
+    status: "finished",
     isCompleted: true,
     result: {
       homeScore: 0,
@@ -436,7 +436,7 @@ export const allFixtures: Match[] = [
     homeTeam: "Banks o' Dee",
     awayTeam: "Buckie Thistle",
     venue: "Spain Park",
-    status: "completed",
+    status: "finished",
     isCompleted: true,
     result: {
       homeScore: 2,
@@ -451,7 +451,7 @@ export const allFixtures: Match[] = [
     homeTeam: "Brechin City",
     awayTeam: "Banks o' Dee",
     venue: "Glebe Park",
-    status: "completed",
+    status: "finished",
     isCompleted: true,
     result: {
       homeScore: 2,
@@ -466,7 +466,7 @@ export const allFixtures: Match[] = [
     homeTeam: "Banks o' Dee",
     awayTeam: "Forres Mechanics",
     venue: "Spain Park",
-    status: "completed",
+    status: "finished",
     isCompleted: true,
     result: {
       homeScore: 2,
@@ -481,7 +481,7 @@ export const allFixtures: Match[] = [
     homeTeam: "Banks o' Dee",
     awayTeam: "Clachnacuddin",
     venue: "Spain Park",
-    status: "completed",
+    status: "finished",
     isCompleted: true,
     result: {
       homeScore: 3,
@@ -498,7 +498,7 @@ export const allFixtures: Match[] = [
     homeTeam: "Huntly",
     awayTeam: "Banks o' Dee",
     venue: "Christie Park",
-    status: "completed",
+    status: "finished",
     isCompleted: true,
     result: {
       homeScore: 1,
@@ -513,7 +513,7 @@ export const allFixtures: Match[] = [
     homeTeam: "Banks o' Dee",
     awayTeam: "Strathspey Thistle",
     venue: "Spain Park",
-    status: "completed",
+    status: "finished",
     isCompleted: true,
     result: {
       homeScore: 2,
@@ -528,7 +528,7 @@ export const allFixtures: Match[] = [
     homeTeam: "Rothes",
     awayTeam: "Banks o' Dee",
     venue: "Mackessack Park",
-    status: "completed",
+    status: "finished",
     isCompleted: true,
     result: {
       homeScore: 1,
@@ -543,7 +543,7 @@ export const allFixtures: Match[] = [
     homeTeam: "Banks o' Dee",
     awayTeam: "Turriff United",
     venue: "Spain Park",
-    status: "completed",
+    status: "finished",
     isCompleted: true,
     result: {
       homeScore: 1,
@@ -558,7 +558,7 @@ export const allFixtures: Match[] = [
     homeTeam: "Brora Rangers",
     awayTeam: "Banks o' Dee",
     venue: "Dudgeon Park",
-    status: "completed",
+    status: "finished",
     isCompleted: true,
     result: {
       homeScore: 2,
@@ -575,7 +575,7 @@ export const allFixtures: Match[] = [
     homeTeam: "Banks o' Dee",
     awayTeam: "Fraserburgh",
     venue: "Spain Park",
-    status: "completed",
+    status: "finished",
     isCompleted: true,
     result: {
       homeScore: 3,
@@ -590,7 +590,7 @@ export const allFixtures: Match[] = [
     homeTeam: "Lossiemouth",
     awayTeam: "Banks o' Dee",
     venue: "Grant Park",
-    status: "completed",
+    status: "finished",
     isCompleted: true,
     result: {
       homeScore: 1,
@@ -605,7 +605,7 @@ export const allFixtures: Match[] = [
     homeTeam: "Forres Mechanics",
     awayTeam: "Banks o' Dee",
     venue: "Mosset Park",
-    status: "completed",
+    status: "finished",
     isCompleted: true,
     result: {
       homeScore: 1,
@@ -639,7 +639,7 @@ if (forresMatchIndex !== -1) {
     awayScore: 1
   };
   allFixtures[forresMatchIndex].isCompleted = true;
-  allFixtures[forresMatchIndex].status = "completed";
+  allFixtures[forresMatchIndex].status = "finished";
 }
 
 // Export available seasons
