@@ -10,7 +10,7 @@ interface MatchCardProps {
   date: string;
   time?: string;
   venue: string;
-  status?: "upcoming" | "live" | "completed";
+  status?: "upcoming" | "live" | "finished" | "completed";
   result?: {
     homeScore: number;
     awayScore: number;
@@ -36,18 +36,21 @@ const MatchCard: React.FC<MatchCardProps> = ({
   // Determine if Banks o' Dee is home or away
   const isBodHome = homeTeam.toLowerCase().includes("banks") || homeTeam.toLowerCase().includes("bod");
 
+  // Normalize status: treat "completed" and "finished" the same way
+  const normalizedStatus = status === "finished" ? "completed" : status;
+
   return (
     <div className={cn("bg-white rounded-lg shadow-md overflow-hidden", className)}>
       {/* Competition Header */}
       <div className="bg-primary py-3 px-4">
         <div className="flex justify-between items-center">
           <h3 className="text-white font-semibold">{competition}</h3>
-          {status === "upcoming" && (
+          {normalizedStatus === "upcoming" && (
             <span className="bg-secondary text-primary px-2 py-1 text-xs font-bold rounded">
               UPCOMING
             </span>
           )}
-          {status === "live" && (
+          {normalizedStatus === "live" && (
             <span className="bg-accent text-primary px-2 py-1 text-xs font-bold rounded animate-pulse">
               LIVE
             </span>
@@ -75,7 +78,7 @@ const MatchCard: React.FC<MatchCardProps> = ({
 
           {/* Score or VS - Enhanced presentation */}
           <div className="text-center w-1/3 px-2">
-            {status === "completed" && result ? (
+            {normalizedStatus === "completed" && result ? (
               <div className="text-3xl font-bold">
                 {result.homeScore} - {result.awayScore}
               </div>
@@ -84,8 +87,8 @@ const MatchCard: React.FC<MatchCardProps> = ({
                 VS
               </div>
             )}
-            {status === "completed" && <div className="text-sm text-gray-500 mt-1">Full Time</div>}
-            {status === "live" && <div className="text-sm text-accent font-medium mt-1">In Progress</div>}
+            {normalizedStatus === "completed" && <div className="text-sm text-gray-500 mt-1">Full Time</div>}
+            {normalizedStatus === "live" && <div className="text-sm text-accent font-medium mt-1">In Progress</div>}
           </div>
 
           {/* Away Team */}
@@ -132,14 +135,14 @@ const MatchCard: React.FC<MatchCardProps> = ({
 
         {/* Action Button with improved styling */}
         <div className="mt-5">
-          {status === "upcoming" ? (
+          {normalizedStatus === "upcoming" ? (
             <a
               href={ticketLink}
               className="block w-full py-2.5 px-4 bg-accent text-primary font-bold text-center rounded transition hover:bg-accent-dark shadow-md"
             >
               Get Tickets
             </a>
-          ) : status === "completed" ? (
+          ) : normalizedStatus === "completed" ? (
             <a
               href={matchReportLink}
               className="block w-full py-2.5 px-4 bg-secondary text-primary font-bold text-center rounded transition hover:bg-secondary-dark shadow-md"
