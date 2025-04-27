@@ -9,1024 +9,55 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      community_initiatives: {
-        Row: {
-          created_at: string | null
-          date: string
-          description: string
-          end_date: string | null
-          id: string
-          impact_summary: string | null
-          location: string
-          participants_count: number | null
-          status: string
-          title: string
-          type: string
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          date: string
-          description: string
-          end_date?: string | null
-          id?: string
-          impact_summary?: string | null
-          location: string
-          participants_count?: number | null
-          status?: string
-          title: string
-          type: string
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          date?: string
-          description?: string
-          end_date?: string | null
-          id?: string
-          impact_summary?: string | null
-          location?: string
-          participants_count?: number | null
-          status?: string
-          title?: string
-          type?: string
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
       competitions: {
         Row: {
-          id: number
-          logo: string | null
+          created_at: string | null
+          id: string
+          logo_url: string | null
           name: string
+          short_name: string | null
+          type: string | null
+          updated_at: string | null
         }
         Insert: {
-          id?: number
-          logo?: string | null
+          created_at?: string | null
+          id?: string
+          logo_url?: string | null
           name: string
+          short_name?: string | null
+          type?: string | null
+          updated_at?: string | null
         }
         Update: {
-          id?: number
-          logo?: string | null
+          created_at?: string | null
+          id?: string
+          logo_url?: string | null
           name?: string
-        }
-        Relationships: []
-      }
-      db_data_access_patterns: {
-        Row: {
-          created_at: string | null
-          needs_compatibility_view: boolean | null
-          page_or_component: string
-          priority: number
-          query_pattern: string
-          table_name: string
-        }
-        Insert: {
-          created_at?: string | null
-          needs_compatibility_view?: boolean | null
-          page_or_component: string
-          priority: number
-          query_pattern: string
-          table_name: string
-        }
-        Update: {
-          created_at?: string | null
-          needs_compatibility_view?: boolean | null
-          page_or_component?: string
-          priority?: number
-          query_pattern?: string
-          table_name?: string
-        }
-        Relationships: []
-      }
-      db_migration_counts: {
-        Row: {
-          backup_record_count: number
-          backup_table_name: string | null
-          migrated_record_count: number | null
-          migrated_table_name: string | null
-          record_count: number
-          table_name: string
-          verified_at: string | null
-          verified_by: string | null
-        }
-        Insert: {
-          backup_record_count: number
-          backup_table_name?: string | null
-          migrated_record_count?: number | null
-          migrated_table_name?: string | null
-          record_count: number
-          table_name: string
-          verified_at?: string | null
-          verified_by?: string | null
-        }
-        Update: {
-          backup_record_count?: number
-          backup_table_name?: string | null
-          migrated_record_count?: number | null
-          migrated_table_name?: string | null
-          record_count?: number
-          table_name?: string
-          verified_at?: string | null
-          verified_by?: string | null
-        }
-        Relationships: []
-      }
-      db_migration_rollback: {
-        Row: {
-          created_at: string | null
-          is_tested: boolean | null
-          rollback_script: string
-          step_name: string
-        }
-        Insert: {
-          created_at?: string | null
-          is_tested?: boolean | null
-          rollback_script: string
-          step_name: string
-        }
-        Update: {
-          created_at?: string | null
-          is_tested?: boolean | null
-          rollback_script?: string
-          step_name?: string
-        }
-        Relationships: []
-      }
-      db_optimization_progress: {
-        Row: {
-          completed_at: string | null
-          is_completed: boolean | null
-          notes: string | null
-          step_name: string
-          verification_passed: boolean | null
-        }
-        Insert: {
-          completed_at?: string | null
-          is_completed?: boolean | null
-          notes?: string | null
-          step_name: string
-          verification_passed?: boolean | null
-        }
-        Update: {
-          completed_at?: string | null
-          is_completed?: boolean | null
-          notes?: string | null
-          step_name?: string
-          verification_passed?: boolean | null
-        }
-        Relationships: []
-      }
-      fan_content: {
-        Row: {
-          content: string | null
-          created_at: string | null
-          featured: boolean | null
-          id: string
-          image_url: string | null
-          moderated_by: string | null
-          moderation_date: string | null
-          moderation_notes: string | null
-          status: string
-          submitted_by: string
-          submitted_on: string | null
-          title: string
-          type: string
-          updated_at: string | null
-          user_reputation: number | null
-        }
-        Insert: {
-          content?: string | null
-          created_at?: string | null
-          featured?: boolean | null
-          id?: string
-          image_url?: string | null
-          moderated_by?: string | null
-          moderation_date?: string | null
-          moderation_notes?: string | null
-          status?: string
-          submitted_by: string
-          submitted_on?: string | null
-          title: string
-          type: string
-          updated_at?: string | null
-          user_reputation?: number | null
-        }
-        Update: {
-          content?: string | null
-          created_at?: string | null
-          featured?: boolean | null
-          id?: string
-          image_url?: string | null
-          moderated_by?: string | null
-          moderation_date?: string | null
-          moderation_notes?: string | null
-          status?: string
-          submitted_by?: string
-          submitted_on?: string | null
-          title?: string
-          type?: string
-          updated_at?: string | null
-          user_reputation?: number | null
-        }
-        Relationships: []
-      }
-      fan_polls: {
-        Row: {
-          created_at: string | null
-          created_by: string | null
-          description: string | null
-          end_date: string | null
-          id: string
-          is_featured: boolean | null
-          published_at: string | null
-          start_date: string | null
-          status: string
-          title: string
-          type: string
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          created_by?: string | null
-          description?: string | null
-          end_date?: string | null
-          id?: string
-          is_featured?: boolean | null
-          published_at?: string | null
-          start_date?: string | null
-          status?: string
-          title: string
-          type: string
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          created_by?: string | null
-          description?: string | null
-          end_date?: string | null
-          id?: string
-          is_featured?: boolean | null
-          published_at?: string | null
-          start_date?: string | null
-          status?: string
-          title?: string
-          type?: string
+          short_name?: string | null
+          type?: string | null
           updated_at?: string | null
         }
         Relationships: []
       }
-      fixtures: {
+      competitions_backup_20250427: {
         Row: {
-          away_score: number | null
-          away_team: string
-          competition: string
-          created_at: string | null
-          date: string
-          date_passed: boolean | null
-          home_score: number | null
-          home_team: string
-          id: string
-          import_date: string | null
-          is_completed: boolean | null
-          is_latest_result: boolean | null
-          is_next_match: boolean | null
-          season: string | null
-          source: string | null
-          ticket_link: string | null
-          time: string
-          updated_at: string | null
-          venue: string | null
-        }
-        Insert: {
-          away_score?: number | null
-          away_team: string
-          competition: string
-          created_at?: string | null
-          date: string
-          date_passed?: boolean | null
-          home_score?: number | null
-          home_team: string
-          id?: string
-          import_date?: string | null
-          is_completed?: boolean | null
-          is_latest_result?: boolean | null
-          is_next_match?: boolean | null
-          season?: string | null
-          source?: string | null
-          ticket_link?: string | null
-          time: string
-          updated_at?: string | null
-          venue?: string | null
-        }
-        Update: {
-          away_score?: number | null
-          away_team?: string
-          competition?: string
-          created_at?: string | null
-          date?: string
-          date_passed?: boolean | null
-          home_score?: number | null
-          home_team?: string
-          id?: string
-          import_date?: string | null
-          is_completed?: boolean | null
-          is_latest_result?: boolean | null
-          is_next_match?: boolean | null
-          season?: string | null
-          source?: string | null
-          ticket_link?: string | null
-          time?: string
-          updated_at?: string | null
-          venue?: string | null
-        }
-        Relationships: []
-      }
-      highland_league_table_backup_20250427: {
-        Row: {
-          created_at: string | null
-          drawn: number | null
-          form: string[] | null
-          goalDifference: number | null
-          goalsAgainst: number | null
-          goalsFor: number | null
-          id: number | null
-          logo: string | null
-          lost: number | null
-          played: number | null
-          points: number | null
-          position: number | null
-          team: string | null
-          won: number | null
-        }
-        Insert: {
-          created_at?: string | null
-          drawn?: number | null
-          form?: string[] | null
-          goalDifference?: number | null
-          goalsAgainst?: number | null
-          goalsFor?: number | null
-          id?: number | null
-          logo?: string | null
-          lost?: number | null
-          played?: number | null
-          points?: number | null
-          position?: number | null
-          team?: string | null
-          won?: number | null
-        }
-        Update: {
-          created_at?: string | null
-          drawn?: number | null
-          form?: string[] | null
-          goalDifference?: number | null
-          goalsAgainst?: number | null
-          goalsFor?: number | null
-          id?: number | null
-          logo?: string | null
-          lost?: number | null
-          played?: number | null
-          points?: number | null
-          position?: number | null
-          team?: string | null
-          won?: number | null
-        }
-        Relationships: []
-      }
-      image_folders: {
-        Row: {
-          created_at: string | null
-          id: string
-          name: string
-          parent_id: string | null
-          path: string
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          name: string
-          parent_id?: string | null
-          path: string
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          name?: string
-          parent_id?: string | null
-          path?: string
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "image_folders_parent_id_fkey"
-            columns: ["parent_id"]
-            isOneToOne: false
-            referencedRelation: "image_folders"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      league_standings: {
-        Row: {
-          created_at: string | null
-          drawn: number
-          form: string[]
-          goal_difference: number
-          goals_against: number
-          goals_for: number
-          id: string
-          lost: number
-          played: number
-          points: number
-          position: number | null
-          season_competition_id: string
-          team_id: string | null
-          updated_at: string | null
-          won: number
-        }
-        Insert: {
-          created_at?: string | null
-          drawn?: number
-          form?: string[]
-          goal_difference?: number
-          goals_against?: number
-          goals_for?: number
-          id?: string
-          lost?: number
-          played?: number
-          points?: number
-          position?: number | null
-          season_competition_id: string
-          team_id?: string | null
-          updated_at?: string | null
-          won?: number
-        }
-        Update: {
-          created_at?: string | null
-          drawn?: number
-          form?: string[]
-          goal_difference?: number
-          goals_against?: number
-          goals_for?: number
-          id?: string
-          lost?: number
-          played?: number
-          points?: number
-          position?: number | null
-          season_competition_id?: string
-          team_id?: string | null
-          updated_at?: string | null
-          won?: number
-        }
-        Relationships: []
-      }
-      match: {
-        Row: {
-          away_score: number | null
-          away_team_id: string
-          competition_id: string | null
-          created_at: string | null
-          date: string
-          home_score: number | null
-          home_team_id: string
-          id: string
-          import_date: string | null
-          is_home: boolean | null
-          is_latest_result: boolean | null
-          is_next_match: boolean | null
-          season_id: string | null
-          source: string | null
-          status: string | null
-          ticket_link: string | null
-          time: string | null
-          updated_at: string | null
-          venue: string | null
-        }
-        Insert: {
-          away_score?: number | null
-          away_team_id: string
-          competition_id?: string | null
-          created_at?: string | null
-          date: string
-          home_score?: number | null
-          home_team_id: string
-          id?: string
-          import_date?: string | null
-          is_home?: boolean | null
-          is_latest_result?: boolean | null
-          is_next_match?: boolean | null
-          season_id?: string | null
-          source?: string | null
-          status?: string | null
-          ticket_link?: string | null
-          time?: string | null
-          updated_at?: string | null
-          venue?: string | null
-        }
-        Update: {
-          away_score?: number | null
-          away_team_id?: string
-          competition_id?: string | null
-          created_at?: string | null
-          date?: string
-          home_score?: number | null
-          home_team_id?: string
-          id?: string
-          import_date?: string | null
-          is_home?: boolean | null
-          is_latest_result?: boolean | null
-          is_next_match?: boolean | null
-          season_id?: string | null
-          source?: string | null
-          status?: string | null
-          ticket_link?: string | null
-          time?: string | null
-          updated_at?: string | null
-          venue?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "fk_away_team"
-            columns: ["away_team_id"]
-            isOneToOne: false
-            referencedRelation: "teams"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "match_season_id_fkey"
-            columns: ["season_id"]
-            isOneToOne: false
-            referencedRelation: "seasons"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      news_articles: {
-        Row: {
-          author: string | null
-          category: string
-          content: string
-          created_at: string
-          id: string
-          image_url: string | null
-          is_featured: boolean
-          publish_date: string
-          slug: string
-          title: string
-          updated_at: string
-        }
-        Insert: {
-          author?: string | null
-          category: string
-          content: string
-          created_at?: string
-          id?: string
-          image_url?: string | null
-          is_featured?: boolean
-          publish_date?: string
-          slug: string
-          title: string
-          updated_at?: string
-        }
-        Update: {
-          author?: string | null
-          category?: string
-          content?: string
-          created_at?: string
-          id?: string
-          image_url?: string | null
-          is_featured?: boolean
-          publish_date?: string
-          slug?: string
-          title?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      news_categories: {
-        Row: {
-          created_at: string
-          id: string
-          name: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          name: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          name?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      scrape_logs: {
-        Row: {
-          created_at: string | null
-          error_message: string | null
-          id: string
-          items_added: number | null
-          items_found: number | null
-          items_updated: number | null
-          source: string
-          status: string
-        }
-        Insert: {
-          created_at?: string | null
-          error_message?: string | null
-          id?: string
-          items_added?: number | null
-          items_found?: number | null
-          items_updated?: number | null
-          source: string
-          status: string
-        }
-        Update: {
-          created_at?: string | null
-          error_message?: string | null
-          id?: string
-          items_added?: number | null
-          items_found?: number | null
-          items_updated?: number | null
-          source?: string
-          status?: string
-        }
-        Relationships: []
-      }
-      season_competitions: {
-        Row: {
-          competition_id: string
-          created_at: string | null
-          id: string
-          is_league: boolean | null
-          name: string
-          season_id: string
-          updated_at: string | null
-        }
-        Insert: {
-          competition_id: string
-          created_at?: string | null
-          id?: string
-          is_league?: boolean | null
-          name: string
-          season_id: string
-          updated_at?: string | null
-        }
-        Update: {
-          competition_id?: string
-          created_at?: string | null
-          id?: string
-          is_league?: boolean | null
-          name?: string
-          season_id?: string
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "season_competitions_season_id_fkey"
-            columns: ["season_id"]
-            isOneToOne: false
-            referencedRelation: "seasons"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      season_tickets: {
-        Row: {
-          available: boolean | null
-          benefits: string[] | null
-          category: string | null
-          created_at: string | null
-          description: string
-          id: string
-          name: string
-          price: number
-          savings_amount: number | null
-          season_id: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          available?: boolean | null
-          benefits?: string[] | null
-          category?: string | null
-          created_at?: string | null
-          description: string
-          id?: string
-          name: string
-          price: number
-          savings_amount?: number | null
-          season_id?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          available?: boolean | null
-          benefits?: string[] | null
-          category?: string | null
-          created_at?: string | null
-          description?: string
-          id?: string
-          name?: string
-          price?: number
-          savings_amount?: number | null
-          season_id?: string | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-      seasons: {
-        Row: {
-          created_at: string | null
-          end_date: string
-          id: string
-          is_current: boolean | null
-          name: string
-          start_date: string
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          end_date: string
-          id?: string
-          is_current?: boolean | null
-          name: string
-          start_date: string
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          end_date?: string
-          id?: string
-          is_current?: boolean | null
-          name?: string
-          start_date?: string
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-      settings: {
-        Row: {
-          key: string
-          updated_at: string | null
-          value: string
-        }
-        Insert: {
-          key: string
-          updated_at?: string | null
-          value: string
-        }
-        Update: {
-          key?: string
-          updated_at?: string | null
-          value?: string
-        }
-        Relationships: []
-      }
-      sponsor_display_settings: {
-        Row: {
-          carousel_speed: number | null
-          display_mode: string | null
-          id: string
-          max_logos_homepage: number | null
-          randomize_order: boolean | null
-          show_on_homepage: boolean | null
-          show_tier_headings: boolean | null
-          sponsors_per_row: number | null
-          updated_at: string | null
-        }
-        Insert: {
-          carousel_speed?: number | null
-          display_mode?: string | null
-          id?: string
-          max_logos_homepage?: number | null
-          randomize_order?: boolean | null
-          show_on_homepage?: boolean | null
-          show_tier_headings?: boolean | null
-          sponsors_per_row?: number | null
-          updated_at?: string | null
-        }
-        Update: {
-          carousel_speed?: number | null
-          display_mode?: string | null
-          id?: string
-          max_logos_homepage?: number | null
-          randomize_order?: boolean | null
-          show_on_homepage?: boolean | null
-          show_tier_headings?: boolean | null
-          sponsors_per_row?: number | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-      sponsorship_tiers: {
-        Row: {
-          benefits: string | null
-          color: string | null
-          created_at: string | null
-          description: string | null
-          id: string
-          name: string
-          order_position: number
-          updated_at: string | null
-        }
-        Insert: {
-          benefits?: string | null
-          color?: string | null
-          created_at?: string | null
-          description?: string | null
-          id?: string
-          name: string
-          order_position?: number
-          updated_at?: string | null
-        }
-        Update: {
-          benefits?: string | null
-          color?: string | null
-          created_at?: string | null
-          description?: string | null
-          id?: string
-          name?: string
-          order_position?: number
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-      team_members: {
-        Row: {
-          bio: string | null
-          created_at: string | null
-          experience: string | null
-          id: string
-          image_url: string | null
-          is_active: boolean | null
-          jersey_number: number | null
-          member_type: string
-          name: string
-          nationality: string | null
-          position: string | null
-          previous_clubs: string[] | null
-          stats: Json | null
-          updated_at: string | null
-        }
-        Insert: {
-          bio?: string | null
-          created_at?: string | null
-          experience?: string | null
-          id?: string
-          image_url?: string | null
-          is_active?: boolean | null
-          jersey_number?: number | null
-          member_type: string
-          name: string
-          nationality?: string | null
-          position?: string | null
-          previous_clubs?: string[] | null
-          stats?: Json | null
-          updated_at?: string | null
-        }
-        Update: {
-          bio?: string | null
-          created_at?: string | null
-          experience?: string | null
-          id?: string
-          image_url?: string | null
-          is_active?: boolean | null
-          jersey_number?: number | null
-          member_type?: string
-          name?: string
-          nationality?: string | null
-          position?: string | null
-          previous_clubs?: string[] | null
-          stats?: Json | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-      teams: {
-        Row: {
-          id: string
-          logo: string | null
-          name: string
-        }
-        Insert: {
-          id?: string
-          logo?: string | null
-          name: string
-        }
-        Update: {
-          id?: string
-          logo?: string | null
-          name?: string
-        }
-        Relationships: []
-      }
-      ticket_types: {
-        Row: {
-          available: boolean | null
-          category: string | null
-          created_at: string | null
-          description: string
-          id: string
-          name: string
-          price: number
-          updated_at: string | null
-        }
-        Insert: {
-          available?: boolean | null
-          category?: string | null
-          created_at?: string | null
-          description: string
-          id?: string
-          name: string
-          price: number
-          updated_at?: string | null
-        }
-        Update: {
-          available?: boolean | null
-          category?: string | null
-          created_at?: string | null
-          description?: string
-          id?: string
-          name?: string
-          price?: number
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-    }
-    Views: {
-      vw_fixtures: {
-        Row: {
-          away_score: number | null
-          away_team: string | null
-          competition: string | null
-          created_at: string | null
-          date: string | null
-          date_passed: boolean | null
-          home_score: number | null
-          home_team: string | null
           id: string | null
-          import_date: string | null
-          is_completed: boolean | null
-          is_latest_result: boolean | null
-          is_next_match: boolean | null
-          season: string | null
-          source: string | null
-          ticket_link: string | null
-          time: string | null
-          updated_at: string | null
-          venue: string | null
+          logo: string | null
+          name: string | null
         }
         Insert: {
-          away_score?: number | null
-          away_team?: never
-          competition?: never
-          created_at?: string | null
-          date?: string | null
-          date_passed?: never
-          home_score?: number | null
-          home_team?: never
           id?: string | null
-          import_date?: string | null
-          is_completed?: never
-          is_latest_result?: boolean | null
-          is_next_match?: boolean | null
-          season?: never
-          source?: string | null
-          ticket_link?: string | null
-          time?: string | null
-          updated_at?: string | null
-          venue?: string | null
+          logo?: string | null
+          name?: string | null
         }
         Update: {
-          away_score?: number | null
-          away_team?: never
-          competition?: never
-          created_at?: string | null
-          date?: string | null
-          date_passed?: never
-          home_score?: number | null
-          home_team?: never
           id?: string | null
-          import_date?: string | null
-          is_completed?: never
-          is_latest_result?: boolean | null
-          is_next_match?: boolean | null
-          season?: never
-          source?: string | null
-          ticket_link?: string | null
-          time?: string | null
-          updated_at?: string | null
-          venue?: string | null
+          logo?: string | null
+          name?: string | null
         }
         Relationships: []
       }
-      vw_highland_league_table: {
+      league_standings_backup_20250427: {
         Row: {
           created_at: string | null
           drawn: number | null
@@ -1080,96 +111,381 @@ export type Database = {
         }
         Relationships: []
       }
-      vw_matches: {
+      league_table: {
+        Row: {
+          competition_id: string
+          created_at: string | null
+          draws: number | null
+          form: string[] | null
+          goal_difference: number | null
+          goals_against: number | null
+          goals_for: number | null
+          id: string
+          losses: number | null
+          matches_played: number | null
+          points: number | null
+          position: number
+          season_id: string | null
+          team_id: string
+          updated_at: string | null
+          wins: number | null
+        }
+        Insert: {
+          competition_id: string
+          created_at?: string | null
+          draws?: number | null
+          form?: string[] | null
+          goal_difference?: number | null
+          goals_against?: number | null
+          goals_for?: number | null
+          id?: string
+          losses?: number | null
+          matches_played?: number | null
+          points?: number | null
+          position: number
+          season_id?: string | null
+          team_id: string
+          updated_at?: string | null
+          wins?: number | null
+        }
+        Update: {
+          competition_id?: string
+          created_at?: string | null
+          draws?: number | null
+          form?: string[] | null
+          goal_difference?: number | null
+          goals_against?: number | null
+          goals_for?: number | null
+          id?: string
+          losses?: number | null
+          matches_played?: number | null
+          points?: number | null
+          position?: number
+          season_id?: string | null
+          team_id?: string
+          updated_at?: string | null
+          wins?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "league_table_competition_id_fkey"
+            columns: ["competition_id"]
+            isOneToOne: false
+            referencedRelation: "competitions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "league_table_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "seasons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "league_table_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      match: {
+        Row: {
+          attendance: number | null
+          away_score: number | null
+          away_scorers: string[] | null
+          away_team_id: string
+          competition_id: string
+          created_at: string | null
+          home_score: number | null
+          home_scorers: string[] | null
+          home_team_id: string
+          id: string
+          is_highlighted: boolean | null
+          match_date: string
+          match_report_link: string | null
+          match_time: string | null
+          season_id: string | null
+          status: string | null
+          ticket_link: string | null
+          updated_at: string | null
+          venue: string | null
+        }
+        Insert: {
+          attendance?: number | null
+          away_score?: number | null
+          away_scorers?: string[] | null
+          away_team_id: string
+          competition_id: string
+          created_at?: string | null
+          home_score?: number | null
+          home_scorers?: string[] | null
+          home_team_id: string
+          id?: string
+          is_highlighted?: boolean | null
+          match_date: string
+          match_report_link?: string | null
+          match_time?: string | null
+          season_id?: string | null
+          status?: string | null
+          ticket_link?: string | null
+          updated_at?: string | null
+          venue?: string | null
+        }
+        Update: {
+          attendance?: number | null
+          away_score?: number | null
+          away_scorers?: string[] | null
+          away_team_id?: string
+          competition_id?: string
+          created_at?: string | null
+          home_score?: number | null
+          home_scorers?: string[] | null
+          home_team_id?: string
+          id?: string
+          is_highlighted?: boolean | null
+          match_date?: string
+          match_report_link?: string | null
+          match_time?: string | null
+          season_id?: string | null
+          status?: string | null
+          ticket_link?: string | null
+          updated_at?: string | null
+          venue?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "match_away_team_id_fkey"
+            columns: ["away_team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_competition_id_fkey"
+            columns: ["competition_id"]
+            isOneToOne: false
+            referencedRelation: "competitions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_home_team_id_fkey"
+            columns: ["home_team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "seasons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      match_backup_20250427: {
         Row: {
           away_score: number | null
           away_team_id: string | null
           competition_id: string | null
+          created_at: string | null
           date: string | null
           home_score: number | null
           home_team_id: string | null
-          id: number | null
-          is_home: boolean | null
-          season: string | null
-          status: string | null
-          time: string | null
-          venue: string | null
-        }
-        Insert: {
-          away_score?: number | null
-          away_team_id?: never
-          competition_id?: never
-          date?: string | null
-          home_score?: number | null
-          home_team_id?: never
-          id?: never
-          is_home?: boolean | null
-          season?: never
-          status?: string | null
-          time?: string | null
-          venue?: string | null
-        }
-        Update: {
-          away_score?: number | null
-          away_team_id?: never
-          competition_id?: never
-          date?: string | null
-          home_score?: number | null
-          home_team_id?: never
-          id?: never
-          is_home?: boolean | null
-          season?: never
-          status?: string | null
-          time?: string | null
-          venue?: string | null
-        }
-        Relationships: []
-      }
-      vw_upcoming_matches: {
-        Row: {
-          away_team: string | null
-          away_team_logo: string | null
-          competition: string | null
-          competition_short: string | null
-          home_team: string | null
-          home_team_logo: string | null
           id: string | null
-          match_date: string | null
-          match_time: string | null
+          import_date: string | null
+          is_home: boolean | null
+          is_latest_result: boolean | null
+          is_next_match: boolean | null
           season: string | null
+          source: string | null
+          status: string | null
           ticket_link: string | null
+          time: string | null
+          updated_at: string | null
           venue: string | null
         }
         Insert: {
-          away_team?: string | null
-          away_team_logo?: never
-          competition?: string | null
-          competition_short?: never
-          home_team?: string | null
-          home_team_logo?: never
+          away_score?: number | null
+          away_team_id?: string | null
+          competition_id?: string | null
+          created_at?: string | null
+          date?: string | null
+          home_score?: number | null
+          home_team_id?: string | null
           id?: string | null
-          match_date?: string | null
-          match_time?: string | null
+          import_date?: string | null
+          is_home?: boolean | null
+          is_latest_result?: boolean | null
+          is_next_match?: boolean | null
           season?: string | null
+          source?: string | null
+          status?: string | null
           ticket_link?: string | null
-          venue?: never
+          time?: string | null
+          updated_at?: string | null
+          venue?: string | null
         }
         Update: {
-          away_team?: string | null
-          away_team_logo?: never
-          competition?: string | null
-          competition_short?: never
-          home_team?: string | null
-          home_team_logo?: never
+          away_score?: number | null
+          away_team_id?: string | null
+          competition_id?: string | null
+          created_at?: string | null
+          date?: string | null
+          home_score?: number | null
+          home_team_id?: string | null
           id?: string | null
-          match_date?: string | null
-          match_time?: string | null
+          import_date?: string | null
+          is_home?: boolean | null
+          is_latest_result?: boolean | null
+          is_next_match?: boolean | null
           season?: string | null
+          source?: string | null
+          status?: string | null
           ticket_link?: string | null
-          venue?: never
+          time?: string | null
+          updated_at?: string | null
+          venue?: string | null
         }
         Relationships: []
       }
+      season_competition: {
+        Row: {
+          competition_id: string | null
+          created_at: string | null
+          id: string
+          season_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          competition_id?: string | null
+          created_at?: string | null
+          id?: string
+          season_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          competition_id?: string | null
+          created_at?: string | null
+          id?: string
+          season_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "season_competition_competition_id_fkey"
+            columns: ["competition_id"]
+            isOneToOne: false
+            referencedRelation: "competitions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "season_competition_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "seasons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      seasons: {
+        Row: {
+          created_at: string | null
+          end_date: string
+          id: string
+          is_current_season: boolean | null
+          name: string
+          start_date: string
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          end_date: string
+          id?: string
+          is_current_season?: boolean | null
+          name: string
+          start_date: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          end_date?: string
+          id?: string
+          is_current_season?: boolean | null
+          name?: string
+          start_date?: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      teams: {
+        Row: {
+          created_at: string | null
+          founded_year: number | null
+          id: string
+          logo_url: string | null
+          name: string
+          primary_color: string | null
+          short_name: string | null
+          stadium_name: string | null
+          updated_at: string | null
+          website: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          founded_year?: number | null
+          id?: string
+          logo_url?: string | null
+          name: string
+          primary_color?: string | null
+          short_name?: string | null
+          stadium_name?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          founded_year?: number | null
+          id?: string
+          logo_url?: string | null
+          name?: string
+          primary_color?: string | null
+          short_name?: string | null
+          stadium_name?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
+      teams_backup_20250427: {
+        Row: {
+          id: string | null
+          logo: string | null
+          name: string | null
+          short_name: string | null
+        }
+        Insert: {
+          id?: string | null
+          logo?: string | null
+          name?: string | null
+          short_name?: string | null
+        }
+        Update: {
+          id?: string | null
+          logo?: string | null
+          name?: string | null
+          short_name?: string | null
+        }
+        Relationships: []
+      }
+    }
+    Views: {
+      [_ in never]: never
     }
     Functions: {
       get_next_match: {

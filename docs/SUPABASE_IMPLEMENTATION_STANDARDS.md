@@ -15,53 +15,76 @@
     - `end_date`: Season end date
     - `status`: Possible values - 'upcoming', 'active', 'completed'
     - `is_current_season`: Boolean flag to identify the current active season
+    - `created_at`: Creation timestamp
+    - `updated_at`: Last update timestamp
 
 - **`competitions`** Table
   - Lists all competitions the club participates in
   - Columns:
-    - `id`: Unique identifier
+    - `id`: UUID primary key
     - `name`: Competition name (e.g., "Highland League", "Scottish Cup")
-    - `type`: Competition type (league, cup, friendly)
+    - `short_name`: Abbreviated name (e.g., "HFL")
+    - `type`: Competition type ('league', 'cup', 'friendly')
+    - `logo_url`: URL to competition logo
+    - `created_at`: Creation timestamp
+    - `updated_at`: Last update timestamp
 
 - **`season_competition`** Table
   - Links seasons to competitions
-  - Allows unique settings per competition in a season
+  - Allows tracking which competitions occur in which seasons
   - Columns:
-    - `season_id`: Foreign key to `season`
-    - `competition_id`: Foreign key to `competitions`
-    - Additional metadata about the competition in that specific season
+    - `id`: UUID primary key
+    - `season_id`: Foreign key to seasons
+    - `competition_id`: Foreign key to competitions
+    - `created_at`: Creation timestamp
+    - `updated_at`: Last update timestamp
+    - UNIQUE constraint on (season_id, competition_id)
 
 #### Match Management
 - **`match`** Table (Central Table)
   - Stores all fixtures and results
   - Columns:
-    - `id`: Unique match identifier
-    - `season_competition_id`: Foreign key to `season_competition`
-    - `home_team_id`: Home team reference
-    - `away_team_id`: Away team reference
+    - `id`: UUID primary key
+    - `season_id`: Foreign key to seasons
+    - `competition_id`: Foreign key to competitions
+    - `home_team_id`: Reference to home team
+    - `away_team_id`: Reference to away team
     - `match_date`: Date of the match
     - `match_time`: Time of the match
     - `venue`: Match location
     - `status`: Match state ('scheduled', 'completed', 'postponed', 'cancelled')
     - `home_score`: Home team score
     - `away_score`: Away team score
+    - `home_scorers`: Array of goal scorer names
+    - `away_scorers`: Array of goal scorer names
+    - `attendance`: Match attendance count
     - `ticket_link`: Optional link to purchase tickets
     - `match_report_link`: Optional link to match report
     - `is_highlighted`: Boolean to feature important matches
+    - `created_at`: Creation timestamp
+    - `updated_at`: Last update timestamp
 
 #### Team and League Management
 - **`teams`** Table
   - Stores all teams in the system
   - Columns:
-    - `id`: Unique team identifier
+    - `id`: UUID primary key
     - `name`: Team name
+    - `short_name`: Abbreviated team name
     - `logo_url`: URL to team logo
     - `founded_year`: Year team was established
+    - `website`: Team website URL
+    - `primary_color`: Team primary color
+    - `stadium_name`: Home stadium
+    - `created_at`: Creation timestamp
+    - `updated_at`: Last update timestamp
 
 - **`league_table`** Table
   - Tracks league standings
   - Columns:
-    - `season_competition_id`: Foreign key to specific season's competition
+    - `id`: UUID primary key
+    - `season_id`: Foreign key to seasons
+    - `competition_id`: Foreign key to competitions
     - `team_id`: Team in the league
     - `position`: Current league position
     - `points`: Total points
@@ -72,6 +95,10 @@
     - `goals_for`: Goals scored
     - `goals_against`: Goals conceded
     - `goal_difference`: Goals for minus goals against
+    - `form`: Array of recent results
+    - `created_at`: Creation timestamp
+    - `updated_at`: Last update timestamp
+    - UNIQUE constraint on (season_id, competition_id, team_id)
 
 ## 2. Views and Compatibility
 
