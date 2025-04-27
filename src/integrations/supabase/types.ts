@@ -54,91 +54,6 @@ export type Database = {
         }
         Relationships: []
       }
-      community_photos: {
-        Row: {
-          caption: string | null
-          created_at: string | null
-          id: string
-          image_url: string
-          initiative_id: string
-          order_position: number | null
-          updated_at: string | null
-        }
-        Insert: {
-          caption?: string | null
-          created_at?: string | null
-          id?: string
-          image_url: string
-          initiative_id: string
-          order_position?: number | null
-          updated_at?: string | null
-        }
-        Update: {
-          caption?: string | null
-          created_at?: string | null
-          id?: string
-          image_url?: string
-          initiative_id?: string
-          order_position?: number | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "community_photos_initiative_id_fkey"
-            columns: ["initiative_id"]
-            isOneToOne: false
-            referencedRelation: "community_initiatives"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      community_volunteers: {
-        Row: {
-          created_at: string | null
-          email: string
-          id: string
-          initiative_id: string
-          name: string
-          notes: string | null
-          phone: string | null
-          role: string | null
-          status: string
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          email: string
-          id?: string
-          initiative_id: string
-          name: string
-          notes?: string | null
-          phone?: string | null
-          role?: string | null
-          status?: string
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          email?: string
-          id?: string
-          initiative_id?: string
-          name?: string
-          notes?: string | null
-          phone?: string | null
-          role?: string | null
-          status?: string
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "community_volunteers_initiative_id_fkey"
-            columns: ["initiative_id"]
-            isOneToOne: false
-            referencedRelation: "community_initiatives"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       competitions: {
         Row: {
           id: number
@@ -157,27 +72,108 @@ export type Database = {
         }
         Relationships: []
       }
-      fan_audience_groups: {
+      db_data_access_patterns: {
         Row: {
           created_at: string | null
-          description: string | null
-          id: string
-          name: string
-          updated_at: string | null
+          needs_compatibility_view: boolean | null
+          page_or_component: string
+          priority: number
+          query_pattern: string
+          table_name: string
         }
         Insert: {
           created_at?: string | null
-          description?: string | null
-          id?: string
-          name: string
-          updated_at?: string | null
+          needs_compatibility_view?: boolean | null
+          page_or_component: string
+          priority: number
+          query_pattern: string
+          table_name: string
         }
         Update: {
           created_at?: string | null
-          description?: string | null
-          id?: string
-          name?: string
-          updated_at?: string | null
+          needs_compatibility_view?: boolean | null
+          page_or_component?: string
+          priority?: number
+          query_pattern?: string
+          table_name?: string
+        }
+        Relationships: []
+      }
+      db_migration_counts: {
+        Row: {
+          backup_record_count: number
+          backup_table_name: string | null
+          migrated_record_count: number | null
+          migrated_table_name: string | null
+          record_count: number
+          table_name: string
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          backup_record_count: number
+          backup_table_name?: string | null
+          migrated_record_count?: number | null
+          migrated_table_name?: string | null
+          record_count: number
+          table_name: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          backup_record_count?: number
+          backup_table_name?: string | null
+          migrated_record_count?: number | null
+          migrated_table_name?: string | null
+          record_count?: number
+          table_name?: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: []
+      }
+      db_migration_rollback: {
+        Row: {
+          created_at: string | null
+          is_tested: boolean | null
+          rollback_script: string
+          step_name: string
+        }
+        Insert: {
+          created_at?: string | null
+          is_tested?: boolean | null
+          rollback_script: string
+          step_name: string
+        }
+        Update: {
+          created_at?: string | null
+          is_tested?: boolean | null
+          rollback_script?: string
+          step_name?: string
+        }
+        Relationships: []
+      }
+      db_optimization_progress: {
+        Row: {
+          completed_at: string | null
+          is_completed: boolean | null
+          notes: string | null
+          step_name: string
+          verification_passed: boolean | null
+        }
+        Insert: {
+          completed_at?: string | null
+          is_completed?: boolean | null
+          notes?: string | null
+          step_name: string
+          verification_passed?: boolean | null
+        }
+        Update: {
+          completed_at?: string | null
+          is_completed?: boolean | null
+          notes?: string | null
+          step_name?: string
+          verification_passed?: boolean | null
         }
         Relationships: []
       }
@@ -235,343 +231,6 @@ export type Database = {
         }
         Relationships: []
       }
-      fan_message_analytics: {
-        Row: {
-          clicked_at: string | null
-          created_at: string | null
-          id: string
-          link_clicked: string | null
-          message_id: string
-          opened_at: string | null
-          subscriber_id: string | null
-        }
-        Insert: {
-          clicked_at?: string | null
-          created_at?: string | null
-          id?: string
-          link_clicked?: string | null
-          message_id: string
-          opened_at?: string | null
-          subscriber_id?: string | null
-        }
-        Update: {
-          clicked_at?: string | null
-          created_at?: string | null
-          id?: string
-          link_clicked?: string | null
-          message_id?: string
-          opened_at?: string | null
-          subscriber_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "fan_message_analytics_message_id_fkey"
-            columns: ["message_id"]
-            isOneToOne: false
-            referencedRelation: "fan_messages"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fan_message_analytics_subscriber_id_fkey"
-            columns: ["subscriber_id"]
-            isOneToOne: false
-            referencedRelation: "fan_subscribers"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      fan_message_recipients: {
-        Row: {
-          created_at: string | null
-          group_id: string | null
-          id: string
-          message_id: string
-          subscriber_id: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          group_id?: string | null
-          id?: string
-          message_id: string
-          subscriber_id?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          group_id?: string | null
-          id?: string
-          message_id?: string
-          subscriber_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "fan_message_recipients_group_id_fkey"
-            columns: ["group_id"]
-            isOneToOne: false
-            referencedRelation: "fan_audience_groups"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fan_message_recipients_message_id_fkey"
-            columns: ["message_id"]
-            isOneToOne: false
-            referencedRelation: "fan_messages"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fan_message_recipients_subscriber_id_fkey"
-            columns: ["subscriber_id"]
-            isOneToOne: false
-            referencedRelation: "fan_subscribers"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      fan_message_templates: {
-        Row: {
-          content: string
-          created_at: string | null
-          id: string
-          name: string
-          subject: string
-          type: string
-          updated_at: string | null
-        }
-        Insert: {
-          content: string
-          created_at?: string | null
-          id?: string
-          name: string
-          subject: string
-          type?: string
-          updated_at?: string | null
-        }
-        Update: {
-          content?: string
-          created_at?: string | null
-          id?: string
-          name?: string
-          subject?: string
-          type?: string
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-      fan_messages: {
-        Row: {
-          content: string
-          created_at: string | null
-          id: string
-          scheduled_for: string | null
-          sent_at: string | null
-          status: string
-          subject: string
-          template_id: string | null
-          title: string
-          type: string
-          updated_at: string | null
-        }
-        Insert: {
-          content: string
-          created_at?: string | null
-          id?: string
-          scheduled_for?: string | null
-          sent_at?: string | null
-          status?: string
-          subject: string
-          template_id?: string | null
-          title: string
-          type?: string
-          updated_at?: string | null
-        }
-        Update: {
-          content?: string
-          created_at?: string | null
-          id?: string
-          scheduled_for?: string | null
-          sent_at?: string | null
-          status?: string
-          subject?: string
-          template_id?: string | null
-          title?: string
-          type?: string
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "fan_messages_template_id_fkey"
-            columns: ["template_id"]
-            isOneToOne: false
-            referencedRelation: "fan_message_templates"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      fan_poll_answers: {
-        Row: {
-          created_at: string | null
-          id: string
-          option_id: string | null
-          question_id: string
-          rating_value: number | null
-          response_id: string
-          text_answer: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          option_id?: string | null
-          question_id: string
-          rating_value?: number | null
-          response_id: string
-          text_answer?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          option_id?: string | null
-          question_id?: string
-          rating_value?: number | null
-          response_id?: string
-          text_answer?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "fan_poll_answers_option_id_fkey"
-            columns: ["option_id"]
-            isOneToOne: false
-            referencedRelation: "fan_poll_options"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fan_poll_answers_question_id_fkey"
-            columns: ["question_id"]
-            isOneToOne: false
-            referencedRelation: "fan_poll_questions"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fan_poll_answers_response_id_fkey"
-            columns: ["response_id"]
-            isOneToOne: false
-            referencedRelation: "fan_poll_responses"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      fan_poll_options: {
-        Row: {
-          created_at: string | null
-          id: string
-          order_position: number | null
-          question_id: string
-          text: string
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          order_position?: number | null
-          question_id: string
-          text: string
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          order_position?: number | null
-          question_id?: string
-          text?: string
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "fan_poll_options_question_id_fkey"
-            columns: ["question_id"]
-            isOneToOne: false
-            referencedRelation: "fan_poll_questions"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      fan_poll_questions: {
-        Row: {
-          created_at: string | null
-          id: string
-          order_position: number | null
-          poll_id: string
-          required: boolean | null
-          text: string
-          type: string
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          order_position?: number | null
-          poll_id: string
-          required?: boolean | null
-          text: string
-          type?: string
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          order_position?: number | null
-          poll_id?: string
-          required?: boolean | null
-          text?: string
-          type?: string
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "fan_poll_questions_poll_id_fkey"
-            columns: ["poll_id"]
-            isOneToOne: false
-            referencedRelation: "fan_polls"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      fan_poll_responses: {
-        Row: {
-          created_at: string | null
-          id: string
-          is_anonymous: boolean | null
-          poll_id: string
-          respondent_email: string | null
-          respondent_name: string | null
-          submission_date: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          is_anonymous?: boolean | null
-          poll_id: string
-          respondent_email?: string | null
-          respondent_name?: string | null
-          submission_date?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          is_anonymous?: boolean | null
-          poll_id?: string
-          respondent_email?: string | null
-          respondent_name?: string | null
-          submission_date?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "fan_poll_responses_poll_id_fkey"
-            columns: ["poll_id"]
-            isOneToOne: false
-            referencedRelation: "fan_polls"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       fan_polls: {
         Row: {
           created_at: string | null
@@ -613,72 +272,6 @@ export type Database = {
           status?: string
           title?: string
           type?: string
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-      fan_subscriber_groups: {
-        Row: {
-          created_at: string | null
-          group_id: string
-          subscriber_id: string
-        }
-        Insert: {
-          created_at?: string | null
-          group_id: string
-          subscriber_id: string
-        }
-        Update: {
-          created_at?: string | null
-          group_id?: string
-          subscriber_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "fan_subscriber_groups_group_id_fkey"
-            columns: ["group_id"]
-            isOneToOne: false
-            referencedRelation: "fan_audience_groups"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fan_subscriber_groups_subscriber_id_fkey"
-            columns: ["subscriber_id"]
-            isOneToOne: false
-            referencedRelation: "fan_subscribers"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      fan_subscribers: {
-        Row: {
-          created_at: string | null
-          email: string
-          first_name: string | null
-          id: string
-          last_name: string | null
-          status: string
-          subscribed_at: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          email: string
-          first_name?: string | null
-          id?: string
-          last_name?: string | null
-          status?: string
-          subscribed_at?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          email?: string
-          first_name?: string | null
-          id?: string
-          last_name?: string | null
-          status?: string
-          subscribed_at?: string | null
           updated_at?: string | null
         }
         Relationships: []
@@ -749,96 +342,54 @@ export type Database = {
         }
         Relationships: []
       }
-      hero_slides: {
+      highland_league_table_backup_20250427: {
         Row: {
           created_at: string | null
-          display_order: number
-          id: string
-          image_url: string
-          is_active: boolean
-          link_text: string | null
-          link_url: string | null
-          subtitle: string | null
-          title: string
-          updated_at: string | null
-          video_url: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          display_order?: number
-          id?: string
-          image_url: string
-          is_active?: boolean
-          link_text?: string | null
-          link_url?: string | null
-          subtitle?: string | null
-          title: string
-          updated_at?: string | null
-          video_url?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          display_order?: number
-          id?: string
-          image_url?: string
-          is_active?: boolean
-          link_text?: string | null
-          link_url?: string | null
-          subtitle?: string | null
-          title?: string
-          updated_at?: string | null
-          video_url?: string | null
-        }
-        Relationships: []
-      }
-      highland_league_table: {
-        Row: {
-          created_at: string | null
-          drawn: number
+          drawn: number | null
           form: string[] | null
-          goalDifference: number
-          goalsAgainst: number
-          goalsFor: number
-          id: number
+          goalDifference: number | null
+          goalsAgainst: number | null
+          goalsFor: number | null
+          id: number | null
           logo: string | null
-          lost: number
-          played: number
-          points: number
-          position: number
-          team: string
-          won: number
+          lost: number | null
+          played: number | null
+          points: number | null
+          position: number | null
+          team: string | null
+          won: number | null
         }
         Insert: {
           created_at?: string | null
-          drawn: number
+          drawn?: number | null
           form?: string[] | null
-          goalDifference: number
-          goalsAgainst: number
-          goalsFor: number
-          id?: number
+          goalDifference?: number | null
+          goalsAgainst?: number | null
+          goalsFor?: number | null
+          id?: number | null
           logo?: string | null
-          lost: number
-          played: number
-          points: number
-          position: number
-          team: string
-          won: number
+          lost?: number | null
+          played?: number | null
+          points?: number | null
+          position?: number | null
+          team?: string | null
+          won?: number | null
         }
         Update: {
           created_at?: string | null
-          drawn?: number
+          drawn?: number | null
           form?: string[] | null
-          goalDifference?: number
-          goalsAgainst?: number
-          goalsFor?: number
-          id?: number
+          goalDifference?: number | null
+          goalsAgainst?: number | null
+          goalsFor?: number | null
+          id?: number | null
           logo?: string | null
-          lost?: number
-          played?: number
-          points?: number
-          position?: number
-          team?: string
-          won?: number
+          lost?: number | null
+          played?: number | null
+          points?: number | null
+          position?: number | null
+          team?: string | null
+          won?: number | null
         }
         Relationships: []
       }
@@ -877,206 +428,137 @@ export type Database = {
           },
         ]
       }
-      image_metadata: {
-        Row: {
-          alt_text: string | null
-          bucket_id: string
-          created_at: string | null
-          created_by: string | null
-          description: string | null
-          dimensions: Json | null
-          file_name: string
-          id: string
-          storage_path: string
-          tags: string[] | null
-          updated_at: string | null
-        }
-        Insert: {
-          alt_text?: string | null
-          bucket_id: string
-          created_at?: string | null
-          created_by?: string | null
-          description?: string | null
-          dimensions?: Json | null
-          file_name: string
-          id?: string
-          storage_path: string
-          tags?: string[] | null
-          updated_at?: string | null
-        }
-        Update: {
-          alt_text?: string | null
-          bucket_id?: string
-          created_at?: string | null
-          created_by?: string | null
-          description?: string | null
-          dimensions?: Json | null
-          file_name?: string
-          id?: string
-          storage_path?: string
-          tags?: string[] | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
       league_standings: {
         Row: {
           created_at: string | null
-          drawn: number | null
-          form: string[] | null
-          goal_difference: number | null
-          goals_against: number | null
-          goals_for: number | null
+          drawn: number
+          form: string[]
+          goal_difference: number
+          goals_against: number
+          goals_for: number
           id: string
-          lost: number | null
-          played: number | null
-          points: number | null
+          lost: number
+          played: number
+          points: number
           position: number | null
-          season_competition_id: string | null
+          season_competition_id: string
           team_id: string | null
           updated_at: string | null
-          won: number | null
+          won: number
         }
         Insert: {
           created_at?: string | null
-          drawn?: number | null
-          form?: string[] | null
-          goal_difference?: number | null
-          goals_against?: number | null
-          goals_for?: number | null
+          drawn?: number
+          form?: string[]
+          goal_difference?: number
+          goals_against?: number
+          goals_for?: number
           id?: string
-          lost?: number | null
-          played?: number | null
-          points?: number | null
+          lost?: number
+          played?: number
+          points?: number
           position?: number | null
-          season_competition_id?: string | null
+          season_competition_id: string
           team_id?: string | null
           updated_at?: string | null
-          won?: number | null
+          won?: number
         }
         Update: {
           created_at?: string | null
-          drawn?: number | null
-          form?: string[] | null
-          goal_difference?: number | null
-          goals_against?: number | null
-          goals_for?: number | null
+          drawn?: number
+          form?: string[]
+          goal_difference?: number
+          goals_against?: number
+          goals_for?: number
           id?: string
-          lost?: number | null
-          played?: number | null
-          points?: number | null
+          lost?: number
+          played?: number
+          points?: number
           position?: number | null
-          season_competition_id?: string | null
+          season_competition_id?: string
           team_id?: string | null
           updated_at?: string | null
-          won?: number | null
+          won?: number
         }
         Relationships: []
       }
-      match_ticket_configs: {
-        Row: {
-          capacity: number | null
-          created_at: string | null
-          fixture_id: string
-          online_purchase_link: string | null
-          sales_close: string | null
-          sales_open: string | null
-          ticket_types: string[] | null
-          updated_at: string | null
-        }
-        Insert: {
-          capacity?: number | null
-          created_at?: string | null
-          fixture_id: string
-          online_purchase_link?: string | null
-          sales_close?: string | null
-          sales_open?: string | null
-          ticket_types?: string[] | null
-          updated_at?: string | null
-        }
-        Update: {
-          capacity?: number | null
-          created_at?: string | null
-          fixture_id?: string
-          online_purchase_link?: string | null
-          sales_close?: string | null
-          sales_open?: string | null
-          ticket_types?: string[] | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "match_ticket_configs_fixture_id_fkey"
-            columns: ["fixture_id"]
-            isOneToOne: true
-            referencedRelation: "fixtures"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      matches: {
+      match: {
         Row: {
           away_score: number | null
-          away_team_id: number | null
-          competition_id: number | null
-          date: string | null
+          away_team_id: string
+          competition_id: string | null
+          created_at: string | null
+          date: string
           home_score: number | null
-          home_team_id: number | null
-          id: number
+          home_team_id: string
+          id: string
+          import_date: string | null
           is_home: boolean | null
-          season: string | null
+          is_latest_result: boolean | null
+          is_next_match: boolean | null
+          season_id: string | null
+          source: string | null
           status: string | null
+          ticket_link: string | null
           time: string | null
+          updated_at: string | null
           venue: string | null
         }
         Insert: {
           away_score?: number | null
-          away_team_id?: number | null
-          competition_id?: number | null
-          date?: string | null
+          away_team_id: string
+          competition_id?: string | null
+          created_at?: string | null
+          date: string
           home_score?: number | null
-          home_team_id?: number | null
-          id?: number
+          home_team_id: string
+          id?: string
+          import_date?: string | null
           is_home?: boolean | null
-          season?: string | null
+          is_latest_result?: boolean | null
+          is_next_match?: boolean | null
+          season_id?: string | null
+          source?: string | null
           status?: string | null
+          ticket_link?: string | null
           time?: string | null
+          updated_at?: string | null
           venue?: string | null
         }
         Update: {
           away_score?: number | null
-          away_team_id?: number | null
-          competition_id?: number | null
-          date?: string | null
+          away_team_id?: string
+          competition_id?: string | null
+          created_at?: string | null
+          date?: string
           home_score?: number | null
-          home_team_id?: number | null
-          id?: number
+          home_team_id?: string
+          id?: string
+          import_date?: string | null
           is_home?: boolean | null
-          season?: string | null
+          is_latest_result?: boolean | null
+          is_next_match?: boolean | null
+          season_id?: string | null
+          source?: string | null
           status?: string | null
+          ticket_link?: string | null
           time?: string | null
+          updated_at?: string | null
           venue?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "matches_away_team_id_fkey"
+            foreignKeyName: "fk_away_team"
             columns: ["away_team_id"]
             isOneToOne: false
             referencedRelation: "teams"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "matches_competition_id_fkey"
-            columns: ["competition_id"]
+            foreignKeyName: "match_season_id_fkey"
+            columns: ["season_id"]
             isOneToOne: false
-            referencedRelation: "competitions"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "matches_home_team_id_fkey"
-            columns: ["home_team_id"]
-            isOneToOne: false
-            referencedRelation: "teams"
+            referencedRelation: "seasons"
             referencedColumns: ["id"]
           },
         ]
@@ -1144,33 +626,6 @@ export type Database = {
         }
         Relationships: []
       }
-      profiles: {
-        Row: {
-          avatar_url: string | null
-          created_at: string | null
-          email: string
-          full_name: string | null
-          id: string
-          updated_at: string | null
-        }
-        Insert: {
-          avatar_url?: string | null
-          created_at?: string | null
-          email: string
-          full_name?: string | null
-          id: string
-          updated_at?: string | null
-        }
-        Update: {
-          avatar_url?: string | null
-          created_at?: string | null
-          email?: string
-          full_name?: string | null
-          id?: string
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
       scrape_logs: {
         Row: {
           created_at: string | null
@@ -1204,55 +659,40 @@ export type Database = {
         }
         Relationships: []
       }
-      season_ticket_holders: {
+      season_competitions: {
         Row: {
-          address: string | null
+          competition_id: string
           created_at: string | null
-          email: string | null
-          first_name: string
           id: string
-          last_name: string
-          notes: string | null
-          phone: string | null
-          renewal_status: string | null
-          season_id: string | null
-          season_ticket_id: string | null
+          is_league: boolean | null
+          name: string
+          season_id: string
           updated_at: string | null
         }
         Insert: {
-          address?: string | null
+          competition_id: string
           created_at?: string | null
-          email?: string | null
-          first_name: string
           id?: string
-          last_name: string
-          notes?: string | null
-          phone?: string | null
-          renewal_status?: string | null
-          season_id?: string | null
-          season_ticket_id?: string | null
+          is_league?: boolean | null
+          name: string
+          season_id: string
           updated_at?: string | null
         }
         Update: {
-          address?: string | null
+          competition_id?: string
           created_at?: string | null
-          email?: string | null
-          first_name?: string
           id?: string
-          last_name?: string
-          notes?: string | null
-          phone?: string | null
-          renewal_status?: string | null
-          season_id?: string | null
-          season_ticket_id?: string | null
+          is_league?: boolean | null
+          name?: string
+          season_id?: string
           updated_at?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "season_ticket_holders_season_ticket_id_fkey"
-            columns: ["season_ticket_id"]
+            foreignKeyName: "season_competitions_season_id_fkey"
+            columns: ["season_id"]
             isOneToOne: false
-            referencedRelation: "season_tickets"
+            referencedRelation: "seasons"
             referencedColumns: ["id"]
           },
         ]
@@ -1299,6 +739,36 @@ export type Database = {
         }
         Relationships: []
       }
+      seasons: {
+        Row: {
+          created_at: string | null
+          end_date: string
+          id: string
+          is_current: boolean | null
+          name: string
+          start_date: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          end_date: string
+          id?: string
+          is_current?: boolean | null
+          name: string
+          start_date: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          end_date?: string
+          id?: string
+          is_current?: boolean | null
+          name?: string
+          start_date?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       settings: {
         Row: {
           key: string
@@ -1316,104 +786,6 @@ export type Database = {
           value?: string
         }
         Relationships: []
-      }
-      sponsor_communications: {
-        Row: {
-          contact_id: string | null
-          content: string | null
-          created_at: string | null
-          created_by: string | null
-          date: string | null
-          id: string
-          sponsor_id: string | null
-          subject: string
-          type: string
-        }
-        Insert: {
-          contact_id?: string | null
-          content?: string | null
-          created_at?: string | null
-          created_by?: string | null
-          date?: string | null
-          id?: string
-          sponsor_id?: string | null
-          subject: string
-          type: string
-        }
-        Update: {
-          contact_id?: string | null
-          content?: string | null
-          created_at?: string | null
-          created_by?: string | null
-          date?: string | null
-          id?: string
-          sponsor_id?: string | null
-          subject?: string
-          type?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "sponsor_communications_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "sponsor_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "sponsor_communications_sponsor_id_fkey"
-            columns: ["sponsor_id"]
-            isOneToOne: false
-            referencedRelation: "sponsors"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      sponsor_contacts: {
-        Row: {
-          created_at: string | null
-          email: string | null
-          id: string
-          name: string
-          notes: string | null
-          phone: string | null
-          primary_contact: boolean | null
-          role: string | null
-          sponsor_id: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          email?: string | null
-          id?: string
-          name: string
-          notes?: string | null
-          phone?: string | null
-          primary_contact?: boolean | null
-          role?: string | null
-          sponsor_id?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          email?: string | null
-          id?: string
-          name?: string
-          notes?: string | null
-          phone?: string | null
-          primary_contact?: boolean | null
-          role?: string | null
-          sponsor_id?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "sponsor_contacts_sponsor_id_fkey"
-            columns: ["sponsor_id"]
-            isOneToOne: false
-            referencedRelation: "sponsors"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       sponsor_display_settings: {
         Row: {
@@ -1451,92 +823,6 @@ export type Database = {
         }
         Relationships: []
       }
-      sponsor_documents: {
-        Row: {
-          created_at: string | null
-          document_type: string
-          file_path: string
-          id: string
-          name: string
-          sponsor_id: string | null
-          upload_date: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          document_type: string
-          file_path: string
-          id?: string
-          name: string
-          sponsor_id?: string | null
-          upload_date?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          document_type?: string
-          file_path?: string
-          id?: string
-          name?: string
-          sponsor_id?: string | null
-          upload_date?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "sponsor_documents_sponsor_id_fkey"
-            columns: ["sponsor_id"]
-            isOneToOne: false
-            referencedRelation: "sponsors"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      sponsors: {
-        Row: {
-          created_at: string | null
-          description: string | null
-          display_order: number | null
-          end_date: string | null
-          id: string
-          is_active: boolean | null
-          logo_url: string | null
-          name: string
-          renewal_status: string | null
-          start_date: string | null
-          tier: string | null
-          updated_at: string | null
-          website_url: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          description?: string | null
-          display_order?: number | null
-          end_date?: string | null
-          id?: string
-          is_active?: boolean | null
-          logo_url?: string | null
-          name: string
-          renewal_status?: string | null
-          start_date?: string | null
-          tier?: string | null
-          updated_at?: string | null
-          website_url?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          description?: string | null
-          display_order?: number | null
-          end_date?: string | null
-          id?: string
-          is_active?: boolean | null
-          logo_url?: string | null
-          name?: string
-          renewal_status?: string | null
-          start_date?: string | null
-          tier?: string | null
-          updated_at?: string | null
-          website_url?: string | null
-        }
-        Relationships: []
-      }
       sponsorship_tiers: {
         Row: {
           benefits: string | null
@@ -1567,33 +853,6 @@ export type Database = {
           name?: string
           order_position?: number
           updated_at?: string | null
-        }
-        Relationships: []
-      }
-      system_logs: {
-        Row: {
-          created_at: string | null
-          id: string
-          message: string
-          source: string
-          timestamp: string
-          type: string
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          message: string
-          source: string
-          timestamp?: string
-          type: string
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          message?: string
-          source?: string
-          timestamp?: string
-          type?: string
         }
         Relationships: []
       }
@@ -1650,105 +909,19 @@ export type Database = {
       }
       teams: {
         Row: {
-          id: number
+          id: string
           logo: string | null
           name: string
         }
         Insert: {
-          id?: number
+          id?: string
           logo?: string | null
           name: string
         }
         Update: {
-          id?: number
+          id?: string
           logo?: string | null
           name?: string
-        }
-        Relationships: []
-      }
-      ticket_sales: {
-        Row: {
-          created_at: string | null
-          customer_email: string | null
-          customer_name: string | null
-          fixture_id: string | null
-          id: string
-          payment_method: string | null
-          purchase_date: string | null
-          quantity: number
-          season_id: string | null
-          ticket_type_id: string | null
-          total_price: number
-        }
-        Insert: {
-          created_at?: string | null
-          customer_email?: string | null
-          customer_name?: string | null
-          fixture_id?: string | null
-          id?: string
-          payment_method?: string | null
-          purchase_date?: string | null
-          quantity: number
-          season_id?: string | null
-          ticket_type_id?: string | null
-          total_price: number
-        }
-        Update: {
-          created_at?: string | null
-          customer_email?: string | null
-          customer_name?: string | null
-          fixture_id?: string | null
-          id?: string
-          payment_method?: string | null
-          purchase_date?: string | null
-          quantity?: number
-          season_id?: string | null
-          ticket_type_id?: string | null
-          total_price?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "ticket_sales_fixture_id_fkey"
-            columns: ["fixture_id"]
-            isOneToOne: false
-            referencedRelation: "fixtures"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      ticket_systems: {
-        Row: {
-          api_endpoint: string | null
-          api_key: string | null
-          created_at: string | null
-          id: string
-          is_active: boolean | null
-          last_sync: string | null
-          name: string
-          updated_at: string | null
-          webhook_url: string | null
-        }
-        Insert: {
-          api_endpoint?: string | null
-          api_key?: string | null
-          created_at?: string | null
-          id?: string
-          is_active?: boolean | null
-          last_sync?: string | null
-          name: string
-          updated_at?: string | null
-          webhook_url?: string | null
-        }
-        Update: {
-          api_endpoint?: string | null
-          api_key?: string | null
-          created_at?: string | null
-          id?: string
-          is_active?: boolean | null
-          last_sync?: string | null
-          name?: string
-          updated_at?: string | null
-          webhook_url?: string | null
         }
         Relationships: []
       }
@@ -1785,30 +958,218 @@ export type Database = {
         }
         Relationships: []
       }
-      user_roles: {
+    }
+    Views: {
+      vw_fixtures: {
         Row: {
+          away_score: number | null
+          away_team: string | null
+          competition: string | null
           created_at: string | null
-          id: string
-          role: string
-          user_id: string | null
+          date: string | null
+          date_passed: boolean | null
+          home_score: number | null
+          home_team: string | null
+          id: string | null
+          import_date: string | null
+          is_completed: boolean | null
+          is_latest_result: boolean | null
+          is_next_match: boolean | null
+          season: string | null
+          source: string | null
+          ticket_link: string | null
+          time: string | null
+          updated_at: string | null
+          venue: string | null
         }
         Insert: {
+          away_score?: number | null
+          away_team?: never
+          competition?: never
           created_at?: string | null
-          id?: string
-          role: string
-          user_id?: string | null
+          date?: string | null
+          date_passed?: never
+          home_score?: number | null
+          home_team?: never
+          id?: string | null
+          import_date?: string | null
+          is_completed?: never
+          is_latest_result?: boolean | null
+          is_next_match?: boolean | null
+          season?: never
+          source?: string | null
+          ticket_link?: string | null
+          time?: string | null
+          updated_at?: string | null
+          venue?: string | null
         }
         Update: {
+          away_score?: number | null
+          away_team?: never
+          competition?: never
           created_at?: string | null
-          id?: string
-          role?: string
-          user_id?: string | null
+          date?: string | null
+          date_passed?: never
+          home_score?: number | null
+          home_team?: never
+          id?: string | null
+          import_date?: string | null
+          is_completed?: never
+          is_latest_result?: boolean | null
+          is_next_match?: boolean | null
+          season?: never
+          source?: string | null
+          ticket_link?: string | null
+          time?: string | null
+          updated_at?: string | null
+          venue?: string | null
         }
         Relationships: []
       }
-    }
-    Views: {
-      [_ in never]: never
+      vw_highland_league_table: {
+        Row: {
+          created_at: string | null
+          drawn: number | null
+          form: string[] | null
+          goal_difference: number | null
+          goals_against: number | null
+          goals_for: number | null
+          id: string | null
+          lost: number | null
+          played: number | null
+          points: number | null
+          position: number | null
+          season_competition_id: string | null
+          team_id: string | null
+          updated_at: string | null
+          won: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          drawn?: number | null
+          form?: string[] | null
+          goal_difference?: number | null
+          goals_against?: number | null
+          goals_for?: number | null
+          id?: string | null
+          lost?: number | null
+          played?: number | null
+          points?: number | null
+          position?: number | null
+          season_competition_id?: string | null
+          team_id?: string | null
+          updated_at?: string | null
+          won?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          drawn?: number | null
+          form?: string[] | null
+          goal_difference?: number | null
+          goals_against?: number | null
+          goals_for?: number | null
+          id?: string | null
+          lost?: number | null
+          played?: number | null
+          points?: number | null
+          position?: number | null
+          season_competition_id?: string | null
+          team_id?: string | null
+          updated_at?: string | null
+          won?: number | null
+        }
+        Relationships: []
+      }
+      vw_matches: {
+        Row: {
+          away_score: number | null
+          away_team_id: string | null
+          competition_id: string | null
+          date: string | null
+          home_score: number | null
+          home_team_id: string | null
+          id: number | null
+          is_home: boolean | null
+          season: string | null
+          status: string | null
+          time: string | null
+          venue: string | null
+        }
+        Insert: {
+          away_score?: number | null
+          away_team_id?: never
+          competition_id?: never
+          date?: string | null
+          home_score?: number | null
+          home_team_id?: never
+          id?: never
+          is_home?: boolean | null
+          season?: never
+          status?: string | null
+          time?: string | null
+          venue?: string | null
+        }
+        Update: {
+          away_score?: number | null
+          away_team_id?: never
+          competition_id?: never
+          date?: string | null
+          home_score?: number | null
+          home_team_id?: never
+          id?: never
+          is_home?: boolean | null
+          season?: never
+          status?: string | null
+          time?: string | null
+          venue?: string | null
+        }
+        Relationships: []
+      }
+      vw_upcoming_matches: {
+        Row: {
+          away_team: string | null
+          away_team_logo: string | null
+          competition: string | null
+          competition_short: string | null
+          home_team: string | null
+          home_team_logo: string | null
+          id: string | null
+          match_date: string | null
+          match_time: string | null
+          season: string | null
+          ticket_link: string | null
+          venue: string | null
+        }
+        Insert: {
+          away_team?: string | null
+          away_team_logo?: never
+          competition?: string | null
+          competition_short?: never
+          home_team?: string | null
+          home_team_logo?: never
+          id?: string | null
+          match_date?: string | null
+          match_time?: string | null
+          season?: string | null
+          ticket_link?: string | null
+          venue?: never
+        }
+        Update: {
+          away_team?: string | null
+          away_team_logo?: never
+          competition?: string | null
+          competition_short?: never
+          home_team?: string | null
+          home_team_logo?: never
+          id?: string | null
+          match_date?: string | null
+          match_time?: string | null
+          season?: string | null
+          ticket_link?: string | null
+          venue?: never
+        }
+        Relationships: []
+      }
     }
     Functions: {
       get_next_match: {
@@ -1827,6 +1188,22 @@ export type Database = {
           venue: string
           ticket_link: string
         }[]
+      }
+      md5_to_away_team: {
+        Args: { team_id: string }
+        Returns: string
+      }
+      md5_to_competition: {
+        Args: { comp_id: string }
+        Returns: string
+      }
+      md5_to_home_team: {
+        Args: { team_id: string }
+        Returns: string
+      }
+      md5_to_team_name: {
+        Args: { team_id: string }
+        Returns: string
       }
     }
     Enums: {
