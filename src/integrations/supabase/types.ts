@@ -485,7 +485,62 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      vw_current_league_table: {
+        Row: {
+          draws: number | null
+          form: string[] | null
+          goal_difference: number | null
+          goals_against: number | null
+          goals_for: number | null
+          id: string | null
+          losses: number | null
+          matches_played: number | null
+          points: number | null
+          position: number | null
+          team_logo: string | null
+          team_name: string | null
+          team_short_name: string | null
+          wins: number | null
+        }
+        Relationships: []
+      }
+      vw_latest_results: {
+        Row: {
+          away_score: number | null
+          away_team: string | null
+          away_team_logo: string | null
+          competition: string | null
+          competition_short: string | null
+          home_score: number | null
+          home_team: string | null
+          home_team_logo: string | null
+          id: string | null
+          match_date: string | null
+          match_report_link: string | null
+          match_time: string | null
+          season: string | null
+          venue: string | null
+        }
+        Relationships: []
+      }
+      vw_upcoming_matches: {
+        Row: {
+          away_team: string | null
+          away_team_logo: string | null
+          competition: string | null
+          competition_short: string | null
+          home_team: string | null
+          home_team_logo: string | null
+          id: string | null
+          is_highlighted: boolean | null
+          match_date: string | null
+          match_time: string | null
+          season: string | null
+          ticket_link: string | null
+          venue: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       get_next_match: {
