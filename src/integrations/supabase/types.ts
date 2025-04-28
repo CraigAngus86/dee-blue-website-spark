@@ -39,78 +39,6 @@ export type Database = {
         }
         Relationships: []
       }
-      competitions_backup_20250427: {
-        Row: {
-          id: string | null
-          logo: string | null
-          name: string | null
-        }
-        Insert: {
-          id?: string | null
-          logo?: string | null
-          name?: string | null
-        }
-        Update: {
-          id?: string | null
-          logo?: string | null
-          name?: string | null
-        }
-        Relationships: []
-      }
-      league_standings_backup_20250427: {
-        Row: {
-          created_at: string | null
-          drawn: number | null
-          form: string[] | null
-          goal_difference: number | null
-          goals_against: number | null
-          goals_for: number | null
-          id: string | null
-          lost: number | null
-          played: number | null
-          points: number | null
-          position: number | null
-          season_competition_id: string | null
-          team_id: string | null
-          updated_at: string | null
-          won: number | null
-        }
-        Insert: {
-          created_at?: string | null
-          drawn?: number | null
-          form?: string[] | null
-          goal_difference?: number | null
-          goals_against?: number | null
-          goals_for?: number | null
-          id?: string | null
-          lost?: number | null
-          played?: number | null
-          points?: number | null
-          position?: number | null
-          season_competition_id?: string | null
-          team_id?: string | null
-          updated_at?: string | null
-          won?: number | null
-        }
-        Update: {
-          created_at?: string | null
-          drawn?: number | null
-          form?: string[] | null
-          goal_difference?: number | null
-          goals_against?: number | null
-          goals_for?: number | null
-          id?: string | null
-          lost?: number | null
-          played?: number | null
-          points?: number | null
-          position?: number | null
-          season_competition_id?: string | null
-          team_id?: string | null
-          updated_at?: string | null
-          won?: number | null
-        }
-        Relationships: []
-      }
       league_table: {
         Row: {
           competition_id: string
@@ -168,6 +96,27 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "fk_league_table_competition"
+            columns: ["competition_id"]
+            isOneToOne: false
+            referencedRelation: "competitions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_league_table_season"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "seasons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_league_table_team"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "league_table_competition_id_fkey"
             columns: ["competition_id"]
             isOneToOne: false
@@ -201,14 +150,17 @@ export type Database = {
           home_score: number | null
           home_scorers: string[] | null
           home_team_id: string
+          hospitality_available: boolean | null
           id: string
           is_highlighted: boolean | null
           match_date: string
           match_report_link: string | null
+          match_sponsor_id: string | null
           match_time: string | null
           season_id: string | null
           status: string | null
           ticket_link: string | null
+          ticketco_event_id: string | null
           updated_at: string | null
           venue: string | null
         }
@@ -222,14 +174,17 @@ export type Database = {
           home_score?: number | null
           home_scorers?: string[] | null
           home_team_id: string
+          hospitality_available?: boolean | null
           id?: string
           is_highlighted?: boolean | null
           match_date: string
           match_report_link?: string | null
+          match_sponsor_id?: string | null
           match_time?: string | null
           season_id?: string | null
           status?: string | null
           ticket_link?: string | null
+          ticketco_event_id?: string | null
           updated_at?: string | null
           venue?: string | null
         }
@@ -243,18 +198,49 @@ export type Database = {
           home_score?: number | null
           home_scorers?: string[] | null
           home_team_id?: string
+          hospitality_available?: boolean | null
           id?: string
           is_highlighted?: boolean | null
           match_date?: string
           match_report_link?: string | null
+          match_sponsor_id?: string | null
           match_time?: string | null
           season_id?: string | null
           status?: string | null
           ticket_link?: string | null
+          ticketco_event_id?: string | null
           updated_at?: string | null
           venue?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_match_away_team"
+            columns: ["away_team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_match_competition"
+            columns: ["competition_id"]
+            isOneToOne: false
+            referencedRelation: "competitions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_match_home_team"
+            columns: ["home_team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_match_season"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "seasons"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "match_away_team_id_fkey"
             columns: ["away_team_id"]
@@ -277,6 +263,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "match_match_sponsor_id_fkey"
+            columns: ["match_sponsor_id"]
+            isOneToOne: false
+            referencedRelation: "sponsors"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "match_season_id_fkey"
             columns: ["season_id"]
             isOneToOne: false
@@ -285,71 +278,79 @@ export type Database = {
           },
         ]
       }
-      match_backup_20250427: {
+      people: {
         Row: {
-          away_score: number | null
-          away_team_id: string | null
-          competition_id: string | null
+          academy_player: boolean | null
+          bio: string | null
           created_at: string | null
-          date: string | null
-          home_score: number | null
-          home_team_id: string | null
-          id: string | null
-          import_date: string | null
-          is_home: boolean | null
-          is_latest_result: boolean | null
-          is_next_match: boolean | null
-          season: string | null
-          source: string | null
-          status: string | null
-          ticket_link: string | null
-          time: string | null
+          did_you_know: string | null
+          first_name: string
+          id: string
+          image_url: string | null
+          jersey_number: number | null
+          joined_date: string | null
+          last_name: string
+          member_type: string
+          name: string
+          nationality: string
+          player_position: string | null
+          position: string
+          social_media: Json | null
+          sponsor_id: string | null
+          staff_role: string | null
           updated_at: string | null
-          venue: string | null
         }
         Insert: {
-          away_score?: number | null
-          away_team_id?: string | null
-          competition_id?: string | null
+          academy_player?: boolean | null
+          bio?: string | null
           created_at?: string | null
-          date?: string | null
-          home_score?: number | null
-          home_team_id?: string | null
-          id?: string | null
-          import_date?: string | null
-          is_home?: boolean | null
-          is_latest_result?: boolean | null
-          is_next_match?: boolean | null
-          season?: string | null
-          source?: string | null
-          status?: string | null
-          ticket_link?: string | null
-          time?: string | null
+          did_you_know?: string | null
+          first_name: string
+          id?: string
+          image_url?: string | null
+          jersey_number?: number | null
+          joined_date?: string | null
+          last_name: string
+          member_type: string
+          name: string
+          nationality?: string
+          player_position?: string | null
+          position: string
+          social_media?: Json | null
+          sponsor_id?: string | null
+          staff_role?: string | null
           updated_at?: string | null
-          venue?: string | null
         }
         Update: {
-          away_score?: number | null
-          away_team_id?: string | null
-          competition_id?: string | null
+          academy_player?: boolean | null
+          bio?: string | null
           created_at?: string | null
-          date?: string | null
-          home_score?: number | null
-          home_team_id?: string | null
-          id?: string | null
-          import_date?: string | null
-          is_home?: boolean | null
-          is_latest_result?: boolean | null
-          is_next_match?: boolean | null
-          season?: string | null
-          source?: string | null
-          status?: string | null
-          ticket_link?: string | null
-          time?: string | null
+          did_you_know?: string | null
+          first_name?: string
+          id?: string
+          image_url?: string | null
+          jersey_number?: number | null
+          joined_date?: string | null
+          last_name?: string
+          member_type?: string
+          name?: string
+          nationality?: string
+          player_position?: string | null
+          position?: string
+          social_media?: Json | null
+          sponsor_id?: string | null
+          staff_role?: string | null
           updated_at?: string | null
-          venue?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "people_sponsor_id_fkey"
+            columns: ["sponsor_id"]
+            isOneToOne: false
+            referencedRelation: "sponsors"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       season_competition: {
         Row: {
@@ -374,6 +375,20 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_season_competition_competition"
+            columns: ["competition_id"]
+            isOneToOne: false
+            referencedRelation: "competitions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_season_competition_season"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "seasons"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "season_competition_competition_id_fkey"
             columns: ["competition_id"]
@@ -423,6 +438,48 @@ export type Database = {
         }
         Relationships: []
       }
+      sponsors: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          featured: boolean | null
+          id: string
+          logo_dark_url: string | null
+          logo_url: string | null
+          name: string
+          sanity_id: string | null
+          tier: string | null
+          updated_at: string | null
+          website: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          featured?: boolean | null
+          id?: string
+          logo_dark_url?: string | null
+          logo_url?: string | null
+          name: string
+          sanity_id?: string | null
+          tier?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          featured?: boolean | null
+          id?: string
+          logo_dark_url?: string | null
+          logo_url?: string | null
+          name?: string
+          sanity_id?: string | null
+          tier?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
       teams: {
         Row: {
           created_at: string | null
@@ -459,27 +516,6 @@ export type Database = {
           stadium_name?: string | null
           updated_at?: string | null
           website?: string | null
-        }
-        Relationships: []
-      }
-      teams_backup_20250427: {
-        Row: {
-          id: string | null
-          logo: string | null
-          name: string | null
-          short_name: string | null
-        }
-        Insert: {
-          id?: string | null
-          logo?: string | null
-          name?: string | null
-          short_name?: string | null
-        }
-        Update: {
-          id?: string | null
-          logo?: string | null
-          name?: string | null
-          short_name?: string | null
         }
         Relationships: []
       }
