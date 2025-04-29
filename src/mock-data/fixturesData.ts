@@ -10,14 +10,14 @@ const formatDate = (dateStr: string) => {
 export const allFixtures: Match[] = [
   // JULY 2024
   {
-    id: "1",
-    competition: "Scottish Highland Football League",
-    date: "2024-07-27",
-    time: "16:00",
-    homeTeam: "Formartine United",
+    id: '1',
+    competition: 'Scottish Highland Football League',
+    date: formatDate('27/07/2024'),
+    time: '16:00',
+    homeTeam: 'Formartine',
     awayTeam: "Banks o' Dee",
-    venue: "North Lodge Park",
-    status: "finished",
+    venue: 'North Lodge Park',
+    status: 'completed',
     isCompleted: true,
     result: {
       homeScore: 0,
@@ -25,14 +25,14 @@ export const allFixtures: Match[] = [
     }
   },
   {
-    id: "2",
-    competition: "Scottish Challenge Cup",
-    date: "2024-07-30",
-    time: "20:45",
+    id: '2',
+    competition: 'Scottish Challenge Cup',
+    date: formatDate('30/07/2024'),
+    time: '20:45',
     homeTeam: "Banks o' Dee",
-    awayTeam: "Aberdeen",
-    venue: "Spain Park",
-    status: "finished",
+    awayTeam: 'Aberdeen FC B',
+    venue: 'Spain Park',
+    status: 'completed',
     isCompleted: true,
     result: {
       homeScore: 1,
@@ -42,14 +42,14 @@ export const allFixtures: Match[] = [
   
   // AUGUST 2024
   {
-    id: "3",
-    competition: "Scottish Highland Football League",
-    date: "2024-08-03",
-    time: "16:00",
+    id: '3',
+    competition: 'Scottish Highland Football League',
+    date: formatDate('03/08/2024'),
+    time: '16:00',
     homeTeam: "Banks o' Dee",
-    awayTeam: "Lossiemouth",
-    venue: "Spain Park",
-    status: "finished",
+    awayTeam: 'Lossiemouth',
+    venue: 'Spain Park',
+    status: 'completed',
     isCompleted: true,
     result: {
       homeScore: 0,
@@ -57,14 +57,14 @@ export const allFixtures: Match[] = [
     }
   },
   {
-    id: "4",
-    competition: "Scottish Highland Football League",
-    date: "2024-08-07",
-    time: "21:00",
-    homeTeam: "Keith",
+    id: '4',
+    competition: 'Scottish Highland Football League',
+    date: formatDate('07/08/2024'),
+    time: '21:00',
+    homeTeam: "Keith FC",
     awayTeam: "Banks o' Dee",
-    venue: "Kynoch Park",
-    status: "finished",
+    venue: 'Kynoch Park',
+    status: 'completed',
     isCompleted: true,
     result: {
       homeScore: 1,
@@ -72,14 +72,14 @@ export const allFixtures: Match[] = [
     }
   },
   {
-    id: "5",
-    competition: "Scottish Highland Football League",
-    date: "2024-08-10",
-    time: "16:00",
+    id: '5',
+    competition: 'Scottish Highland Football League',
+    date: formatDate('10/08/2024'),
+    time: '16:00',
     homeTeam: "Banks o' Dee",
-    awayTeam: "Nairn County",
-    venue: "Spain Park",
-    status: "finished",
+    awayTeam: 'Nairn County',
+    venue: 'Spain Park',
+    status: 'completed',
     isCompleted: true,
     result: {
       homeScore: 4,
@@ -87,14 +87,14 @@ export const allFixtures: Match[] = [
     }
   },
   {
-    id: "6",
-    competition: "Scottish Challenge Cup",
-    date: "2024-08-13",
-    time: "20:45",
-    homeTeam: "Elgin City",
+    id: '6',
+    competition: 'Scottish Challenge Cup',
+    date: formatDate('13/08/2024'),
+    time: '20:45',
+    homeTeam: 'Elgin City',
     awayTeam: "Banks o' Dee",
-    venue: "Borough Briggs",
-    status: "finished",
+    venue: 'Borough Briggs',
+    status: 'completed',
     isCompleted: true,
     result: {
       homeScore: 2,
@@ -102,14 +102,14 @@ export const allFixtures: Match[] = [
     }
   },
   {
-    id: "7",
-    competition: "Scottish Highland Football League",
-    date: "2024-08-17",
-    time: "16:00",
+    id: '7',
+    competition: 'Scottish Highland Football League',
+    date: formatDate('17/08/2024'),
+    time: '16:00',
     homeTeam: "Banks o' Dee",
-    awayTeam: "Inverurie Loco Works",
-    venue: "Spain Park",
-    status: "finished",
+    awayTeam: 'Inverurie Locos',
+    venue: 'Spain Park',
+    status: 'completed',
     isCompleted: true,
     result: {
       homeScore: 1,
@@ -117,14 +117,14 @@ export const allFixtures: Match[] = [
     }
   },
   {
-    id: "8",
-    competition: "Scottish Highland Football League",
-    date: "2024-08-24",
-    time: "16:00",
-    homeTeam: "Fraserburgh",
+    id: '8',
+    competition: 'Scottish Highland Football League',
+    date: formatDate('24/08/2024'),
+    time: '16:00',
+    homeTeam: 'Fraserburgh',
     awayTeam: "Banks o' Dee",
-    venue: "Bellslea Park",
-    status: "finished",
+    venue: 'Bellslea Park',
+    status: 'completed',
     isCompleted: true,
     result: {
       homeScore: 1,
@@ -132,495 +132,25 @@ export const allFixtures: Match[] = [
     }
   },
   {
-    id: "9",
-    competition: "Scottish Highland Football League",
-    date: "2024-08-28",
-    time: "21:00",
-    homeTeam: "Banks o' Dee",
-    awayTeam: "Huntly",
-    venue: "Spain Park",
-    status: "finished",
-    isCompleted: true,
-    result: {
-      homeScore: 2,
-      awayScore: 3
-    }
-  },
-  {
-    id: "10",
-    competition: "Scottish Highland Football League",
-    date: "2024-08-31",
-    time: "16:00",
-    homeTeam: "Wick Academy",
+    id: '38',
+    competition: 'Scottish Highland Football League',
+    date: formatDate('12/04/2025'),
+    time: '16:00',
+    homeTeam: 'Forres',
     awayTeam: "Banks o' Dee",
-    venue: "Harmsworth Park",
-    status: "finished",
-    isCompleted: true,
-    result: {
-      homeScore: 1,
-      awayScore: 6
-    }
+    venue: 'Mosset Park',
+    status: 'upcoming',
+    isCompleted: false
   },
-  
-  // SEPTEMBER 2024
   {
-    id: "11",
-    competition: "Scottish Highland Football League",
-    date: "2024-09-06",
-    time: "20:30",
+    id: '39',
+    competition: 'Highland League Cup - Final',
+    date: formatDate('30/05/2025'),
+    time: '19:45',
     homeTeam: "Banks o' Dee",
-    awayTeam: "Deveronvale",
-    venue: "Spain Park",
-    status: "finished",
-    isCompleted: true,
-    result: {
-      homeScore: 1,
-      awayScore: 0
-    }
-  },
-  {
-    id: "12",
-    competition: "Scottish Highland Football League",
-    date: "2024-09-14",
-    time: "16:00",
-    homeTeam: "Buckie Thistle",
-    awayTeam: "Banks o' Dee",
-    venue: "Victoria Park",
-    status: "finished",
-    isCompleted: true,
-    result: {
-      homeScore: 0,
-      awayScore: 1
-    }
-  },
-  {
-    id: "13",
-    competition: "Scottish Highland Football League",
-    date: "2024-09-18",
-    time: "21:00",
-    homeTeam: "Banks o' Dee",
-    awayTeam: "Brechin City",
-    venue: "Spain Park",
-    status: "finished",
-    isCompleted: true,
-    result: {
-      homeScore: 1,
-      awayScore: 3
-    }
-  },
-  {
-    id: "14",
-    competition: "Scottish Highland Football League",
-    date: "2024-09-21",
-    time: "16:00",
-    homeTeam: "Clachnacuddin",
-    awayTeam: "Banks o' Dee",
-    venue: "Grant Street Park",
-    status: "finished",
-    isCompleted: true,
-    result: {
-      homeScore: 0,
-      awayScore: 3
-    }
-  },
-  {
-    id: "15",
-    competition: "Scottish FA Cup",
-    date: "2024-09-28",
-    time: "16:00",
-    homeTeam: "Gala Fairydean Rovers",
-    awayTeam: "Banks o' Dee",
-    venue: "Netherdale",
-    status: "finished",
-    isCompleted: true,
-    result: {
-      homeScore: 0,
-      awayScore: 1
-    }
-  },
-  
-  // OCTOBER 2024
-  {
-    id: "16",
-    competition: "Scottish Highland Football League",
-    date: "2024-10-05",
-    time: "16:00",
-    homeTeam: "Strathspey Thistle",
-    awayTeam: "Banks o' Dee",
-    venue: "Seafield Park",
-    status: "finished",
-    isCompleted: true,
-    result: {
-      homeScore: 1,
-      awayScore: 4
-    }
-  },
-  {
-    id: "17",
-    competition: "Scottish Highland Football League",
-    date: "2024-10-12",
-    time: "16:00",
-    homeTeam: "Banks o' Dee",
-    awayTeam: "Rothes",
-    venue: "Spain Park",
-    status: "finished",
-    isCompleted: true,
-    result: {
-      homeScore: 7,
-      awayScore: 1
-    }
-  },
-  {
-    id: "18",
-    competition: "Scottish Highland Football League",
-    date: "2024-10-19",
-    time: "16:00",
-    homeTeam: "Turriff United",
-    awayTeam: "Banks o' Dee",
-    venue: "The Haughs",
-    status: "finished",
-    isCompleted: true,
-    result: {
-      homeScore: 0,
-      awayScore: 3
-    }
-  },
-  {
-    id: "19",
-    competition: "Scottish FA Cup",
-    date: "2024-10-26",
-    time: "16:00",
-    homeTeam: "East Fife",
-    awayTeam: "Banks o' Dee",
-    venue: "Bayview Stadium",
-    status: "finished",
-    isCompleted: true,
-    result: {
-      homeScore: 0,
-      awayScore: 1
-    }
-  },
-  
-  // NOVEMBER 2024
-  {
-    id: "20",
-    competition: "Scottish Highland Football League",
-    date: "2024-11-02",
-    time: "16:00",
-    homeTeam: "Banks o' Dee",
-    awayTeam: "Brora Rangers",
-    venue: "Spain Park",
-    status: "finished",
-    isCompleted: true,
-    result: {
-      homeScore: 0,
-      awayScore: 2
-    }
-  },
-  {
-    id: "21",
-    competition: "Scottish Highland Football League",
-    date: "2024-11-23",
-    time: "16:00",
-    homeTeam: "Banks o' Dee",
-    awayTeam: "Formartine United",
-    venue: "Spain Park",
-    status: "finished",
-    isCompleted: true,
-    result: {
-      homeScore: 1,
-      awayScore: 0
-    }
-  },
-  {
-    id: "22",
-    competition: "Scottish FA Cup",
-    date: "2024-11-30",
-    time: "16:00",
-    homeTeam: "Banks o' Dee",
-    awayTeam: "Hamilton Academical",
-    venue: "Spain Park",
-    status: "finished",
-    isCompleted: true,
-    result: {
-      homeScore: 1,
-      awayScore: 2
-    }
-  },
-  
-  // DECEMBER 2024
-  {
-    id: "23",
-    competition: "Scottish Highland Football League",
-    date: "2024-12-13",
-    time: "21:00",
-    homeTeam: "Banks o' Dee",
-    awayTeam: "Keith",
-    venue: "Spain Park",
-    status: "finished",
-    isCompleted: true,
-    result: {
-      homeScore: 5,
-      awayScore: 0
-    }
-  },
-  {
-    id: "24",
-    competition: "Scottish Highland Football League",
-    date: "2024-12-21",
-    time: "16:00",
-    homeTeam: "Nairn County",
-    awayTeam: "Banks o' Dee",
-    venue: "Station Park",
-    status: "finished",
-    isCompleted: true,
-    result: {
-      homeScore: 1,
-      awayScore: 4
-    }
-  },
-  {
-    id: "25",
-    competition: "Scottish Highland Football League",
-    date: "2024-12-28",
-    time: "16:00",
-    homeTeam: "Inverurie Loco Works",
-    awayTeam: "Banks o' Dee",
-    venue: "Harlaw Park",
-    status: "finished",
-    isCompleted: true,
-    result: {
-      homeScore: 0,
-      awayScore: 0
-    }
-  },
-  
-  // JANUARY 2025
-  {
-    id: "26",
-    competition: "Scottish Highland Football League",
-    date: "2025-01-18",
-    time: "16:00",
-    homeTeam: "Banks o' Dee",
-    awayTeam: "Wick Academy",
-    venue: "Spain Park",
-    status: "finished",
-    isCompleted: true,
-    result: {
-      homeScore: 4,
-      awayScore: 0
-    }
-  },
-  {
-    id: "27",
-    competition: "Scottish Highland Football League",
-    date: "2025-01-25",
-    time: "16:00",
-    homeTeam: "Deveronvale",
-    awayTeam: "Banks o' Dee",
-    venue: "Princess Royal Park",
-    status: "finished",
-    isCompleted: true,
-    result: {
-      homeScore: 0,
-      awayScore: 2
-    }
-  },
-  
-  // FEBRUARY 2025
-  {
-    id: "28",
-    competition: "Scottish Highland Football League",
-    date: "2025-02-01",
-    time: "16:00",
-    homeTeam: "Banks o' Dee",
-    awayTeam: "Buckie Thistle",
-    venue: "Spain Park",
-    status: "finished",
-    isCompleted: true,
-    result: {
-      homeScore: 2,
-      awayScore: 0
-    }
-  },
-  {
-    id: "29",
-    competition: "Scottish Highland Football League",
-    date: "2025-02-08",
-    time: "16:00",
-    homeTeam: "Brechin City",
-    awayTeam: "Banks o' Dee",
-    venue: "Glebe Park",
-    status: "finished",
-    isCompleted: true,
-    result: {
-      homeScore: 2,
-      awayScore: 2
-    }
-  },
-  {
-    id: "30",
-    competition: "Scottish Highland Football League",
-    date: "2025-02-15",
-    time: "15:00",
-    homeTeam: "Banks o' Dee",
-    awayTeam: "Forres Mechanics",
-    venue: "Spain Park",
-    status: "finished",
-    isCompleted: true,
-    result: {
-      homeScore: 2,
-      awayScore: 3
-    }
-  },
-  {
-    id: "31",
-    competition: "Scottish Highland Football League",
-    date: "2025-02-22",
-    time: "16:00",
-    homeTeam: "Banks o' Dee",
-    awayTeam: "Clachnacuddin",
-    venue: "Spain Park",
-    status: "finished",
-    isCompleted: true,
-    result: {
-      homeScore: 3,
-      awayScore: 0
-    }
-  },
-  
-  // MARCH 2025
-  {
-    id: "32",
-    competition: "Scottish Highland Football League",
-    date: "2025-03-05",
-    time: "21:00",
-    homeTeam: "Huntly",
-    awayTeam: "Banks o' Dee",
-    venue: "Christie Park",
-    status: "finished",
-    isCompleted: true,
-    result: {
-      homeScore: 1,
-      awayScore: 1
-    }
-  },
-  {
-    id: "33",
-    competition: "Scottish Highland Football League",
-    date: "2025-03-08",
-    time: "16:00",
-    homeTeam: "Banks o' Dee",
-    awayTeam: "Strathspey Thistle",
-    venue: "Spain Park",
-    status: "finished",
-    isCompleted: true,
-    result: {
-      homeScore: 2,
-      awayScore: 1
-    }
-  },
-  {
-    id: "34",
-    competition: "Scottish Highland Football League",
-    date: "2025-03-15",
-    time: "16:00",
-    homeTeam: "Rothes",
-    awayTeam: "Banks o' Dee",
-    venue: "Mackessack Park",
-    status: "finished",
-    isCompleted: true,
-    result: {
-      homeScore: 1,
-      awayScore: 5
-    }
-  },
-  {
-    id: "35",
-    competition: "Scottish Highland Football League",
-    date: "2025-03-22",
-    time: "16:00",
-    homeTeam: "Banks o' Dee",
-    awayTeam: "Turriff United",
-    venue: "Spain Park",
-    status: "finished",
-    isCompleted: true,
-    result: {
-      homeScore: 1,
-      awayScore: 0
-    }
-  },
-  {
-    id: "36",
-    competition: "Scottish Highland Football League",
-    date: "2025-03-29",
-    time: "16:00",
-    homeTeam: "Brora Rangers",
-    awayTeam: "Banks o' Dee",
-    venue: "Dudgeon Park",
-    status: "finished",
-    isCompleted: true,
-    result: {
-      homeScore: 2,
-      awayScore: 0
-    }
-  },
-  
-  // APRIL 2025
-  {
-    id: "37",
-    competition: "Scottish Highland Football League",
-    date: "2025-04-02",
-    time: "21:00",
-    homeTeam: "Banks o' Dee",
-    awayTeam: "Fraserburgh",
-    venue: "Spain Park",
-    status: "finished",
-    isCompleted: true,
-    result: {
-      homeScore: 3,
-      awayScore: 1
-    }
-  },
-  {
-    id: "38",
-    competition: "Scottish Highland Football League",
-    date: "2025-04-05",
-    time: "16:00",
-    homeTeam: "Lossiemouth",
-    awayTeam: "Banks o' Dee",
-    venue: "Grant Park",
-    status: "finished",
-    isCompleted: true,
-    result: {
-      homeScore: 1,
-      awayScore: 2
-    }
-  },
-  {
-    id: "39",
-    competition: "Scottish Highland Football League",
-    date: "2025-04-12",
-    time: "16:00",
-    homeTeam: "Forres Mechanics",
-    awayTeam: "Banks o' Dee",
-    venue: "Mosset Park",
-    status: "finished",
-    isCompleted: true,
-    result: {
-      homeScore: 1,
-      awayScore: 1
-    }
-  },
-  {
-    id: "40",
-    competition: "Highland League Cup - Final",
-    date: "2025-05-30",
-    time: "19:45",
-    homeTeam: "Banks o' Dee",
-    awayTeam: "Fraserburgh",
-    venue: "Spain Park",
-    status: "upcoming",
+    awayTeam: 'Fraserburgh',
+    venue: 'Spain Park',
+    status: 'upcoming',
     isCompleted: false,
     ticketLink: "https://tickets.bankodee.com/cup-final"
   }
@@ -703,17 +233,17 @@ const getFixturesBySeason = (season: string): Match[] => {
 };
 
 // Helper function to get completed matches (results)
-export const getResults = (season?: string) => {
-  const fixtures = season ? getFixturesBySeason(season) : [...allFixtures, ...fixtures2025_26];
-  return fixtures
+export const getResults = () => {
+  const now = new Date();
+  return allFixtures
     .filter(match => match.isCompleted)
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 };
 
 // Helper function to get upcoming fixtures
-export const getUpcomingFixtures = (season?: string) => {
-  const fixtures = season ? getFixturesBySeason(season) : [...allFixtures, ...fixtures2025_26];
-  return fixtures
+export const getUpcomingFixtures = () => {
+  const now = new Date();
+  return allFixtures
     .filter(match => !match.isCompleted)
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 };
