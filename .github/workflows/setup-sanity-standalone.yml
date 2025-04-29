@@ -1,0 +1,74 @@
+name: Setup Standalone Sanity
+
+on:
+  workflow_dispatch:
+    inputs:
+      token:
+        description: 'Sanity API Token'
+        required: true
+        default: 'skDzsxivYA0QfrljsZpg3rJCPYUnlLU99jc39BcSmKmbTVYprfwl7xD5iPAXTiOjysUx5LP5qQfVGXAOnWvd7il8mngOHkTyunL9xtTPSM5TMjfs1Rc2ieTWrPsxXTOBGf14sVKzEelZTzRs8ATOIRhMmvIZaAvvekd8FVL2b6CcJ4QPv8Ed'
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          
+      - name: Install Sanity CLI
+        run: npm install -g @sanity/cli
+        
+      - name: Login to Sanity
+        run: sanity login --token ${{ github.event.inputs.token }}
+        
+      - name: Create separate Sanity directory
+        run: mkdir -p banks-o-dee-sanity
+        
+      - name: Initialize Sanity Project
+        working-directory: ./banks-o-dee-sanity
+        run: |
+          sanity init --project gxtptap2 --dataset production --output-path . --create-project false --yes
+
+      - name: Add README with integration instructions
+        working-directory: ./banks-o-dee-sanity
+        run: |
+          cat > README.md << 'EOL'
+          # Banks o' Dee FC Sanity Studio
+
+          This is the standalone Sanity Studio for the Banks o' Dee FC website.
+
+          ## How to use
+
+          1. Navigate to this directory: `cd banks-o-dee-sanity`
+          2. Install dependencies: `npm install`
+          3. Start the Sanity Studio: `npm run dev`
+          4. Access the studio at: http://localhost:3333
+
+          ## To integrate with the main project
+
+          Add the following files to your main project:
+
+          \`\`\`js
+          // src/lib/sanity.js
+          import { createClient } from '@sanity/client';
+
+          export const sanityClient = createClient({
+            projectId: 'gxtptap2',
+            dataset: 'production',
+            apiVersion: '2023-04-29',
+            useCdn: true,
+          });
+          \`\`\`
+          EOL
+      
+      - name: Commit changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add banks-o-dee-sanity/
+          git commit -m "Add standalone Sanity Studio"
+          git push
