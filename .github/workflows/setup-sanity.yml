@@ -1,0 +1,45 @@
+name: Setup Sanity
+
+on:
+  workflow_dispatch:
+    inputs:
+      token:
+        description: 'Sanity API Token'
+        required: true
+        default: 'skDzsxivYA0QfrljsZpg3rJCPYUnlLU99jc39BcSmKmbTVYprfwl7xD5iPAXTiOjysUx5LP5qQfVGXAOnWvd7il8mngOHkTyunL9xtTPSM5TMjfs1Rc2ieTWrPsxXTOBGf14sVKzEelZTzRs8ATOIRhMmvIZaAvvekd8FVL2b6CcJ4QPv8Ed'
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          
+      - name: Install Sanity CLI
+        run: npm install -g @sanity/cli
+        
+      - name: Login to Sanity
+        run: sanity login --token ${{ github.event.inputs.token }}
+        
+      - name: Create Sanity directory
+        run: mkdir -p sanity-studio
+        
+      - name: Initialize Sanity Project
+        working-directory: ./sanity-studio
+        run: sanity init --project gxtptap2 --dataset production --output-path . --create-project false
+        
+      - name: Install dependencies
+        working-directory: ./sanity-studio
+        run: npm install
+        
+      - name: Commit changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add sanity-studio/
+          git commit -m "Initialize Sanity Studio"
+          git push
