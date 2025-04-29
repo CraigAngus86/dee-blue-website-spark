@@ -4,14 +4,15 @@ import { fetchSanityData } from '../../sanity-studio/client.js';
 import { TeamMember } from '@/hooks/useTeamData';
 
 const getTeamMembersQuery = `
-  *[_type == "teamMember"] | order(lastName asc) {
+  *[_type == "playerProfile"] | order(lastName asc) {
     _id,
-    name,
+    supabaseId,
+    playerName as name,
     firstName,
     lastName,
     position,
     nationality,
-    "image": image.asset->url,
+    "image": profileImage.asset->url,
     number,
     member_type
   }
@@ -25,7 +26,7 @@ export function useSanityTeamData() {
       
       // Map Sanity data to match our existing TeamMember type
       return (teamMembers || []).map((member: any) => ({
-        id: member._id,
+        id: member.supabaseId || member._id, // Use supabaseId if available, fall back to _id
         name: member.name,
         firstName: member.firstName || '',
         lastName: member.lastName || '',

@@ -1,3 +1,4 @@
+
 // resolveProductionUrl.js
 
 const previewSecret = 'YOUR_PREVIEW_SECRET' // Keep this secret!
@@ -15,7 +16,7 @@ export default function resolveProductionUrl(document) {
       path = `/news/${document?.slug?.current || "default-slug"}`;
       break;
     case "playerProfile":
-      path = `/team/player/${document?.playerId || "unknown-player"}`;
+      path = `/team/player/${document?.supabaseId || "unknown-player"}`;
       break;
     case "sponsor":
       path = `/sponsors/${document?.slug?.current || "default-slug"}`;
@@ -24,7 +25,7 @@ export default function resolveProductionUrl(document) {
       path = `/commercial/${document?.slug?.current || "default-slug"}`;
       break;
     case "matchGallery":
-      path = `/matches/${document?.matchId || "unknown-match"}/gallery`;
+      path = `/matches/${document?.supabaseId || "unknown-match"}/gallery`;
       break;
     case "stadiumInfo":
       path = `/stadium`;

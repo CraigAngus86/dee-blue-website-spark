@@ -22,11 +22,23 @@ export default {
     ],
     fields: [
       {
-        name: 'playerId',
-        title: 'Player ID',
+        name: 'supabaseId',
+        title: 'Supabase ID',
         type: 'string',
-        description: 'Supabase UUID for this player',
-        validation: Rule => Rule.required(),
+        description: 'UUID from Supabase for this player',
+        validation: Rule => Rule.required().regex(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/, {
+          name: 'UUID',
+          invert: false,
+          message: 'Must be a valid UUID format'
+        }),
+        group: 'reference'
+      },
+      {
+        name: 'playerId',
+        title: 'Player ID (Legacy)',
+        type: 'string',
+        description: 'Legacy ID field - use supabaseId instead',
+        hidden: true,
         group: 'reference'
       },
       {

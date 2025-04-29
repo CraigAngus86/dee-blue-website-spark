@@ -22,11 +22,23 @@ export default {
     ],
     fields: [
       {
-        name: 'sponsorId',
-        title: 'Sponsor ID',
+        name: 'supabaseId',
+        title: 'Supabase ID',
         type: 'string',
-        description: 'Supabase UUID for this sponsor',
-        validation: Rule => Rule.required(),
+        description: 'UUID from Supabase for this sponsor',
+        validation: Rule => Rule.required().regex(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/, {
+          name: 'UUID',
+          invert: false,
+          message: 'Must be a valid UUID format'
+        }),
+        group: 'reference'
+      },
+      {
+        name: 'sponsorId',
+        title: 'Sponsor ID (Legacy)',
+        type: 'string',
+        description: 'Legacy ID field - use supabaseId instead',
+        hidden: true,
         group: 'reference'
       },
       {

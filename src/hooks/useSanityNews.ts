@@ -16,6 +16,7 @@ export type SanityNewsItem = {
   };
   excerpt: string;
   body: any;
+  supabaseId?: string; // Optional supabaseId for linking to a Supabase record
 };
 
 const getNewsQuery = `
@@ -26,7 +27,8 @@ const getNewsQuery = `
     publishedAt,
     mainImage,
     excerpt,
-    body
+    body,
+    supabaseId
   }
 `;
 

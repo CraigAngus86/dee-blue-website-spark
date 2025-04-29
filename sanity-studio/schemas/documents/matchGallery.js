@@ -18,11 +18,23 @@ export default {
     ],
     fields: [
       {
-        name: 'matchId',
-        title: 'Match ID',
+        name: 'supabaseId',
+        title: 'Supabase ID',
         type: 'string',
-        description: 'Supabase UUID for the match',
-        validation: Rule => Rule.required(),
+        description: 'UUID from Supabase for the match',
+        validation: Rule => Rule.required().regex(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/, {
+          name: 'UUID',
+          invert: false,
+          message: 'Must be a valid UUID format'
+        }),
+        group: 'reference'
+      },
+      {
+        name: 'matchId',
+        title: 'Match ID (Legacy)',
+        type: 'string',
+        description: 'Legacy ID field - use supabaseId instead',
+        hidden: true,
         group: 'reference'
       },
       {
