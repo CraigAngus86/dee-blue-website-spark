@@ -1,0 +1,100 @@
+name: Create Sanity Config
+
+on:
+  workflow_dispatch:
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Create Sanity config files
+        run: |
+          mkdir -p sanity-config
+          cd sanity-config
+          
+          # Create sanity.json
+          cat > sanity.json << 'EOL'
+          {
+            "root": true,
+            "project": {
+              "name": "Banks o' Dee FC"
+            },
+            "api": {
+              "projectId": "gxtptap2",
+              "dataset": "production"
+            },
+            "plugins": [
+              "@sanity/base",
+              "@sanity/components",
+              "@sanity/default-layout",
+              "@sanity/default-login",
+              "@sanity/desk-tool",
+              "@sanity/vision"
+            ],
+            "parts": [
+              {
+                "name": "part:@sanity/base/schema",
+                "path": "./schemas/schema"
+              }
+            ]
+          }
+          EOL
+          
+          # Create client.js
+          cat > client.js << 'EOL'
+          import { createClient } from '@sanity/client';
+          
+          export const sanityClient = createClient({
+            projectId: 'gxtptap2',
+            dataset: 'production',
+            apiVersion: '2025-04-29',
+            useCdn: true,
+          });
+          EOL
+          
+          # Create README.md
+          cat > README.md << 'EOL'
+          # Sanity Configuration for Banks o' Dee FC
+          
+          This directory contains the configuration files for connecting to the Sanity CMS project for Banks o' Dee FC.
+          
+          ## How to Use
+          
+          1. Install Sanity packages in your main project:
+             ```
+             npm install @sanity/client @sanity/image-url
+             ```
+             
+          2. Copy the client.js file to your project's lib directory
+          
+          3. Import and use the client in your components:
+             ```javascript
+             import { sanityClient } from '../lib/client';
+             
+             // Example query
+             const fetchNews = async () => {
+               return await sanityClient.fetch(`*[_type == "newsArticle"]`);
+             }
+             ```
+             
+          ## Sanity Studio Access
+          
+          To access the Sanity Studio directly:
+          
+          1. Go to: https://gxtptap2.sanity.studio/
+          2. Log in with your Sanity credentials
+          
+          ## Schema Reference
+          
+          The schemas defined in Claude's instructions can be implemented directly in Sanity Studio.
+          EOL
+      
+      - name: Commit changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add sanity-config/
+          git commit -m "Add Sanity configuration files"
+          git push
