@@ -1,3 +1,4 @@
+
 import { deskTool } from 'sanity/desk'
 
 export const structure = (S) =>
@@ -24,7 +25,18 @@ export const structure = (S) =>
             .title('Team')
             .items([
               S.listItem().title('Player Profiles').child(S.documentTypeList('playerProfile')),
+            ])
+        ),
+        
+      // Fan Engagement - New section
+      S.listItem()
+        .title('Fan Engagement')
+        .child(
+          S.list()
+            .title('Fan Engagement')
+            .items([
               S.listItem().title('Fan of the Month').child(S.documentTypeList('fanOfMonth')),
+              // Future fan engagement content types would go here
             ])
         ),
 

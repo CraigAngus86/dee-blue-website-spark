@@ -31,7 +31,7 @@ export default function resolveProductionUrl(document) {
       path = `/stadium`;
       break;
     case "fanOfMonth":
-      path = `/fan-of-month/${document?.slug?.current || "default-slug"}`;
+      path = `/fan-engagement/fan-of-month/${document?.slug?.current || "default-slug"}`;
       break;
     default:
       return null;
