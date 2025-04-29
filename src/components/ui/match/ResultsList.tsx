@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { Match } from '@/types/match';
 import { getResults } from '@/mock-data/fixturesData';
@@ -22,7 +21,7 @@ const ResultsList: React.FC<ResultsListProps> = ({
   React.useEffect(() => {
     const loadResults = async () => {
       // Pass the selected season to get the correct results
-      const results = await getResults(selectedSeason);
+      const results = await getResults();
       setAllRecentResults(results);
       setIsLoading(false);
     };

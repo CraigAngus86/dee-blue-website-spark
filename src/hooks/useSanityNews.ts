@@ -1,6 +1,6 @@
 
 import { useQuery } from '@tanstack/react-query';
-import { fetchSanityData } from '../integrations/sanity/client';
+import { fetchSanityData } from '../../sanity-studio/client.js';
 
 export type SanityNewsItem = {
   _id: string;
