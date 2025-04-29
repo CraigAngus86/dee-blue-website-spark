@@ -9,7 +9,7 @@ export default defineConfig({
   name: 'default',
   title: 'Banks o\' Dee FC',
 
-  projectId: 'YOUR_PROJECT_ID',
+  projectId: 'gxtptap2',
   dataset: 'production',
 
   plugins: [
