@@ -1,3 +1,4 @@
+
 // Import your schemas
 import newsArticle from './documents/newsArticle'
 import playerProfile from './documents/playerProfile'
@@ -9,6 +10,7 @@ import fanOfMonth from './documents/fanOfMonth'
 
 // Import object schemas (reusable components)
 import mainImage from './objects/mainImage'
+import cloudinaryImage from './objects/cloudinaryImage'
 import bodyContent from './objects/bodyContent'
 import gallery from './objects/gallery'
 import socialMedia from './objects/socialMedia'
@@ -27,6 +29,7 @@ export const schemaTypes = [
   
   // Objects
   mainImage,
+  cloudinaryImage,
   bodyContent,
   gallery,
   socialMedia,

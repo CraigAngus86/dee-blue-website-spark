@@ -1,9 +1,11 @@
+
 import {defineConfig} from 'sanity'
 import {deskTool} from 'sanity/desk'
 import {visionTool} from '@sanity/vision'
 import {schemaTypes} from './schemas'
 import {structure} from './structure'
 import resolveProductionUrl from './resolveProductionUrl'
+import { banksDeeCloudinaryPlugin } from './plugins/cloudinary-asset-source'
 
 export default defineConfig({
   name: 'default',
@@ -31,6 +33,7 @@ export default defineConfig({
       }
     }),
     visionTool(),
+    banksDeeCloudinaryPlugin(),
   ],
 
   schema: {

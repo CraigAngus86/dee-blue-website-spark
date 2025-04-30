@@ -5,18 +5,18 @@ import { format, quality } from '@cloudinary/url-gen/actions/delivery';
 import { auto } from '@cloudinary/url-gen/qualifiers/format';
 import { auto as autoQuality } from '@cloudinary/url-gen/qualifiers/quality';
 import { 
-  fill, scale, crop, thumbnail,
-  Resize 
+  fill, scale, crop, thumbnail
 } from '@cloudinary/url-gen/actions/resize';
 import { focusOn } from '@cloudinary/url-gen/qualifiers/gravity';
-import { face, faces, center } from '@cloudinary/url-gen/qualifiers/focusOn';
-import { backgroundRemoval, CustomFunction } from '@cloudinary/url-gen/actions/effect';
+import { face, faces } from '@cloudinary/url-gen/qualifiers/focusOn';
+import { backgroundRemoval } from '@cloudinary/url-gen/actions/effect';
 import { source } from '@cloudinary/url-gen/actions/overlay';
 import { image, text } from '@cloudinary/url-gen/qualifiers/source';
 import { compass } from '@cloudinary/url-gen/qualifiers/gravity';
 import { Position } from '@cloudinary/url-gen/qualifiers/position';
 import { opacity, brightness } from '@cloudinary/url-gen/actions/adjust';
 import { Gravity } from '@cloudinary/url-gen/qualifiers';
+import { TextStyle } from '@cloudinary/url-gen/qualifiers/textStyle';
 
 /**
  * Extended transformation options
@@ -51,7 +51,7 @@ export function transformImage(publicId: string, options: TransformOptions = {})
   
   // Apply resize transformation if dimensions provided
   if (options.width || options.height || options.aspectRatio) {
-    let resizeAction: typeof Resize.prototype;
+    let resizeAction;
     
     switch(options.crop) {
       case 'fill':
@@ -88,7 +88,8 @@ export function transformImage(publicId: string, options: TransformOptions = {})
           resizeAction = resizeAction.gravity(focusOn(faces()));
           break;
         case 'center':
-          resizeAction = resizeAction.gravity(focusOn(center()));
+          // Use compass gravity for center
+          resizeAction = resizeAction.gravity(compass('center'));
           break;
         case 'auto':
           // Auto gravity is applied differently
@@ -112,7 +113,7 @@ export function transformImage(publicId: string, options: TransformOptions = {})
   }
   
   // Apply the transformation to the image
-  image.setTransformation(transformation);
+  image.transformation(transformation);
   
   return image.toURL();
 }
@@ -470,13 +471,15 @@ export function createSilhouettePlaceholder(
   
   // Add text if provided
   if (text) {
+    const textStyle = new TextStyle('Arial', 20).color('white');
+    
     transformation.overlay(
-      source(text(text, new TextStyle('Arial', 20)).color('white'))
-        .position(new Position().gravity(Gravity.south()).offsetY(20))
+      source(text(text, textStyle))
+        .position(new Position().gravity(compass('south')).offsetY(20))
     );
   }
   
-  placeholder.setTransformation(transformation);
+  placeholder.transformation(transformation);
   
   return placeholder.toURL();
 }
