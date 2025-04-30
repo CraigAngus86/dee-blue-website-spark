@@ -120,21 +120,22 @@ export function usePlayerProfileImage(publicId: string | undefined, options: {
       return createSilhouettePlaceholder(
         size, 
         variant === 'featured' ? Math.round(size * (4/3)) : size,
-        name
+        name || ''  // Fixing argument type issue
       );
     }
     
     try {
+      // Fixed function calls to match proper signatures
       if (variant === 'featured') {
-        return playerProfileFeatured(publicId, size, deviceSize);
+        return playerProfileFeatured(publicId);
       }
-      return playerProfileSquare(publicId, size, deviceSize);
+      return playerProfileSquare(publicId);
     } catch (error) {
       console.error('Error generating player profile image:', error);
       return createSilhouettePlaceholder(
         size, 
         variant === 'featured' ? Math.round(size * (4/3)) : size,
-        name
+        name || ''  // Fixing argument type issue
       );
     }
   }, [publicId, variant, size, name, deviceSize]);

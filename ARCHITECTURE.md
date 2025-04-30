@@ -3,186 +3,174 @@
 
 ## System Overview
 
-The Banks o' Dee FC website is a React-based web application transitioning to Next.js, designed to provide club information, match updates, and commercial opportunities.
+The Banks o' Dee FC website is built using a hybrid architecture that combines structured data from Supabase with editorial content from Sanity CMS, integrated into a React-based frontend transitioning to Next.js. This multi-system approach provides both operational efficiency and content flexibility.
 
-## Architecture Design
+## Core Architecture Components
 
-### Frontend Architecture
+### 1. Data Management Systems
+
+#### Supabase (Operational Database)
+- **Primary role**: Handles structured data, authentication, and operational aspects
+- **Data stored**: Match data, team information, league tables, user accounts, etc.
+- **Key features**: Real-time updates, row-level security, authentication
+
+#### Sanity CMS (Content Management)
+- **Primary role**: Provides flexible content management for editorial staff
+- **Data stored**: News articles, rich media content, player profiles, etc.
+- **Key features**: Content versioning, previews, draft/publish workflow
+
+### 2. Cross-System Reference Resolution
+
+A key architectural feature is the reference resolution system that maintains relationships between entities across both systems:
+
+- **Supabase → Sanity**: Uses `sanity_id` fields in Supabase tables
+- **Sanity → Supabase**: Uses `supabaseId` fields in Sanity documents
+
+This bi-directional reference system allows data to be maintained in its optimal location while preserving relationships.
+
+### 3. Content Preview System
+
+The preview system allows content editors to view unpublished Sanity content before it goes live:
+
+- **Authentication**: Secure token-based preview access
+- **Preview API**: Structured endpoints for different content types
+- **Preview Control**: Utilities for entering/exiting preview mode
+- **UI Components**: Visual indicators for preview state
+
+### 4. Asset Management with Cloudinary
+
+Media assets are managed through Cloudinary:
+
+- **Structured organization**: Folder hierarchy based on content type
+- **Transformation presets**: Standard image processing operations
+- **Bi-directional integration**: Connected to both Sanity and the frontend
+
+## Data Flow Architecture
 
 ```
-Frontend
-├── Components
-│   ├── UI Components (shadcn/ui)
-│   ├── Layout Components
-│   ├── Feature Components
-│   └── Page Components
-├── State Management
-│   ├── React Query (Server State)
-│   └── React Context (UI State)
-└── Routing
-    └── React Router (transitioning to Next.js)
+┌─────────────┐       ┌─────────────┐       ┌─────────────┐
+│   Supabase  │◄─────►│   Frontend  │◄─────►│  Sanity CMS │
+└─────┬───────┘       └──────┬──────┘       └─────┬───────┘
+      │                      │                    │
+      │                      ▼                    │
+      │               ┌─────────────┐             │
+      └───────────────► Cross-System ◄─────────────┘
+                      │  Reference  │
+                      │ Resolution  │
+                      └─────────────┘
+                            │
+                            ▼
+                      ┌─────────────┐
+                      │  Cloudinary │
+                      │    Assets   │
+                      └─────────────┘
 ```
 
-### Data Flow
+## Directory Structure
 
-1. User Interaction
-2. Component State Updates
-3. Server State Management
-4. API Integration
-5. UI Updates
-
-### Key Components
-
-#### Core Components
-- Layout System
-- Navigation
-- Dynamic Content Rendering
-- Image Optimization
-- Form Handling
-
-#### Feature Components
-- News System
-- Match Center
-- Team Management
-- Commercial Platform
-- Stadium Information
-
-### State Management
-
-#### Server State
-- React Query for data fetching
-- Caching and invalidation
-- Error handling
-- Loading states
-
-#### UI State
-- React Context for global state
-- Local component state
-- Form state management
-- Navigation state
-
-### Data Integration
-
-#### Supabase Integration
-- Authentication
-- Database access
-- Real-time updates
-- File storage
-
-#### Image Management
-- Cloudinary integration
-- Responsive images
-- Lazy loading
-- Format optimization
+```
+/
+├── src/                       # Frontend application code
+│   ├── components/            # React components
+│   ├── hooks/                 # Custom React hooks
+│   ├── lib/                   # Shared utilities
+│   │   ├── cloudinary/        # Cloudinary integration
+│   │   └── ...
+│   └── ...
+├── utils/                     # Backend utilities
+│   ├── cross-system/          # Cross-system reference resolution
+│   ├── sanity-preview/        # Sanity preview utilities
+│   └── ...
+├── sanity-studio/             # Sanity CMS configuration
+│   ├── schemas/               # Content models
+│   ├── preview.js             # Preview configuration
+│   └── ...
+└── docs/                      # Project documentation
+```
 
 ## Technical Decisions
 
-### Framework Selection
-- React for component-based architecture
-- TypeScript for type safety
-- Tailwind CSS for styling
-- shadcn/ui for UI components
+### 1. Reference Resolution Strategy
 
-### Performance Optimization
-- Code splitting
-- Asset optimization
-- Caching strategies
-- Bundle size management
+We implemented a modular approach to reference resolution with these key features:
 
-### Security Measures
-- Authentication flow
-- Data validation
-- API security
-- Error handling
+- **Entity-specific helpers**: Specialized functions for common entities
+- **Caching layer**: Performance optimization with time-based expiration
+- **Error handling**: Comprehensive error management strategies
+- **Type safety**: Full TypeScript type checking
 
-## Next.js Migration
+### 2. Preview System Architecture
 
-### Current Architecture
+The preview system uses a token-based approach:
+
+1. **Secret validation**: Secure token verification
+2. **Dynamic URL generation**: Content-type specific preview URLs
+3. **Isolated preview environment**: Separate from production
+4. **Future Next.js integration**: Structured for easy adoption
+
+### 3. Performance Considerations
+
+- **In-memory caching**: Reduces redundant database queries
+- **Optimized asset delivery**: Cloudinary transformation pipeline
+- **Selective loading**: Only fetch related content when needed
+
+## Integration with Next.js
+
+The current implementation is designed for seamless integration with Next.js:
+
+### Server Components
+
+Cross-system utilities can be directly used in Server Components:
+
+```typescript
+// Example Next.js Server Component
+export default async function PlayerProfile({ id }) {
+  const { player, profile } = await getPlayerWithProfile(id);
+  return <PlayerProfileComponent player={player} profile={profile} />;
+}
 ```
-React App
-└── src/
-    ├── components/
-    ├── pages/
-    ├── lib/
-    └── styles/
+
+### API Routes
+
+Preview functionality is structured as API route handlers:
+
+```typescript
+// Example Next.js API route
+export async function GET(request) {
+  const { searchParams } = new URL(request.url);
+  const secret = searchParams.get('secret');
+  const documentId = searchParams.get('id');
+  
+  if (!validatePreviewSecret(request, process.env.PREVIEW_SECRET)) {
+    return new Response(JSON.stringify({ message: 'Invalid secret' }), { 
+      status: 401,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+  
+  // Process preview request...
+}
 ```
 
-### Target Architecture
-```
-Next.js App
-└── app/
-    ├── components/
-    ├── lib/
-    ├── api/
-    └── (routes)/
-```
+## Error Handling Strategy
 
-### Migration Strategy
-1. Directory Structure Alignment
-2. Component Adaptation
-3. Routing Migration
-4. Server Components Implementation
-5. API Routes Development
+The architecture implements a comprehensive error handling approach:
 
-## Development Workflow
+1. **Graceful degradation**: Fall back to available data when relationships fail
+2. **Informative logging**: Detailed error information for debugging
+3. **User feedback**: Clear messaging for content editors
+4. **Typed returns**: Null or empty arrays for missing data
 
-### Local Development
-1. Component Development
-2. Feature Implementation
-3. Testing
-4. Code Review
-5. Deployment
+## Security Considerations
 
-### Deployment Pipeline
-1. Build Process
-2. Testing
-3. Staging Deployment
-4. Production Release
+- **Environment variables**: Secrets stored as environment variables
+- **Token validation**: Secure preview access
+- **Access control**: Row-level security in Supabase
+- **API protection**: Authenticated endpoints
 
 ## Future Considerations
 
-### Scalability
-- Component modularity
-- Performance optimization
-- Cache management
-- Load balancing
-
-### Maintainability
-- Code documentation
-- Testing coverage
-- Error monitoring
-- Performance monitoring
-
-### Feature Roadmap
-1. Enhanced match statistics
-2. Improved user engagement
-3. Advanced analytics
-4. Mobile optimization
-
-## Technical Debt Management
-
-### Current Technical Debt
-- Legacy components
-- Inconsistent styling
-- Duplicate code
-- Outdated dependencies
-
-### Resolution Strategy
-1. Systematic refactoring
-2. Component standardization
-3. Documentation updates
-4. Dependency updates
-
-## Support and Documentation
-
-### Developer Resources
-- Component documentation
-- API documentation
-- Style guide
-- Testing guidelines
-
-### Monitoring and Debugging
-- Error tracking
-- Performance monitoring
-- Usage analytics
-- Logging system
+1. **Persistent caching**: Replace in-memory cache with Redis
+2. **Webhook integration**: Real-time cache invalidation
+3. **Batch operations**: Optimize reference resolution
+4. **Enhanced preview**: Visual diff comparisons

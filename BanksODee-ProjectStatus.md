@@ -2,7 +2,7 @@
 # Banks o' Dee FC - Project Status Document
 
 ## Overview
-This document provides an overview of the current state of the Banks o' Dee FC website development project, including completed components, design decisions, known issues, and future development priorities.
+This document provides an overview of the current state of the Banks o' Dee FC website development project, including completed components, design decisions, known issues, future development priorities, and backend infrastructure.
 
 ## Completed Components & Pages
 
@@ -55,6 +55,29 @@ This document provides an overview of the current state of the Banks o' Dee FC w
   - PatternOverlay: Complete
   - GradientBackground: Complete
 
+### Backend Infrastructure
+
+- **Cross-System Reference Resolution**:
+  - Core reference utilities: Complete
+  - Entity-specific helpers (player, match, sponsor): Complete
+  - Caching layer: Complete
+  - TypeScript type definitions: Complete
+  - Documentation and examples: Complete
+
+- **Sanity Preview Functionality**:
+  - Preview secret validation: Complete
+  - Preview controller module: Complete
+  - API route structure for content types: Complete
+  - Sanity Studio integration: Complete
+  - Documentation and guides: Complete
+
+- **Cloudinary Implementation**:
+  - Folder structure design: Complete
+  - Transformation utilities: Complete
+  - Upload workflows: Complete
+  - React hooks integration: Complete
+  - Documentation: Complete
+
 ## Key Design Decisions
 
 ### Color Palette
@@ -97,13 +120,13 @@ The color scheme follows the Banks o' Dee FC brand identity:
   - `<Heading>` component with level props (1-6)
   - `<Text>` component with size, weight, and color props
 
-### Component Design Principles
-- **Consistency**: All components follow the same design language
-- **Responsiveness**: Mobile-first approach with responsive breakpoints
-- **Accessibility**: WCAG AA contrast requirements for text and interactive elements
-- **Animation**: Subtle animations with standardized durations
-- **Elevation**: Consistent shadow system for depth
-- **Spacing**: Standardized spacing scale throughout the application
+### Architecture Decisions
+
+- **Hybrid Data Strategy**: Using Supabase for operational data and Sanity CMS for editorial content
+- **Cross-System References**: Standardized approach using 'supabaseId' fields in Sanity documents
+- **Preview System**: Secure token-based preview for unpublished content
+- **Asset Management**: Structured Cloudinary implementation with defined patterns
+- **Caching Strategy**: In-memory caching with configurable TTL for performance
 
 ## Known Issues & Areas for Refinement
 
@@ -116,6 +139,19 @@ The color scheme follows the Banks o' Dee FC brand identity:
 
 3. **Hero Sections**:
    - Mobile responsiveness could be improved for some content layouts
+
+### Backend Issues
+1. **Cross-System References**:
+   - Memory caching should be replaced with persistent caching for production
+   - Additional entity-specific helpers needed for remaining content types
+
+2. **Cloudinary Implementation**:
+   - Some type definition issues have been fixed but require more comprehensive testing
+   - Transform utility could benefit from further optimization and refactoring
+
+3. **Preview Implementation**:
+   - Currently structured for, but not integrated with, Next.js preview mode
+   - Will need adaptation for production environment
 
 ### General Issues
 1. **Image Optimization**:
@@ -130,12 +166,18 @@ The color scheme follows the Banks o' Dee FC brand identity:
 ## Next Steps & Development Priorities
 
 ### Short-term Priorities
-1. **Content Pages**:
+1. **Next.js Migration**:
+   - Initialize Next.js project with App Router
+   - Migrate components to Next.js structure
+   - Implement API routes for backend functionality
+   - Integrate preview functionality with Next.js
+
+2. **Content Pages**:
    - Complete the Fixtures & Results page
    - Complete the Club History page
    - Complete the News listing page with filters
 
-2. **Component Refinement**:
+3. **Component Refinement**:
    - Finalize any spacing issues in NewsCard component
    - Improve mobile responsiveness for complex layouts
    - Complete the match statistics component
@@ -145,11 +187,18 @@ The color scheme follows the Banks o' Dee FC brand identity:
    - Ticket purchasing integration
    - Match live updates feature
    - Newsletter signup with validation
+   - User authentication flow
 
 2. **Performance Optimization**:
    - Implement lazy loading for off-screen components
    - Optimize image loading strategy
    - Improve initial load time
+   - Implement persistent caching
+
+3. **Backend Improvements**:
+   - Webhook integration for cache invalidation
+   - Enhanced preview functionality
+   - Batch reference resolution operations
 
 ### Long-term Goals
 1. **Advanced Features**:
@@ -163,5 +212,10 @@ The color scheme follows the Banks o' Dee FC brand identity:
    - Historical statistics database
    - Video content integration
 
+3. **Infrastructure Improvements**:
+   - Advanced monitoring and analytics
+   - Automated testing pipeline
+   - Performance benchmarking
+
 ## Conclusion
-The Banks o' Dee FC website project has made significant progress with the completion of core components and implementation of the design system. The focus should now shift to completing content pages while refining existing components and addressing known issues.
+The Banks o' Dee FC website project has made significant progress with the completion of core frontend components and critical backend infrastructure. The focus should now shift to migrating to Next.js and completing content pages while refining existing components and addressing known issues. The project is well-positioned for the next phase of development with a solid foundation of design, components, and backend utilities.

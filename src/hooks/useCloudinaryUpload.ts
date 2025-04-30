@@ -46,6 +46,9 @@ export function useCloudinaryUpload() {
         return null;
       }
       
+      // Fix: Declare the interval variable in proper scope
+      let progressIntervalId: NodeJS.Timeout | null = null;
+      
       try {
         setState({
           isUploading: true,
@@ -55,7 +58,7 @@ export function useCloudinaryUpload() {
         });
         
         // Simulate progress updates (in a real implementation this would come from the upload API)
-        let progressIntervalId: NodeJS.Timeout | null = setInterval(() => {
+        progressIntervalId = setInterval(() => {
           setState(prev => ({
             ...prev,
             progress: Math.min(prev.progress + 10, 90), // Cap at 90% until complete
@@ -89,8 +92,10 @@ export function useCloudinaryUpload() {
         
         return result;
       } catch (error) {
+        // Fix: Use the local variable
         if (progressIntervalId) {
           clearInterval(progressIntervalId);
+          progressIntervalId = null;
         }
         
         setState({

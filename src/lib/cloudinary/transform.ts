@@ -1,19 +1,19 @@
-
 import { Cloudinary } from '@cloudinary/url-gen';
 import { fill, crop, scale, thumbnail } from '@cloudinary/url-gen/actions/resize';
 import { focusOn } from '@cloudinary/url-gen/qualifiers/gravity';
 import { blur, grayscale, sepia } from '@cloudinary/url-gen/actions/effect';
-import { text, source } from '@cloudinary/url-gen/actions/overlay';
+import { source } from '@cloudinary/url-gen/actions/overlay';
+import { text as textOverlay } from '@cloudinary/url-gen/qualifiers/source';
 import { Position } from '@cloudinary/url-gen/qualifiers/position';
 import { compass } from '@cloudinary/url-gen/qualifiers/gravity';
 import { TextStyle } from '@cloudinary/url-gen/qualifiers/textStyle';
-import { Color } from '@cloudinary/url-gen/qualifiers/color';
-import { cloudinaryConfig } from './config';
+import { color } from '@cloudinary/url-gen/qualifiers';
+import { cloudinary } from '@/lib/cloudinary';
 
 // Initialize Cloudinary
 const cld = new Cloudinary({
   cloud: {
-    cloudName: cloudinaryConfig.cloudName
+    cloudName: 'dlkpaw2a0'
   }
 });
 
@@ -60,25 +60,26 @@ export function transformImage(publicId: string, options: TransformOptions = {})
     if (options.width || options.height) {
       switch (options.crop) {
         case 'fill':
-          image.resize(fill().width(options.width).height(options.height));
+          image.resize(fill().width(options.width || 0).height(options.height || 0));
           break;
         case 'crop':
-          image.resize(crop().width(options.width).height(options.height));
+          image.resize(crop().width(options.width || 0).height(options.height || 0));
           break;
         case 'scale':
-          image.resize(scale().width(options.width).height(options.height));
+          image.resize(scale().width(options.width || 0).height(options.height || 0));
           break;
         case 'thumb':
-          image.resize(thumbnail().width(options.width).height(options.height));
+          image.resize(thumbnail().width(options.width || 0).height(options.height || 0));
           break;
         default:
-          image.resize(fill().width(options.width).height(options.height));
+          image.resize(fill().width(options.width || 0).height(options.height || 0));
       }
     }
 
-    // Focus point
+    // Focus point - fixed implementation
     if (options.focus === 'face') {
-      image.resize(focusOn('face'));
+      // Apply focus separately from resize
+      image.gravity(focusOn('face'));
     }
 
     // Effects
@@ -94,21 +95,23 @@ export function transformImage(publicId: string, options: TransformOptions = {})
       image.effect(sepia());
     }
 
-    // Text overlay
+    // Text overlay - fixed implementation
     if (options.text) {
       const textStyle = new TextStyle(options.textFont || 'Arial')
         .fontWeight(options.textWeight || 'bold')
         .fontSize(options.textSize || 24);
       
       if (options.textColor) {
-        textStyle.textColor(new Color(options.textColor));
+        // Fix textColor application
+        textStyle.fontColor(options.textColor);
       }
       
-      const textOverlay = source(
-        text(options.text, textStyle)
+      // Fixed text overlay implementation
+      const textSourceOverlay = source(
+        textOverlay(options.text, textStyle)
       );
       
-      image.overlay(textOverlay);
+      image.overlay(textSourceOverlay);
     }
 
     return image.toURL();
@@ -289,20 +292,26 @@ export function cardImage(publicId: string): string {
 
 /**
  * Generate a silhouette placeholder image
- * @param text Text to overlay on the placeholder
  * @param width Width of the image
  * @param height Height of the image
+ * @param text Text to overlay on the placeholder
  * @returns Transformed image URL
  */
-export function createSilhouettePlaceholder(text: string, width: number = 300, height: number = 300): string {
-  return transformImage('banks-o-dee/placeholders/silhouette', {
+export function createSilhouettePlaceholder(width: number = 300, height: number = 300, text?: string): string {
+  // Fix implementation to use proper types
+  const options: TransformOptions = {
     width,
     height,
-    crop: 'fill',
-    text,
-    textColor: '#ffffff',
-    textSize: Math.max(16, Math.floor(width / 15)),
-    textFont: 'Arial',
-    textWeight: 'bold',
-  });
+    crop: 'fill'
+  };
+  
+  if (text) {
+    options.text = text;
+    options.textColor = '#ffffff';
+    options.textSize = Math.max(16, Math.floor(width / 15));
+    options.textFont = 'Arial';
+    options.textWeight = 'bold';
+  }
+  
+  return transformImage('banks-o-dee/placeholders/silhouette', options);
 }

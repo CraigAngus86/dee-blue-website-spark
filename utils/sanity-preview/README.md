@@ -1,154 +1,191 @@
 
 # Sanity Preview System
 
-This module provides utilities for implementing a preview system for Sanity CMS content. The preview system allows editors to preview unpublished content before making it live.
+This module provides utilities for implementing Sanity CMS preview functionality for the Banks o' Dee FC website.
 
-## Architecture
+## Overview
 
-The preview system consists of several components:
+The Sanity Preview System allows content editors to preview unpublished content before it goes live on the website. It includes:
 
-1. **Sanity Studio Configuration**: Sets up preview URLs and UI in the Studio
-2. **Preview Authentication**: Validates preview requests using a secret
-3. **Preview Data Handling**: Manages preview session data
-4. **API Handlers**: Handle preview requests for different content types
-5. **Preview UI Components**: Enhance the editor experience
+- Secure token-based authentication
+- Preview API for different content types
+- Preview mode control utilities
+- Integration with Sanity Studio
 
-## Setup
-
-### 1. Environment Configuration
-
-Create a `.env.local` file in your project root with the following values:
+## Directory Structure
 
 ```
-SANITY_PREVIEW_SECRET=your-secret-key-here
+utils/sanity-preview/
+├── README.md                  # This documentation file
+├── validatePreviewSecret.ts   # Secret validation utility
+├── previewController.ts       # Preview mode controller
+├── index.ts                   # Main entry point
+└── api/                       # API handlers
+    ├── preview.ts             # Main preview handler
+    ├── exit-preview.ts        # Exit preview handler
+    ├── news.ts                # News article preview
+    ├── player.ts              # Player profile preview
+    └── sponsor.ts             # Sponsor preview
+```
+
+## Environment Variables
+
+This system requires the following environment variables:
+
+```
 SANITY_STUDIO_PREVIEW_URL=http://localhost:3000
+SANITY_PREVIEW_SECRET=your-secure-random-string
 ```
-
-Replace `your-secret-key-here` with a secure random string.
-
-### 2. Sanity Studio Configuration
-
-The `resolveProductionUrl.js` file in the Sanity Studio configuration is already set up to generate preview URLs with proper authentication. It handles different document types (news articles, player profiles, etc.) and passes the appropriate parameters.
-
-### 3. Preview Secret Handling
-
-The `validatePreviewSecret.ts` utility securely validates preview requests against a known secret.
 
 ## Usage
 
-### For Content Editors
+### Validating Preview Requests
 
-1. In Sanity Studio, open the document you wish to preview
-2. Click on the "Preview" tab in the editor panel
-3. The preview pane will show a preview of how the content will appear on the site
-4. Use the preview controls to exit preview mode when finished
+```typescript
+import { validatePreviewSecret } from 'utils/sanity-preview';
 
-### For Developers
+// In an API handler
+function previewHandler(req, res) {
+  if (!validatePreviewSecret(req, process.env.SANITY_PREVIEW_SECRET)) {
+    return res.status(401).json({ message: 'Invalid preview token' });
+  }
+  
+  // Continue with preview handling
+}
+```
 
-#### Entering Preview Mode
+### Enabling Preview Mode
 
 ```typescript
 import { enablePreviewMode } from 'utils/sanity-preview';
 
-// In a Next.js API route handler
-export default function preview(req, res) {
-  const previewSecret = process.env.SANITY_PREVIEW_SECRET;
-  const previewData = enablePreviewMode(req, previewSecret);
+// In an API handler
+async function enterPreviewMode(req, res) {
+  const previewData = enablePreviewMode(req, process.env.SANITY_PREVIEW_SECRET);
   
   if (!previewData) {
-    return res.status(401).json({ message: 'Invalid preview secret' });
+    return res.status(401).json({ message: 'Invalid preview request' });
   }
   
-  // Set preview data in cookies (Next.js specific)
-  res.setPreviewData(previewData);
+  // In Next.js, you would set preview data
+  // res.setPreviewData(previewData);
   
-  // Redirect to the content
+  // Redirect to the preview page
   res.redirect(req.query.slug || '/');
 }
 ```
 
-#### Exiting Preview Mode
+### Disabling Preview Mode
 
 ```typescript
 import { disablePreviewMode } from 'utils/sanity-preview';
 
-// In a Next.js API route handler
-export default function exitPreview(req, res) {
+// In an API handler
+function exitPreviewMode(req, res) {
   disablePreviewMode();
   
-  // Clear preview data from cookies (Next.js specific)
-  res.clearPreviewData();
+  // In Next.js, you would clear preview data
+  // res.clearPreviewData();
   
-  // Redirect back to the content
+  // Redirect back to the page
   res.redirect(req.query.slug || '/');
 }
 ```
 
-#### Checking Preview Mode
+### Content Type-Specific Preview
 
 ```typescript
-import { isPreviewModeActive } from 'utils/sanity-preview';
+import { newsPreviewHandler } from 'utils/sanity-preview/api/news';
 
-// In a page component or middleware
-function MyPage({ preview }) {
-  if (preview) {
-    // Show preview indicator
-  }
-  
-  // Render page content
-}
-
-// Get server-side props (Next.js specific)
-export async function getServerSideProps({ preview }) {
-  return {
-    props: {
-      preview: !!preview
-    }
-  };
+// In a news article preview handler
+async function previewNewsArticle(req, res) {
+  await newsPreviewHandler(req, res);
 }
 ```
 
-## Integration with Next.js
+## Integration with Sanity Studio
 
-This preview system is designed to be integrated with Next.js in the future. The API handlers and utilities provided here can be used directly in Next.js API routes and server-side rendering functions.
+Add this to your Sanity Studio configuration:
 
-### API Routes for Next.js
+```javascript
+// sanity-studio/resolveProductionUrl.js
+export default function resolveProductionUrl(document) {
+  const previewSecret = process.env.SANITY_PREVIEW_SECRET;
+  const previewUrl = process.env.SANITY_STUDIO_PREVIEW_URL || 'http://localhost:3000';
+  
+  let path;
+  
+  if (document._type === 'newsArticle') {
+    path = `/api/preview?secret=${previewSecret}&id=${document._id}&slug=/news/${document.slug.current}`;
+  } else if (document._type === 'playerProfile') {
+    path = `/api/preview?secret=${previewSecret}&id=${document._id}&slug=/players/${document.supabaseId}`;
+  } else if (document._type === 'sponsor') {
+    path = `/api/preview?secret=${previewSecret}&id=${document._id}&slug=/sponsors/${document.supabaseId}`;
+  } else {
+    return '';
+  }
+  
+  return `${previewUrl}${path}`;
+}
+```
 
-Create the following API routes in your Next.js project:
+## Next.js Integration
 
-1. `/api/preview`: Main entry point for previews
-2. `/api/exit-preview`: Exit preview mode
-3. `/api/preview/news`: News article preview handler
-4. `/api/preview/player`: Player profile preview handler
-5. `/api/preview/sponsor`: Sponsor preview handler
+In a Next.js application, implement these API routes:
 
-The implementation for these routes is provided in the `/api` subdirectory.
+```typescript
+// pages/api/preview.js
+export default async function preview(req, res) {
+  // Validate the preview request
+  if (!validatePreviewSecret(req, process.env.SANITY_PREVIEW_SECRET)) {
+    return res.status(401).json({ message: 'Invalid preview token' });
+  }
+  
+  // Enable preview mode with the data
+  res.setPreviewData({
+    documentId: req.query.id,
+    slug: req.query.slug,
+  });
+  
+  // Redirect to the path
+  res.redirect(req.query.slug || '/');
+}
+```
+
+```typescript
+// pages/api/exit-preview.js
+export default async function exitPreview(req, res) {
+  // Exit preview mode
+  res.clearPreviewData();
+  
+  // Redirect to the path
+  res.redirect(req.query.slug || '/');
+}
+```
 
 ## Security Considerations
 
-- The preview secret should be a secure random string
-- Always validate the preview secret before entering preview mode
-- Use HTTPS for all preview requests
-- Implement rate limiting for preview endpoints
-- Consider using short-lived preview sessions
+- Always validate the preview token with `validatePreviewSecret`
+- Generate a strong random preview secret
+- Store the preview secret in environment variables
+- Only enable preview mode for authenticated users in Sanity Studio
+- Preview tokens should have a limited lifetime
 
-## Customization
+## Error Handling
 
-You can customize the preview system by modifying the following:
+The preview system includes comprehensive error handling:
 
-- `resolveProductionUrl.js`: Change how preview URLs are generated
-- `preview.js`: Customize the preview UI in Sanity Studio
-- API handlers: Modify how content is fetched for preview
+- Invalid preview secrets return 401 Unauthorized responses
+- Missing documents return 404 Not Found responses
+- API errors return 500 Internal Server Error responses
 
-## Troubleshooting
+## Performance Considerations
 
-Common issues:
+- Preview mode may bypass caching mechanisms
+- Consider implementing a separate caching strategy for preview content
+- Monitor performance differences between preview and published content
 
-1. **Preview URLs not working**: Check that `SANITY_STUDIO_PREVIEW_URL` is set correctly in Sanity Studio
-2. **Invalid secret errors**: Ensure the same secret is used in both Sanity Studio and your API routes
-3. **Content not found**: Verify that the content query is correct and handles draft content
-
-## References
+## Further Documentation
 
 - [Sanity Preview Documentation](https://www.sanity.io/docs/preview-content-on-site)
-- [Next.js Preview Mode Documentation](https://nextjs.org/docs/advanced-features/preview-mode)
+- [Next.js Preview Mode](https://nextjs.org/docs/advanced-features/preview-mode)

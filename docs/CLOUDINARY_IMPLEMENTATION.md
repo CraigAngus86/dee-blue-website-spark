@@ -79,7 +79,7 @@ function PlayerAvatar({ playerId }: { playerId: string }) {
     width: 200,
     height: 200,
     crop: 'fill',
-    gravity: 'face'
+    focus: 'face'
   });
 
   return (
@@ -122,6 +122,32 @@ The following domains should be allowed in Cloudinary CORS settings:
 - `https://banksofdeefc.com`
 - `https://www.banksofdeefc.com`
 - Your development environments (localhost, etc.)
+
+## Build Errors and Solutions
+
+During implementation, we encountered several Cloudinary-related build errors:
+
+1. **Import issues with text overlay**:
+   - **Error**: `Module '"@cloudinary/url-gen/actions/overlay"' has no exported member 'text'`
+   - **Solution**: Updated import to use `text` from `'@cloudinary/url-gen/qualifiers/source'` instead
+
+2. **Configuration import errors**:
+   - **Error**: `Module '"./config"' has no exported member 'cloudinaryConfig'`
+   - **Solution**: Updated import to use `cloudinary` directly from the base module
+
+3. **Type mismatch in focus parameter**:
+   - **Error**: `Argument of type 'string' is not assignable to parameter of type 'FocusOnValue'`
+   - **Solution**: Modified implementation to use gravity separately from resize
+
+4. **TextStyle method errors**:
+   - **Error**: `Property 'textColor' does not exist on type 'TextStyle'`
+   - **Solution**: Updated to use `fontColor` method instead
+
+5. **Color constructor issues**:
+   - **Error**: `This expression is not constructable`
+   - **Solution**: Updated to use string color values directly
+
+All these issues were resolved by updating the code to align with the Cloudinary URL Gen SDK's proper API usage patterns, while maintaining the same functionality.
 
 ## Next Steps
 
