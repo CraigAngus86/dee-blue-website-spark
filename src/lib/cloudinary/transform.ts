@@ -1,509 +1,411 @@
 
-import { cloudinary } from './config';
-import { Transformation } from '@cloudinary/url-gen';
-import { format, quality } from '@cloudinary/url-gen/actions/delivery';
-import { auto } from '@cloudinary/url-gen/qualifiers/format';
-import { auto as autoQuality } from '@cloudinary/url-gen/qualifiers/quality';
-import { 
-  fill, scale, crop, thumbnail
-} from '@cloudinary/url-gen/actions/resize';
-import { focusOn } from '@cloudinary/url-gen/qualifiers/gravity';
-import { face, faces } from '@cloudinary/url-gen/qualifiers/focusOn';
-import { backgroundRemoval } from '@cloudinary/url-gen/actions/effect';
-import { source } from '@cloudinary/url-gen/actions/overlay';
-import { image, text } from '@cloudinary/url-gen/qualifiers/source';
-import { compass } from '@cloudinary/url-gen/qualifiers/gravity';
-import { Position } from '@cloudinary/url-gen/qualifiers/position';
-import { opacity, brightness } from '@cloudinary/url-gen/actions/adjust';
-import { Gravity } from '@cloudinary/url-gen/qualifiers';
-import { TextStyle } from '@cloudinary/url-gen/qualifiers/textStyle';
+import { Transformation, Resize, Gravity, Effect, Overlay, TextStyle, TextAlignment } from '@cloudinary/url-gen';
+import { source } from "@cloudinary/url-gen/actions/overlay";
+import { text } from "@cloudinary/url-gen/qualifiers/source";
+import { scale, fill, crop, thumbnail } from "@cloudinary/url-gen/actions/resize";
+import { Position } from "@cloudinary/url-gen/qualifiers/position";
+import { compass } from "@cloudinary/url-gen/qualifiers/gravity";
+import { color } from "@cloudinary/url-gen/qualifiers/color";
+import { TextFit } from "@cloudinary/url-gen/qualifiers/textFit";
+import { format, quality } from "@cloudinary/url-gen/actions/delivery";
+import { auto } from "@cloudinary/url-gen/qualifiers/quality";
+import { gradientFade } from "@cloudinary/url-gen/actions/effect";
+import { artisticFilter } from "@cloudinary/url-gen/actions/effect";
+
+// Brand colors
+const BRAND_COLORS = {
+  navy: '#00105A',
+  lightBlue: '#C5E7FF',
+  gold: '#FFD700',
+};
 
 /**
- * Extended transformation options
+ * Transformation presets for player profile images
  */
-export interface TransformOptions {
-  width?: number;
-  height?: number;
-  format?: 'auto' | 'webp' | 'jpg' | 'png';
-  quality?: 'auto' | number;
-  crop?: 'fill' | 'scale' | 'crop' | 'thumb';
-  gravity?: 'auto' | 'face' | 'faces' | 'center';
-  background?: string; // Background color (hex)
-  placeholder?: boolean; // Whether to use placeholder for missing images
-  aspectRatio?: number; // Explicit aspect ratio
-  deviceSize?: 'sm' | 'md' | 'lg' | 'xl'; // Device size for responsive images
-}
+export const playerProfileTransformations = {
+  /**
+   * Square 1:1 aspect ratio for team listings and management grid
+   * @returns Transformation preset for square player profile
+   */
+  square: () => {
+    return new Transformation()
+      .resize(fill().width(400).height(400).gravity(compass('face')))
+      .quality(auto())
+      .format('auto');
+  },
+
+  /**
+   * Featured player profile with 1.75:1 aspect ratio
+   * @returns Transformation preset for featured player profile
+   */
+  featured: () => {
+    return new Transformation()
+      .resize(fill().width(700).height(400).gravity(compass('face:center')))
+      .quality(auto())
+      .format('auto');
+  },
+
+  /**
+   * Apply Banks o' Dee FC branded background for player photos
+   * @returns Transformation with branded background
+   */
+  brandedBackground: () => {
+    return new Transformation()
+      .resize(fill().width(500).height(600))
+      .overlay(
+        source(text('Banks o\' Dee FC', new TextStyle('Arial', 14))
+          .textColor(BRAND_COLORS.navy)
+          .textBackground(BRAND_COLORS.lightBlue)
+        )
+      )
+      .effect(gradientFade().strength(20))
+      .quality(auto())
+      .format('auto');
+  },
+
+  /**
+   * Silhouette placeholder for missing player images
+   * @returns Transformation preset for player silhouette placeholder
+   */
+  silhouette: () => {
+    // Create a transformation that overlays a silhouette on a branded background
+    return new Transformation()
+      .resize(fill().width(400).height(500))
+      .overlay(
+        source(text('Player', new TextStyle('Arial', 24))
+          .textColor('#FFFFFF')
+        ).position(new Position().gravity(compass('south')))
+      )
+      .effect(artisticFilter('shadow'))
+      .quality(auto())
+      .format('auto');
+  },
+
+  /**
+   * Player image placeholder with striped background
+   * @returns Transformation for player placeholder
+   */
+  placeholder: () => {
+    const tx = new Transformation();
+    tx.resize(fill().width(400).height(500))
+      .overlay(
+        source(text('No Image', new TextStyle('Arial', 20))
+          .textColor('#FFFFFF')
+        ).position(new Position().gravity(compass('center')))
+      )
+      .quality(auto())
+      .format('auto');
+    return tx;
+  }
+};
 
 /**
- * Transform image using Cloudinary SDK
- * @param publicId Full public ID including folder path
- * @param options Transformation options
+ * Transformation presets for match gallery images
  */
-export function transformImage(publicId: string, options: TransformOptions = {}) {
-  if (!publicId) return '';
-  
-  const image = cloudinary.image(publicId);
-  
-  // Set default transformations for web optimization
-  let transformation = new Transformation()
-    .delivery(format(auto()))
-    .delivery(quality(autoQuality()));
-  
-  // Apply resize transformation if dimensions provided
-  if (options.width || options.height || options.aspectRatio) {
-    let resizeAction;
-    
-    switch(options.crop) {
-      case 'fill':
-        resizeAction = fill();
-        break;
-      case 'scale':
-        resizeAction = scale();
-        break;
-      case 'crop':
-        resizeAction = crop();
-        break;
-      case 'thumb':
-        resizeAction = thumbnail();
-        break;
-      default:
-        resizeAction = fill(); // Default to fill
+export const matchGalleryTransformations = {
+  /**
+   * Standard match photo with 4:3 aspect ratio
+   * @returns Transformation preset for match photo
+   */
+  standard: () => {
+    const tx = new Transformation();
+    tx.resize(fill().width(800).height(600).gravity(compass('center')))
+      .quality(auto())
+      .format('auto');
+    return tx;
+  },
+
+  /**
+   * Thumbnail for match gallery grid
+   * @returns Transformation preset for match gallery thumbnail
+   */
+  thumbnail: () => {
+    const tx = new Transformation();
+    tx.resize(thumbnail().width(300).height(200).gravity(compass('center')))
+      .quality(auto())
+      .format('auto');
+    return tx;
+  },
+
+  /**
+   * Featured match photo with 16:9 widescreen aspect ratio
+   * @returns Transformation preset for featured match photo
+   */
+  featured: () => {
+    const tx = new Transformation();
+    tx.resize(fill().width(1280).height(720).gravity(compass('center')))
+      .quality(auto())
+      .format('auto');
+    return tx;
+  }
+};
+
+/**
+ * Transformation presets for news article images
+ */
+export const newsTransformations = {
+  /**
+   * Featured news image with 16:9 aspect ratio
+   * @returns Transformation preset for featured news image
+   */
+  featured: () => {
+    const tx = new Transformation();
+    tx.resize(fill().width(1200).height(675).gravity(compass('center')))
+      .quality(auto())
+      .format('auto');
+    return tx;
+  },
+
+  /**
+   * News thumbnail with 4:3 aspect ratio for article listings
+   * @returns Transformation preset for news thumbnail
+   */
+  thumbnail: () => {
+    const tx = new Transformation();
+    tx.resize(fill().width(400).height(300).gravity(compass('center')))
+      .quality(auto())
+      .format('auto');
+    return tx;
+  },
+
+  /**
+   * In-article image with flexible aspect ratio
+   * @returns Transformation preset for in-article image
+   */
+  article: () => {
+    const tx = new Transformation();
+    tx.resize(scale().width(800))
+      .quality(auto())
+      .format('auto');
+    return tx;
+  }
+};
+
+/**
+ * Transformation presets for sponsor logos
+ */
+export const sponsorTransformations = {
+  /**
+   * Standard sponsor logo with preserved transparency
+   * @returns Transformation preset for sponsor logo
+   */
+  logo: () => {
+    const tx = new Transformation();
+    tx.resize(scale().width(300))
+      .quality(auto())
+      .format('auto');
+    return tx;
+  },
+
+  /**
+   * Small sponsor logo for footer or sidebar
+   * @returns Transformation preset for small sponsor logo
+   */
+  small: () => {
+    const tx = new Transformation();
+    tx.resize(scale().width(150))
+      .quality(auto())
+      .format('auto');
+    return tx;
+  },
+
+  /**
+   * Large sponsor logo for dedicated sponsor pages
+   * @returns Transformation preset for large sponsor logo
+   */
+  large: () => {
+    const tx = new Transformation();
+    tx.resize(scale().width(600))
+      .quality(auto())
+      .format('auto');
+    return tx;
+  }
+};
+
+/**
+ * Transformation presets for stadium images
+ */
+export const stadiumTransformations = {
+  /**
+   * Panoramic stadium view with 21:9 aspect ratio
+   * @returns Transformation preset for panoramic stadium view
+   */
+  panoramic: () => {
+    const tx = new Transformation();
+    tx.resize(fill().width(1680).height(720).gravity(compass('center')))
+      .quality(auto())
+      .format('auto');
+    return tx;
+  },
+
+  /**
+   * Facility image with 3:2 aspect ratio
+   * @returns Transformation preset for facility image
+   */
+  facility: () => {
+    const tx = new Transformation();
+    tx.resize(fill().width(600).height(400).gravity(compass('center')))
+      .quality(auto())
+      .format('auto');
+    return tx;
+  },
+
+  /**
+   * Gallery thumbnail for stadium images
+   * @returns Transformation preset for stadium gallery thumbnail
+   */
+  thumbnail: () => {
+    const tx = new Transformation();
+    tx.resize(fill().width(300).height(200).gravity(compass('center')))
+      .quality(auto())
+      .format('auto');
+    return tx;
+  }
+};
+
+/**
+ * Helper function for creating responsive image transformations
+ * @param baseTransformation Base transformation to apply
+ * @param breakpoints Breakpoints for responsive variants
+ * @returns Object with responsive transformations
+ */
+export function createResponsiveTransformations(
+  baseTransformation: () => Transformation,
+  breakpoints: { sm?: number, md?: number, lg?: number, xl?: number } = {
+    sm: 640,
+    md: 1024,
+    lg: 1280,
+    xl: 1920
+  }
+) {
+  const sm = breakpoints.sm || 640;
+  const md = breakpoints.md || 1024;
+  const lg = breakpoints.lg || 1280;
+  const xl = breakpoints.xl || 1920;
+
+  return {
+    sm: () => {
+      const tx = baseTransformation();
+      tx.resize(scale().width(sm));
+      return tx;
+    },
+    md: () => {
+      const tx = baseTransformation();
+      tx.resize(scale().width(md));
+      return tx;
+    },
+    lg: () => {
+      const tx = baseTransformation();
+      tx.resize(scale().width(lg));
+      return tx;
+    },
+    xl: () => {
+      const tx = baseTransformation();
+      tx.resize(scale().width(xl));
+      return tx;
     }
-    
-    if (options.width) {
-      resizeAction = resizeAction.width(options.width);
-    }
-    
-    if (options.height) {
-      resizeAction = resizeAction.height(options.height);
-    }
-    
-    // Apply gravity/focus if specified
-    if (options.gravity) {
-      switch(options.gravity) {
-        case 'face':
-          resizeAction = resizeAction.gravity(focusOn(face()));
-          break;
-        case 'faces':
-          resizeAction = resizeAction.gravity(focusOn(faces()));
-          break;
-        case 'center':
-          // Use compass gravity for center
-          resizeAction = resizeAction.gravity(compass('center'));
-          break;
-        case 'auto':
-          // Auto gravity is applied differently
-          break;
-        default:
-          // Center gravity is default
-      }
-    }
-    
-    transformation = transformation.resize(resizeAction);
-  }
-  
-  // Apply specific format if requested
-  if (options.format && options.format !== 'auto') {
-    transformation = transformation.delivery(format(options.format));
-  }
-  
-  // Apply specific quality if requested
-  if (options.quality && options.quality !== 'auto') {
-    transformation = transformation.delivery(quality(options.quality));
-  }
-  
-  // Apply the transformation to the image
-  image.transformation(transformation);
-  
-  return image.toURL();
+  };
 }
 
 /**
- * Generate a responsive srcset with multiple widths
- * @param publicId Full public ID including folder path
- * @param widths Array of widths to generate
- * @param options Additional transformation options
+ * Apply text overlay to an image
+ * @param transformation Base transformation
+ * @param text Text to overlay
+ * @param options Options for text overlay
+ * @returns Transformation with text overlay
  */
-export function generateResponsiveSrcSet(
-  publicId: string,
-  widths: number[] = [640, 768, 1024, 1280, 1536, 1920],
-  options: Omit<TransformOptions, 'width'> = {}
-): string {
-  if (!publicId) return '';
-  
-  return widths
-    .map(width => {
-      const url = transformImage(publicId, { ...options, width });
-      return `${url} ${width}w`;
-    })
-    .join(', ');
+export function applyTextOverlay(
+  transformation: Transformation,
+  textContent: string,
+  options: {
+    fontSize?: number;
+    fontFamily?: string;
+    textColor?: string;
+    backgroundColor?: string;
+    position?: 'top' | 'bottom' | 'center';
+    padding?: number;
+  } = {}
+) {
+  const {
+    fontSize = 30,
+    fontFamily = 'Arial',
+    textColor = '#FFFFFF',
+    backgroundColor = 'rgb:000000,60',
+    position = 'bottom',
+    padding = 10
+  } = options;
+
+  const textStyle = new TextStyle(fontFamily, fontSize);
+
+  // Position mapping to Cloudinary compass positions
+  const positionMapping = {
+    top: 'north',
+    center: 'center',
+    bottom: 'south'
+  };
+
+  transformation.overlay(
+    source(text(textContent, textStyle)
+      .textColor(textColor)
+      .backgroundColor(backgroundColor)
+    ).position(new Position().gravity(compass(positionMapping[position])).offsetY(padding))
+  );
+
+  return transformation;
 }
 
 /**
- * Map device size to width in pixels
- * @param size Device size designation
+ * Create a brand watermark overlay
+ * @param transformation Base transformation
+ * @param opacity Watermark opacity (0-100)
+ * @returns Transformation with brand watermark
  */
-function mapDeviceSizeToWidth(size?: 'sm' | 'md' | 'lg' | 'xl'): number {
-  switch(size) {
-    case 'sm': return 640;  // Mobile
-    case 'md': return 768;  // Tablet
-    case 'lg': return 1280; // Desktop
-    case 'xl': return 1920; // Large desktop
-    default: return 1024;   // Default (md-lg)
-  }
-}
+export function applyBrandWatermark(
+  transformation: Transformation,
+  opacity: number = 50
+) {
+  // This would typically reference a stored logo image in Cloudinary
+  // For now, we're using text as a placeholder
+  const tx = transformation;
+  tx.overlay(
+    source(text('Banks o\' Dee FC', new TextStyle('Arial', 20))
+      .textColor('#FFFFFF')
+    ).position(new Position().gravity(compass('southeast')))
+  );
 
-/* ===== PLAYER IMAGE TRANSFORMATIONS ===== */
-
-/**
- * Create an optimized player profile image (square format)
- * Perfect for team grid listings
- * @param publicId Full public ID including folder path
- * @param size Size of the square profile image
- * @param deviceSize Responsive device size
- */
-export function playerProfileSquare(
-  publicId: string,
-  size: number = 300,
-  deviceSize?: 'sm' | 'md' | 'lg' | 'xl'
-): string {
-  const width = deviceSize ? mapDeviceSizeToWidth(deviceSize) / 3 : size;
-  
-  return transformImage(publicId, {
-    width: width,
-    height: width,
-    crop: 'fill',
-    gravity: 'face'
-  });
+  return tx;
 }
 
 /**
- * Create an optimized player profile image (featured format)
- * Shows more upper body, approximately 3:4 aspect ratio
- * @param publicId Full public ID including folder path
- * @param width Width of the profile image
- * @param deviceSize Responsive device size
+ * Apply art direction to an image based on its intended use
+ * @param transformation Base transformation
+ * @param artDirection Type of art direction to apply
+ * @returns Transformation with art direction applied
  */
-export function playerProfileFeatured(
-  publicId: string,
-  width: number = 400,
-  deviceSize?: 'sm' | 'md' | 'lg' | 'xl'
-): string {
-  const imageWidth = deviceSize ? mapDeviceSizeToWidth(deviceSize) / 2.5 : width;
-  const height = Math.round(imageWidth * (4/3)); // 3:4 aspect ratio
-  
-  return transformImage(publicId, {
-    width: imageWidth,
-    height: height,
-    crop: 'fill',
-    gravity: 'face'
-  });
-}
+export function applyArtDirection(
+  transformation: Transformation,
+  artDirection: 'hero' | 'card' | 'thumbnail' | 'overlay'
+) {
+  const tx = transformation;
 
-/**
- * Create an optimized player action shot
- * @param publicId Full public ID including folder path
- * @param width Desired width
- * @param deviceSize Responsive device size
- */
-export function playerAction(
-  publicId: string,
-  width: number = 800,
-  deviceSize?: 'sm' | 'md' | 'lg' | 'xl'
-): string {
-  const imageWidth = deviceSize ? mapDeviceSizeToWidth(deviceSize) : width;
-  const height = Math.round(imageWidth * (9/16)); // 16:9 aspect ratio
-  
-  return transformImage(publicId, {
-    width: imageWidth,
-    height: height,
-    crop: 'fill'
-  });
-}
-
-/* ===== MATCH IMAGE TRANSFORMATIONS ===== */
-
-/**
- * Create a match gallery thumbnail transformation
- * @param publicId Full public ID including folder path
- * @param width Thumbnail width
- * @param deviceSize Responsive device size
- */
-export function matchGalleryThumb(
-  publicId: string,
-  width: number = 300,
-  deviceSize?: 'sm' | 'md' | 'lg' | 'xl'
-): string {
-  const imageWidth = deviceSize ? mapDeviceSizeToWidth(deviceSize) / 4 : width;
-  const height = Math.round(imageWidth * (3/4)); // 4:3 aspect ratio
-  
-  return transformImage(publicId, {
-    width: imageWidth,
-    height: height,
-    crop: 'thumb'
-  });
-}
-
-/**
- * Create a match featured image transformation
- * @param publicId Full public ID including folder path
- * @param width Desired width
- * @param deviceSize Responsive device size
- */
-export function matchFeatured(
-  publicId: string,
-  width: number = 1200,
-  deviceSize?: 'sm' | 'md' | 'lg' | 'xl'
-): string {
-  const imageWidth = deviceSize ? mapDeviceSizeToWidth(deviceSize) : width;
-  const height = Math.round(imageWidth * (9/16)); // 16:9 aspect ratio
-  
-  return transformImage(publicId, {
-    width: imageWidth,
-    height: height,
-    crop: 'fill'
-  });
-}
-
-/* ===== NEWS IMAGE TRANSFORMATIONS ===== */
-
-/**
- * Create a news featured image transformation
- * Perfect for news articles and featured content
- * @param publicId Full public ID including folder path
- * @param width Desired width
- * @param deviceSize Responsive device size
- */
-export function newsFeatured(
-  publicId: string,
-  width: number = 1200,
-  deviceSize?: 'sm' | 'md' | 'lg' | 'xl'
-): string {
-  const imageWidth = deviceSize ? mapDeviceSizeToWidth(deviceSize) : width;
-  const height = Math.round(imageWidth * (9/16)); // 16:9 aspect ratio
-  
-  return transformImage(publicId, {
-    width: imageWidth,
-    height: height,
-    crop: 'fill'
-  });
-}
-
-/**
- * Create a news thumbnail transformation
- * Perfect for news listings
- * @param publicId Full public ID including folder path
- * @param width Thumbnail width
- * @param deviceSize Responsive device size
- */
-export function newsThumbnail(
-  publicId: string,
-  width: number = 400,
-  deviceSize?: 'sm' | 'md' | 'lg' | 'xl'
-): string {
-  const imageWidth = deviceSize ? mapDeviceSizeToWidth(deviceSize) / 3 : width;
-  const height = Math.round(imageWidth * (3/4)); // 4:3 aspect ratio
-  
-  return transformImage(publicId, {
-    width: imageWidth,
-    height: height,
-    crop: 'fill'
-  });
-}
-
-/* ===== SPONSOR IMAGE TRANSFORMATIONS ===== */
-
-/**
- * Create an optimized logo transformation
- * @param publicId Full public ID including folder path
- * @param maxWidth Maximum width of the logo
- * @param format Optional format (png recommended for logos)
- * @param deviceSize Responsive device size
- */
-export function sponsorLogo(
-  publicId: string,
-  maxWidth: number = 300,
-  format: 'auto' | 'png' = 'png',
-  deviceSize?: 'sm' | 'md' | 'lg' | 'xl'
-): string {
-  const width = deviceSize ? mapDeviceSizeToWidth(deviceSize) / 4 : maxWidth;
-  
-  return transformImage(publicId, {
-    width,
-    format
-  });
-}
-
-/* ===== STADIUM IMAGE TRANSFORMATIONS ===== */
-
-/**
- * Create a stadium featured image transformation (panoramic)
- * Perfect for stadium overview and wide shots
- * @param publicId Full public ID including folder path
- * @param width Desired width
- * @param deviceSize Responsive device size
- */
-export function stadiumPanoramic(
-  publicId: string,
-  width: number = 1600,
-  deviceSize?: 'sm' | 'md' | 'lg' | 'xl'
-): string {
-  const imageWidth = deviceSize ? mapDeviceSizeToWidth(deviceSize) : width;
-  const height = Math.round(imageWidth * (9/21)); // 21:9 aspect ratio
-  
-  return transformImage(publicId, {
-    width: imageWidth,
-    height: height,
-    crop: 'fill'
-  });
-}
-
-/**
- * Create a stadium facility image transformation
- * For interior, facilities and detail shots
- * @param publicId Full public ID including folder path
- * @param width Desired width
- * @param deviceSize Responsive device size
- */
-export function stadiumFacility(
-  publicId: string,
-  width: number = 800,
-  deviceSize?: 'sm' | 'md' | 'lg' | 'xl'
-): string {
-  const imageWidth = deviceSize ? mapDeviceSizeToWidth(deviceSize) : width;
-  const height = Math.round(imageWidth * (2/3)); // 3:2 aspect ratio
-  
-  return transformImage(publicId, {
-    width: imageWidth,
-    height: height,
-    crop: 'fill'
-  });
-}
-
-/* ===== ART DIRECTION TRANSFORMATIONS ===== */
-
-/**
- * Create a hero banner image transformation
- * Optimized for full-width banner with text overlay
- * @param publicId Full public ID including folder path
- * @param width Desired width
- * @param deviceSize Responsive device size
- */
-export function heroBanner(
-  publicId: string,
-  width: number = 1920,
-  deviceSize?: 'sm' | 'md' | 'lg' | 'xl'
-): string {
-  let imageWidth = width;
-  let height;
-  
-  switch(deviceSize) {
-    case 'sm':
-      imageWidth = 640;
-      height = Math.round(imageWidth * (1/1)); // 1:1 aspect for mobile
+  switch (artDirection) {
+    case 'hero':
+      // For hero images, ensure there's space at bottom for text overlay
+      tx.resize(fill().width(1600).height(600).gravity(compass('center')));
       break;
-    case 'md':
-      imageWidth = 768;
-      height = Math.round(imageWidth * (2/3)); // 3:2 aspect for tablet
+    case 'card':
+      // For card images, focus on the subject
+      tx.resize(fill().width(400).height(300).gravity(compass('auto')));
       break;
-    case 'lg':
-      imageWidth = 1280;
-      height = Math.round(imageWidth * (9/21)); // 21:9 aspect for desktop
+    case 'thumbnail':
+      // For thumbnails, create a square format
+      tx.resize(fill().width(200).height(200).gravity(compass('auto')));
       break;
-    case 'xl':
-      imageWidth = 1920;
-      height = Math.round(imageWidth * (9/21)); // 21:9 aspect for large desktop
+    case 'overlay':
+      // For images with text overlay, add a gradient
+      tx.effect(gradientFade().strength(20));
       break;
-    default:
-      imageWidth = width;
-      height = Math.round(imageWidth * (9/21)); // Default 21:9
   }
-  
-  return transformImage(publicId, {
-    width: imageWidth,
-    height: height,
-    crop: 'fill'
-  });
-}
 
-/**
- * Create an optimized card image transformation
- * Perfect for UI cards with overlay text
- * @param publicId Full public ID including folder path
- * @param width Desired width
- * @param deviceSize Responsive device size
- */
-export function cardImage(
-  publicId: string,
-  width: number = 600,
-  deviceSize?: 'sm' | 'md' | 'lg' | 'xl'
-): string {
-  const imageWidth = deviceSize ? mapDeviceSizeToWidth(deviceSize) / 2 : width;
-  const height = Math.round(imageWidth * (3/4)); // 4:3 aspect ratio
-  
-  return transformImage(publicId, {
-    width: imageWidth,
-    height: height,
-    crop: 'fill'
-  });
-}
-
-/**
- * Helper function to generate standard placeholder silhouette for missing images
- * @param width Width of the placeholder
- * @param height Height of the placeholder
- * @param text Optional text to display
- * @returns URL of the generated placeholder image
- */
-export function createSilhouettePlaceholder(
-  width: number = 400,
-  height: number = 500,
-  text?: string
-): string {
-  // Generate a dynamic placeholder with blue and white striped background
-  const placeholder = cloudinary.image('banksofdeefc/placeholders/player_silhouette');
-  
-  const transformation = new Transformation()
-    .resize(fill().width(width).height(height))
-    .backgroundColor('#00105A') // Deep Navy background
-    .delivery(format(auto()))
-    .delivery(quality(autoQuality()));
-  
-  // Add text if provided
-  if (text) {
-    const textStyle = new TextStyle('Arial', 20).color('white');
-    
-    transformation.overlay(
-      source(text(text, textStyle))
-        .position(new Position().gravity(compass('south')).offsetY(20))
-    );
-  }
-  
-  placeholder.transformation(transformation);
-  
-  return placeholder.toURL();
-}
-
-/**
- * Create an optimized profile image with Banks o' Dee FC
- * standard diagonal blue and white striped background
- * @param publicId Full public ID including folder path
- * @param size Size of the square profile image
- * @param name Optional player name for fallback display
- */
-export function standardPlayerProfile(
-  publicId: string,
-  size: number = 200,
-  name?: string
-): string {
-  if (!publicId) {
-    return createSilhouettePlaceholder(size, size * 1.25, name);
-  }
-  
-  return transformImage(publicId, {
-    width: size,
-    height: size,
-    crop: 'fill',
-    gravity: 'face'
-  });
+  return tx;
 }
