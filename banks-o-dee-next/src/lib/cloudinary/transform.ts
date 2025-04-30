@@ -120,6 +120,7 @@ export function transformImage(publicId: string, options: TransformOptions = {})
       
       // Create text overlay with position (required second parameter)
       const position = new Position();
+      // Fix: Pass both required parameters to text()
       const textSource = text(options.text, textStyle);
       
       // Apply the text overlay to the image with position

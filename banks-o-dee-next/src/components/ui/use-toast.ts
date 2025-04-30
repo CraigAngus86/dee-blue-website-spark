@@ -1,3 +1,4 @@
+
 import { useCallback, useEffect, useId, useRef, useState } from "react"
 import type { ToastActionElement, ToastProps } from "@/components/ui/toast"
 
@@ -48,7 +49,8 @@ const toastTimeouts = new Map<string, ReturnType<typeof setTimeout>>()
 
 const listeners: Array<(state: State) => void> = []
 
-const memoryState: State = { toasts: [] }
+// Fix: Change const to let to allow reassignment
+let memoryState: State = { toasts: [] }
 
 function dispatch(action: Action) {
   memoryState = reducer(memoryState, action)

@@ -11,8 +11,11 @@ const nextConfig = {
     formats: ['image/avif', 'image/webp']
   },
   experimental: {
-    // Enable or disable various experiments
-    serverActions: true,
+    // Updated from serverActions: true to proper object format
+    serverActions: {
+      allowedOrigins: ['localhost:3000', '*.lovableproject.com', '*.lovable.app'],
+      allowedForwardedHosts: ['localhost:3000', '*.lovableproject.com', '*.lovable.app']
+    },
   },
 };
 
