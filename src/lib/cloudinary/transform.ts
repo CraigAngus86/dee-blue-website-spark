@@ -4,7 +4,10 @@ import { Transformation } from '@cloudinary/url-gen';
 import { format, quality } from '@cloudinary/url-gen/actions/delivery';
 import { auto } from '@cloudinary/url-gen/qualifiers/format';
 import { auto as autoQuality } from '@cloudinary/url-gen/qualifiers/quality';
-import { resize, fill, scale, crop, thumbnail } from '@cloudinary/url-gen/actions/resize';
+import { 
+  fill, scale, crop, thumbnail, 
+  Resize // Import Resize class instead of 'resize'
+} from '@cloudinary/url-gen/actions/resize';
 import { focusOn } from '@cloudinary/url-gen/qualifiers/gravity';
 import { face, faces } from '@cloudinary/url-gen/qualifiers/focusOn';
 
@@ -35,7 +38,7 @@ export function transformImage(publicId: string, options: TransformOptions = {})
   
   // Apply resize transformation if dimensions provided
   if (options.width || options.height) {
-    let resizeAction;
+    let resizeAction: Resize;
     
     switch(options.crop) {
       case 'fill':
@@ -92,6 +95,7 @@ export function transformImage(publicId: string, options: TransformOptions = {})
     transformation = transformation.delivery(quality(options.quality));
   }
   
+  // Apply the transformation to the image
   image.transformation(transformation);
   
   return image.toURL();
