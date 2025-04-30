@@ -1,63 +1,85 @@
+
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
 /**
- * Format match data from Supabase to the format expected by the MatchCarousel component
+ * Merges Tailwind CSS classes
  */
-export function formatMatchData(matches: any[], isCompleted: boolean = false) {
-  if (!matches) return [];
-  
-  return matches.map(match => ({
-    id: match.id,
-    date: match.match_date,
-    time: match.match_time,
-    competition: match.competition_id?.name || "",
-    competitionShort: match.competition_id?.short_name || "",
-    competitionImage: match.competition_id?.logo_url || "",
-    homeTeam: match.home_team_id?.name || "TBC",
-    awayTeam: match.away_team_id?.name || "TBC",
-    homeTeamLogo: match.home_team_id?.logo_url || "",
-    awayTeamLogo: match.away_team_id?.logo_url || "",
-    venue: match.venue || "TBC",
-    isCompleted: isCompleted,
-    homeScore: match.home_score,
-    awayScore: match.away_score,
-    ticketLink: match.ticket_link || "",
-    matchReportLink: match.match_report_link || "",
-    ticketcoEventId: match.ticketco_event_id || ""
-  }));
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
 }
 
 /**
- * Format a date to a readable string
+ * Formats match data for use in components
  */
-export function formatDate(dateString: string, includeYear: boolean = true) {
-  if (!dateString) return "";
+export function formatMatchData(matches: any[], isResults = false) {
+  return (matches || []).map(match => {
+    const homeTeam = match.home_team_id;
+    const awayTeam = match.away_team_id;
+    const competition = match.competition_id;
+
+    return {
+      id: match.id,
+      date: match.match_date,
+      time: match.match_time,
+      venue: match.venue || "Spain Park",
+      homeTeam: {
+        id: homeTeam?.id,
+        name: homeTeam?.name || "Unknown Team",
+        logo: homeTeam?.logo_url || "/assets/images/logos/BOD_Logo_Navy_square.png"
+      },
+      awayTeam: {
+        id: awayTeam?.id,
+        name: awayTeam?.name || "Unknown Team",
+        logo: awayTeam?.logo_url || "/assets/images/logos/BOD_Logo_White_square.png"
+      },
+      competition: {
+        id: competition?.id,
+        name: competition?.name || "Unknown Competition",
+        shortName: competition?.short_name,
+        logo: competition?.logo_url
+      },
+      result: isResults ? {
+        homeScore: match.home_score,
+        awayScore: match.away_score,
+        matchReportLink: match.match_report_link
+      } : undefined,
+      ticketLink: match.ticket_link || null,
+      status: match.status || "scheduled"
+    };
+  });
+}
+
+/**
+ * Formats currency amounts
+ */
+export function formatCurrency(amount: number) {
+  return new Intl.NumberFormat('en-GB', {
+    style: 'currency',
+    currency: 'GBP',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  }).format(amount);
+}
+
+/**
+ * Formats dates in the UK format
+ */
+export function formatDate(date: Date | string) {
+  if (!date) return '';
   
-  const date = new Date(dateString);
-  const options: Intl.DateTimeFormatOptions = {
-    weekday: 'short',
+  const d = typeof date === 'string' ? new Date(date) : date;
+  return d.toLocaleDateString('en-GB', {
     day: 'numeric',
-    month: 'long',
-  };
-  
-  if (includeYear) {
-    options.year = 'numeric';
-  }
-  
-  return date.toLocaleDateString('en-GB', options);
+    month: 'short',
+    year: 'numeric'
+  });
 }
 
 /**
- * Format time from 24h format to 12h format
+ * Truncate text with ellipsis
  */
-export function formatTime(timeString: string) {
-  if (!timeString) return "";
-  
-  // Handle both time string formats (HH:MM:SS and HH:MM)
-  const timeParts = timeString.split(':');
-  const hours = parseInt(timeParts[0]);
-  const minutes = timeParts[1];
-  
-  const ampm = hours >= 12 ? 'PM' : 'AM';
-  const displayHours = hours % 12 || 12;
-  
-  return `${displayHours}:${minutes} ${ampm}`;
+export function truncateText(text: string, maxLength: number) {
+  if (!text || text.length <= maxLength) return text;
+  return `${text.slice(0, maxLength)}...`;
 }

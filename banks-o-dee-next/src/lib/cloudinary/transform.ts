@@ -1,12 +1,13 @@
 
 import { Cloudinary } from '@cloudinary/url-gen';
 import { fill, crop, scale, thumbnail } from '@cloudinary/url-gen/actions/resize';
-import { FocusOn, autoFocus } from '@cloudinary/url-gen/qualifiers/gravity';
+import { focusOn } from '@cloudinary/url-gen/qualifiers/gravity';
+import { FocusOn } from '@cloudinary/url-gen/qualifiers/focusOn';
+import { compass } from '@cloudinary/url-gen/qualifiers/gravity';
 import { blur, grayscale, sepia } from '@cloudinary/url-gen/actions/effect';
 import { source } from '@cloudinary/url-gen/actions/overlay';
 import { text } from '@cloudinary/url-gen/qualifiers/source';
 import { Position } from '@cloudinary/url-gen/qualifiers/position';
-import { compass } from '@cloudinary/url-gen/qualifiers/gravity';
 import { TextStyle } from '@cloudinary/url-gen/qualifiers/textStyle';
 import { cloudinary } from '@/lib/cloudinary';
 
@@ -76,18 +77,18 @@ export function transformImage(publicId: string, options: TransformOptions = {})
       }
     }
 
-    // Focus point - fixed implementation
+    // Fix: Focus point - use FocusOn enum correctly
     if (options.focus) {
       if (options.width || options.height) {
         switch (options.focus) {
           case 'face':
-            image.resize(fill().width(options.width || 0).height(options.height || 0).gravity(FocusOn.face()));
+            image.resize(fill().width(options.width || 0).height(options.height || 0).gravity(focusOn(FocusOn.face)));
             break;
           case 'center':
             image.resize(fill().width(options.width || 0).height(options.height || 0).gravity(compass('center')));
             break;
           case 'auto':
-            image.resize(fill().width(options.width || 0).height(options.height || 0).gravity(autoFocus()));
+            image.resize(fill().width(options.width || 0).height(options.height || 0).gravity(focusOn(FocusOn.auto)));
             break;
         }
       }
@@ -106,22 +107,23 @@ export function transformImage(publicId: string, options: TransformOptions = {})
       image.effect(sepia());
     }
 
-    // Text overlay - fixed implementation
+    // Fix: Text overlay with correct implementation
     if (options.text) {
       const textStyle = new TextStyle(options.textFont || 'Arial')
         .fontWeight(options.textWeight || 'bold')
         .fontSize(options.textSize || 24);
       
-      // Use color method instead of fontColor
+      // Fix: Use fontColor method instead of color for TextStyle
       if (options.textColor) {
-        textStyle.color(options.textColor);
+        textStyle.fontColor(options.textColor);
       }
       
-      // Fixed text overlay implementation with correct parameters
+      // Create text overlay with position (required second parameter)
+      const position = new Position();
       const textSource = text(options.text, textStyle);
       
-      // Apply the text overlay to the image
-      image.overlay(source(textSource));
+      // Apply the text overlay to the image with position
+      image.overlay(source(textSource).position(position));
     }
 
     return image.toURL();

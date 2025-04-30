@@ -11,7 +11,7 @@ import PatternOverlay from "@/components/ui/backgrounds/PatternOverlay";
 import MatchCenter from "@/components/ui/sections/MatchCenter";
 import PlayersSection from "@/components/ui/sections/PlayersSection";
 import { fetchSanityData } from "@/lib/sanity/client";
-import { supabase } from "@/lib/supabase/client";
+import { supabase } from "@/integrations/supabase/client";
 
 export const metadata: Metadata = {
   title: "Home | Banks o' Dee FC",
@@ -145,7 +145,7 @@ async function getFanOfMonth() {
     const { data: fanOfMonth, error } = await supabase
       .from("vw_current_fan_of_month")
       .select("*")
-      .single();
+      .maybeSingle();
 
     if (error && error.code !== 'PGRST116') throw error;
     return fanOfMonth;
