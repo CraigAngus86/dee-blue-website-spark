@@ -118,9 +118,9 @@ export function transformImage(publicId: string, options: TransformOptions = {})
         textStyle.fontColor(options.textColor);
       }
       
-      // Create text overlay with position (required second parameter)
+      // Create text overlay with position
       const position = new Position();
-      // Fix: Pass both required parameters to text()
+      // Fix: Pass text and textStyle to text() function as required parameters
       const textSource = text(options.text, textStyle);
       
       // Apply the text overlay to the image with position
