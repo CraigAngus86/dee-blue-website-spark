@@ -1,8 +1,7 @@
 
 import { Cloudinary } from '@cloudinary/url-gen';
 import { fill, crop, scale, thumbnail } from '@cloudinary/url-gen/actions/resize';
-import { FocusOn } from '@cloudinary/url-gen/qualifiers/gravity';
-import { autoFocus, focusOn } from '@cloudinary/url-gen/qualifiers/gravity';
+import { focusOn } from '@cloudinary/url-gen/qualifiers/gravity';
 import { blur, grayscale, sepia } from '@cloudinary/url-gen/actions/effect';
 import { source } from '@cloudinary/url-gen/actions/overlay';
 import { text } from '@cloudinary/url-gen/qualifiers/source';
@@ -82,14 +81,15 @@ export function transformImage(publicId: string, options: TransformOptions = {})
       if (options.width || options.height) {
         switch (options.focus) {
           case 'face':
-            // Fix: Use FocusOn.face() instead of passing 'face' as a string
-            image.resize(fill().width(options.width || 0).height(options.height || 0).gravity(FocusOn.face()));
+            // Use focusOn('face') instead of FocusOn.face()
+            image.resize(fill().width(options.width || 0).height(options.height || 0).gravity(focusOn('face')));
             break;
           case 'center':
             image.resize(fill().width(options.width || 0).height(options.height || 0).gravity(compass('center')));
             break;
           case 'auto':
-            image.resize(fill().width(options.width || 0).height(options.height || 0).gravity(autoFocus()));
+            // Use an alternative to autoFocus - in this case focusOn('auto')
+            image.resize(fill().width(options.width || 0).height(options.height || 0).gravity(focusOn('auto')));
             break;
         }
       }
@@ -114,17 +114,17 @@ export function transformImage(publicId: string, options: TransformOptions = {})
         .fontWeight(options.textWeight || 'bold')
         .fontSize(options.textSize || 24);
       
-      // Fix: Use color instead of fontColor
+      // Use fontColor method instead of color
       if (options.textColor) {
-        textStyle.color(options.textColor);
+        textStyle.fontColor(options.textColor);
       }
       
-      // Fix: Text overlay implementation with correct parameters
-      // Create text source with style
-      const textOverlay = text(options.text, textStyle);
+      // Create text overlay with correct parameters
+      // The text function expects a string and optional TextStyle
+      const textSource = text(options.text, textStyle);
       
       // Apply the text overlay to the image
-      image.overlay(source(textOverlay));
+      image.overlay(source(textSource));
     }
 
     return image.toURL();
