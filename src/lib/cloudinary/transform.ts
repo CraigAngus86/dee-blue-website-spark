@@ -1,15 +1,16 @@
 
-import { Cloudinary } from '@cloudinary/url-gen';
+"use client";
+
+import { Cloudinary, CloudinaryImage } from '@cloudinary/url-gen';
 import { fill, crop, scale, thumbnail } from '@cloudinary/url-gen/actions/resize';
 import { focusOn } from '@cloudinary/url-gen/qualifiers/gravity';
-import { Focus } from '@cloudinary/url-gen/qualifiers/focusOn';
+import { FocusOn } from '@cloudinary/url-gen/qualifiers/focusOn';
 import { compass } from '@cloudinary/url-gen/qualifiers/gravity';
 import { blur, grayscale, sepia } from '@cloudinary/url-gen/actions/effect';
 import { source } from '@cloudinary/url-gen/actions/overlay';
 import { text } from '@cloudinary/url-gen/qualifiers/source';
 import { Position } from '@cloudinary/url-gen/qualifiers/position';
 import { TextStyle } from '@cloudinary/url-gen/qualifiers/textStyle';
-import { cloudinary } from '@/lib/cloudinary';
 
 // Initialize Cloudinary
 const cld = new Cloudinary({
@@ -77,20 +78,18 @@ export function transformImage(publicId: string, options: TransformOptions = {})
       }
     }
 
-    // Focus point - fixed implementation using proper Focus enum values
+    // Focus point
     if (options.focus) {
       if (options.width || options.height) {
         switch (options.focus) {
           case 'face':
-            // Using Focus enum instead of string
-            image.resize(fill().width(options.width || 0).height(options.height || 0).gravity(focusOn(Focus.face)));
+            image.resize(fill().width(options.width || 0).height(options.height || 0).gravity(focusOn(FocusOn.face)));
             break;
           case 'center':
             image.resize(fill().width(options.width || 0).height(options.height || 0).gravity(compass('center')));
             break;
           case 'auto':
-            // Using Focus enum for auto instead of string
-            image.resize(fill().width(options.width || 0).height(options.height || 0).gravity(focusOn(Focus.auto)));
+            image.resize(fill().width(options.width || 0).height(options.height || 0).gravity(focusOn(FocusOn.auto)));
             break;
         }
       }
@@ -109,22 +108,20 @@ export function transformImage(publicId: string, options: TransformOptions = {})
       image.effect(sepia());
     }
 
-    // Text overlay with correct implementation
+    // Text overlay
     if (options.text) {
       const textStyle = new TextStyle(options.textFont || 'Arial')
         .fontWeight(options.textWeight || 'bold')
         .fontSize(options.textSize || 24);
       
-      // Use color method instead of fontColor
+      const textOverlay = text(options.text, textStyle);
+      
       if (options.textColor) {
-        textStyle.color(options.textColor);
+        // Apply text color to the source overlay, not to the TextStyle
+        image.overlay(source(textOverlay).color(options.textColor));
+      } else {
+        image.overlay(source(textOverlay));
       }
-      
-      // Fixed text overlay implementation with both required parameters
-      const textSource = text(options.text, textStyle);
-      
-      // Apply the text overlay to the image
-      image.overlay(source(textSource));
     }
 
     return image.toURL();
@@ -327,3 +324,6 @@ export function createSilhouettePlaceholder(width: number = 300, height: number 
   
   return transformImage('banks-o-dee/placeholders/silhouette', options);
 }
+
+// Export the Cloudinary instance for direct use
+export { cld };
