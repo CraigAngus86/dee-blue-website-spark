@@ -1,4 +1,3 @@
-
 import { Cloudinary } from '@cloudinary/url-gen';
 import { fill, crop, scale, thumbnail } from '@cloudinary/url-gen/actions/resize';
 import { focusOn } from '@cloudinary/url-gen/qualifiers/gravity';
@@ -8,7 +7,7 @@ import { text as textOverlay } from '@cloudinary/url-gen/qualifiers/source';
 import { Position } from '@cloudinary/url-gen/qualifiers/position';
 import { compass } from '@cloudinary/url-gen/qualifiers/gravity';
 import { TextStyle } from '@cloudinary/url-gen/qualifiers/textStyle';
-import { Color } from '@cloudinary/url-gen/qualifiers'; // Fix: Changed 'color' to 'Color'
+import { Color } from '@cloudinary/url-gen/qualifiers'; // Fixed import
 import { cloudinary } from '@/lib/cloudinary';
 
 // Initialize Cloudinary
@@ -79,8 +78,7 @@ export function transformImage(publicId: string, options: TransformOptions = {})
 
     // Focus point - fixed implementation
     if (options.focus === 'face') {
-      // Apply focus without using the non-existent gravity method directly on CloudinaryImage
-      // Instead, apply it within the resize action
+      // Apply focus using the correct type for focusOn
       if (options.width || options.height) {
         image.resize(fill().width(options.width || 0).height(options.height || 0).gravity(focusOn('face')));
       }
@@ -106,13 +104,13 @@ export function transformImage(publicId: string, options: TransformOptions = {})
         .fontSize(options.textSize || 24);
       
       if (options.textColor) {
-        // Fix for textColor application - use fontColor with proper argument
-        textStyle.color(options.textColor);
+        // Fix for textColor application - using fontColor instead of color
+        textStyle.fontColor(options.textColor);
       }
       
-      // Fixed text overlay implementation
+      // Fixed text overlay implementation with the correct number of arguments
       const textSourceOverlay = source(
-        textOverlay(options.text, textStyle)
+        textOverlay(options.text).textStyle(textStyle)
       );
       
       image.overlay(textSourceOverlay);
