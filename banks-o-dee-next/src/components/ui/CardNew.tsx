@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 interface CardNewProps {
   children: React.ReactNode;
   className?: string;
-  elevation?: 'none' | 'sm' | 'md' | 'lg';
+  elevation?: 'none' | 'flat' | 'sm' | 'md' | 'lg';
   hoverEffect?: boolean;
   onClick?: () => void;
 }
@@ -19,6 +19,7 @@ export const CardNew = ({
 }: CardNewProps) => {
   const elevationClasses = {
     none: '',
+    flat: 'border border-gray-100',
     sm: 'shadow-sm',
     md: 'shadow-md',
     lg: 'shadow-lg',

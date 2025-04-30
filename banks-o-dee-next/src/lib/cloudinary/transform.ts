@@ -113,9 +113,9 @@ export function transformImage(publicId: string, options: TransformOptions = {})
         .fontWeight(options.textWeight || 'bold')
         .fontSize(options.textSize || 24);
       
-      // Fix: Use fontColor method instead of color for TextStyle
+      // Fix: Use color method instead of fontColor for TextStyle
       if (options.textColor) {
-        textStyle.fontColor(options.textColor);
+        textStyle.color(options.textColor);
       }
       
       // Create text overlay with position
