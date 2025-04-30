@@ -1,3 +1,4 @@
+
 import { Transformation } from '@cloudinary/url-gen';
 import { pad } from '@cloudinary/url-gen/actions/resize';
 import { Gravity } from '@cloudinary/url-gen/qualifiers';
@@ -36,7 +37,7 @@ export const createSponsorLogoTransformation = () => {
   };
 };
 
-export const createTextOverlay = (text: string, options: any = {}) => {
+export const createTextOverlay = (textContent: string, options: any = {}) => {
   // Default configuration for text overlay
   const fontFamily = options.fontFamily || 'montserrat';
   const fontSize = options.fontSize || 24;
@@ -57,16 +58,16 @@ export const createTextOverlay = (text: string, options: any = {}) => {
 
     // Fix the text overlay - pass both the string and the style
     return transformation.overlay(
-      source(text(text, textStyle)).color(textColor).backgroundColor(backgroundColor) // Fix: Add textColor through the color method
+      source(text(textContent, textStyle)).color(textColor).backgroundColor(backgroundColor) // Fixed: Pass both arguments to text() and use color() method correctly
     );
   };
 };
 
 // Helper function to create a transformation for stadium images with text overlay
-export const createStadiumImageTransformationWithText = (text: string, options: any = {}) => {
+export const createStadiumImageTransformationWithText = (textContent: string, options: any = {}) => {
   return (transformation: Transformation) => {
     transformation
       .resize(pad().width(600).height(400).gravity(autoGravity().autoFocus(FocusOn.subject())))
-      .chain(createTextOverlay(text, options));
+      .chain(createTextOverlay(textContent, options));
   };
 };
