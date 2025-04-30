@@ -1,4 +1,3 @@
-
 "use client";
 
 import React from 'react';
@@ -11,24 +10,7 @@ import {
 } from "@/components/ui/carousel";
 import MatchCardNew from "@/components/ui/image/MatchCardNew";
 import LoadingState from "@/components/ui/common/LoadingState";
-
-interface Match {
-  id: string;
-  date: string;
-  time: string;
-  competition: string;
-  competitionShort: string;
-  homeTeam: string;
-  awayTeam: string;
-  homeTeamLogo: string;
-  awayTeamLogo: string;
-  venue: string;
-  isCompleted: boolean;
-  homeScore?: number;
-  awayScore?: number;
-  ticketLink?: string;
-  matchReportLink?: string;
-}
+import { Match } from '@/types/match';
 
 interface MatchCarouselProps {
   matches: Match[];
