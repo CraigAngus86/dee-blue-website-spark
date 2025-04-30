@@ -1,6 +1,22 @@
 
 import { useMemo, useState } from 'react';
-import { transformImage, TransformOptions } from '@/lib/cloudinary/transform';
+import {
+  transformImage,
+  playerProfileSquare,
+  playerProfileFeatured,
+  playerAction,
+  matchGalleryThumb,
+  matchFeatured,
+  newsFeatured,
+  newsThumbnail,
+  sponsorLogo,
+  stadiumPanoramic,
+  stadiumFacility,
+  heroBanner,
+  cardImage,
+  createSilhouettePlaceholder,
+  TransformOptions
+} from '@/lib/cloudinary/transform';
 
 /**
  * Hook for working with Cloudinary images in React components
@@ -83,5 +99,60 @@ export function useCloudinarySrcSet(
   return {
     srcSet,
     sizes,
+  };
+}
+
+/**
+ * Hook for optimized player profile images
+ * @param publicId Cloudinary public ID (with folder path)
+ * @param options Additional options
+ */
+export function usePlayerProfileImage(publicId: string | undefined, options: {
+  variant?: 'square' | 'featured';
+  size?: number;
+  name?: string;
+  deviceSize?: 'sm' | 'md' | 'lg' | 'xl';
+} = {}) {
+  const { variant = 'square', size = 300, name, deviceSize } = options;
+  
+  const imageUrl = useMemo(() => {
+    if (!publicId) {
+      return createSilhouettePlaceholder(
+        size, 
+        variant === 'featured' ? Math.round(size * (4/3)) : size,
+        name
+      );
+    }
+    
+    try {
+      if (variant === 'featured') {
+        return playerProfileFeatured(publicId, size, deviceSize);
+      }
+      return playerProfileSquare(publicId, size, deviceSize);
+    } catch (error) {
+      console.error('Error generating player profile image:', error);
+      return createSilhouettePlaceholder(
+        size, 
+        variant === 'featured' ? Math.round(size * (4/3)) : size,
+        name
+      );
+    }
+  }, [publicId, variant, size, name, deviceSize]);
+
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [hasError, setHasError] = useState(false);
+
+  const handleLoad = () => setIsLoaded(true);
+  const handleError = () => {
+    console.error(`Failed to load player image: ${publicId}`);
+    setHasError(true);
+  };
+
+  return {
+    imageUrl,
+    isLoaded,
+    hasError,
+    handleLoad,
+    handleError,
   };
 }
