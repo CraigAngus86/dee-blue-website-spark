@@ -55,7 +55,7 @@ export function useCloudinaryUpload() {
         });
         
         // Simulate progress updates (in a real implementation this would come from the upload API)
-        const progressIntervalId = setInterval(() => {
+        let progressIntervalId: NodeJS.Timeout | null = setInterval(() => {
           setState(prev => ({
             ...prev,
             progress: Math.min(prev.progress + 10, 90), // Cap at 90% until complete
@@ -75,7 +75,10 @@ export function useCloudinaryUpload() {
           }
         );
         
-        clearInterval(progressIntervalId);
+        if (progressIntervalId) {
+          clearInterval(progressIntervalId);
+          progressIntervalId = null;
+        }
         
         setState({
           isUploading: false,
