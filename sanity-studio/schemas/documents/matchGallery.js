@@ -1,3 +1,4 @@
+
 export default {
     name: 'matchGallery',
     title: 'Match Gallery',
@@ -25,7 +26,7 @@ export default {
         validation: Rule => Rule.required().regex(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/, {
           name: 'UUID',
           invert: false,
-          message: 'Must be a valid UUID format'
+          message: 'Must be a valid UUID format (example: 123e4567-e89b-12d3-a456-426614174000)'
         }),
         group: 'reference'
       },

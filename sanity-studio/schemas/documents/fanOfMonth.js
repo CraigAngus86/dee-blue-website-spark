@@ -1,3 +1,4 @@
+
 export default {
     name: 'fanOfMonth',
     title: 'Fan of the Month',
@@ -22,10 +23,23 @@ export default {
     ],
     fields: [
       {
-        name: 'fanId',
-        title: 'Fan ID',
+        name: 'supabaseId',
+        title: 'Supabase ID',
         type: 'string',
-        description: 'Supabase ID for this fan (if applicable)',
+        description: 'UUID from Supabase for this fan (if applicable)',
+        validation: Rule => Rule.regex(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/, {
+          name: 'UUID',
+          invert: false,
+          message: 'Must be a valid UUID format (example: 123e4567-e89b-12d3-a456-426614174000)'
+        }),
+        group: 'reference'
+      },
+      {
+        name: 'fanId',
+        title: 'Fan ID (Legacy)',
+        type: 'string',
+        description: 'Legacy ID field - use supabaseId instead',
+        hidden: true,
         group: 'reference'
       },
       {
