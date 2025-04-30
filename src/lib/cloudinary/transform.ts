@@ -1,19 +1,20 @@
+
 import { Cloudinary } from '@cloudinary/url-gen';
 import { fill, crop, scale, thumbnail } from '@cloudinary/url-gen/actions/resize';
-import { focusOn } from '@cloudinary/url-gen/qualifiers/gravity';
+import { FocusOn } from '@cloudinary/url-gen/qualifiers/gravity';
+import { autoFocus, focusOn } from '@cloudinary/url-gen/qualifiers/gravity';
 import { blur, grayscale, sepia } from '@cloudinary/url-gen/actions/effect';
 import { source } from '@cloudinary/url-gen/actions/overlay';
-import { text as textOverlay } from '@cloudinary/url-gen/qualifiers/source';
+import { text } from '@cloudinary/url-gen/qualifiers/source';
 import { Position } from '@cloudinary/url-gen/qualifiers/position';
 import { compass } from '@cloudinary/url-gen/qualifiers/gravity';
 import { TextStyle } from '@cloudinary/url-gen/qualifiers/textStyle';
-import { Color } from '@cloudinary/url-gen/qualifiers'; // Fixed import
 import { cloudinary } from '@/lib/cloudinary';
 
 // Initialize Cloudinary
 const cld = new Cloudinary({
   cloud: {
-    cloudName: 'dlkpaw2a0'
+    cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'dlkpaw2a0'
   }
 });
 
@@ -77,10 +78,20 @@ export function transformImage(publicId: string, options: TransformOptions = {})
     }
 
     // Focus point - fixed implementation
-    if (options.focus === 'face') {
-      // Apply focus using the correct type for focusOn
+    if (options.focus) {
       if (options.width || options.height) {
-        image.resize(fill().width(options.width || 0).height(options.height || 0).gravity(focusOn('face')));
+        switch (options.focus) {
+          case 'face':
+            // Fix: Use FocusOn.face() instead of passing 'face' as a string
+            image.resize(fill().width(options.width || 0).height(options.height || 0).gravity(FocusOn.face()));
+            break;
+          case 'center':
+            image.resize(fill().width(options.width || 0).height(options.height || 0).gravity(compass('center')));
+            break;
+          case 'auto':
+            image.resize(fill().width(options.width || 0).height(options.height || 0).gravity(autoFocus()));
+            break;
+        }
       }
     }
 
@@ -103,17 +114,17 @@ export function transformImage(publicId: string, options: TransformOptions = {})
         .fontWeight(options.textWeight || 'bold')
         .fontSize(options.textSize || 24);
       
+      // Fix: Use color instead of fontColor
       if (options.textColor) {
-        // Fix for textColor application - using fontColor instead of color
-        textStyle.fontColor(options.textColor);
+        textStyle.color(options.textColor);
       }
       
-      // Fixed text overlay implementation with the correct number of arguments
-      const textSourceOverlay = source(
-        textOverlay(options.text).textStyle(textStyle)
-      );
+      // Fix: Text overlay implementation with correct parameters
+      // Create text source with style
+      const textOverlay = text(options.text, textStyle);
       
-      image.overlay(textSourceOverlay);
+      // Apply the text overlay to the image
+      image.overlay(source(textOverlay));
     }
 
     return image.toURL();
@@ -300,7 +311,6 @@ export function cardImage(publicId: string): string {
  * @returns Transformed image URL
  */
 export function createSilhouettePlaceholder(width: number = 300, height: number = 300, text?: string): string {
-  // Fix implementation to use proper types
   const options: TransformOptions = {
     width,
     height,
