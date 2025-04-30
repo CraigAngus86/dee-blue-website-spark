@@ -3,6 +3,8 @@ import type { Metadata } from 'next';
 import { fontVariables, inter, montserrat } from '@/lib/fonts';
 import '@/styles/globals.css';
 import { Providers } from './providers';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
 
 export const metadata: Metadata = {
   title: {
@@ -23,11 +25,11 @@ export default function RootLayout({
       <body className={`${fontVariables} antialiased`}>
         <Providers>
           <div className="min-h-screen flex flex-col">
-            {/* Header component will be added here */}
-            <main className="flex-grow">
+            <Header />
+            <main className="flex-grow pt-20">
               {children}
             </main>
-            {/* Footer component will be added here */}
+            <Footer />
           </div>
         </Providers>
       </body>
