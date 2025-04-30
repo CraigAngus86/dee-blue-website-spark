@@ -1,149 +1,144 @@
 
 /**
- * Common types for cross-system reference resolution
+ * Types for cross-system reference resolution
  */
 
-import { PostgrestSingleResponse } from '@supabase/supabase-js';
-
-/**
- * Base Sanity document interface
- */
+// Base types for Sanity and Supabase
 export interface SanityDocument {
   _id: string;
   _type: string;
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  [key: string]: any;
+  _createdAt?: string;
+  _updatedAt?: string;
+  supabaseId?: string;
 }
 
-/**
- * Base Supabase record interface
- */
 export interface SupabaseRecord {
   id: string;
   created_at?: string;
   updated_at?: string;
-  [key: string]: any;
-}
-
-/**
- * Entity-specific Sanity document types
- */
-export interface SanityPlayerProfile extends SanityDocument {
-  _type: 'playerProfile';
-  supabaseId: string;
-  playerName?: string;
-  profileImage?: any;
-  extendedBio?: any;
-}
-
-export interface SanityMatchGallery extends SanityDocument {
-  _type: 'matchGallery';
-  supabaseId: string;
-  title?: string;
-  description?: string;
-  matchDate?: string;
-  coverImage?: any;
-  photos?: Array<any>;
-}
-
-export interface SanitySponsor extends SanityDocument {
-  _type: 'sponsor';
-  supabaseId: string;
-  name?: string;
-  slug?: any;
-  logo?: any;
-  tier?: string;
-}
-
-export interface SanityCommercialPackage extends SanityDocument {
-  _type: 'commercialPackage';
-  supabaseId: string;
-  title?: string;
-  category?: string;
-  price?: number;
-  description?: any;
-}
-
-export interface SanityFanOfMonth extends SanityDocument {
-  _type: 'fanOfMonth';
-  supabaseId?: string;
-  name?: string;
-  monthYear?: string;
-  shortBio?: string;
-}
-
-/**
- * Entity-specific Supabase record types
- */
-export interface SupabasePerson extends SupabaseRecord {
-  name: string;
-  first_name: string;
-  last_name: string;
-  position?: string;
-  player_position?: string;
-  staff_role?: string;
-  jersey_number?: number;
-  image_url?: string;
-  bio?: string;
   sanity_id?: string;
 }
 
+// Reference resolution options
+export interface ReferenceOptions {
+  skipCache?: boolean;
+  includeRelated?: boolean;
+}
+
+// Sanity document types
+export interface SanityPlayerProfile extends SanityDocument {
+  playerName?: string;
+  firstName?: string;
+  lastName?: string;
+  position?: string;
+  profileImage?: {
+    asset: {
+      _ref: string;
+    };
+  };
+  number?: number;
+  nationality?: string;
+  bio?: string;
+  member_type?: string;
+  didYouKnow?: string;
+  stats?: any;
+}
+
+export interface SanityMatchGallery extends SanityDocument {
+  title?: string;
+  result?: string;
+  date?: string;
+  gallery?: {
+    images: Array<{
+      asset: {
+        _ref: string;
+      };
+      caption?: string;
+    }>;
+  };
+}
+
+export interface SanitySponsor extends SanityDocument {
+  name?: string;
+  logo?: {
+    asset: {
+      _ref: string;
+    };
+  };
+  darkLogo?: {
+    asset: {
+      _ref: string;
+    };
+  };
+  tier?: string;
+  website?: string;
+  description?: string;
+  featured?: boolean;
+}
+
+export interface SanityTeam extends SanityDocument {
+  name?: string;
+  shortName?: string;
+  logo?: {
+    asset: {
+      _ref: string;
+    };
+  };
+  primaryColor?: string;
+  website?: string;
+}
+
+// Supabase record types
+export interface SupabasePerson extends SupabaseRecord {
+  first_name: string;
+  last_name: string;
+  name: string;
+  player_position?: string;
+  staff_role?: string;
+  position?: string;
+  image_url?: string;
+  jersey_number?: number;
+  nationality?: string;
+  bio?: string;
+  joined_date?: string;
+  social_media?: Record<string, string>;
+  academy_player?: boolean;
+}
+
 export interface SupabaseMatch extends SupabaseRecord {
-  season_id?: string;
+  season_id: string;
   competition_id: string;
   home_team_id: string;
   away_team_id: string;
   match_date: string;
   match_time?: string;
+  venue?: string;
   home_score?: number;
   away_score?: number;
-  venue?: string;
-  status?: string;
-  ticket_link?: string;
+  status: 'scheduled' | 'in_progress' | 'completed' | 'postponed' | 'cancelled';
+  home_scorers?: string[];
+  away_scorers?: string[];
+  attendance?: number;
+  is_highlighted?: boolean;
   match_report_link?: string;
-  sanity_id?: string;
 }
 
 export interface SupabaseSponsor extends SupabaseRecord {
   name: string;
   tier?: string;
   logo_url?: string;
+  logo_dark_url?: string;
   website?: string;
   description?: string;
-  sanity_id?: string;
+  featured?: boolean;
 }
 
-export interface SupabaseCommercialPackage extends SupabaseRecord {
+export interface SupabaseTeam extends SupabaseRecord {
   name: string;
-  type: string;
-  description?: string;
-  price?: number;
-  sanity_id?: string;
-}
-
-export interface SupabaseFanOfMonth extends SupabaseRecord {
-  name: string;
-  featured_month: string;
-  quote?: string;
-  image_url?: string;
-  fan_story?: string;
-  sanity_id?: string;
-}
-
-/**
- * Generic fetch response type
- */
-export type FetchResponse<T> = {
-  data: T | null;
-  error: Error | null;
-};
-
-/**
- * Reference resolution options
- */
-export interface ReferenceOptions {
-  skipCache?: boolean;
-  includeRelated?: boolean;
+  short_name?: string;
+  logo_url?: string;
+  website?: string;
+  primary_color?: string;
+  stadium_name?: string;
+  founded_year?: number;
 }

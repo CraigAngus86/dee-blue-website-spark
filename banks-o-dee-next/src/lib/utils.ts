@@ -1,104 +1,63 @@
-
-import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
-
 /**
- * Combines multiple class names using clsx and then processes with tailwind-merge
- * to handle Tailwind CSS class conflicts
+ * Format match data from Supabase to the format expected by the MatchCarousel component
  */
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+export function formatMatchData(matches: any[], isCompleted: boolean = false) {
+  if (!matches) return [];
+  
+  return matches.map(match => ({
+    id: match.id,
+    date: match.match_date,
+    time: match.match_time,
+    competition: match.competition_id?.name || "",
+    competitionShort: match.competition_id?.short_name || "",
+    competitionImage: match.competition_id?.logo_url || "",
+    homeTeam: match.home_team_id?.name || "TBC",
+    awayTeam: match.away_team_id?.name || "TBC",
+    homeTeamLogo: match.home_team_id?.logo_url || "",
+    awayTeamLogo: match.away_team_id?.logo_url || "",
+    venue: match.venue || "TBC",
+    isCompleted: isCompleted,
+    homeScore: match.home_score,
+    awayScore: match.away_score,
+    ticketLink: match.ticket_link || "",
+    matchReportLink: match.match_report_link || "",
+    ticketcoEventId: match.ticketco_event_id || ""
+  }));
 }
 
 /**
- * Format a date into a readable string
+ * Format a date to a readable string
  */
-export function formatDate(date: Date | string, options?: Intl.DateTimeFormatOptions) {
-  const defaultOptions: Intl.DateTimeFormatOptions = {
-    day: 'numeric', 
-    month: 'long', 
-    year: 'numeric',
-    ...options
+export function formatDate(dateString: string, includeYear: boolean = true) {
+  if (!dateString) return "";
+  
+  const date = new Date(dateString);
+  const options: Intl.DateTimeFormatOptions = {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'long',
   };
   
-  return new Date(date).toLocaleDateString('en-GB', defaultOptions);
-}
-
-/**
- * Generate a URL-friendly slug from a string
- */
-export function slugify(text: string) {
-  return text
-    .toString()
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, '-')       // Replace spaces with -
-    .replace(/&/g, '-and-')     // Replace & with 'and'
-    .replace(/[^\w\-]+/g, '')   // Remove all non-word characters
-    .replace(/\-\-+/g, '-');    // Replace multiple - with single -
-}
-
-/**
- * Truncate text to a maximum length with ellipsis
- */
-export function truncateText(text: string, maxLength: number) {
-  if (!text || text.length <= maxLength) return text;
-  return `${text.slice(0, maxLength)}...`;
-}
-
-/**
- * Convert a number to a formatted currency string (GBP)
- */
-export function formatCurrency(value: number) {
-  return new Intl.NumberFormat('en-GB', {
-    style: 'currency',
-    currency: 'GBP',
-  }).format(value);
-}
-
-/**
- * Generate initials from a name (e.g., "John Doe" => "JD")
- */
-export function getInitials(name: string) {
-  return name
-    .split(' ')
-    .map(part => part[0])
-    .join('')
-    .toUpperCase();
-}
-
-/**
- * Simple email validation
- */
-export function isValidEmail(email: string) {
-  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return regex.test(email);
-}
-
-/**
- * Calculate age from date of birth
- */
-export function calculateAge(dateOfBirth: Date | string) {
-  const dob = new Date(dateOfBirth);
-  const today = new Date();
-  
-  let age = today.getFullYear() - dob.getFullYear();
-  const monthDiff = today.getMonth() - dob.getMonth();
-  
-  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
-    age--;
+  if (includeYear) {
+    options.year = 'numeric';
   }
   
-  return age;
+  return date.toLocaleDateString('en-GB', options);
 }
 
 /**
- * Safely access nested object properties
+ * Format time from 24h format to 12h format
  */
-export function getNestedValue<T>(obj: any, path: string, defaultValue: T): T {
-  try {
-    return path.split('.').reduce((a, b) => a[b], obj) as T;
-  } catch (e) {
-    return defaultValue;
-  }
+export function formatTime(timeString: string) {
+  if (!timeString) return "";
+  
+  // Handle both time string formats (HH:MM:SS and HH:MM)
+  const timeParts = timeString.split(':');
+  const hours = parseInt(timeParts[0]);
+  const minutes = timeParts[1];
+  
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  const displayHours = hours % 12 || 12;
+  
+  return `${displayHours}:${minutes} ${ampm}`;
 }
