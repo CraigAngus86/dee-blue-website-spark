@@ -1,4 +1,3 @@
-
 import { Metadata } from "next";
 import HeroSection from "@/components/ui/hero/HeroSection";
 import OverlappingNewsCards from "@/components/ui/sections/OverlappingNewsCards";
@@ -11,7 +10,7 @@ import PatternOverlay from "@/components/ui/backgrounds/PatternOverlay";
 import MatchCenter from "@/components/ui/sections/MatchCenter";
 import PlayersSection from "@/components/ui/sections/PlayersSection";
 import { fetchSanityData } from "@/lib/sanity/client";
-import { supabase } from "@/lib/supabase/client";
+import { supabase } from "@/lib/supabase/client"; // Updated to use the correct path
 
 export const metadata: Metadata = {
   title: "Home | Banks o' Dee FC",
