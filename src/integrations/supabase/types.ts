@@ -1273,6 +1273,45 @@ export type Database = {
         }
         Relationships: []
       }
+      webhook_logs: {
+        Row: {
+          created_at: string | null
+          document_id: string
+          document_type: string
+          error_message: string | null
+          event_type: string
+          id: string
+          operation: string
+          payload: Json | null
+          processed_at: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string | null
+          document_id: string
+          document_type: string
+          error_message?: string | null
+          event_type: string
+          id?: string
+          operation: string
+          payload?: Json | null
+          processed_at?: string | null
+          status: string
+        }
+        Update: {
+          created_at?: string | null
+          document_id?: string
+          document_type?: string
+          error_message?: string | null
+          event_type?: string
+          id?: string
+          operation?: string
+          payload?: Json | null
+          processed_at?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       vw_active_polls: {
