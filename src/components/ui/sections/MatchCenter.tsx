@@ -15,7 +15,10 @@ interface MatchCenterProps {
   leagueTable: any[];
 }
 
-// Update the component to handle the Match interface properly
+/**
+ * Match center component with tabs for fixtures, results, and league table
+ * Must be a client component because it uses React state and interactive tabs
+ */
 const MatchCenter: React.FC<MatchCenterProps> = ({ 
   upcomingMatches,
   recentResults,

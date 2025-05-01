@@ -1,5 +1,5 @@
 
-'use client';
+"use client";
 
 import { useState } from 'react';
 import { CloudinaryMetadata } from '@/lib/cloudinary/metadata';
@@ -22,6 +22,7 @@ interface UploadError {
 
 /**
  * Custom hook for uploading images to Cloudinary
+ * Must be client-side as it uses browser File API and FormData
  */
 export function useCloudinaryUpload() {
   const [isUploading, setIsUploading] = useState(false);

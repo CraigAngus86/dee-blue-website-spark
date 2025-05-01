@@ -1,5 +1,5 @@
 
-"use client"
+"use client";
 
 import {
   Toast,
@@ -11,6 +11,10 @@ import {
 } from "@/components/ui/toast"
 import { useToast } from "@/components/ui/use-toast"
 
+/**
+ * Toaster component for displaying toast notifications
+ * Must be client-side as it renders dynamic UI based on toast state
+ */
 export function Toaster() {
   const { toasts } = useToast()
 

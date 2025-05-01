@@ -1,4 +1,6 @@
 
+"use client";
+
 import React from "react";
 import {
   Table,
@@ -10,10 +12,14 @@ import {
 } from "@/components/ui/table";
 
 export interface LeagueTableProps {
-  data: any[];
+  data: any[]; // Main table data
   selectedSeason: string;
 }
 
+/**
+ * League table component to display standings
+ * This is a client component as it includes interactive elements
+ */
 const LeagueTable: React.FC<LeagueTableProps> = ({ data, selectedSeason }) => {
   return (
     <div className="overflow-x-auto">

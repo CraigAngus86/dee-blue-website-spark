@@ -7,6 +7,10 @@ import { usePathname } from "next/navigation";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Menu, X } from "lucide-react";
 
+/**
+ * Header component with responsive mobile menu
+ * Client component because it uses useState, usePathname, and browser APIs
+ */
 const Header = () => {
   const isMobile = useIsMobile();
   const [isMenuOpen, setIsMenuOpen] = useState(false);

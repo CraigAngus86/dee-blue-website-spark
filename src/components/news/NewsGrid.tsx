@@ -8,6 +8,10 @@ import NewsModal from "./NewsModal";
 import { newsArticles } from "@/mock-data/newsData";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 
+/**
+ * Interactive news grid component with filtering and modals
+ * Must be client component as it uses state, router, and browser APIs
+ */
 const NewsGrid = () => {
   const [activeFilter, setActiveFilter] = useState('all');
   const [selectedArticle, setSelectedArticle] = useState<typeof newsArticles[0] | null>(null);

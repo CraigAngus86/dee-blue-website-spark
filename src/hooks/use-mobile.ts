@@ -1,11 +1,11 @@
 
-'use client';
+"use client";
 
 import { useEffect, useState } from 'react';
 
 /**
  * Custom hook to detect if the current viewport is a mobile device
- * Safe for server-side rendering
+ * Must be a client component as it uses window object and browser APIs
  */
 export function useIsMobile(): boolean {
   // Initialize with false to avoid hydration mismatch

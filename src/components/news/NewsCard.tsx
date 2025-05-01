@@ -3,9 +3,7 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
-import { CardNew } from "@/components/ui/CardNew";
-import HoverEffect from "@/components/ui/animations/HoverEffect";
+import ResponsiveImage from "@/components/ui/image/ResponsiveImage";
 
 interface NewsCardProps {
   image: string;
@@ -17,6 +15,10 @@ interface NewsCardProps {
   onClick?: () => void;
 }
 
+/**
+ * News card component with hover effects and click interaction
+ * Client component as it has onClick handler and interactive UI
+ */
 const NewsCard: React.FC<NewsCardProps> = ({
   image,
   title,
@@ -26,48 +28,45 @@ const NewsCard: React.FC<NewsCardProps> = ({
   onClick,
 }) => {
   return (
-    <HoverEffect effect="lift" className="h-full">
-      <CardNew
-        className="group cursor-pointer h-full flex flex-col overflow-hidden"
-        elevation="flat"
-        onClick={onClick}
-      >
-        <div className="relative flex-grow flex flex-col">
-          {/* Image container with full height */}
-          <div className={cn(
-            "relative flex-grow",
-            isFeatured ? "aspect-[2/1]" : "aspect-square"
-          )}>
-            <div className="relative w-full h-full">
-              <Image
-                src={image}
-                alt={title}
-                className="object-cover transform transition-transform duration-500 group-hover:scale-105"
-                fill
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              />
-            </div>
-            <div className="absolute inset-0 bg-gradient-to-t from-[#00105A]/90 via-[#00105A]/50 to-transparent" />
-          </div>
-
-          {/* Content overlay */}
-          <div className="absolute inset-0 flex flex-col justify-end p-6">
-            <h3 className={cn(
-              "font-montserrat font-bold text-white mb-2 line-clamp-3",
-              isFeatured ? "text-2xl md:text-3xl" : "text-lg"
-            )}>
-              {title}
-            </h3>
-
-            {date && (
-              <span className="text-white/70 text-sm">
-                {date}
-              </span>
-            )}
-          </div>
+    <div 
+      className={`group cursor-pointer h-full flex flex-col overflow-hidden rounded-lg ${
+        isFeatured ? "shadow-lg" : "shadow-md"
+      } hover:shadow-xl transition-all duration-300 hover:-translate-y-1`}
+      onClick={onClick}
+    >
+      <div className="relative flex-grow flex flex-col">
+        {/* Image container with full height */}
+        <div className={cn(
+          "relative flex-grow",
+          isFeatured ? "aspect-[2/1]" : "aspect-square"
+        )}>
+          <ResponsiveImage
+            src={image}
+            alt={title}
+            className="w-full h-full transform transition-transform duration-500 group-hover:scale-105"
+            aspectRatio={isFeatured ? "2/1" : "1/1"}
+            objectFit="cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/50 to-transparent" />
         </div>
-      </CardNew>
-    </HoverEffect>
+
+        {/* Content overlay */}
+        <div className="absolute inset-0 flex flex-col justify-end p-6">
+          <h3 className={cn(
+            "font-bold text-white mb-2 line-clamp-3",
+            isFeatured ? "text-2xl md:text-3xl" : "text-lg"
+          )}>
+            {title}
+          </h3>
+
+          {date && (
+            <span className="text-white/70 text-sm">
+              {date}
+            </span>
+          )}
+        </div>
+      </div>
+    </div>
   );
 };
 

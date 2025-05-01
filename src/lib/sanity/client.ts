@@ -18,7 +18,7 @@ const apiVersion = process.env.NEXT_PUBLIC_SANITY_API_VERSION || "2023-05-03";
 
 // Create a client for fetching data
 export const client = createClient({
-  projectId,
+  projectId, // projectId is now guaranteed to be a string
   dataset,
   apiVersion,
   useCdn: process.env.NODE_ENV === "production",

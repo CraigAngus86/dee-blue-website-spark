@@ -29,9 +29,6 @@ function genId() {
   return count.toString();
 }
 
-// Explicitly add id property to Toast type
-type Toast = ToasterToast;
-
 type ActionType = typeof actionTypes;
 
 type Action =
@@ -139,6 +136,7 @@ function dispatch(action: Action) {
   });
 }
 
+// Explicitly type the Toast interface with ID
 interface Toast extends Omit<ToasterToast, "id"> {}
 
 function toast({ ...props }: Toast) {
@@ -164,7 +162,7 @@ function toast({ ...props }: Toast) {
   });
 
   return {
-    id: id,
+    id,
     dismiss,
     update,
   };

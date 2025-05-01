@@ -1,3 +1,4 @@
+
 "use client";
 
 import React from 'react';
@@ -17,6 +18,10 @@ interface MatchCarouselProps {
   isLoading?: boolean;
 }
 
+/**
+ * Interactive match carousel component
+ * Client component as it uses Carousel which requires browser APIs
+ */
 const MatchCarousel: React.FC<MatchCarouselProps> = ({ matches, isLoading = false }) => {
   if (isLoading) {
     return <LoadingState count={3} />;

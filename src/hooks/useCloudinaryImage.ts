@@ -2,7 +2,6 @@
 "use client";
 
 import { useMemo } from "react";
-import { transformCloudinaryImage } from "@/lib/cloudinary/transform";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { CloudinaryImage } from "@cloudinary/url-gen/assets/CloudinaryImage";
 
@@ -28,6 +27,7 @@ interface CloudinaryImageOptions {
 
 /**
  * A hook to generate optimized Cloudinary image URLs
+ * Client-side only as it uses browser-based transformations
  * 
  * @param publicId The Cloudinary public ID of the image
  * @param options Transformation options
@@ -41,9 +41,28 @@ export function useCloudinaryImage(publicId: string, options: CloudinaryImageOpt
     const cloudinaryImage = cld.image(publicId);
     
     // Apply transformations
-    const transformedImage = transformCloudinaryImage(cloudinaryImage, options);
+    // We'll apply these manually without the transform helper for now
+    if (options.width) {
+      cloudinaryImage.resize().width(options.width);
+    }
     
-    return transformedImage;
+    if (options.height) {
+      cloudinaryImage.resize().height(options.height);
+    }
+    
+    if (options.crop) {
+      cloudinaryImage.resize().crop(options.crop);
+    }
+    
+    if (options.format) {
+      cloudinaryImage.format(options.format);
+    }
+    
+    if (options.quality) {
+      cloudinaryImage.quality(options.quality);
+    }
+    
+    return cloudinaryImage;
   }, [publicId, options]);
   
   // Generate the URL
