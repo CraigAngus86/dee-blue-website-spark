@@ -68,7 +68,7 @@ async function getMatches() {
   
   try {
     // Fetch upcoming matches with explicit relationship references
-    const { data: upcomingMatches, error: upcomingError } = await supabase
+    let { data: upcomingMatches, error: upcomingError } = await supabase
       .from("match")
       .select(`
         id, match_date, match_time, venue, status, ticketco_event_id, ticket_link,
@@ -93,7 +93,7 @@ async function getMatches() {
     }
 
     // Fetch recent results with explicit relationship references
-    const { data: recentMatches, error: recentError } = await supabase
+    let { data: recentMatches, error: recentError } = await supabase
       .from("match")
       .select(`
         id, match_date, match_time, venue, status, home_score, away_score, match_report_link,
