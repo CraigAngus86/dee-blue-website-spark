@@ -3,7 +3,7 @@ import { Transformation } from '@cloudinary/url-gen';
 import { pad } from '@cloudinary/url-gen/actions/resize';
 import { Gravity } from '@cloudinary/url-gen/qualifiers';
 import { autoGravity } from '@cloudinary/url-gen/qualifiers/gravity';
-import { FocusOn } from '@cloudinary/url-gen/qualifiers/focusOn'; // Fixed import from Focus to FocusOn
+import { FocusOn } from '@cloudinary/url-gen/qualifiers/focusOn';
 import { source } from '@cloudinary/url-gen/actions/overlay';
 import { text } from '@cloudinary/url-gen/actions/overlay';
 import { Position } from '@cloudinary/url-gen/qualifiers/position';
@@ -11,19 +11,8 @@ import { compass } from '@cloudinary/url-gen/qualifiers/gravity/compass';
 import { TextStyle } from '@cloudinary/url-gen/qualifiers/textStyle';
 import { scale } from '@cloudinary/url-gen/actions/resize';
 import { opacity } from '@cloudinary/url-gen/actions/adjust';
-
-<<<<<<< HEAD
 import { Cloudinary, CloudinaryImage } from '@cloudinary/url-gen';
-import { Transformation } from '@cloudinary/url-gen';
-import { scale, fill, crop, pad } from '@cloudinary/url-gen/actions/resize';
-import { source } from '@cloudinary/url-gen/actions/overlay';
-import { text } from '@cloudinary/url-gen/actions/overlay';
-import { Position } from '@cloudinary/url-gen/qualifiers/position';
-import { compass } from '@cloudinary/url-gen/qualifiers/gravity/compass';
-import { TextStyle } from '@cloudinary/url-gen/qualifiers/textStyle';
-import { autoGravity } from '@cloudinary/url-gen/qualifiers/gravity';
-import { FocusOn } from '@cloudinary/url-gen/qualifiers/focusOn';
-import { opacity } from '@cloudinary/url-gen/actions/adjust';
+import { fill, crop } from '@cloudinary/url-gen/actions/resize';
 
 // Initialize Cloudinary with your cloud name
 const cld = new Cloudinary({
@@ -34,7 +23,7 @@ const cld = new Cloudinary({
     secure: true // Use HTTPS
   }
 });
-=======
+
 // Helper function to create a transformation for stadium images
 export const createStadiumImageTransformation = () => {
   return (transformation: Transformation) => {
@@ -42,7 +31,6 @@ export const createStadiumImageTransformation = () => {
       .resize(pad().width(600).height(400).gravity(autoGravity().autoFocus(FocusOn.subject())))
   };
 };
->>>>>>> d38a519 (Updated Node.js version and package dependencies)
 
 // Helper function to create a transformation for player profile images
 export const createPlayerProfileImageTransformation = () => {
@@ -52,7 +40,66 @@ export const createPlayerProfileImageTransformation = () => {
   };
 };
 
-<<<<<<< HEAD
+// Helper function to create a transformation for sponsor logos
+export const createSponsorLogoTransformation = () => {
+  return (transformation: Transformation) => {
+    transformation
+      .resize(scale().width(200))
+      .adjust(opacity(80));
+  };
+};
+
+/**
+ * Transform options for Cloudinary images
+ */
+export interface TransformOptions {
+  width?: number;
+  height?: number;
+  crop?: 'fill' | 'crop' | 'scale' | 'thumb';
+  focus?: 'face' | 'center' | 'auto';
+  quality?: number;
+  format?: 'auto' | 'webp' | 'jpg' | 'png';
+  effect?: string;
+  blur?: number;
+  grayscale?: boolean;
+  sepia?: boolean;
+  radius?: string;
+  background?: string;
+  overlay?: string;
+  text?: string;
+  textColor?: string;
+  textSize?: number;
+  textFont?: string;
+  textWeight?: string;
+  textPosition?: string;
+}
+
+export const createTextOverlay = (textContent: string, options: any = {}) => {
+  // Default configuration for text overlay
+  const fontFamily = options.fontFamily || 'montserrat';
+  const fontSize = options.fontSize || 24;
+  const fontWeight = options.fontWeight || 'bold';
+  const textColor = options.textColor || 'white';
+  const backgroundColor = options.backgroundColor || 'rgb:000000';
+  const padding = options.padding || 20;
+  const position = options.position || 'south';
+  const offsetX = options.offsetX || 0;
+  const offsetY = options.offsetY || 0;
+  const opacity = options.opacity || 100;
+
+  return (transformation: Transformation) => {
+    const textStyle = new TextStyle()
+      .fontFamily(fontFamily)
+      .fontSize(fontSize)
+      .fontWeight(fontWeight);
+
+    // Fix the text overlay - pass both the string and the style
+    return transformation.overlay(
+      source(text(textContent, textStyle)).color(textColor).backgroundColor(backgroundColor)
+    );
+  };
+};
+
 /**
  * Transform an image using Cloudinary
  * @param publicId Cloudinary public ID
@@ -276,41 +323,6 @@ export function createSilhouettePlaceholder(width: number = 300, height: number 
     return '/placeholder.svg';
   }
 }
-=======
-// Helper function to create a transformation for sponsor logos
-export const createSponsorLogoTransformation = () => {
-  return (transformation: Transformation) => {
-    transformation
-      .resize(scale().width(200))
-      .adjust(opacity(80));
-  };
-};
-
-export const createTextOverlay = (textContent: string, options: any = {}) => {
-  // Default configuration for text overlay
-  const fontFamily = options.fontFamily || 'montserrat';
-  const fontSize = options.fontSize || 24;
-  const fontWeight = options.fontWeight || 'bold';
-  const textColor = options.textColor || 'white';
-  const backgroundColor = options.backgroundColor || 'rgb:000000';
-  const padding = options.padding || 20;
-  const position = options.position || 'south';
-  const offsetX = options.offsetX || 0;
-  const offsetY = options.offsetY || 0;
-  const opacity = options.opacity || 100;
-
-  return (transformation: Transformation) => {
-    const textStyle = new TextStyle()
-      .fontFamily(fontFamily)
-      .fontSize(fontSize)
-      .fontWeight(fontWeight);
-
-    // Fix the text overlay - pass both the string and the style
-    return transformation.overlay(
-      source(text(textContent, textStyle)).color(textColor).backgroundColor(backgroundColor) // Fixed: Pass both arguments to text() and use color() method correctly
-    );
-  };
-};
 
 // Helper function to create a transformation for stadium images with text overlay
 export const createStadiumImageTransformationWithText = (textContent: string, options: any = {}) => {
@@ -320,7 +332,3 @@ export const createStadiumImageTransformationWithText = (textContent: string, op
       .chain(createTextOverlay(textContent, options));
   };
 };
->>>>>>> d38a519 (Updated Node.js version and package dependencies)
-^X
-
-
