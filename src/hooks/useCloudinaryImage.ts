@@ -1,85 +1,60 @@
 
-import { useState, useEffect } from 'react';
-import { transformImage } from '@/lib/cloudinary/transform';
+"use client";
+
+import { useMemo } from "react";
+import { transformCloudinaryImage } from "@/lib/cloudinary/transform";
+import { Cloudinary } from "@cloudinary/url-gen";
+import { CloudinaryImage } from "@cloudinary/url-gen/assets/CloudinaryImage";
+
+// Initialize the Cloudinary instance
+const cld = new Cloudinary({
+  cloud: {
+    cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "dlkpaw2a0",
+  },
+  url: {
+    secure: true, // Force https
+  },
+});
+
+interface CloudinaryImageOptions {
+  width?: number;
+  height?: number;
+  crop?: "fill" | "thumb" | "scale" | "fit";
+  format?: "auto" | "webp" | "jpg" | "png";
+  quality?: number;
+  aspectRatio?: number;
+  focus?: "auto" | "faces" | "center";
+}
 
 /**
- * Custom hook for loading player profile images with fallbacks
+ * A hook to generate optimized Cloudinary image URLs
+ * 
+ * @param publicId The Cloudinary public ID of the image
+ * @param options Transformation options
+ * @returns The transformed image URL and CloudinaryImage object
  */
-export function usePlayerProfileImage(publicId: string, options: {
-  variant?: 'square' | 'featured';
-  size?: number;
-  name?: string;
-  deviceSize?: 'sm' | 'md' | 'lg' | 'xl';
-}) {
-  const [imageUrl, setImageUrl] = useState<string>('');
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [hasError, setHasError] = useState(false);
-
-  useEffect(() => {
-    // Generate the initial image URL
-    try {
-      // Default to a sensible configuration
-      const defaultOptions = {
-        width: options.size || 128,
-        height: options.variant === 'featured' ? options.size ? options.size * 1.25 : 160 : options.size || 128,
-        crop: 'fill',
-        focus: 'face'
-      };
-      
-      // Generate image URL using Cloudinary transform
-      const url = transformImage(publicId, defaultOptions);
-      setImageUrl(url);
-    } catch (error) {
-      console.error('Error generating player image URL:', error);
-      setHasError(true);
-      
-      // Generate a fallback URL
-      const fallbackName = options.name || 'Player';
-      const encodedName = encodeURIComponent(fallbackName);
-      setImageUrl(`https://placehold.co/${options.size || 128}/${options.size || 128}/CCCCCC/333333?text=${encodedName}`);
-    }
-  }, [publicId, options]);
-
-  // Handlers for image load events
-  const handleLoad = () => {
-    setIsLoaded(true);
-  };
-
-  const handleError = () => {
-    setHasError(true);
+export function useCloudinaryImage(publicId: string, options: CloudinaryImageOptions = {}) {
+  const imageInstance = useMemo(() => {
+    if (!publicId) return null;
     
-    // Generate a fallback URL
-    const fallbackName = options.name || 'Player';
-    const encodedName = encodeURIComponent(fallbackName);
-    setImageUrl(`https://placehold.co/${options.size || 128}/${options.size || 128}/CCCCCC/333333?text=${encodedName}`);
+    // Create a CloudinaryImage instance
+    const cloudinaryImage = cld.image(publicId);
+    
+    // Apply transformations
+    const transformedImage = transformCloudinaryImage(cloudinaryImage, options);
+    
+    return transformedImage;
+  }, [publicId, options]);
+  
+  // Generate the URL
+  const imageUrl = useMemo(() => {
+    return imageInstance ? imageInstance.toURL() : "";
+  }, [imageInstance]);
+  
+  return { 
+    imageUrl, 
+    imageInstance
   };
-
-  return { imageUrl, isLoaded, hasError, handleLoad, handleError };
 }
 
-/**
- * Custom hook for loading news images with transformations
- */
-export function useNewsImage(publicId: string, size: 'thumbnail' | 'full' = 'thumbnail') {
-  const [imageUrl, setImageUrl] = useState<string>('');
-  
-  useEffect(() => {
-    try {
-      const width = size === 'thumbnail' ? 400 : 1200;
-      const height = size === 'thumbnail' ? 225 : 675;
-      
-      const url = transformImage(publicId, {
-        width,
-        height,
-        crop: 'fill',
-        quality: size === 'thumbnail' ? 70 : 80
-      });
-      setImageUrl(url);
-    } catch (error) {
-      console.error('Error generating news image URL:', error);
-      setImageUrl(`https://placehold.co/${size === 'thumbnail' ? '400x225' : '1200x675'}/CCCCCC/333333?text=News+Image`);
-    }
-  }, [publicId, size]);
-  
-  return { imageUrl };
-}
+export default useCloudinaryImage;

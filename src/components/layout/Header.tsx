@@ -1,59 +1,91 @@
 
 "use client";
 
-import React from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { useIsMobile } from '@/hooks/use-mobile';
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { Menu, X } from "lucide-react";
 
 const Header = () => {
   const isMobile = useIsMobile();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const pathname = usePathname();
+
+  // Close menu when route changes
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [pathname]);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const navigation = [
+    { name: "Home", href: "/" },
+    { name: "News", href: "/news" },
+    { name: "Team", href: "/team" },
+    { name: "Fixtures", href: "/fixtures" },
+    { name: "Commercial", href: "/commercial" },
+  ];
 
   return (
     <header className="fixed top-0 left-0 w-full bg-primary text-white z-50 shadow-md">
-      <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center h-20">
-          {/* Logo */}
+      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+        <div className="flex items-center">
           <Link href="/" className="flex items-center">
-            {/* Replace with actual logo when available */}
-            <div className="font-montserrat font-bold text-2xl">
-              Banks o&apos; Dee FC
-            </div>
+            <img
+              src="/assets/images/logos/BOD_Logo_White_square.png"
+              alt="Banks o' Dee FC"
+              className="h-10 w-auto mr-2"
+            />
+            <span className="font-bold text-lg hidden sm:block">Banks o&apos; Dee FC</span>
           </Link>
-
-          {/* Desktop Navigation */}
-          {!isMobile && (
-            <nav className="hidden md:flex space-x-8">
-              <Link href="/" className="font-medium hover:text-accent transition-colors">
-                Home
-              </Link>
-              <Link href="/team" className="font-medium hover:text-accent transition-colors">
-                Team
-              </Link>
-              <Link href="/fixtures" className="font-medium hover:text-accent transition-colors">
-                Fixtures
-              </Link>
-              <Link href="/news" className="font-medium hover:text-accent transition-colors">
-                News
-              </Link>
-              <Link href="/spain-park" className="font-medium hover:text-accent transition-colors">
-                Spain Park
-              </Link>
-              <Link href="/commercial" className="font-medium hover:text-accent transition-colors">
-                Commercial
-              </Link>
-            </nav>
-          )}
-
-          {/* Mobile Menu Button */}
-          {isMobile && (
-            <button className="md:hidden text-white focus:outline-none">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
-          )}
         </div>
+
+        {isMobile ? (
+          <>
+            <button 
+              onClick={toggleMenu} 
+              className="text-white p-2"
+              aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+            >
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+            
+            {isMenuOpen && (
+              <div className="fixed inset-0 top-16 bg-primary z-40 p-4">
+                <nav className="flex flex-col gap-4">
+                  {navigation.map((item) => (
+                    <Link 
+                      key={item.name} 
+                      href={item.href}
+                      className={`text-lg py-2 border-b border-primary-700 ${
+                        pathname === item.href ? "font-bold" : ""
+                      }`}
+                    >
+                      {item.name}
+                    </Link>
+                  ))}
+                </nav>
+              </div>
+            )}
+          </>
+        ) : (
+          <nav className="flex space-x-6">
+            {navigation.map((item) => (
+              <Link 
+                key={item.name} 
+                href={item.href}
+                className={`text-white hover:text-blue-200 transition-colors ${
+                  pathname === item.href ? "font-bold" : ""
+                }`}
+              >
+                {item.name}
+              </Link>
+            ))}
+          </nav>
+        )}
       </div>
     </header>
   );

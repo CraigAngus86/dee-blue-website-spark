@@ -1,51 +1,81 @@
 
-import { createClient } from 'next-sanity';
-import createImageUrlBuilder from '@sanity/image-url';
-import type { Image } from 'sanity';
+import { createClient } from "@sanity/client";
+import imageUrlBuilder from "@sanity/image-url";
 
-// Environment variables with explicit fallback for projectId
-const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'gxtptap2'; // Fallback to known projectId
-const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production';
-const apiVersion = process.env.NEXT_PUBLIC_SANITY_API_VERSION || '2024-04-30';
+// Ensure we have an environment variable validation function
+const requireEnvVar = (name: string): string => {
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(`Missing required environment variable: ${name}`);
+  }
+  return value;
+};
 
-// Log warning if projectId is missing from environment
-if (!process.env.NEXT_PUBLIC_SANITY_PROJECT_ID) {
-  console.warn('Warning: NEXT_PUBLIC_SANITY_PROJECT_ID is not set in environment variables. Using fallback value.');
-}
+// Get project credentials from environment variables with validation
+const projectId = requireEnvVar("NEXT_PUBLIC_SANITY_PROJECT_ID");
+const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || "production";
+const apiVersion = process.env.NEXT_PUBLIC_SANITY_API_VERSION || "2023-05-03";
 
-// Client configuration
-const config = {
+// Create a client for fetching data
+export const client = createClient({
   projectId,
   dataset,
   apiVersion,
-  useCdn: process.env.NODE_ENV === 'production',
-};
-
-// Standard client for regular content fetching
-export const sanityClient = createClient(config);
-
-// Preview client for draft content
-export const previewClient = createClient({
-  ...config,
-  useCdn: false,
-  token: process.env.SANITY_API_TOKEN,
+  useCdn: process.env.NODE_ENV === "production",
 });
 
-// Helper to determine which client to use
-export const getClient = (usePreview = false) => (usePreview ? previewClient : sanityClient);
+// Create a preview client with lower cache time
+export const previewClient = createClient({
+  projectId,
+  dataset,
+  apiVersion,
+  useCdn: false,
+  token: process.env.SANITY_API_TOKEN,
+  perspective: "previewDrafts",
+});
 
-// Helper function for simple queries
-export async function fetchSanityData(query: string, params = {}, usePreview = false) {
+// Helper function to switch between normal client and preview
+export const getClient = (preview = false) => (preview ? previewClient : client);
+
+// Set up image URL builder
+const builder = imageUrlBuilder(client);
+
+// Helper function to generate image URLs
+export const urlFor = (source: any) => {
+  return builder.image(source);
+};
+
+// Function to get all documents of a specific type
+export async function getAllDocuments(type: string) {
   try {
-    const client = getClient(usePreview);
-    return await client.fetch(query, params);
+    const documents = await client.fetch(`*[_type == "${type}"]`);
+    return documents;
   } catch (error) {
-    console.error('Error fetching Sanity data:', error);
-    throw error;
+    console.error(`Error fetching ${type} documents:`, error);
+    return [];
   }
 }
 
-// Image URL builder for Sanity images
-export const urlForImage = (source: Image) => {
-  return createImageUrlBuilder(config).image(source);
-};
+// Function to get a single document by ID
+export async function getDocumentById(type: string, id: string) {
+  try {
+    const document = await client.fetch(`*[_type == "${type}" && _id == "${id}"][0]`);
+    return document;
+  } catch (error) {
+    console.error(`Error fetching ${type} document with ID ${id}:`, error);
+    return null;
+  }
+}
+
+// Function to get a document by slug
+export async function getDocumentBySlug(type: string, slug: string) {
+  try {
+    const document = await client.fetch(
+      `*[_type == "${type}" && slug.current == "${slug}"][0]`
+    );
+    return document;
+  } catch (error) {
+    console.error(`Error fetching ${type} document with slug ${slug}:`, error);
+    return null;
+  }
+}
