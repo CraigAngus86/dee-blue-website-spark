@@ -1,70 +1,91 @@
 
-import React, { useEffect, useRef, useState } from "react";
+"use client";
 
-type FadeInProps = {
+import React, { useEffect, useRef, useState } from 'react';
+import { cn } from '@/lib/utils';
+
+interface FadeInProps {
   children: React.ReactNode;
-  direction?: "up" | "down" | "left" | "right" | "none";
-  duration?: number;
-  delay?: number;
-  threshold?: number;
   className?: string;
-};
+  delay?: number;
+  duration?: number;
+  threshold?: number;
+  direction?: 'up' | 'down' | 'left' | 'right' | 'none';
+  distance?: number;
+  once?: boolean;
+}
 
 const FadeIn: React.FC<FadeInProps> = ({
   children,
-  direction = "up",
-  duration = 0.3,
+  className,
   delay = 0,
+  duration = 500,
   threshold = 0.1,
-  className = "",
+  direction = 'up',
+  distance = 20,
+  once = true,
 }) => {
   const [isVisible, setIsVisible] = useState(false);
-  const domRef = useRef<HTMLDivElement>(null);
-
-  // Direction-based transform values
-  const transformMap = {
-    up: "translateY(20px)",
-    down: "translateY(-20px)",
-    left: "translateX(20px)",
-    right: "translateX(-20px)",
-    none: "none",
-  };
+  const [hasAnimated, setHasAnimated] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const current = ref.current;
+    
     const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setIsVisible(true);
-            observer.unobserve(entry.target);
-          }
-        });
+      ([entry]) => {
+        if (entry.isIntersecting && (!once || !hasAnimated)) {
+          setIsVisible(true);
+          if (once) setHasAnimated(true);
+        } else if (!once) {
+          setIsVisible(false);
+        }
       },
-      { threshold }
+      {
+        threshold,
+      }
     );
-
-    const { current } = domRef;
+    
     if (current) {
       observer.observe(current);
     }
-
+    
     return () => {
       if (current) {
         observer.unobserve(current);
       }
     };
-  }, [threshold]);
+  }, [threshold, once, hasAnimated]);
+
+  // Define transform based on direction
+  const getInitialTransform = () => {
+    switch (direction) {
+      case 'up':
+        return `translateY(${distance}px)`;
+      case 'down':
+        return `translateY(-${distance}px)`;
+      case 'left':
+        return `translateX(${distance}px)`;
+      case 'right':
+        return `translateX(-${distance}px)`;
+      case 'none':
+      default:
+        return 'translate(0, 0)';
+    }
+  };
+
+  const style: React.CSSProperties = {
+    opacity: isVisible ? 1 : 0,
+    transform: isVisible ? 'translate(0, 0)' : getInitialTransform(),
+    transition: `opacity ${duration}ms ease-out, transform ${duration}ms ease-out`,
+    transitionDelay: `${delay}ms`,
+  };
 
   return (
     <div
-      ref={domRef}
-      className={`${className}`}
-      style={{
-        opacity: isVisible ? 1 : 0,
-        transform: isVisible ? "none" : transformMap[direction],
-        transition: `opacity ${duration}s ease-out, transform ${duration}s ease-out`,
-        transitionDelay: `${delay}s`,
-      }}
+      ref={ref}
+      style={style}
+      className={cn(className)}
     >
       {children}
     </div>

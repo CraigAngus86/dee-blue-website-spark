@@ -1,4 +1,6 @@
 
+"use client";
+
 import * as React from "react"
 import useEmblaCarousel, {
   type UseEmblaCarouselType,
@@ -14,10 +16,7 @@ type CarouselOptions = UseCarouselParameters[0]
 type CarouselPlugin = UseCarouselParameters[1]
 
 type CarouselProps = {
-  opts?: CarouselOptions & { 
-    autoplay?: boolean;
-    delay?: number;
-  };
+  opts?: CarouselOptions
   plugins?: CarouselPlugin
   orientation?: "horizontal" | "vertical"
   setApi?: (api: CarouselApi) => void
@@ -60,29 +59,15 @@ const Carousel = React.forwardRef<
     },
     ref
   ) => {
-    // Extract autoplay options
-    const { autoplay, delay, ...emblaOpts } = opts || {};
-    
     const [carouselRef, api] = useEmblaCarousel(
       {
-        ...emblaOpts,
+        ...opts,
         axis: orientation === "horizontal" ? "x" : "y",
       },
       plugins
     )
     const [canScrollPrev, setCanScrollPrev] = React.useState(false)
     const [canScrollNext, setCanScrollNext] = React.useState(false)
-
-    // Autoplay functionality
-    React.useEffect(() => {
-      if (api && autoplay) {
-        const intervalId = setInterval(() => {
-          api.scrollNext();
-        }, delay || 3000);
-
-        return () => clearInterval(intervalId);
-      }
-    }, [api, autoplay, delay]);
 
     const onSelect = React.useCallback((api: CarouselApi) => {
       if (!api) {
@@ -128,11 +113,12 @@ const Carousel = React.forwardRef<
       }
 
       onSelect(api)
-      api.on("reInit", onSelect)
       api.on("select", onSelect)
+      api.on("reInit", onSelect)
 
       return () => {
         api?.off("select", onSelect)
+        api?.off("reInit", onSelect)
       }
     }, [api, onSelect])
 
@@ -140,10 +126,9 @@ const Carousel = React.forwardRef<
       <CarouselContext.Provider
         value={{
           carouselRef,
-          api: api,
+          api,
           opts,
-          orientation:
-            orientation || (emblaOpts?.axis === "y" ? "vertical" : "horizontal"),
+          orientation,
           scrollPrev,
           scrollNext,
           canScrollPrev,
@@ -222,7 +207,7 @@ const CarouselPrevious = React.forwardRef<
       variant={variant}
       size={size}
       className={cn(
-        "absolute  h-8 w-8 rounded-full",
+        "absolute",
         orientation === "horizontal"
           ? "-left-12 top-1/2 -translate-y-1/2"
           : "-top-12 left-1/2 -translate-x-1/2 rotate-90",
@@ -251,7 +236,7 @@ const CarouselNext = React.forwardRef<
       variant={variant}
       size={size}
       className={cn(
-        "absolute h-8 w-8 rounded-full",
+        "absolute",
         orientation === "horizontal"
           ? "-right-12 top-1/2 -translate-y-1/2"
           : "-bottom-12 left-1/2 -translate-x-1/2 rotate-90",

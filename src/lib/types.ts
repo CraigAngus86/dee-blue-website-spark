@@ -1,88 +1,101 @@
-export interface ImageAsset {
-  src: string;
-  alt: string;
-  width?: number;
-  height?: number;
-  caption?: string;
-  credit?: string;
-  tags?: string[];
-  category?: string;
-  date?: string;
-  match?: string;
-}
 
+/**
+ * Core type definitions for the Banks o' Dee FC website
+ */
+
+/**
+ * Sponsor information
+ */
 export interface Sponsor {
+  id: string;
   name: string;
+  tier?: 'main' | 'platinum' | 'gold' | 'silver' | 'bronze' | 'partner';
   logo: string;
   logoLight?: string;
   website?: string;
-  tier: 'main' | 'platinum' | 'gold' | 'silver' | 'bronze' | 'partner';
+  featured?: boolean;
+  description?: string;
 }
 
-export interface Competitor {
-  name: string;
-  logo: string;
-  shortName?: string;
-  website?: string;
-  logoVariant?: 'rect' | 'square' | 'circle';
-}
-
+/**
+ * Match photo information
+ */
 export interface MatchPhoto {
   src: string;
-  thumbnail: string;
-  alt: string;
+  thumbnail?: string;
+  alt?: string;
   caption?: string;
   credit?: string;
-  category?: 'action' | 'fans' | 'pre-match' | 'post-match' | 'highlights';
-  featured?: boolean;
+  category?: string;
+  tags?: string[];
 }
 
+/**
+ * Match information
+ */
 export interface Match {
   id: string;
-  date: string;
+  homeTeam: string;
+  awayTeam: string;
   competition: string;
-  home: {
-    team: string;
-    logo: string;
-    score?: number;
-  };
-  away: {
-    team: string;
-    logo: string;
-    score?: number;
-  };
+  date: string;
+  time: string;
   venue: string;
-  status: 'scheduled' | 'live' | 'completed' | 'postponed';
-  photos?: MatchPhoto[];
+  isCompleted?: boolean;
+  result?: {
+    homeScore: number;
+    awayScore: number;
+  };
+  ticketLink?: string;
+  matchReportLink?: string;
 }
 
-export interface LeagueTableData {
-  position: number;
-  team: string;
-  played: number;
-  won: number;
-  drawn: number;
-  lost: number;
-  goalsFor: number;
-  goalsAgainst: number;
-  goalDifference: number;
-  points: number;
-  form: string[];
-}
-
-export interface PlayerStats {
-  appearances: number;
-  goals: number;
-  assists: number;
-}
-
+/**
+ * Player information
+ */
 export interface Player {
   id: string;
   name: string;
-  firstName?: string;
-  lastName?: string;
   position: string;
-  image: string;
-  isAcademy?: boolean;
-  stats?: PlayerStats;
+  number?: number;
+  imageUrl?: string;
+  nationality?: string;
+  joined?: string;
+  biography?: string;
+}
+
+/**
+ * News article
+ */
+export interface NewsArticle {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt?: string;
+  content: string;
+  date: string;
+  author?: string;
+  category: string;
+  tags?: string[];
+  featuredImage?: string;
+  isHighlighted?: boolean;
+}
+
+/**
+ * Commercial/Hospitality package
+ */
+export interface HospitalityPackage {
+  id: string;
+  name: string;
+  description: string;
+  headlinePrice: string;
+  pricePerPerson?: number;
+  totalPrice?: number;
+  maxGuests: number;
+  imageUrl?: string;
+  features?: Array<{
+    name: string;
+    value: string;
+    included: boolean;
+  }>;
 }

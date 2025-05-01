@@ -1,3 +1,4 @@
+"use client";
 
 import React from 'react';
 import { 
@@ -30,7 +31,7 @@ const MatchCarousel: React.FC<MatchCarouselProps> = ({ matches, isLoading = fals
         className="w-full"
         opts={{
           align: "center",
-          loop: false, // Disable looping
+          loop: false,
           startIndex: Math.max(0, nextMatchIndex),
         }}
       >

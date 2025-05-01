@@ -1,42 +1,74 @@
 
-import React from "react";
-import { ArrowRight } from "lucide-react";
-import { cn } from "@/lib/utils";
+import React from 'react';
+import { cn } from '@/lib/utils';
 
 interface SectionHeaderProps {
   title: string;
+  subtitle?: string;
+  align?: 'left' | 'center' | 'right';
+  className?: string;
+  titleClassName?: string;
+  subtitleClassName?: string;
   viewAllLink?: string;
   viewAllText?: string;
-  className?: string;
   textColor?: string;
 }
 
 const SectionHeader: React.FC<SectionHeaderProps> = ({
   title,
-  viewAllLink,
-  viewAllText = "View All",
+  subtitle,
+  align = 'center',
   className,
-  textColor = "primary",
+  titleClassName,
+  subtitleClassName,
+  viewAllLink,
+  viewAllText,
+  textColor,
 }) => {
   return (
-    <div className={cn("flex flex-wrap justify-between items-center mb-8", className)}>
-      <div className="flex flex-col relative">
-        <h2 className={`text-2xl font-montserrat font-bold text-${textColor}`}>
-          {title}
-        </h2>
-      </div>
+    <div 
+      className={cn(
+        "mb-8",
+        align === 'center' && 'text-center',
+        align === 'right' && 'text-right',
+        className
+      )}
+    >
+      <h2 
+        className={cn(
+          "text-3xl md:text-4xl font-bold font-montserrat text-primary mb-3",
+          titleClassName
+        )}
+      >
+        {title}
+      </h2>
+      
+      {subtitle && (
+        <p 
+          className={cn(
+            "text-lg text-gray-600",
+            subtitleClassName
+          )}
+        >
+          {subtitle}
+        </p>
+      )}
       
       {viewAllLink && (
-        <a
-          href={viewAllLink}
-          className={`text-${textColor} font-semibold hover:text-${textColor}-light flex items-center transition-colors group`}
-        >
-          {viewAllText}
-          <ArrowRight
-            size={16}
-            className="ml-1 group-hover:translate-x-1 transition-transform"
-          />
-        </a>
+        <div className="mt-3">
+          <a 
+            href={viewAllLink}
+            className={cn(
+              "inline-flex items-center text-primary hover:text-primary-dark font-semibold transition-colors",
+              textColor && `text-${textColor} hover:text-${textColor}-light`
+            )}
+          >
+            {viewAllText || "View All"}
+            <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </a>
+        </div>
       )}
     </div>
   );

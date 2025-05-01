@@ -1,4 +1,6 @@
 
+"use client";
+
 import React from "react";
 import NewsCard from "@/components/ui/image/NewsCard";
 import { newsArticles } from "@/mock-data/newsData";

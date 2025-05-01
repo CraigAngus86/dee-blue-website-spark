@@ -1,38 +1,35 @@
 
 import React from 'react';
-import { Loader2 } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
 
 interface LoadingStateProps {
-  variant?: 'spinner' | 'skeleton';
+  variant?: 'skeleton' | 'spinner';
   count?: number;
-  className?: string;
+  height?: string;
+  width?: string;
 }
 
-const LoadingState: React.FC<LoadingStateProps> = ({ 
-  variant = 'skeleton', 
-  count = 3,
-  className = ''
+const LoadingState: React.FC<LoadingStateProps> = ({
+  variant = 'skeleton',
+  count = 1,
+  height = '200px',
+  width = '100%',
 }) => {
   if (variant === 'spinner') {
     return (
-      <div className={`flex justify-center items-center py-12 ${className}`}>
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="flex justify-center items-center py-8">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
       </div>
     );
   }
 
   return (
-    <div className={`space-y-4 ${className}`}>
-      {Array.from({ length: count }).map((_, i) => (
-        <div key={i} className="space-y-2">
-          <Skeleton className="h-6 w-36" />
-          <div className="grid gap-4">
-            {Array.from({ length: i === 0 ? 3 : 2 }).map((_, j) => (
-              <Skeleton key={j} className="h-24 w-full rounded-lg" />
-            ))}
-          </div>
-        </div>
+    <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(auto-fit, minmax(${width}, 1fr))` }}>
+      {Array.from({ length: count }).map((_, index) => (
+        <div
+          key={index}
+          className="animate-pulse bg-gray-200 rounded-lg"
+          style={{ height }}
+        ></div>
       ))}
     </div>
   );

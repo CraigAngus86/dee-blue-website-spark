@@ -1,115 +1,77 @@
 
-import React, { useRef, useEffect, useState } from "react";
-import { cn } from "@/lib/utils";
+import React from 'react';
+import { cn } from '@/lib/utils';
 
-interface SectionProps extends React.HTMLAttributes<HTMLDivElement> {
-  background?: 
-    | "white" 
-    | "light" 
-    | "primary" 
-    | "primary-gradient" 
-    | "accent-gradient";
-  spacing?: "sm" | "md" | "lg" | "xl";
-  animate?: boolean;
-  className?: string;
+interface SectionProps {
   children: React.ReactNode;
+  id?: string;
+  className?: string;
+  background?: 'light' | 'dark' | 'primary' | 'accent' | 'transparent';
+  spacing?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
+  container?: boolean;
 }
 
-const Section = React.forwardRef<HTMLDivElement, SectionProps>(
-  (
-    {
-      background = "white",
-      spacing = "lg",
-      animate = false,
-      className,
-      children,
-      ...props
-    },
-    ref
-  ) => {
-    const sectionRef = useRef<HTMLDivElement>(null);
-    const [isVisible, setIsVisible] = useState(false);
-    
-    // Background variations
-    const backgroundClasses = {
-      white: "bg-white",
-      light: "bg-light-gray",
-      primary: "bg-primary text-white",
-      "primary-gradient":
-        "bg-gradient-to-r from-primary to-primary-light text-white",
-      "accent-gradient":
-        "bg-gradient-to-r from-accent to-accent-light",
-    };
-    
-    // Spacing variations
-    const spacingClasses = {
-      sm: "py-8",
-      md: "py-12",
-      lg: "py-16",
-      xl: "py-24",
-    };
-    
-    // Set up intersection observer for animation
-    useEffect(() => {
-      if (!animate) return;
-      
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            setIsVisible(true);
-            observer.unobserve(entry.target);
-          }
-        },
-        { threshold: 0.1 }
-      );
-      
-      if (sectionRef.current) {
-        observer.observe(sectionRef.current);
-      }
-      
-      return () => {
-        if (sectionRef.current) {
-          observer.unobserve(sectionRef.current);
-        }
-      };
-    }, [animate]);
-    
-    const animationClass = animate
-      ? isVisible
-        ? "animate-fade-in"
-        : "opacity-0"
-      : "";
-    
-    // Combine refs properly for TypeScript
-    const assignRefs = (element: HTMLDivElement | null) => {
-      // Forward the ref
-      if (typeof ref === 'function') {
-        ref(element);
-      } else if (ref) {
-        ref.current = element;
-      }
-      
-      // Assign to internal ref
-      sectionRef.current = element;
-    };
-    
-    return (
-      <section
-        ref={assignRefs}
-        className={cn(
-          backgroundClasses[background],
-          spacingClasses[spacing],
-          animationClass,
-          className
-        )}
-        {...props}
-      >
-        {children}
-      </section>
-    );
-  }
-);
+const Section: React.FC<SectionProps> = ({
+  children,
+  id,
+  className,
+  background = 'transparent',
+  spacing = 'md',
+  container = true,
+}) => {
+  // Background styles
+  const getBgClass = () => {
+    switch (background) {
+      case 'light':
+        return 'bg-gray-50';
+      case 'dark':
+        return 'bg-gray-900 text-white';
+      case 'primary':
+        return 'bg-primary text-white';
+      case 'accent':
+        return 'bg-accent text-white';
+      case 'transparent':
+      default:
+        return 'bg-transparent';
+    }
+  };
+  
+  // Spacing styles
+  const getSpacingClass = () => {
+    switch (spacing) {
+      case 'none':
+        return 'py-0';
+      case 'sm':
+        return 'py-6';
+      case 'md':
+        return 'py-12';
+      case 'lg':
+        return 'py-16 md:py-20';
+      case 'xl':
+        return 'py-20 md:py-24';
+      default:
+        return 'py-12';
+    }
+  };
 
-Section.displayName = "Section";
+  return (
+    <section
+      id={id}
+      className={cn(
+        getBgClass(),
+        getSpacingClass(),
+        className
+      )}
+    >
+      {container ? (
+        <div className="container mx-auto px-4">
+          {children}
+        </div>
+      ) : (
+        children
+      )}
+    </section>
+  );
+};
 
 export default Section;
