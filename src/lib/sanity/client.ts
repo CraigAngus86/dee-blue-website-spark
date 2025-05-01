@@ -1,59 +1,34 @@
-
 import { createClient } from 'next-sanity';
 
-/**
- * Safely gets environment variables with proper fallbacks
- * to ensure we always have valid configuration values.
- */
-function getSanityConfig() {
-  // Log the current environment for debugging purposes
-  console.log(`Environment mode: ${process.env.NODE_ENV}`);
-  
-  // Get projectId with proper fallback
-  const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'gxtptap2';
-  console.log(`Using Sanity projectId: [${projectId}]`);
-  
-  // Get dataset with proper fallback
-  const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production';
-  console.log(`Using Sanity dataset: [${dataset}]`);
-  
-  // Get API version with proper fallback
-  const apiVersion = process.env.NEXT_PUBLIC_SANITY_API_VERSION || '2024-04-30';
-  console.log(`Using Sanity API version: [${apiVersion}]`);
-  
-  return {
-    projectId,
-    dataset,
-    apiVersion,
-    useCdn: process.env.NODE_ENV === 'production',
-  };
-}
+// Directly use environment variables with hardcoded fallbacks for critical values
+const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'gxtptap2';
+const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production';
+const apiVersion = process.env.NEXT_PUBLIC_SANITY_API_VERSION || '2024-04-30';
 
-/**
- * Set up the Sanity client for fetching data using our configuration helper.
- */
-export const sanityClient = createClient(getSanityConfig());
+// Create the client with direct values
+export const sanityClient = createClient({
+  projectId,
+  dataset,
+  apiVersion,
+  useCdn: process.env.NODE_ENV === 'production',
+});
 
-/**
- * Preview client for draft content with authentication token
- */
+// Preview client
 export const previewClient = process.env.SANITY_API_TOKEN
   ? createClient({
-      ...getSanityConfig(),
+      projectId,
+      dataset,
+      apiVersion,
       useCdn: false,
       token: process.env.SANITY_API_TOKEN,
     })
   : sanityClient;
 
-/**
- * Helper to determine which client to use based on preview mode
- */
+// Helper to determine which client to use
 export const getClient = (usePreview = false) => 
   (usePreview && process.env.SANITY_API_TOKEN) ? previewClient : sanityClient;
 
-/**
- * Helper function to safely fetch data from Sanity with error handling.
- */
+// Helper function to fetch data
 export async function fetchSanityData(query: string, params?: Record<string, any>, usePreview = false): Promise<any> {
   try {
     const client = getClient(usePreview);
@@ -63,10 +38,3 @@ export async function fetchSanityData(query: string, params?: Record<string, any
     throw error;
   }
 }
-
-/**
- * Image URL builder function placeholder - import and initialize if needed.
- * Uncomment when needed:
- */
-// import imageUrlBuilder from '@sanity/image-url';
-// export const urlForImage = (source) => imageUrlBuilder(getSanityConfig()).image(source);
