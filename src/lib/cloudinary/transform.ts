@@ -1,72 +1,27 @@
 
 "use client";
 
-/**
- * TEMPORARY MOCK IMPLEMENTATION
- * 
- * This is a temporary mock of the Cloudinary transform utilities
- * to allow the build to succeed while we resolve the TypeScript issues
- * with the actual Cloudinary SDK implementation.
- */
+import { Cloudinary, CloudinaryImage } from '@cloudinary/url-gen';
+import { Transformation } from '@cloudinary/url-gen';
+import { scale, fill, crop, pad } from '@cloudinary/url-gen/actions/resize';
+import { source } from '@cloudinary/url-gen/actions/overlay';
+import { text } from '@cloudinary/url-gen/actions/overlay';
+import { Position } from '@cloudinary/url-gen/qualifiers/position';
+import { compass } from '@cloudinary/url-gen/qualifiers/gravity/compass';
+import { TextStyle } from '@cloudinary/url-gen/qualifiers/textStyle';
+import { autoGravity } from '@cloudinary/url-gen/qualifiers/gravity';
+import { FocusOn } from '@cloudinary/url-gen/qualifiers/focusOn';
+import { opacity } from '@cloudinary/url-gen/actions/adjust';
 
-// Mock CloudinaryImage class that mimics the API surface
-export class CloudinaryImage {
-  private publicId: string;
-  
-  constructor(publicId: string = '') {
-    this.publicId = publicId;
+// Initialize Cloudinary with your cloud name
+const cld = new Cloudinary({
+  cloud: {
+    cloudName: 'dlkpaw2a0' // The cloud name from environment variables or use a default for development
+  },
+  url: {
+    secure: true // Use HTTPS
   }
-  
-  // Mock resize methods
-  resize() { return this; }
-  
-  // Mock effect methods
-  effect() { return this; }
-  
-  // Mock overlay methods
-  overlay() { return this; }
-  
-  // Convert to URL - returns a placeholder or static path
-  toURL(): string {
-    // If this is a player image, return a specific placeholder
-    if (this.publicId.includes('player')) {
-      return '/assets/images/players/headshot_dummy.jpg';
-    }
-    
-    // If this is a team image
-    if (this.publicId.includes('team')) {
-      return '/assets/images/team/Squad1.jpg';
-    }
-    
-    // If this is a news image
-    if (this.publicId.includes('news')) {
-      return '/assets/images/news/News1.jpg';
-    }
-    
-    // If this is a stadium image
-    if (this.publicId.includes('stadium')) {
-      return '/assets/images/stadium/Spain Park.jpg';
-    }
-    
-    // If this is a sponsor image
-    if (this.publicId.includes('sponsor')) {
-      return '/assets/images/sponsors/Global.png';
-    }
-    
-    // Default placeholder
-    return '/placeholder.svg';
-  }
-  
-  // String representation - same as URL for compatibility
-  toString(): string {
-    return this.toURL();
-  }
-}
-
-// Mock Cloudinary instance
-export const cld = {
-  image: (publicId: string): CloudinaryImage => new CloudinaryImage(publicId)
-};
+});
 
 /**
  * Transform options for Cloudinary images
@@ -94,10 +49,10 @@ export interface TransformOptions {
 }
 
 /**
- * Transform an image using Cloudinary (MOCK)
+ * Transform an image using Cloudinary
  * @param publicId Cloudinary public ID
  * @param options Transform options
- * @returns Transformed image URL (actually a static placeholder)
+ * @returns Transformed image URL
  */
 export function transformImage(publicId: string, options: TransformOptions = {}): string {
   if (!publicId) {
@@ -105,7 +60,27 @@ export function transformImage(publicId: string, options: TransformOptions = {})
   }
 
   try {
-    const image = new CloudinaryImage(publicId);
+    // Check if the publicId is already a URL or a path
+    const id = publicId.startsWith('http') 
+      ? publicId.split('/').pop() || '' 
+      : publicId;
+      
+    const image = cld.image(id);
+    
+    // Apply transformations based on options
+    if (options.width || options.height) {
+      const resizeAction = options.crop === 'fill' 
+        ? fill() 
+        : options.crop === 'scale' 
+          ? scale() 
+          : crop();
+      
+      if (options.width) resizeAction.width(options.width);
+      if (options.height) resizeAction.height(options.height);
+      
+      image.resize(resizeAction);
+    }
+    
     return image.toURL();
   } catch (error) {
     console.error('Error transforming Cloudinary image:', error);
@@ -114,92 +89,185 @@ export function transformImage(publicId: string, options: TransformOptions = {})
 }
 
 /**
- * Generate a player profile square thumbnail (MOCK)
+ * Generate a player profile square thumbnail
  */
 export function playerProfileSquare(publicId: string): string {
-  return '/assets/images/players/headshot_dummy.jpg';
+  try {
+    const image = cld.image(publicId);
+    image.resize(fill().width(300).height(300).gravity(autoGravity().autoFocus(FocusOn.face())));
+    return image.toURL();
+  } catch (error) {
+    return '/assets/images/players/headshot_dummy.jpg';
+  }
 }
 
 /**
- * Generate a player profile featured image (MOCK)
+ * Generate a player profile featured image
  */
 export function playerProfileFeatured(publicId: string): string {
-  return '/assets/images/players/headshot_dummy.jpg';
+  try {
+    const image = cld.image(publicId);
+    image.resize(fill().width(800).height(600).gravity(autoGravity().autoFocus(FocusOn.face())));
+    return image.toURL();
+  } catch (error) {
+    return '/assets/images/players/headshot_dummy.jpg';
+  }
 }
 
 /**
- * Generate a player action shot (MOCK)
+ * Generate a player action shot
  */
 export function playerAction(publicId: string): string {
-  return '/assets/images/players/headshot_dummy.jpg';
+  try {
+    const image = cld.image(publicId);
+    image.resize(fill().width(1200).height(800).gravity(autoGravity()));
+    return image.toURL();
+  } catch (error) {
+    return '/assets/images/players/headshot_dummy.jpg';
+  }
 }
 
 /**
- * Generate a match gallery thumbnail (MOCK)
+ * Generate a match gallery thumbnail
  */
 export function matchGalleryThumb(publicId: string): string {
-  return '/assets/images/matchday/MatchDay1.jpg';
+  try {
+    const image = cld.image(publicId);
+    image.resize(fill().width(400).height(300).gravity(autoGravity()));
+    return image.toURL();
+  } catch (error) {
+    return '/assets/images/matchday/MatchDay1.jpg';
+  }
 }
 
 /**
- * Generate a featured match image (MOCK)
+ * Generate a featured match image
  */
 export function matchFeatured(publicId: string): string {
-  return '/assets/images/matchday/MatchDay1.jpg';
+  try {
+    const image = cld.image(publicId);
+    image.resize(fill().width(1200).height(675).gravity(autoGravity()));
+    return image.toURL();
+  } catch (error) {
+    return '/assets/images/matchday/MatchDay1.jpg';
+  }
 }
 
 /**
- * Generate a featured news image (MOCK)
+ * Generate a featured news image
  */
 export function newsFeatured(publicId: string): string {
-  return '/assets/images/news/News1.jpg';
+  try {
+    const image = cld.image(publicId);
+    image.resize(fill().width(1600).height(900).gravity(autoGravity()));
+    return image.toURL();
+  } catch (error) {
+    return '/assets/images/news/News1.jpg';
+  }
 }
 
 /**
- * Generate a news thumbnail (MOCK)
+ * Generate a news thumbnail
  */
 export function newsThumbnail(publicId: string): string {
-  return '/assets/images/news/News1.jpg';
+  try {
+    const image = cld.image(publicId);
+    image.resize(fill().width(600).height(400).gravity(autoGravity()));
+    return image.toURL();
+  } catch (error) {
+    return '/assets/images/news/News1.jpg';
+  }
 }
 
 /**
- * Generate a sponsor logo (MOCK)
+ * Generate a sponsor logo
  */
 export function sponsorLogo(publicId: string): string {
-  return '/assets/images/sponsors/Global.png';
+  try {
+    const image = cld.image(publicId);
+    image.resize(scale().width(300));
+    return image.toURL();
+  } catch (error) {
+    return '/assets/images/sponsors/Global.png';
+  }
 }
 
 /**
- * Generate a stadium panoramic image (MOCK)
+ * Generate a stadium panoramic image
  */
 export function stadiumPanoramic(publicId: string): string {
-  return '/assets/images/stadium/Spain Park.jpg';
+  try {
+    const image = cld.image(publicId);
+    image.resize(fill().width(1600).height(600).gravity(autoGravity()));
+    return image.toURL();
+  } catch (error) {
+    return '/assets/images/stadium/Spain Park.jpg';
+  }
 }
 
 /**
- * Generate a stadium facility image (MOCK)
+ * Generate a stadium facility image
  */
 export function stadiumFacility(publicId: string): string {
-  return '/assets/images/stadium/Spain Park.jpg';
+  try {
+    const image = cld.image(publicId);
+    image.resize(fill().width(800).height(600).gravity(autoGravity()));
+    return image.toURL();
+  } catch (error) {
+    return '/assets/images/stadium/Spain Park.jpg';
+  }
 }
 
 /**
- * Generate a hero banner image (MOCK)
+ * Generate a hero banner image
  */
 export function heroBanner(publicId: string): string {
-  return '/assets/images/team/Squad1.jpg';
+  try {
+    const image = cld.image(publicId);
+    image.resize(fill().width(1920).height(1080).gravity(autoGravity()));
+    return image.toURL();
+  } catch (error) {
+    return '/assets/images/team/Squad1.jpg';
+  }
 }
 
 /**
- * Generate a card image (MOCK)
+ * Generate a card image
  */
 export function cardImage(publicId: string): string {
-  return '/assets/images/news/News1.jpg';
+  try {
+    const image = cld.image(publicId);
+    image.resize(fill().width(600).height(400).gravity(autoGravity()));
+    return image.toURL();
+  } catch (error) {
+    return '/assets/images/news/News1.jpg';
+  }
 }
 
 /**
- * Generate a silhouette placeholder image (MOCK)
+ * Generate a silhouette placeholder image
  */
 export function createSilhouettePlaceholder(width: number = 300, height: number = 300, text?: string): string {
-  return '/placeholder.svg';
+  try {
+    const image = cld.image('placeholder_silhouette');
+    
+    const transformation = new Transformation();
+    transformation.resize(fill().width(width).height(height));
+    
+    if (text) {
+      const textStyle = new TextStyle()
+        .fontFamily('Arial')
+        .fontSize(Math.floor(width / 10));
+        
+      transformation.overlay(
+        source(text(text, textStyle))
+          .position(new Position().gravity(compass('center')))
+      );
+    }
+    
+    image.addTransformation(transformation);
+    return image.toURL();
+  } catch (error) {
+    return '/placeholder.svg';
+  }
 }
