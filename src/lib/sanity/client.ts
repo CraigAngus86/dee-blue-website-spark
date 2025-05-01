@@ -1,61 +1,73 @@
+
 import { createClient } from 'next-sanity';
 
 /**
- * Retrieves a required environment variable.
- * If the variable is missing, it returns a fallback value in development,
- * or throws an error in production.
+ * Safely gets environment variables with proper fallbacks
+ * to ensure we always have valid configuration values.
  */
-function getRequiredEnvironmentVariable(name: string): string {
-  const value = process.env[name];
-  console.log(`Loading environment variable ${name}: [${value}]`);
+function getSanityConfig() {
+  // Log the current environment for debugging purposes
   console.log(`Environment mode: ${process.env.NODE_ENV}`);
   
-  if (!value || value.trim() === '') {
-    if (process.env.NODE_ENV === 'development') {
-      console.warn(
-        `Warning: Environment variable ${name} is not set or empty. Using fallback value.`
-      );
-      // Use actual fallback values for development here.
-      if (name === 'NEXT_PUBLIC_SANITY_PROJECT_ID') return 'gxtptap2'; // Your actual projectId
-      if (name === 'NEXT_PUBLIC_SANITY_DATASET') return 'production';
-      if (name === 'NEXT_PUBLIC_SANITY_API_VERSION') return '2024-04-30';
-    } else {
-      throw new Error(`Environment variable ${name} is not set or empty`);
-    }
-  }
+  // Get projectId with proper fallback
+  const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'gxtptap2';
+  console.log(`Using Sanity projectId: [${projectId}]`);
   
-  return value;
+  // Get dataset with proper fallback
+  const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production';
+  console.log(`Using Sanity dataset: [${dataset}]`);
+  
+  // Get API version with proper fallback
+  const apiVersion = process.env.NEXT_PUBLIC_SANITY_API_VERSION || '2024-04-30';
+  console.log(`Using Sanity API version: [${apiVersion}]`);
+  
+  return {
+    projectId,
+    dataset,
+    apiVersion,
+    useCdn: process.env.NODE_ENV === 'production',
+  };
 }
 
 /**
- * Set up the Sanity client for fetching data.
- * Uses the helper function to read required environment variables.
+ * Set up the Sanity client for fetching data using our configuration helper.
  */
-export const sanityClient = createClient({
-  projectId: getRequiredEnvironmentVariable('NEXT_PUBLIC_SANITY_PROJECT_ID') as string,
-  dataset: getRequiredEnvironmentVariable('NEXT_PUBLIC_SANITY_DATASET') as string,
-  apiVersion: getRequiredEnvironmentVariable('NEXT_PUBLIC_SANITY_API_VERSION') as string,
-  useCdn: process.env.NODE_ENV === 'production',
-});
+export const sanityClient = createClient(getSanityConfig());
+
+/**
+ * Preview client for draft content with authentication token
+ */
+export const previewClient = process.env.SANITY_API_TOKEN
+  ? createClient({
+      ...getSanityConfig(),
+      useCdn: false,
+      token: process.env.SANITY_API_TOKEN,
+    })
+  : sanityClient;
+
+/**
+ * Helper to determine which client to use based on preview mode
+ */
+export const getClient = (usePreview = false) => 
+  (usePreview && process.env.SANITY_API_TOKEN) ? previewClient : sanityClient;
 
 /**
  * Helper function to safely fetch data from Sanity with error handling.
  */
-export async function fetchSanityData(query: string, params?: Record<string, any>): Promise<any> {
+export async function fetchSanityData(query: string, params?: Record<string, any>, usePreview = false): Promise<any> {
   try {
-    // Validate that we have required environment variables before fetching
-    const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
-    if (!projectId) {
-      console.warn('Warning: NEXT_PUBLIC_SANITY_PROJECT_ID is not set. Sanity queries may fail.');
-      if (process.env.NODE_ENV === 'production') {
-        throw new Error('Sanity configuration error: NEXT_PUBLIC_SANITY_PROJECT_ID is missing.');
-      }
-    }
-    
-    const data = await sanityClient.fetch(query, params);
-    return data;
+    const client = getClient(usePreview);
+    return await client.fetch(query, params);
   } catch (error) {
     console.error('Error fetching data from Sanity:', error);
     throw error;
   }
 }
+
+/**
+ * Image URL builder function placeholder - import and initialize if needed.
+ * Uncomment when needed:
+ */
+// import imageUrlBuilder from '@sanity/image-url';
+// export const urlForImage = (source) => imageUrlBuilder(getSanityConfig()).image(source);
+
