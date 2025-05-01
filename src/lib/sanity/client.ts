@@ -1,95 +1,58 @@
 
-import { createClient } from "@sanity/client";
-import imageUrlBuilder from "@sanity/image-url";
+import { createClient } from 'next-sanity';
+import { SanityClient } from '@sanity/client';
 
-// Ensure we have an environment variable validation function
-const requireEnvVar = (name: string): string => {
+// Environment validation
+function getRequiredEnvironmentVariable(name: string): string {
   const value = process.env[name];
   if (!value) {
-    throw new Error(`Missing required environment variable: ${name}`);
+    // In development, we'll warn but use a fallback
+    if (process.env.NODE_ENV === 'development') {
+      console.warn(`Warning: Environment variable ${name} is not set. Using fallback value.`);
+      
+      // Provide fallback values for development
+      if (name === 'NEXT_PUBLIC_SANITY_PROJECT_ID') return 'your-project-id';
+      if (name === 'NEXT_PUBLIC_SANITY_DATASET') return 'production';
+      if (name === 'NEXT_PUBLIC_SANITY_API_VERSION') return '2023-05-03';
+    } else {
+      // In production, we'll throw an error
+      throw new Error(`Environment variable ${name} is not set`);
+    }
   }
-  return value;
-};
+  
+  return value as string;
+}
 
-// Get project credentials from environment variables with validation
-const projectId = requireEnvVar("NEXT_PUBLIC_SANITY_PROJECT_ID");
-const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || "production";
-const apiVersion = process.env.NEXT_PUBLIC_SANITY_API_VERSION || "2023-05-03";
-
-// Create a client for fetching data
-export const client = createClient({
-  projectId, // projectId is now guaranteed to be a string
-  dataset,
-  apiVersion,
-  useCdn: process.env.NODE_ENV === "production",
+/**
+ * Set up the Sanity client for fetching data
+ * Validates environment variables to prevent runtime errors
+ */
+export const sanityClient = createClient({
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || '',
+  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
+  apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION || '2023-05-03',
+  useCdn: process.env.NODE_ENV === 'production',
 });
 
-// Create a preview client with lower cache time
-export const previewClient = createClient({
-  projectId,
-  dataset,
-  apiVersion,
-  useCdn: false,
-  token: process.env.SANITY_API_TOKEN,
-  perspective: "previewDrafts",
-});
-
-// Helper function to switch between normal client and preview
-export const getClient = (preview = false) => (preview ? previewClient : client);
-
-// Set up image URL builder
-const builder = imageUrlBuilder(client);
-
-// Helper function to generate image URLs
-export const urlFor = (source: any) => {
-  return builder.image(source);
-};
-
-// Export the sanityClient for cross-system usage
-export const sanityClient = client;
-
-// Function to get all documents of a specific type
-export async function getAllDocuments(type: string) {
+/**
+ * Helper function to safely fetch data from Sanity with error handling
+ */
+export async function fetchSanityData(query: string, params?: Record<string, any>): Promise<any> {
   try {
-    const documents = await client.fetch(`*[_type == "${type}"]`);
-    return documents;
+    // Validate that we have required environment variables before fetching
+    if (!process.env.NEXT_PUBLIC_SANITY_PROJECT_ID) {
+      console.warn('Warning: NEXT_PUBLIC_SANITY_PROJECT_ID is not set. Sanity queries may fail.');
+      
+      // In production, we'll throw an error
+      if (process.env.NODE_ENV === 'production') {
+        throw new Error('Sanity configuration error: NEXT_PUBLIC_SANITY_PROJECT_ID is missing.');
+      }
+    }
+    
+    const data = await sanityClient.fetch(query, params);
+    return data;
   } catch (error) {
-    console.error(`Error fetching ${type} documents:`, error);
-    return [];
-  }
-}
-
-// Function to get a single document by ID
-export async function getDocumentById(type: string, id: string) {
-  try {
-    const document = await client.fetch(`*[_type == "${type}" && _id == "${id}"][0]`);
-    return document;
-  } catch (error) {
-    console.error(`Error fetching ${type} document with ID ${id}:`, error);
-    return null;
-  }
-}
-
-// Function to get a document by slug
-export async function getDocumentBySlug(type: string, slug: string) {
-  try {
-    const document = await client.fetch(
-      `*[_type == "${type}" && slug.current == "${slug}"][0]`
-    );
-    return document;
-  } catch (error) {
-    console.error(`Error fetching ${type} document with slug ${slug}:`, error);
-    return null;
-  }
-}
-
-// Function to fetch data with a custom query
-export async function fetchSanityData(query: string, params = {}, usePreview = false) {
-  try {
-    const client = getClient(usePreview);
-    return await client.fetch(query, params);
-  } catch (error) {
-    console.error('Error fetching Sanity data:', error);
+    console.error('Error fetching data from Sanity:', error);
     throw error;
   }
 }

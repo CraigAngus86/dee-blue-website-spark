@@ -1,3 +1,4 @@
+
 import { Metadata } from "next";
 import HeroSection from "@/components/ui/hero/HeroSection";
 import OverlappingNewsCards from "@/components/ui/sections/OverlappingNewsCards";
@@ -60,41 +61,61 @@ async function getRecentNews(limit = 6) {
   }
 }
 
-// Fetch upcoming and recent matches
+// Enhanced fetching of upcoming and recent matches with explicit relationship and error handling
 async function getMatches() {
   // Get current date in ISO format without time
   const today = new Date().toISOString().split('T')[0];
   
   try {
-    // Fetch upcoming matches
+    // Fetch upcoming matches with explicit relationship references
     const { data: upcomingMatches, error: upcomingError } = await supabase
       .from("match")
       .select(`
         id, match_date, match_time, venue, status, ticketco_event_id, ticket_link,
-        home_team_id(id, name, logo_url),
-        away_team_id(id, name, logo_url),
+        home_team_id:teams!match_home_team_id_fkey(id, name, logo_url),
+        away_team_id:teams!match_away_team_id_fkey(id, name, logo_url),
         competition_id(id, name, short_name, logo_url)
       `)
       .gte("match_date", today)
       .order("match_date", { ascending: true })
       .limit(5);
 
-    if (upcomingError) throw upcomingError;
+    if (upcomingError) {
+      console.error("Error fetching upcoming matches:", upcomingError.message, upcomingError.details);
+      throw upcomingError;
+    }
 
-    // Fetch recent results
+    // Validate upcoming matches data shape
+    if (!upcomingMatches || !Array.isArray(upcomingMatches)) {
+      console.warn("Upcoming matches data is not in expected format:", upcomingMatches);
+      // Return empty array as fallback
+      upcomingMatches = [];
+    }
+
+    // Fetch recent results with explicit relationship references
     const { data: recentMatches, error: recentError } = await supabase
       .from("match")
       .select(`
         id, match_date, match_time, venue, status, home_score, away_score, match_report_link,
-        home_team_id(id, name, logo_url),
-        away_team_id(id, name, logo_url),
+        home_team_id:teams!match_home_team_id_fkey(id, name, logo_url),
+        away_team_id:teams!match_away_team_id_fkey(id, name, logo_url),
         competition_id(id, name, short_name, logo_url)
       `)
       .eq("status", "completed")
       .order("match_date", { ascending: false })
       .limit(5);
 
-    if (recentError) throw recentError;
+    if (recentError) {
+      console.error("Error fetching recent matches:", recentError.message, recentError.details);
+      throw recentError;
+    }
+
+    // Validate recent matches data shape
+    if (!recentMatches || !Array.isArray(recentMatches)) {
+      console.warn("Recent matches data is not in expected format:", recentMatches);
+      // Return empty array as fallback
+      recentMatches = [];
+    }
 
     return {
       upcoming: upcomingMatches || [],
@@ -102,11 +123,12 @@ async function getMatches() {
     };
   } catch (error) {
     console.error("Error fetching matches:", error);
+    // Return empty arrays as fallback to prevent runtime crashes
     return { upcoming: [], recent: [] };
   }
 }
 
-// Fetch league table
+// Fetch league table with enhanced error handling
 async function getLeagueTable() {
   try {
     const { data: leagueTable, error } = await supabase
@@ -114,15 +136,25 @@ async function getLeagueTable() {
       .select("*")
       .order("position", { ascending: true });
 
-    if (error) throw error;
-    return leagueTable || [];
+    if (error) {
+      console.error("Error fetching league table:", error.message, error.details);
+      throw error;
+    }
+
+    // Validate league table data shape
+    if (!leagueTable || !Array.isArray(leagueTable)) {
+      console.warn("League table data is not in expected format:", leagueTable);
+      return [];
+    }
+
+    return leagueTable;
   } catch (error) {
     console.error("Error fetching league table:", error);
     return [];
   }
 }
 
-// Fetch sponsors
+// Fetch sponsors with enhanced error handling
 async function getSponsors() {
   try {
     const { data: sponsors, error } = await supabase
@@ -130,15 +162,25 @@ async function getSponsors() {
       .select("*")
       .order("featured", { ascending: false });
 
-    if (error) throw error;
-    return sponsors || [];
+    if (error) {
+      console.error("Error fetching sponsors:", error.message, error.details);
+      throw error;
+    }
+
+    // Validate sponsors data shape
+    if (!sponsors || !Array.isArray(sponsors)) {
+      console.warn("Sponsors data is not in expected format:", sponsors);
+      return [];
+    }
+
+    return sponsors;
   } catch (error) {
     console.error("Error fetching sponsors:", error);
     return [];
   }
 }
 
-// Fetch fan of the month
+// Fetch fan of the month with enhanced error handling
 async function getFanOfMonth() {
   try {
     const { data: fanOfMonth, error } = await supabase
@@ -146,7 +188,17 @@ async function getFanOfMonth() {
       .select("*")
       .maybeSingle();
 
-    if (error && error.code !== 'PGRST116') throw error;
+    if (error && error.code !== 'PGRST116') {
+      console.error("Error fetching fan of the month:", error.message, error.details);
+      throw error;
+    }
+
+    // Validate fan of month data shape
+    if (fanOfMonth && typeof fanOfMonth !== 'object') {
+      console.warn("Fan of month data is not in expected format:", fanOfMonth);
+      return null;
+    }
+
     return fanOfMonth;
   } catch (error) {
     console.error("Error fetching fan of the month:", error);
@@ -154,7 +206,7 @@ async function getFanOfMonth() {
   }
 }
 
-// Fetch featured players
+// Fetch featured players with enhanced error handling
 async function getFeaturedPlayers() {
   try {
     const { data: players, error } = await supabase
@@ -164,95 +216,130 @@ async function getFeaturedPlayers() {
       .order("jersey_number", { ascending: true })
       .limit(8);
 
-    if (error) throw error;
-    return players || [];
+    if (error) {
+      console.error("Error fetching players:", error.message, error.details);
+      throw error;
+    }
+
+    // Validate players data shape
+    if (!players || !Array.isArray(players)) {
+      console.warn("Players data is not in expected format:", players);
+      return [];
+    }
+
+    return players;
   } catch (error) {
     console.error("Error fetching players:", error);
     return [];
   }
 }
 
+// Enhanced data transformation utility
+export function safelyTransformData(data: any, transformFn: Function, fallback: any) {
+  try {
+    if (!data) {
+      console.warn("No data provided to transform");
+      return fallback;
+    }
+    return transformFn(data);
+  } catch (error) {
+    console.error("Error transforming data:", error, data);
+    return fallback;
+  }
+}
+
 export default async function HomePage() {
-  // Fetch all data in parallel
-  const [
-    featuredNewsArticle, 
-    recentNews, 
-    matches, 
-    leagueTable,
-    sponsors,
-    fanOfMonth,
-    featuredPlayers
-  ] = await Promise.all([
-    getFeaturedNewsArticle(),
-    getRecentNews(),
-    getMatches(),
-    getLeagueTable(),
-    getSponsors(),
-    getFanOfMonth(),
-    getFeaturedPlayers()
-  ]);
+  try {
+    // Fetch all data in parallel
+    const [
+      featuredNewsArticle, 
+      recentNews, 
+      matches, 
+      leagueTable,
+      sponsors,
+      fanOfMonth,
+      featuredPlayers
+    ] = await Promise.all([
+      getFeaturedNewsArticle(),
+      getRecentNews(),
+      getMatches(),
+      getLeagueTable(),
+      getSponsors(),
+      getFanOfMonth(),
+      getFeaturedPlayers()
+    ]);
 
-  // Convert to the format expected by components
-  const cardShadowStyle = {
-    "--card-shadow": "0 10px 25px -5px rgba(0, 16, 90, 0.1), 0 8px 10px -6px rgba(0, 16, 90, 0.05)",
-    "--card-hover-shadow": "0 20px 25px -5px rgba(0, 16, 90, 0.15), 0 10px 10px -5px rgba(0, 16, 90, 0.1)"
-  } as React.CSSProperties;
+    // Convert to the format expected by components
+    const cardShadowStyle = {
+      "--card-shadow": "0 10px 25px -5px rgba(0, 16, 90, 0.1), 0 8px 10px -6px rgba(0, 16, 90, 0.05)",
+      "--card-hover-shadow": "0 20px 25px -5px rgba(0, 16, 90, 0.15), 0 10px 10px -5px rgba(0, 16, 90, 0.1)"
+    } as React.CSSProperties;
 
-  return (
-    <div className="min-h-screen flex flex-col" style={cardShadowStyle}>
-      {/* Hero Section */}
-      {featuredNewsArticle && (
-        <HeroSection
-          title={featuredNewsArticle.title}
-          category={featuredNewsArticle.category || "CLUB NEWS"}
-          timestamp={new Date(featuredNewsArticle.publishedAt).toLocaleString()}
-          backgroundImage={featuredNewsArticle.mainImage}
-        />
-      )}
-      
-      {/* News Cards Section */}
-      <div className="py-12">
-        <FadeIn>
-          <OverlappingNewsCards articles={recentNews} count={6} />
-        </FadeIn>
-      </div>
-      
-      {/* Gradient Separator */}
-      <GradientSeparator />
-      
-      {/* Match Center Section */}
-      <Section 
-        background="light"
-        spacing="lg"
-      >
-        <FadeIn>
-          <MatchCenter 
-            upcomingMatches={matches.upcoming} 
-            recentResults={matches.recent} 
-            leagueTable={leagueTable} 
+    return (
+      <div className="min-h-screen flex flex-col" style={cardShadowStyle}>
+        {/* Hero Section */}
+        {featuredNewsArticle && (
+          <HeroSection
+            title={featuredNewsArticle.title}
+            category={featuredNewsArticle.category || "CLUB NEWS"}
+            timestamp={new Date(featuredNewsArticle.publishedAt).toLocaleString()}
+            backgroundImage={featuredNewsArticle.mainImage}
           />
-        </FadeIn>
-      </Section>
-      
-      {/* Gradient Separator */}
-      <GradientSeparator />
-      
-      {/* Fan Zone Section */}
-      <div className="py-12">
-        <FanZoneSection fanOfMonth={fanOfMonth} />
+        )}
+        
+        {/* News Cards Section */}
+        <div className="py-12">
+          <FadeIn>
+            <OverlappingNewsCards articles={recentNews} count={6} />
+          </FadeIn>
+        </div>
+        
+        {/* Gradient Separator */}
+        <GradientSeparator />
+        
+        {/* Match Center Section */}
+        <Section 
+          background="light"
+          spacing="lg"
+        >
+          <FadeIn>
+            <MatchCenter 
+              upcomingMatches={matches.upcoming} 
+              recentResults={matches.recent} 
+              leagueTable={leagueTable} 
+            />
+          </FadeIn>
+        </Section>
+        
+        {/* Gradient Separator */}
+        <GradientSeparator />
+        
+        {/* Fan Zone Section */}
+        <div className="py-12">
+          <FanZoneSection fanOfMonth={fanOfMonth} />
+        </div>
+        
+        {/* Gradient Separator before Players Section */}
+        <GradientSeparator />
+        
+        {/* Players Section */}
+        <PlayersSection players={featuredPlayers} />
+        
+        {/* Gradient Separator before Sponsors Section */}
+        <GradientSeparator />
+        
+        {/* Sponsors Section */}
+        <SponsorsSection sponsors={sponsors} />
       </div>
-      
-      {/* Gradient Separator before Players Section */}
-      <GradientSeparator />
-      
-      {/* Players Section */}
-      <PlayersSection players={featuredPlayers} />
-      
-      {/* Gradient Separator before Sponsors Section */}
-      <GradientSeparator />
-      
-      {/* Sponsors Section */}
-      <SponsorsSection sponsors={sponsors} />
-    </div>
-  );
+    );
+  } catch (error) {
+    console.error("Error in HomePage:", error);
+    // Return a minimal fallback UI if something goes wrong
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center">
+        <h1 className="text-2xl font-bold text-red-600">Temporarily Unavailable</h1>
+        <p className="mt-2">Our team is working to restore service. Please check back later.</p>
+      </div>
+    );
+  }
 }

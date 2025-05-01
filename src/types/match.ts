@@ -27,5 +27,5 @@ export interface Match {
   };
   ticketLink: string;
   status: string;
-  isCompleted?: boolean; // Added to match the usage in MatchCarousel
+  isCompleted?: boolean;
 }
