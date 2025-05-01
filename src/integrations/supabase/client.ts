@@ -3,8 +3,18 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
-const SUPABASE_URL = "https://bbbxhwaixjjxgboeiktq.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJiYnhod2FpeGpqeGdib2Vpa3RxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI4MzA1NzMsImV4cCI6MjA1ODQwNjU3M30.ZZEenwbdq-bGlya3R2yvuspOlKMqkBp6tzC3TAdKGcQ";
+// Use environment variables with fallbacks to ensure the client doesn't break
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://bbbxhwaixjjxgboeiktq.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJiYnhod2FpeGpqeGdib2Vpa3RxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI4MzA1NzMsImV4cCI6MjA1ODQwNjU3M30.ZZEenwbdq-bGlya3R2yvuspOlKMqkBp6tzC3TAdKGcQ";
+
+// Log warnings if environment variables are missing
+if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+  console.warn('Warning: NEXT_PUBLIC_SUPABASE_URL is not set in environment variables. Using fallback value.');
+}
+
+if (!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+  console.warn('Warning: NEXT_PUBLIC_SUPABASE_ANON_KEY is not set in environment variables. Using fallback value.');
+}
 
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";

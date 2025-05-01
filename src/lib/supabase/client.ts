@@ -5,6 +5,15 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
+// Log warnings if environment variables are missing
+if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+  console.error('Supabase configuration error: NEXT_PUBLIC_SUPABASE_URL is missing.');
+}
+
+if (!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+  console.error('Supabase configuration error: NEXT_PUBLIC_SUPABASE_ANON_KEY is missing.');
+}
+
 // Client for browser usage (client-side)
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
