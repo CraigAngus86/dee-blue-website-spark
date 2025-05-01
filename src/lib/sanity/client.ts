@@ -7,18 +7,24 @@ import { createClient } from 'next-sanity';
  */
 function getRequiredEnvironmentVariable(name: string): string {
   const value = process.env[name];
-  if (!value) {
+  console.log(`Loading environment variable ${name}: [${value}]`);
+  console.log(`Environment mode: ${process.env.NODE_ENV}`);
+  
+  if (!value || value.trim() === '') {
     if (process.env.NODE_ENV === 'development') {
-      console.warn(`Warning: Environment variable ${name} is not set. Using fallback value.`);
-      // Provide fallback values for development
-      if (name === 'NEXT_PUBLIC_SANITY_PROJECT_ID') return 'your-project-id';
+      console.warn(
+        `Warning: Environment variable ${name} is not set or empty. Using fallback value.`
+      );
+      // Use actual fallback values for development here.
+      if (name === 'NEXT_PUBLIC_SANITY_PROJECT_ID') return 'gxtptap2'; // Your actual projectId
       if (name === 'NEXT_PUBLIC_SANITY_DATASET') return 'production';
-      if (name === 'NEXT_PUBLIC_SANITY_API_VERSION') return '2023-05-03';
+      if (name === 'NEXT_PUBLIC_SANITY_API_VERSION') return '2024-04-30';
     } else {
-      throw new Error(`Environment variable ${name} is not set`);
+      throw new Error(`Environment variable ${name} is not set or empty`);
     }
   }
-  return value as string;
+  
+  return value;
 }
 
 /**
