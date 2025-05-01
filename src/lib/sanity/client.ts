@@ -70,4 +70,3 @@ export async function fetchSanityData(query: string, params?: Record<string, any
  */
 // import imageUrlBuilder from '@sanity/image-url';
 // export const urlForImage = (source) => imageUrlBuilder(getSanityConfig()).image(source);
-
