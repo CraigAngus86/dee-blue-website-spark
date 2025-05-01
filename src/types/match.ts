@@ -3,25 +3,28 @@ export interface Match {
   id: string;
   date: string;
   time: string;
-  competition: string;
-  round?: string;
-  homeTeam: string;
-  awayTeam: string;
   venue: string;
-  status: "upcoming" | "live" | "finished" | "scheduled" | "completed" | "postponed" | "cancelled";
-  isCompleted?: boolean;
-  ticketLink?: string;
-  matchReportLink?: string;
+  homeTeam: {
+    id: string;
+    name: string;
+    logo: string;
+  };
+  awayTeam: {
+    id: string;
+    name: string;
+    logo: string;
+  };
+  competition: {
+    id: string;
+    name: string;
+    shortName: string;
+    logo: string;
+  };
   result?: {
     homeScore: number;
     awayScore: number;
+    matchReportLink: string;
   };
-}
-
-export interface MatchDetails extends Match {
-  seasonId?: string;
-  seasonCompetitionId?: string;
-  homeTeamId?: number;
-  awayTeamId?: number;
-  isHighlighted?: boolean;
+  ticketLink: string;
+  status: string;
 }

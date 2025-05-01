@@ -45,6 +45,9 @@ export const urlFor = (source: any) => {
   return builder.image(source);
 };
 
+// Export the sanityClient for cross-system usage
+export const sanityClient = client;
+
 // Function to get all documents of a specific type
 export async function getAllDocuments(type: string) {
   try {
@@ -77,5 +80,16 @@ export async function getDocumentBySlug(type: string, slug: string) {
   } catch (error) {
     console.error(`Error fetching ${type} document with slug ${slug}:`, error);
     return null;
+  }
+}
+
+// Function to fetch data with a custom query
+export async function fetchSanityData(query: string, params = {}, usePreview = false) {
+  try {
+    const client = getClient(usePreview);
+    return await client.fetch(query, params);
+  } catch (error) {
+    console.error('Error fetching Sanity data:', error);
+    throw error;
   }
 }

@@ -15,26 +15,7 @@ interface MatchCenterProps {
   leagueTable: any[];
 }
 
-// Extended Match type to match the shape returned by formatMatchData
-interface FormattedMatch {
-  id: any;
-  date: any;
-  time: any;
-  venue: any;
-  homeTeam: { id: any; name: any; logo: any; };
-  awayTeam: { id: any; name: any; logo: any; };
-  competition: { id: any; name: any; shortName: any; logo: any; };
-  result?: { homeScore: any; awayScore: any; matchReportLink: any; };
-  ticketLink: any;
-  status: any;
-}
-
-// Update LeagueTable props interface
-interface ExtendedLeagueTableProps {
-  leagueTable: any[];
-  selectedSeason: string;
-}
-
+// Update the component to handle the Match interface properly
 const MatchCenter: React.FC<MatchCenterProps> = ({ 
   upcomingMatches,
   recentResults,
@@ -42,9 +23,9 @@ const MatchCenter: React.FC<MatchCenterProps> = ({
 }) => {
   const [tabValue, setTabValue] = useState("fixtures");
   
-  // Format the match data for the carousel component
-  const formattedUpcoming = formatMatchData(upcomingMatches, false) as FormattedMatch[];
-  const formattedResults = formatMatchData(recentResults, true) as FormattedMatch[];
+  // Format the match data for the carousel component and cast to Match type
+  const formattedUpcoming = formatMatchData(upcomingMatches, false) as unknown as Match[];
+  const formattedResults = formatMatchData(recentResults, true) as unknown as Match[];
   
   return (
     <div>
@@ -67,19 +48,19 @@ const MatchCenter: React.FC<MatchCenterProps> = ({
         
         <TabsContent value="fixtures" className="animation-fade-in">
           <MatchCarousel 
-            matches={formattedUpcoming as unknown as Match[]}
+            matches={formattedUpcoming}
           />
         </TabsContent>
         
         <TabsContent value="results" className="animation-fade-in">
           <MatchCarousel 
-            matches={formattedResults as unknown as Match[]}
+            matches={formattedResults}
           />
         </TabsContent>
         
         <TabsContent value="table" className="animation-fade-in">
           <LeagueTable 
-            leagueTable={leagueTable} 
+            data={leagueTable} 
             selectedSeason="2023/24"
           />
         </TabsContent>
