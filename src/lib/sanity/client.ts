@@ -32,9 +32,9 @@ function getRequiredEnvironmentVariable(name: string): string {
  * Uses the helper function to read required environment variables.
  */
 export const sanityClient = createClient({
-  projectId: getRequiredEnvironmentVariable('NEXT_PUBLIC_SANITY_PROJECT_ID'),
-  dataset: getRequiredEnvironmentVariable('NEXT_PUBLIC_SANITY_DATASET'),
-  apiVersion: getRequiredEnvironmentVariable('NEXT_PUBLIC_SANITY_API_VERSION'),
+  projectId: getRequiredEnvironmentVariable('NEXT_PUBLIC_SANITY_PROJECT_ID') as string,
+  dataset: getRequiredEnvironmentVariable('NEXT_PUBLIC_SANITY_DATASET') as string,
+  apiVersion: getRequiredEnvironmentVariable('NEXT_PUBLIC_SANITY_API_VERSION') as string,
   useCdn: process.env.NODE_ENV === 'production',
 });
 
