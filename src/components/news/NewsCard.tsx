@@ -1,8 +1,9 @@
+
 "use client";
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import ResponsiveImage from "@/components/ui/image/ResponsiveImage";
+import Image from "next/image";
 import { CardNew } from "@/components/ui/CardNew";
 import HoverEffect from "@/components/ui/animations/HoverEffect";
 
@@ -37,13 +38,15 @@ const NewsCard: React.FC<NewsCardProps> = ({
             "relative flex-grow",
             isFeatured ? "aspect-[2/1]" : "aspect-square"
           )}>
-            <ResponsiveImage
-              src={image}
-              alt={title}
-              className="w-full h-full transform transition-transform duration-500 group-hover:scale-105"
-              aspectRatio={isFeatured ? "2/1" : "1/1"}
-              objectFit="cover"
-            />
+            <div className="relative w-full h-full">
+              <Image
+                src={image}
+                alt={title}
+                className="object-cover transform transition-transform duration-500 group-hover:scale-105"
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
+            </div>
             <div className="absolute inset-0 bg-gradient-to-t from-[#00105A]/90 via-[#00105A]/50 to-transparent" />
           </div>
 
