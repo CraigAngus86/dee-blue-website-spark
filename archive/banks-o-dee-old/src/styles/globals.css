@@ -1,0 +1,265 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Base colors */
+    --primary: 0 16 90; /* #00105A */
+    --primary-dark: 0 12 66; /* #000C42 */
+    --primary-light: 0 28 140; /* #001C8C */
+    
+    --secondary: 197 231 255; /* #C5E7FF */
+    --secondary-dark: 156 203 235; /* #9CCBEB */
+    --secondary-light: 229 244 255; /* #E5F4FF */
+    
+    --accent: 255 215 0; /* #FFD700 */
+    --accent-dark: 230 194 0; /* #E6C200 */
+    --accent-light: 255 223 51; /* #FFDF33 */
+    
+    /* Neutral colors */
+    --white: 255 255 255; /* #FFFFFF */
+    --light-gray: 244 247 251; /* #F4F7FB */
+    --medium-gray: 226 232 240; /* #E2E8F0 */
+    --gray: 148 163 184; /* #94A3B8 */
+    --dark-gray: 71 85 105; /* #475569 */
+    --near-black: 30 41 59; /* #1E293B */
+    --black: 15 23 42; /* #0F172A */
+    
+    /* Semantic colors */
+    --success: 16 185 129; /* #10B981 */
+    --warning: 245 158 11; /* #F59E0B */
+    --error: 239 68 68; /* #EF4444 */
+    --info: 59 130 246; /* #3B82F6 */
+    
+    /* Animation speeds - standardized for consistency */
+    --animation-quick: 200ms;
+    --animation-standard: 250ms;
+    --animation-deliberate: 400ms;
+    
+    /* Elevation/shadows - enhanced for better depth */
+    --shadow-sm: 0px 1px 2px rgba(15, 23, 42, 0.1);
+    --shadow-md: 0px 4px 6px -1px rgba(15, 23, 42, 0.1), 0px 2px 4px -1px rgba(15, 23, 42, 0.06);
+    --shadow-lg: 0px 10px 15px -3px rgba(15, 23, 42, 0.1), 0px 4px 6px -2px rgba(15, 23, 42, 0.05);
+    --shadow-xl: 0px 20px 25px -5px rgba(15, 23, 42, 0.1), 0px 10px 10px -5px rgba(15, 23, 42, 0.04);
+    
+    /* Common border radius values */
+    --radius-sm: 0.125rem;
+    --radius-md: 0.25rem;
+    --radius-lg: 0.375rem;
+    --radius-xl: 0.5rem;
+    --radius-2xl: 1rem;
+    
+    /* Standard spacing values for consistency */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+    --space-12: 3rem;
+    --space-16: 4rem;
+    --space-20: 5rem;
+    --space-24: 6rem;
+  }
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes slideOutRight {
+  from { transform: translateX(0); }
+  to { transform: translateX(100%); }
+}
+
+/* Special class for forcing vertical alignment */
+.force-vertical-center {
+  display: flex !important;
+  align-items: center !important;
+  align-self: center !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* Utility classes */
+.animate-fade-in {
+  animation: fadeIn var(--animation-standard) ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp var(--animation-standard) ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn var(--animation-standard) ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight var(--animation-standard) ease-out forwards;
+}
+
+.animate-slide-out-right {
+  animation: slideOutRight var(--animation-standard) ease-out forwards;
+}
+
+/* Enhanced hover effects for interactive elements */
+.hover-scale {
+  transition: transform var(--animation-quick) ease-out;
+}
+
+.hover-scale:hover {
+  transform: scale(1.03);
+}
+
+/* Focus states for accessibility */
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2px solid rgb(var(--accent));
+  outline-offset: 2px;
+}
+
+/* Staggered animation setup for children */
+.stagger-children > * {
+  opacity: 0;
+}
+
+.stagger-children > *:nth-child(1) { 
+  animation: fadeIn var(--animation-standard) ease-out forwards;
+  animation-delay: 0ms;
+}
+
+.stagger-children > *:nth-child(2) { 
+  animation: fadeIn var(--animation-standard) ease-out forwards;
+  animation-delay: 100ms;
+}
+
+.stagger-children > *:nth-child(3) { 
+  animation: fadeIn var(--animation-standard) ease-out forwards;
+  animation-delay: 200ms;
+}
+
+.stagger-children > *:nth-child(4) { 
+  animation: fadeIn var(--animation-standard) ease-out forwards;
+  animation-delay: 300ms;
+}
+
+.stagger-children > *:nth-child(5) { 
+  animation: fadeIn var(--animation-standard) ease-out forwards;
+  animation-delay: 400ms;
+}
+
+body {
+  @apply bg-white text-near-black font-inter text-base;
+}
+
+/* Typography baseline with consistent spacing */
+h1, h2, h3, h4, h5, h6 {
+  @apply font-montserrat font-bold;
+  line-height: 1.2;
+}
+
+h1 { @apply text-h1 mb-6; }
+h2 { @apply text-h2 mb-5; }
+h3 { @apply text-h3 mb-4; }
+h4 { @apply text-h4 mb-3; }
+h5 { @apply text-h5 mb-2; }
+h6 { @apply text-h6 mb-2; }
+
+p { @apply mb-4 leading-relaxed; }
+
+/* Enhanced link styles with consistent transitions */
+.link {
+  @apply relative inline-block font-medium text-primary;
+  transition: color var(--animation-quick) ease-out;
+}
+
+.link:after {
+  content: '';
+  @apply absolute w-full scale-x-0 h-0.5 bottom-0 left-0 bg-accent;
+  transform-origin: bottom right;
+  transition: transform var(--animation-standard) ease-out;
+}
+
+.link:hover {
+  @apply text-primary-light;
+}
+
+.link:hover:after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+
+/* Section spacing consistency */
+.section {
+  @apply py-12;
+}
+
+@media (min-width: 768px) {
+  .section {
+    @apply py-16;
+  }
+}
+
+@media (min-width: 1024px) {
+  .section {
+    @apply py-24;
+  }
+}
+
+/* For image treatment - duotone effect */
+.duotone {
+  position: relative;
+}
+
+.duotone::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to right, rgba(0, 16, 90, 0.3), rgba(197, 231, 255, 0.3));
+  mix-blend-mode: color;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Button focus and hover states for consistency */
+button, .btn {
+  transition: all var(--animation-quick) ease-out;
+}
+
+/* Consistent container padding */
+.container {
+  @apply px-4 sm:px-6 lg:px-8;
+}
+
+/* Hide scrollbars but maintain functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
+}
