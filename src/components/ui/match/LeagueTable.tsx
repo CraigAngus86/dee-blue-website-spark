@@ -1,110 +1,117 @@
 
 "use client";
 
-import React from 'react';
-import Image from 'next/image';
-import { cn } from '@/lib/utils';
+import React, { useState } from 'react';
+import { leagueTableData } from '@/lib/fixtures-data';
+import LoadingState from '../common/LoadingState';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface LeagueTableProps {
-  leagueTable: any[];
-  selectedSeason?: string;
-  className?: string;
+  selectedSeason: string;
 }
 
-const LeagueTable: React.FC<LeagueTableProps> = ({ 
-  leagueTable, 
-  selectedSeason = "2023/24",
-  className 
-}) => {
-  // Team highlighting
-  const isHomeTeam = (teamName: string) => {
-    return teamName.includes("Banks o") || teamName.includes("Banks O") || teamName.includes("Banks o'");
-  };
+interface FormIcon {
+  label: string;
+  color: string;
+}
 
+const getFormIcon = (result: string): FormIcon => {
+  switch (result) {
+    case 'W':
+      return { label: 'W', color: 'bg-green-500 text-white' };
+    case 'D':
+      return { label: 'D', color: 'bg-yellow-500 text-white' };
+    case 'L':
+      return { label: 'L', color: 'bg-red-500 text-white' };
+    default:
+      return { label: '-', color: 'bg-gray-300 text-gray-700' };
+  }
+};
+
+const LeagueTable: React.FC<LeagueTableProps> = ({ selectedSeason }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  
+  // In a real app, this would fetch data based on the selected season
+  // For now, we'll use the static league table data
+  React.useEffect(() => {
+    setIsLoading(true);
+    
+    // Simulate loading data for the selected season
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, [selectedSeason]);
+  
+  if (isLoading) {
+    return <LoadingState count={1} />;
+  }
+  
   return (
-    <div className={cn("overflow-x-auto", className)}>
-      <h3 className="text-lg font-semibold mb-2 text-gray-800">Highland Football League {selectedSeason}</h3>
-      <table className="w-full text-sm border-collapse">
-        <thead>
-          <tr className="border-b-2 border-gray-200 text-gray-600">
-            <th className="px-2 py-3 text-left">Pos</th>
-            <th className="px-2 py-3 text-left">Team</th>
-            <th className="px-2 py-3 text-center">P</th>
-            <th className="px-2 py-3 text-center">W</th>
-            <th className="px-2 py-3 text-center">D</th>
-            <th className="px-2 py-3 text-center">L</th>
-            <th className="px-2 py-3 text-center">GF</th>
-            <th className="px-2 py-3 text-center">GA</th>
-            <th className="px-2 py-3 text-center">GD</th>
-            <th className="px-2 py-3 text-center">Pts</th>
-            <th className="px-2 py-3 text-center">Form</th>
-          </tr>
-        </thead>
-        <tbody>
-          {leagueTable && leagueTable.length > 0 ? (
-            leagueTable.map((team) => (
-              <tr
-                key={team.id}
-                className={cn(
-                  "border-b border-gray-200 hover:bg-gray-50 transition-colors",
-                  isHomeTeam(team.team_name) ? "bg-primary-50" : ""
-                )}
+    <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="overflow-x-auto">
+        <Table>
+          <TableHeader className="bg-gray-100">
+            <TableRow>
+              <TableHead className="w-12 text-center">Pos</TableHead>
+              <TableHead>Team</TableHead>
+              <TableHead className="text-center w-12">P</TableHead>
+              <TableHead className="text-center w-12">W</TableHead>
+              <TableHead className="text-center w-12">D</TableHead>
+              <TableHead className="text-center w-12">L</TableHead>
+              <TableHead className="text-center w-12">GF</TableHead>
+              <TableHead className="text-center w-12">GA</TableHead>
+              <TableHead className="text-center w-12">GD</TableHead>
+              <TableHead className="text-center w-12">Pts</TableHead>
+              <TableHead className="text-center hidden md:table-cell">Form</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {leagueTableData.map((team) => (
+              <TableRow 
+                key={team.position}
+                className={`hover:bg-gray-50 ${team.team.includes("Banks o' Dee") ? "bg-blue-50" : ""}`}
               >
-                <td className="px-2 py-3 font-medium">{team.position}</td>
-                <td className="px-2 py-3">
-                  <div className="flex items-center space-x-2">
-                    {team.team_logo && (
-                      <div className="w-6 h-6 relative">
-                        <Image 
-                          src={team.team_logo} 
-                          alt={team.team_name}
-                          width={24}
-                          height={24}
-                          className="object-contain"
-                        />
-                      </div>
-                    )}
-                    <span className={cn("text-sm font-medium", isHomeTeam(team.team_name) ? "text-primary font-semibold" : "")}>
-                      {team.team_name}
-                    </span>
+                <TableCell className="text-center font-medium">{team.position}</TableCell>
+                <TableCell className={`font-medium ${team.team.includes("Banks o' Dee") ? "font-bold" : ""}`}>
+                  {team.team}
+                </TableCell>
+                <TableCell className="text-center">{team.played}</TableCell>
+                <TableCell className="text-center">{team.won}</TableCell>
+                <TableCell className="text-center">{team.drawn}</TableCell>
+                <TableCell className="text-center">{team.lost}</TableCell>
+                <TableCell className="text-center">{team.goalsFor}</TableCell>
+                <TableCell className="text-center">{team.goalsAgainst}</TableCell>
+                <TableCell className="text-center">{team.goalDifference}</TableCell>
+                <TableCell className="text-center font-medium">{team.points}</TableCell>
+                <TableCell className="hidden md:table-cell">
+                  <div className="flex space-x-1 justify-center">
+                    {team.form.map((result, idx) => {
+                      const formIcon = getFormIcon(result);
+                      return (
+                        <div 
+                          key={idx}
+                          className={`w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold ${formIcon.color}`}
+                        >
+                          {formIcon.label}
+                        </div>
+                      );
+                    })}
                   </div>
-                </td>
-                <td className="px-2 py-3 text-center">{team.matches_played}</td>
-                <td className="px-2 py-3 text-center">{team.wins}</td>
-                <td className="px-2 py-3 text-center">{team.draws}</td>
-                <td className="px-2 py-3 text-center">{team.losses}</td>
-                <td className="px-2 py-3 text-center">{team.goals_for}</td>
-                <td className="px-2 py-3 text-center">{team.goals_against}</td>
-                <td className="px-2 py-3 text-center">{team.goal_difference}</td>
-                <td className="px-2 py-3 text-center font-bold">{team.points}</td>
-                <td className="px-2 py-3">
-                  <div className="flex justify-center space-x-1">
-                    {team.form && team.form.map((result: string, idx: number) => (
-                      <span
-                        key={idx}
-                        className={cn(
-                          "w-5 h-5 flex items-center justify-center text-xs text-white font-medium rounded-full",
-                          result === "W" ? "bg-green-500" : 
-                          result === "D" ? "bg-yellow-500" : 
-                          "bg-red-500"
-                        )}
-                      >
-                        {result}
-                      </span>
-                    ))}
-                  </div>
-                </td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan={11} className="px-2 py-8 text-center text-gray-500">
-                No league data available
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 };
