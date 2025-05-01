@@ -1,11 +1,14 @@
+
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+
 /**
  * Merges Tailwind CSS classes
  */
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
 /**
  * Formats match data for use in components
  */
@@ -14,6 +17,7 @@ export function formatMatchData(matches: any[], isResults = false) {
     const homeTeam = match.home_team_id;
     const awayTeam = match.away_team_id;
     const competition = match.competition_id;
+
     return {
       id: match.id,
       date: match.match_date,
@@ -45,6 +49,7 @@ export function formatMatchData(matches: any[], isResults = false) {
     };
   });
 }
+
 /**
  * Formats currency amounts
  */
@@ -56,39 +61,25 @@ export function formatCurrency(amount: number) {
     maximumFractionDigits: 0
   }).format(amount);
 }
+
 /**
  * Formats dates in the UK format
  */
-export function formatDate(date: Date | string, includeYear: boolean = true) {
+export function formatDate(date: Date | string) {
   if (!date) return '';
+  
   const d = typeof date === 'string' ? new Date(date) : date;
   return d.toLocaleDateString('en-GB', {
     day: 'numeric',
     month: 'short',
-    year: includeYear ? 'numeric' : undefined
+    year: 'numeric'
   });
 }
+
 /**
  * Truncate text with ellipsis
  */
 export function truncateText(text: string, maxLength: number) {
   if (!text || text.length <= maxLength) return text;
   return `${text.slice(0, maxLength)}...`;
-}
-/**
- * Formats time from 24h to 12h format
- */
-export function formatTime(time: string): string {
-  if (!time) return '';
-  
-  const [hours, minutes] = time.split(':').map(num => parseInt(num, 10));
-  
-  if (isNaN(hours) || isNaN(minutes)) {
-    return time;
-  }
-  
-  const period = hours >= 12 ? 'PM' : 'AM';
-  const hour12 = hours % 12 || 12;
-  
-  return `${hour12}:${minutes.toString().padStart(2, '0')} ${period}`;
 }
