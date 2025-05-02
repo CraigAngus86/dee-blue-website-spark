@@ -40,3 +40,33 @@ export const CardNew = ({
     </div>
   );
 };
+
+// Adding the missing CardNewContent component
+export const CardNewContent = ({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) => {
+  return (
+    <div className={cn('p-4', className)}>
+      {children}
+    </div>
+  );
+};
+
+// Adding the missing CardNewMedia component
+export const CardNewMedia = ({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) => {
+  return (
+    <div className={cn('relative w-full', className)}>
+      {children}
+    </div>
+  );
+};

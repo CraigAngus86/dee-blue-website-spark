@@ -1,60 +1,73 @@
-
-"use client";
-
 import React from 'react';
 import Container from '@/components/ui/layout/Container';
 import Section from '@/components/ui/layout/Section';
-import { Eye, Building, Users, Globe } from 'lucide-react';
+import { CardNew, CardNewContent, CardNewMedia } from '@/components/ui/CardNew';
+import { Sparkles } from 'lucide-react';
+import { useCloudinaryImage } from '@/hooks/useCloudinaryImage';
 
 const WhyPartnerSection = () => {
-  const benefitCards = [
-    {
-      icon: <Eye className="h-8 w-8 text-primary" />,
-      title: "Local Visibility",
-      description: "Connect with our passionate fanbase of over 1,000 match attendees and gain exposure in the Aberdeen community."
-    },
-    {
-      icon: <Building className="h-8 w-8 text-primary" />,
-      title: "Premium Facilities",
-      description: "Showcase your brand at our state-of-the-art Spain Park stadium with modern hospitality spaces."
-    },
-    {
-      icon: <Users className="h-8 w-8 text-primary" />,
-      title: "Community Engagement",
-      description: "Associate with a club deeply rooted in the community, supporting local initiatives and youth development."
-    },
-    {
-      icon: <Globe className="h-8 w-8 text-primary" />,
-      title: "Digital Presence",
-      description: "Reach over 5,000 weekly visitors through our website and active social media channels."
-    },
-  ];
-
   return (
-    <Section background="white" spacing="md">
+    <Section 
+      id="why-partner" 
+      background="primary" 
+      spacing="lg"
+    >
       <Container>
-        <div className="text-center mb-6">
-          <h2 className="text-2xl md:text-3xl font-bold text-primary font-montserrat">
-            Why Partner With Banks o' Dee FC
+        <div className="text-center max-w-3xl mx-auto mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 font-montserrat">
+            Why Partner with Banks o' Dee FC?
           </h2>
-          <p className="text-base max-w-3xl mx-auto mt-3 text-gray-700">
-            Partnering with Banks o' Dee FC offers excellent exposure for your business
-            through one of Aberdeen's most progressive football clubs, connecting you with
-            a passionate community of supporters.
+          <p className="text-lg md:text-xl text-white/90 font-inter">
+            Unlock unparalleled opportunities by partnering with a club at the heart of the community.
           </p>
         </div>
+        
+        {/* Change "white" to "light" to fix the type error */}
+        <Section background="light" spacing="md" className="rounded-lg">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <CardNew elevation="md" hoverEffect>
+              <CardNewContent>
+                <div className="flex items-center space-x-3 mb-3">
+                  <Sparkles className="text-primary" size={24} />
+                  <h3 className="text-xl font-semibold text-gray-800 font-montserrat">
+                    Community Engagement
+                  </h3>
+                </div>
+                <p className="text-gray-600">
+                  Connect with a passionate local fanbase and make a real impact in the community.
+                </p>
+              </CardNewContent>
+            </CardNew>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
-          {benefitCards.map((card, index) => (
-            <div key={index} className="bg-light-gray rounded-lg p-6 flex flex-col items-center text-center transition-transform hover:transform hover:scale-105">
-              <div className="bg-primary/10 p-4 rounded-full mb-4">
-                {card.icon}
-              </div>
-              <h3 className="text-lg font-bold mb-2 text-primary font-montserrat">{card.title}</h3>
-              <p className="text-sm text-gray-600">{card.description}</p>
-            </div>
-          ))}
-        </div>
+            <CardNew elevation="md" hoverEffect>
+              <CardNewContent>
+                <div className="flex items-center space-x-3 mb-3">
+                  <Sparkles className="text-primary" size={24} />
+                  <h3 className="text-xl font-semibold text-gray-800 font-montserrat">
+                    Extensive Brand Exposure
+                  </h3>
+                </div>
+                <p className="text-gray-600">
+                  Showcase your brand to a wide audience through various channels and promotional activities.
+                </p>
+              </CardNewContent>
+            </CardNew>
+
+            <CardNew elevation="md" hoverEffect>
+              <CardNewContent>
+                <div className="flex items-center space-x-3 mb-3">
+                  <Sparkles className="text-primary" size={24} />
+                  <h3 className="text-xl font-semibold text-gray-800 font-montserrat">
+                    Bespoke Partnership Packages
+                  </h3>
+                </div>
+                <p className="text-gray-600">
+                  Tailored solutions to meet your specific business objectives and marketing goals.
+                </p>
+              </CardNewContent>
+            </CardNew>
+          </div>
+        </Section>
       </Container>
     </Section>
   );
