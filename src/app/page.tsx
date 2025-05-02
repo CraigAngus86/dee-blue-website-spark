@@ -1,6 +1,6 @@
-
 import { Metadata } from "next";
-import HeroSection from "@/components/ui/hero/HeroSection";
+import { getHeroSlides } from "@/lib/sanity/queries/heroSlides";
+import HeroSection from "@/components/ui/home/HeroSection";
 import OverlappingNewsCards from "@/components/ui/sections/OverlappingNewsCards";
 import Section from "@/components/ui/layout/Section";
 import FanZoneSection from "@/components/ui/sections/FanZoneSection";
@@ -198,9 +198,11 @@ async function getFeaturedPlayers() {
 
 export default async function HomePage() {
   try {
-    // Fetch all data in parallel
+    // Fetch hero slides separately from other data
+    const heroSlides = await getHeroSlides();
+    
+    // Fetch all other data in parallel
     const [
-      featuredNewsArticle, 
       recentNews, 
       matches, 
       leagueTable,
@@ -208,7 +210,6 @@ export default async function HomePage() {
       fanOfMonth,
       featuredPlayers
     ] = await Promise.all([
-      getFeaturedNewsArticle(),
       getRecentNews(),
       getMatches(),
       getLeagueTable(),
@@ -226,14 +227,7 @@ export default async function HomePage() {
     return (
       <div className="min-h-screen flex flex-col" style={cardShadowStyle}>
         {/* Hero Section */}
-        {featuredNewsArticle && (
-          <HeroSection
-            title={featuredNewsArticle.title}
-            category={featuredNewsArticle.category || "CLUB NEWS"}
-            timestamp={new Date(featuredNewsArticle.publishedAt).toLocaleString()}
-            backgroundImage={featuredNewsArticle.mainImage}
-          />
-        )}
+        <HeroSection slides={heroSlides} />
         
         {/* News Cards Section */}
         <div className="py-12">
