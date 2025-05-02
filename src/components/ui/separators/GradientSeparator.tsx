@@ -1,36 +1,15 @@
 
 import React from 'react';
-import { cn } from '@/lib/utils';
 
-interface GradientSeparatorProps {
+type GradientSeparatorProps = {
   className?: string;
-  height?: string;
-  colors?: {
-    from: string;
-    via?: string;
-    to: string;
-  };
-}
+};
 
-const GradientSeparator: React.FC<GradientSeparatorProps> = ({
-  className,
-  height = '8px',
-  colors = {
-    from: 'from-primary',
-    via: 'via-primary-light',
-    to: 'to-accent',
-  },
-}) => {
+const GradientSeparator = ({ className = "" }: GradientSeparatorProps) => {
   return (
     <div 
-      className={cn(
-        "w-full bg-gradient-to-r",
-        colors.from,
-        colors.via,
-        colors.to,
-        className
-      )}
-      style={{ height }}
+      className={`h-1 w-full bg-gradient-to-r from-primary via-accent to-primary ${className}`}
+      aria-hidden="true"
     />
   );
 };

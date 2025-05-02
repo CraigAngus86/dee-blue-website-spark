@@ -11,7 +11,7 @@ import PatternOverlay from "@/components/ui/backgrounds/PatternOverlay";
 import MatchCenter from "@/components/ui/sections/MatchCenter";
 import PlayersSection from "@/components/ui/sections/PlayersSection";
 import { fetchSanityData } from "@/lib/sanity/client";
-import { supabase } from "@/lib/supabase/client"; // Updated to use the correct path
+import { supabase } from "@/lib/supabase/client";
 
 export const metadata: Metadata = {
   title: "Home | Banks o' Dee FC",
@@ -68,7 +68,7 @@ async function getMatches() {
   
   try {
     // Fetch upcoming matches with explicit relationship references
-    let { data: upcomingMatches, error: upcomingError } = await supabase
+    const { data: upcomingMatches, error: upcomingError } = await supabase
       .from("match")
       .select(`
         id, match_date, match_time, venue, status, ticketco_event_id, ticket_link,
@@ -85,15 +85,8 @@ async function getMatches() {
       throw upcomingError;
     }
 
-    // Validate upcoming matches data shape
-    if (!upcomingMatches || !Array.isArray(upcomingMatches)) {
-      console.warn("Upcoming matches data is not in expected format:", upcomingMatches);
-      // Return empty array as fallback
-      upcomingMatches = [];
-    }
-
     // Fetch recent results with explicit relationship references
-    let { data: recentMatches, error: recentError } = await supabase
+    const { data: recentMatches, error: recentError } = await supabase
       .from("match")
       .select(`
         id, match_date, match_time, venue, status, home_score, away_score, match_report_link,
@@ -108,13 +101,6 @@ async function getMatches() {
     if (recentError) {
       console.error("Error fetching recent matches:", recentError.message, recentError.details);
       throw recentError;
-    }
-
-    // Validate recent matches data shape
-    if (!recentMatches || !Array.isArray(recentMatches)) {
-      console.warn("Recent matches data is not in expected format:", recentMatches);
-      // Return empty array as fallback
-      recentMatches = [];
     }
 
     return {
@@ -141,13 +127,7 @@ async function getLeagueTable() {
       throw error;
     }
 
-    // Validate league table data shape
-    if (!leagueTable || !Array.isArray(leagueTable)) {
-      console.warn("League table data is not in expected format:", leagueTable);
-      return [];
-    }
-
-    return leagueTable;
+    return leagueTable || [];
   } catch (error) {
     console.error("Error fetching league table:", error);
     return [];
@@ -167,13 +147,7 @@ async function getSponsors() {
       throw error;
     }
 
-    // Validate sponsors data shape
-    if (!sponsors || !Array.isArray(sponsors)) {
-      console.warn("Sponsors data is not in expected format:", sponsors);
-      return [];
-    }
-
-    return sponsors;
+    return sponsors || [];
   } catch (error) {
     console.error("Error fetching sponsors:", error);
     return [];
@@ -191,12 +165,6 @@ async function getFanOfMonth() {
     if (error && error.code !== 'PGRST116') {
       console.error("Error fetching fan of the month:", error.message, error.details);
       throw error;
-    }
-
-    // Validate fan of month data shape
-    if (fanOfMonth && typeof fanOfMonth !== 'object') {
-      console.warn("Fan of month data is not in expected format:", fanOfMonth);
-      return null;
     }
 
     return fanOfMonth;
@@ -221,30 +189,10 @@ async function getFeaturedPlayers() {
       throw error;
     }
 
-    // Validate players data shape
-    if (!players || !Array.isArray(players)) {
-      console.warn("Players data is not in expected format:", players);
-      return [];
-    }
-
-    return players;
+    return players || [];
   } catch (error) {
     console.error("Error fetching players:", error);
     return [];
-  }
-}
-
-// Enhanced data transformation utility
-export function safelyTransformData(data: any, transformFn: Function, fallback: any) {
-  try {
-    if (!data) {
-      console.warn("No data provided to transform");
-      return fallback;
-    }
-    return transformFn(data);
-  } catch (error) {
-    console.error("Error transforming data:", error, data);
-    return fallback;
   }
 }
 
