@@ -41,7 +41,7 @@ export const CardNew = ({
   );
 };
 
-// Adding the missing CardNewContent component
+// CardNewContent component
 export const CardNewContent = ({
   children,
   className,
@@ -56,16 +56,26 @@ export const CardNewContent = ({
   );
 };
 
-// Adding the missing CardNewMedia component
+// CardNewMedia component with aspectRatio support
 export const CardNewMedia = ({
   children,
   className,
+  aspectRatio = "16/9",
 }: {
   children: React.ReactNode;
   className?: string;
+  aspectRatio?: string;
 }) => {
+  const aspectRatioClasses: Record<string, string> = {
+    "16/9": "aspect-video",
+    "4/3": "aspect-4/3",
+    "1/1": "aspect-square",
+  };
+
+  const aspectClass = aspectRatioClasses[aspectRatio] || '';
+  
   return (
-    <div className={cn('relative w-full', className)}>
+    <div className={cn('relative w-full', aspectClass, className)}>
       {children}
     </div>
   );

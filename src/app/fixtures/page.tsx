@@ -2,168 +2,189 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import FixturesList from '@/components/ui/match/FixturesList';
-import ResultsList from '@/components/ui/match/ResultsList';
+import { format, parseISO } from 'date-fns';
+import { fixtures } from '@/lib/fixtures-data';
+import { MatchCardNew } from '@/components/ui/image/MatchCardNew';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { SelectCompat } from '@/components/ui/select';
 import LeagueTable from '@/components/ui/match/LeagueTable';
-import Container from '@/components/ui/layout/Container';
-import { 
-  getAvailableSeasons, 
-  getAvailableCompetitions, 
-  getAvailableMonths 
-} from '@/lib/fixtures-data';
+
+// Mock data for the league table
+const mockLeagueData = [
+  { position: 1, team: 'Banks o\' Dee', played: 10, won: 8, drawn: 1, lost: 1, goalsFor: 24, goalsAgainst: 7, goalDifference: 17, points: 25 },
+  { position: 2, team: 'Formartine United', played: 10, won: 7, drawn: 2, lost: 1, goalsFor: 22, goalsAgainst: 8, goalDifference: 14, points: 23 },
+  { position: 3, team: 'Buckie Thistle', played: 10, won: 7, drawn: 1, lost: 2, goalsFor: 19, goalsAgainst: 9, goalDifference: 10, points: 22 },
+  { position: 4, team: 'Brechin City', played: 10, won: 6, drawn: 2, lost: 2, goalsFor: 18, goalsAgainst: 10, goalDifference: 8, points: 20 },
+  { position: 5, team: 'Fraserburgh', played: 10, won: 5, drawn: 3, lost: 2, goalsFor: 15, goalsAgainst: 10, goalDifference: 5, points: 18 },
+];
+
+// Get unique competitions from fixtures
+const competitions = Array.from(new Set(fixtures.map(fixture => fixture.competition)));
+
+// Get unique seasons - normally would come from API
+const seasons = ['2023/24', '2022/23', '2021/22'];
 
 export default function FixturesPage() {
-  const [selectedSeason, setSelectedSeason] = useState<string>('2024/25');
-  const [selectedMonth, setSelectedMonth] = useState<string>('all');
-  const [selectedCompetitions, setSelectedCompetitions] = useState<string[]>([]);
-  const [selectedTab, setSelectedTab] = useState<string>('fixtures');
+  const [activeTab, setActiveTab] = useState<string>('fixtures');
+  const [selectedCompetition, setSelectedCompetition] = useState<string>('All');
+  const [selectedSeason, setSelectedSeason] = useState<string>(seasons[0]);
+  const [selectedMonth, setSelectedMonth] = useState<string>('All');
   
-  const seasons = getAvailableSeasons();
-  const competitions = getAvailableCompetitions();
-  const months = getAvailableMonths();
-
-  const filterProps = {
-    selectedCompetitions,
-    selectedMonth,
-    selectedSeason
-  };
+  // Filter fixtures by competition if not 'All'
+  const filteredFixtures = selectedCompetition === 'All' 
+    ? fixtures
+    : fixtures.filter(fixture => fixture.competition === selectedCompetition);
+  
+  // Split into upcoming and past matches
+  const now = new Date();
+  const upcomingFixtures = filteredFixtures.filter(fixture => 
+    new Date(`${fixture.date}T${fixture.time}`) > now).sort((a, b) => 
+    new Date(a.date).getTime() - new Date(b.date).getTime());
+  
+  const pastFixtures = filteredFixtures.filter(fixture => 
+    new Date(`${fixture.date}T${fixture.time}`) <= now && fixture.result).sort((a, b) => 
+    new Date(b.date).getTime() - new Date(a.date).getTime());
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <main className="flex-grow">
-        <div className="relative h-[40vh] min-h-[300px] w-full bg-[#00105A]">
-          <div 
-            className="absolute inset-0 bg-cover bg-center z-0" 
-            style={{ 
-              backgroundImage: `url(/assets/images/stadium/Spain Park.jpg)`,
-              backgroundPosition: "center 30%"
-            }}
-          >
-            <div className="absolute inset-0 bg-[#00105A]/60 z-10"></div>
+    <main className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-6">Fixtures & Results</h1>
+      
+      <Tabs defaultValue="fixtures" value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="mb-6">
+          <TabsTrigger value="fixtures" className="px-6">Fixtures</TabsTrigger>
+          <TabsTrigger value="results" className="px-6">Results</TabsTrigger>
+          <TabsTrigger value="table" className="px-6">League Table</TabsTrigger>
+        </TabsList>
+        
+        {/* Fixtures Tab */}
+        <TabsContent value="fixtures" className="space-y-6">
+          <div className="flex flex-col md:flex-row gap-4 mb-6">
+            <div className="w-full md:w-1/3">
+              <label className="block text-sm font-medium mb-1">Competition</label>
+              <SelectCompat
+                value={selectedCompetition}
+                onValueChange={(value) => setSelectedCompetition(value)}
+                className="w-full"
+              >
+                <option value="All">All Competitions</option>
+                {competitions.map(comp => (
+                  <option key={comp} value={comp}>{comp}</option>
+                ))}
+              </SelectCompat>
+            </div>
+            
+            <div className="w-full md:w-1/3">
+              <label className="block text-sm font-medium mb-1">Season</label>
+              <SelectCompat
+                value={selectedSeason}
+                onValueChange={(val) => setSelectedSeason(val)}
+                className="w-full"
+              >
+                {seasons.map(season => (
+                  <option key={season} value={season}>{season}</option>
+                ))}
+              </SelectCompat>
+            </div>
           </div>
           
-          <div className="relative z-20 h-full flex flex-col justify-center items-center text-center px-4 max-w-4xl mx-auto">
-            <h1 className="text-4xl md:text-5xl font-montserrat font-bold text-white mb-4">
-              Match Centre
-            </h1>
-            <p className="text-lg md:text-xl text-white/90 max-w-2xl font-inter">
-              View fixtures, results and league standings
-            </p>
+          {upcomingFixtures.length > 0 ? (
+            <div className="grid gap-6">
+              {upcomingFixtures.map(fixture => (
+                <MatchCardNew
+                  key={fixture.id}
+                  competition={fixture.competition}
+                  date={fixture.date}
+                  time={fixture.time}
+                  venue={fixture.venue}
+                  home={fixture.home}
+                  away={fixture.away}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12 bg-gray-50 rounded-lg">
+              <p className="text-lg text-gray-600">No upcoming fixtures found</p>
+            </div>
+          )}
+        </TabsContent>
+        
+        {/* Results Tab */}
+        <TabsContent value="results" className="space-y-6">
+          <div className="flex flex-col md:flex-row gap-4 mb-6">
+            <div className="w-full md:w-1/3">
+              <label className="block text-sm font-medium mb-1">Competition</label>
+              <SelectCompat
+                value={selectedCompetition}
+                onValueChange={(value) => setSelectedCompetition(value)}
+                className="w-full"
+              >
+                <option value="All">All Competitions</option>
+                {competitions.map(comp => (
+                  <option key={comp} value={comp}>{comp}</option>
+                ))}
+              </SelectCompat>
+            </div>
+            
+            <div className="w-full md:w-1/3">
+              <label className="block text-sm font-medium mb-1">Month</label>
+              <SelectCompat
+                value={selectedMonth}
+                onValueChange={(value) => setSelectedMonth(value)}
+                className="w-full"
+              >
+                <option value="All">All Months</option>
+                <option value="Aug">August</option>
+                <option value="Sep">September</option>
+                <option value="Oct">October</option>
+                {/* Add more months as needed */}
+              </SelectCompat>
+            </div>
           </div>
-        </div>
-
-        <div className="bg-[#F4F7FB] py-8">
-          <Container>
-            <Tabs 
-              defaultValue="fixtures" 
-              className="w-full"
-              onValueChange={(value) => {
-                setSelectedTab(value);
-              }}
-            >
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-                <TabsList className="bg-white border flex justify-start p-1">
-                  <TabsTrigger 
-                    value="fixtures"
-                    className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-white"
-                  >
-                    Fixtures
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="results"
-                    className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-white"
-                  >
-                    Results
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="table"
-                    className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-white"
-                  >
-                    League Table
-                  </TabsTrigger>
-                </TabsList>
-
-                <div className="flex flex-wrap gap-2">
-                  <Select
-                    value={selectedSeason}
-                    onValueChange={setSelectedSeason}
-                  >
-                    <SelectTrigger className="w-[140px]">
-                      <SelectValue placeholder="Season" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {seasons.map((season) => (
-                        <SelectItem key={season} value={season}>
-                          {season}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-
-                  <Select
-                    value={selectedMonth}
-                    onValueChange={(val) => {
-                      setSelectedMonth(val);
-                    }}
-                  >
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="All Months" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem key="all-months" value="all">All Months</SelectItem>
-                      {months.filter(m => m !== 'all').map((month) => (
-                        <SelectItem key={month} value={month}>
-                          {month}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-
-                  <Select
-                    value={selectedCompetitions[0] || 'all'}
-                    onValueChange={(value) => {
-                      const newValue = value !== 'all' ? [value] : [];
-                      setSelectedCompetitions(newValue);
-                    }}
-                  >
-                    <SelectTrigger className="w-[220px]">
-                      <SelectValue placeholder="All Competitions" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem key="all-competitions" value="all">All Competitions</SelectItem>
-                      {competitions.map((competition) => (
-                        <SelectItem key={competition} value={competition}>
-                          {competition}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <TabsContent value="fixtures" className="mt-6">
-                <FixturesList {...filterProps} />
-              </TabsContent>
-
-              <TabsContent value="results" className="mt-6">
-                <ResultsList {...filterProps} />
-              </TabsContent>
-
-              <TabsContent value="table" className="mt-6">
-                <LeagueTable selectedSeason={selectedSeason} />
-              </TabsContent>
-            </Tabs>
-          </Container>
-        </div>
-      </main>
-    </div>
+          
+          {pastFixtures.length > 0 ? (
+            <div className="grid gap-6">
+              {pastFixtures.map(fixture => (
+                <MatchCardNew
+                  key={fixture.id}
+                  competition={fixture.competition}
+                  date={fixture.date}
+                  time={fixture.time}
+                  venue={fixture.venue}
+                  home={fixture.home}
+                  away={fixture.away}
+                  result={fixture.result}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12 bg-gray-50 rounded-lg">
+              <p className="text-lg text-gray-600">No past results found</p>
+            </div>
+          )}
+        </TabsContent>
+        
+        {/* League Table Tab */}
+        <TabsContent value="table" className="space-y-6">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-bold">Highland League Table</h2>
+            <div className="w-40">
+              <SelectCompat
+                value={selectedSeason}
+                onValueChange={(value) => setSelectedSeason(value)}
+              >
+                {seasons.map(season => (
+                  <option key={season} value={season}>{season}</option>
+                ))}
+              </SelectCompat>
+            </div>
+          </div>
+          
+          <LeagueTable
+            selectedSeason={selectedSeason}
+            data={mockLeagueData}
+          />
+        </TabsContent>
+      </Tabs>
+    </main>
   );
 }

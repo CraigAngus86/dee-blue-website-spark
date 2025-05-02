@@ -1,144 +1,98 @@
 
-"use client";
-
 import React from 'react';
-import { Match } from '@/types/match';
 import Image from 'next/image';
-import { Clock, MapPin } from 'lucide-react';
+import { format, parseISO } from 'date-fns';
+import { Separator } from '@/components/ui/separator';
+import { Team } from '@/lib/fixtures-data';
 
-interface MatchCardNewProps {
-  match: Match;
-  variant: 'past' | 'future' | 'next';
-  className?: string;
+interface MatchCardProps {
+  competition: string;
+  date: string;
+  time: string;
+  venue: string;
+  home: Team;
+  away: Team;
+  result?: {
+    homeScore: number;
+    awayScore: number;
+    matchReportLink?: string;
+  };
 }
 
-const formatDate = (dateStr: string) => {
-  const date = new Date(dateStr);
-  return date.toLocaleDateString('en-GB', {
-    weekday: 'short',
-    day: 'numeric',
-    month: 'short'
-  });
-};
-
-const CompetitorLogo = ({ name, size = "md", className = "" }) => {
-  // Simplified version of CompetitorLogo component
-  const getTeamImage = () => {
-    // Convert team name to a filename format (simple version)
-    const normalizedName = name.replace(/[^\w\s]/g, '').replace(/\s+/g, '');
-    
-    // Try to find the team logo or use a placeholder
-    try {
-      return `/assets/images/competitors/${normalizedName}.png`;
-    } catch (e) {
-      return `/assets/images/competitors/placeholder.png`;
-    }
-  };
-
-  return (
-    <div className={`relative ${className}`}>
-      <div className="relative w-full h-full">
-        <Image
-          src={getTeamImage()}
-          alt={name}
-          width={size === "sm" ? 48 : 64}
-          height={size === "sm" ? 48 : 64}
-          className="object-contain"
-          onError={(e) => {
-            // Fallback for missing images - show a placeholder or text
-            e.currentTarget.src = `/assets/images/logos/BOD_Logo_Navy_square.png`;
-          }}
-        />
-      </div>
+export const TeamDisplay = ({ team, isHome = false }: { team: Team, isHome?: boolean }) => (
+  <div className={`flex ${isHome ? 'flex-row' : 'flex-row-reverse'} items-center gap-3`}>
+    <div className="w-10 h-10 relative">
+      <Image 
+        src={team.logo} 
+        alt={`${team.name} logo`} 
+        fill
+        className="object-contain"
+      />
     </div>
-  );
-};
+    <span className="font-semibold">{team.name}</span>
+  </div>
+);
 
-const MatchCardNew: React.FC<MatchCardNewProps> = ({ match, variant, className = "" }) => {
-  const isPast = match.isCompleted || variant === 'past';
-  const isNext = variant === 'next';
-  const isMobile = false; // In a real app, this would use a hook like useIsMobile()
-
+export const MatchCardNew = ({ 
+  competition, 
+  date, 
+  time, 
+  venue, 
+  home, 
+  away, 
+  result 
+}: MatchCardProps) => {
+  const isMatchOver = Boolean(result);
+  const dateObj = parseISO(date);
+  
   return (
-    <div 
-      className={`relative ${className} bg-white rounded-lg shadow overflow-hidden transition-all hover:shadow-md`}
-    >
-      <div className={`p-3 text-center font-semibold text-sm uppercase ${isNext ? 'bg-blue-900 text-white' : 'bg-gray-100 text-gray-700'}`}>
-        {isPast ? 'FINAL RESULT' : isNext ? 'NEXT MATCH' : 'UPCOMING MATCH'}
+    <div className="bg-white rounded-lg shadow-md p-4">
+      <div className="text-sm text-gray-600 mb-2">
+        {competition} • {format(dateObj, 'dd MMM yyyy')} • {time} • {venue}
       </div>
       
-      <div className="p-3 text-center text-xs font-medium text-gray-500 uppercase">
-        {match.competition}
-      </div>
-      
-      <div className="flex items-center justify-between px-3 sm:px-6 py-4">
-        <div className="flex flex-col items-center text-center w-[35%] sm:w-5/12">
-          <CompetitorLogo
-            name={match.homeTeam}
-            size={isMobile ? "sm" : "md"}
-            className="w-12 h-12 sm:w-16 sm:h-16"
-          />
-          <span className={`mt-2 text-xs sm:text-sm ${match.homeTeam.includes("Banks o' Dee") ? "font-bold" : ""}`}>
-            {match.homeTeam}
-          </span>
+      <div className="flex justify-between items-center my-4">
+        <div className="flex-1">
+          <TeamDisplay team={home} isHome={true} />
         </div>
         
-        <div className="text-center w-[30%] sm:w-2/12">
-          {isPast && match.result ? (
-            <div className="flex items-center justify-center space-x-2">
-              <div className="text-lg sm:text-2xl font-bold">
-                {match.result.homeScore}
-              </div>
-              <div className="text-sm sm:text-lg text-gray-400">-</div>
-              <div className="text-lg sm:text-2xl font-bold">
-                {match.result.awayScore}
-              </div>
+        <div className="mx-4 text-center">
+          {isMatchOver ? (
+            <div className="flex items-center justify-center">
+              <span className="text-2xl font-bold">{result?.homeScore}</span>
+              <span className="mx-2 text-gray-400">-</span>
+              <span className="text-2xl font-bold">{result?.awayScore}</span>
             </div>
           ) : (
-            <div className="text-base sm:text-xl font-bold text-gray-700">
-              VS
-            </div>
+            <div className="text-lg font-semibold">VS</div>
           )}
         </div>
         
-        <div className="flex flex-col items-center text-center w-[35%] sm:w-5/12">
-          <CompetitorLogo
-            name={match.awayTeam}
-            size={isMobile ? "sm" : "md"}
-            className="w-12 h-12 sm:w-16 sm:h-16"
-          />
-          <span className={`mt-2 text-xs sm:text-sm ${match.awayTeam.includes("Banks o' Dee") ? "font-bold" : ""}`}>
-            {match.awayTeam}
-          </span>
+        <div className="flex-1 text-right">
+          <TeamDisplay team={away} isHome={false} />
         </div>
       </div>
       
-      <div className="p-3 border-t border-gray-100">
-        <div className="flex items-center justify-center mb-1">
-          <Clock className="w-3 h-3 sm:w-4 sm:h-4 mr-1 text-gray-500" />
-          <span className="text-xs sm:text-sm text-gray-600">
-            {formatDate(match.date)} • {match.time}
-          </span>
+      <Separator className="my-3" />
+      
+      <div className="flex justify-between items-center">
+        <div className="text-sm">
+          {isMatchOver ? (
+            <span className="text-green-600 font-medium">Final Result</span>
+          ) : (
+            <span className="text-blue-600 font-medium">Upcoming Match</span>
+          )}
         </div>
         
-        <div className="flex items-center justify-center">
-          <MapPin className="w-3 h-3 sm:w-4 sm:h-4 mr-1 text-gray-500" />
-          <span className="text-xs sm:text-sm text-gray-600">{match.venue}</span>
-        </div>
-      </div>
-      
-      {isNext && match.ticketLink && (
-        <div className="p-3 text-center border-t border-gray-100 bg-gray-50">
+        {isMatchOver && result?.matchReportLink && (
           <a 
-            href={match.ticketLink} 
-            className="text-sm text-primary font-medium hover:underline"
+            href={result.matchReportLink} 
+            className="text-sm text-blue-600 hover:text-blue-800 underline"
           >
-            MATCH DETAILS
+            Match Report
           </a>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };
-
-export default MatchCardNew;

@@ -1,79 +1,72 @@
 
-"use client";
+import { useState, useEffect } from 'react';
 
-import { useMemo } from "react";
-import { Cloudinary } from "@cloudinary/url-gen";
-import { CloudinaryImage } from "@cloudinary/url-gen/assets/CloudinaryImage";
-
-// Initialize the Cloudinary instance
-const cld = new Cloudinary({
-  cloud: {
-    cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "dlkpaw2a0",
-  },
-  url: {
-    secure: true, // Force https
-  },
-});
-
-interface CloudinaryImageOptions {
-  width?: number;
-  height?: number;
-  crop?: "fill" | "thumb" | "scale" | "fit";
-  format?: "auto" | "webp" | "jpg" | "png";
-  quality?: number;
-  aspectRatio?: number;
-  focus?: "auto" | "faces" | "center";
+// Simplified interface for CloudinaryImage
+interface CloudinaryImage {
+  url: string;
+  getWidth: () => number | null;
+  getHeight: () => number | null;
+  getCrop: () => string | null;
 }
 
-/**
- * A hook to generate optimized Cloudinary image URLs
- * Client-side only as it uses browser-based transformations
- * 
- * @param publicId The Cloudinary public ID of the image
- * @param options Transformation options
- * @returns The transformed image URL and CloudinaryImage object
- */
-export function useCloudinaryImage(publicId: string, options: CloudinaryImageOptions = {}) {
-  const imageInstance = useMemo(() => {
-    if (!publicId) return null;
-    
-    // Create a CloudinaryImage instance
-    const cloudinaryImage = cld.image(publicId);
-    
-    // Apply transformations
-    // We'll apply these manually without the transform helper for now
-    if (options.width) {
-      cloudinaryImage.resize().width(options.width);
+// Simplified CloudinaryService
+class CloudinaryService {
+  createImage(url: string): CloudinaryImage {
+    return {
+      url,
+      getWidth: () => null,
+      getHeight: () => null,
+      getCrop: () => null,
+    };
+  }
+}
+
+// Singleton instance
+const cloudinaryService = new CloudinaryService();
+
+const useCloudinaryImage = (imageUrl: string) => {
+  const [image, setImage] = useState<CloudinaryImage | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    if (!imageUrl) {
+      setLoading(false);
+      setImage(null);
+      return;
     }
-    
-    if (options.height) {
-      cloudinaryImage.resize().height(options.height);
+
+    try {
+      const cloudinaryImage = cloudinaryService.createImage(imageUrl);
+      setImage(cloudinaryImage);
+      setLoading(false);
+    } catch (err) {
+      console.error('Error creating Cloudinary image:', err);
+      setError(err instanceof Error ? err : new Error('Unknown error occurred'));
+      setLoading(false);
     }
-    
-    if (options.crop) {
-      cloudinaryImage.resize().crop(options.crop);
-    }
-    
-    if (options.format) {
-      cloudinaryImage.format(options.format);
-    }
-    
-    if (options.quality) {
-      cloudinaryImage.quality(options.quality);
-    }
-    
-    return cloudinaryImage;
-  }, [publicId, options]);
-  
-  // Generate the URL
-  const imageUrl = useMemo(() => {
-    return imageInstance ? imageInstance.toURL() : "";
-  }, [imageInstance]);
-  
-  return { 
-    imageUrl, 
-    imageInstance
+  }, [imageUrl]);
+
+  const getWidth = () => {
+    return image?.getWidth() || 0;
   };
-}
+
+  const getHeight = () => {
+    return image?.getHeight() || 0;
+  };
+
+  const getCrop = () => {
+    return image?.getCrop() || 'fill';
+  };
+
+  return {
+    image,
+    loading,
+    error,
+    getWidth,
+    getHeight,
+    getCrop,
+  };
+};
 
 export default useCloudinaryImage;
