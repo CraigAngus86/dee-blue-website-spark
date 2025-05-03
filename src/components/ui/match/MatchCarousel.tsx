@@ -10,13 +10,17 @@ import {
 import { MatchCardNew } from '@/components/ui/image/MatchCardNew';
 import { Fixture } from '@/lib/fixtures-data';
 
-interface MatchCarouselProps {
+export interface MatchCarouselProps {
   fixtures: Fixture[];
   title?: string;
+  matches?: any[]; // Added for backward compatibility
 }
 
-const MatchCarousel: React.FC<MatchCarouselProps> = ({ fixtures, title }) => {
-  if (!fixtures || fixtures.length === 0) {
+const MatchCarousel: React.FC<MatchCarouselProps> = ({ fixtures, matches, title }) => {
+  // Support both fixtures and matches props for backward compatibility
+  const displayFixtures = fixtures || matches || [];
+
+  if (!displayFixtures || displayFixtures.length === 0) {
     return (
       <div className="text-center py-8">
         <p className="text-muted-foreground">No fixtures to display</p>
@@ -32,7 +36,7 @@ const MatchCarousel: React.FC<MatchCarouselProps> = ({ fixtures, title }) => {
       
       <Carousel className="w-full">
         <CarouselContent>
-          {fixtures.map((fixture) => (
+          {displayFixtures.map((fixture) => (
             <CarouselItem key={fixture.id} className="md:basis-1/2 lg:basis-1/3">
               <div className="p-2">
                 <MatchCardNew

@@ -1,74 +1,78 @@
 
 "use client";
 
-import React, { useState } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import MatchCarousel from "@/components/ui/match/MatchCarousel";
-import LeagueTable from "@/components/ui/match/LeagueTable";
-import SectionHeader from "@/components/ui/sections/SectionHeader";
-import { formatMatchData } from "@/lib/utils";
-import { Match } from "@/types/match";
+import React, { useState } from 'react';
+import { format } from 'date-fns';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import MatchCarousel from '@/components/ui/match/MatchCarousel';
+import { Match } from '@/types/match';
+import Heading from '@/components/ui/typography/Heading';
+import Text from '@/components/ui/typography/Text';
 
 interface MatchCenterProps {
-  upcomingMatches: any[];
-  recentResults: any[];
-  leagueTable: any[];
+  upcomingMatches: Match[];
+  recentResults: Match[];
+  highlighedMatch?: Match;
 }
 
-/**
- * Match center component with tabs for fixtures, results, and league table
- * Must be a client component because it uses React state and interactive tabs
- */
-const MatchCenter: React.FC<MatchCenterProps> = ({ 
+const MatchCenter: React.FC<MatchCenterProps> = ({
   upcomingMatches,
   recentResults,
-  leagueTable
+  highlighedMatch
 }) => {
-  const [tabValue, setTabValue] = useState("fixtures");
-  
-  // Format the match data for the carousel component and cast to Match type
-  const formattedUpcoming = formatMatchData(upcomingMatches, false) as unknown as Match[];
-  const formattedResults = formatMatchData(recentResults, true) as unknown as Match[];
-  
+  const [activeTab, setActiveTab] = useState("fixtures");
+
+  // Format date for display (can be customized as needed)
+  const formatMatchDate = (dateString: string): string => {
+    try {
+      const date = new Date(dateString);
+      return format(date, 'EEEE, MMMM d, yyyy');
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return dateString;
+    }
+  };
+
   return (
-    <div>
-      <SectionHeader
-        title="Match Center"
-        subtitle="Upcoming fixtures, recent results and league standings"
-      />
-      
-      <Tabs 
-        defaultValue="fixtures" 
-        className="w-full"
-        value={tabValue}
-        onValueChange={setTabValue}
-      >
-        <TabsList className="mb-6">
-          <TabsTrigger value="fixtures">Fixtures</TabsTrigger>
-          <TabsTrigger value="results">Results</TabsTrigger>
-          <TabsTrigger value="table">League Table</TabsTrigger>
-        </TabsList>
+    <section className="py-12 bg-gray-50">
+      <div className="container mx-auto px-4">
+        {/* Section header */}
+        <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-8">
+          <div>
+            <Heading level={2}>Match Center</Heading>
+            <Text color="muted" className="mt-2">
+              Latest fixtures and results for Banks o' Dee FC
+            </Text>
+          </div>
+          
+          {/* Tabs for fixtures/results */}
+          <div className="mt-4 md:mt-0">
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="fixtures">Fixtures</TabsTrigger>
+                <TabsTrigger value="results">Results</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
+        </div>
         
-        <TabsContent value="fixtures" className="animation-fade-in">
+        {/* Fixtures carousel */}
+        {activeTab === "fixtures" && (
           <MatchCarousel 
-            matches={formattedUpcoming}
+            title="Upcoming Fixtures"
+            fixtures={upcomingMatches}
           />
-        </TabsContent>
+        )}
         
-        <TabsContent value="results" className="animation-fade-in">
+        {/* Results carousel */}
+        {activeTab === "results" && (
           <MatchCarousel 
-            matches={formattedResults}
+            title="Recent Results"
+            fixtures={recentResults}
           />
-        </TabsContent>
-        
-        <TabsContent value="table" className="animation-fade-in">
-          <LeagueTable 
-            data={leagueTable} 
-            selectedSeason="2023/24"
-          />
-        </TabsContent>
-      </Tabs>
-    </div>
+        )}
+      </div>
+    </section>
   );
 };
 

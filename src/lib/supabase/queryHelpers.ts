@@ -54,12 +54,14 @@ export async function getById<T>(
   id: string,
   select?: string
 ): Promise<T | null> {
+  const query = supabase
+    .from(table)
+    .select(select || '*')
+    .eq('id', id)
+    .maybeSingle();
+    
   return safeQuery<T | null>(
-    () => supabase
-      .from(table)
-      .select(select || '*')
-      .eq('id', id)
-      .maybeSingle(),
+    async () => await query,
     null,
     `getById(${table}, ${id})`
   );
@@ -117,7 +119,7 @@ export async function getMany<T>(
   }
   
   return safeQuery<T[]>(
-    () => query,
+    async () => await query,
     [] as T[],
     `getMany(${table})`
   );

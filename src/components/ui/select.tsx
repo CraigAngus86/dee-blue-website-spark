@@ -139,12 +139,12 @@ const SelectSeparator = React.forwardRef<
 SelectSeparator.displayName = SelectPrimitive.Separator.displayName;
 
 // Export a non-primitive version for backwards compatibility with the fixtures page
-interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
+interface SelectCompatProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   onValueChange?: (value: string) => void;
   value?: string;
 }
 
-const SelectCompat = React.forwardRef<HTMLSelectElement, SelectProps>(
+const SelectCompat = React.forwardRef<HTMLSelectElement, SelectCompatProps>(
   ({ className, children, value, onValueChange, onChange, ...props }, ref) => {
     // Handle both the native onChange and the custom onValueChange
     const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -181,5 +181,5 @@ export {
   SelectSeparator,
   SelectScrollUpButton,
   SelectScrollDownButton,
-  SelectCompat as SelectPrimitive,
+  SelectCompat,
 };

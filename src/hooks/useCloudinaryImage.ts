@@ -1,72 +1,60 @@
 
 import { useState, useEffect } from 'react';
 
-// Simplified interface for CloudinaryImage
-interface CloudinaryImage {
-  url: string;
-  getWidth: () => number | null;
-  getHeight: () => number | null;
-  getCrop: () => string | null;
+interface CloudinaryImageOptions {
+  width?: number;
+  height?: number;
+  crop?: 'fill' | 'scale' | 'fit' | 'limit' | 'mfit' | 'pad';
+  quality?: number;
+  format?: 'auto' | 'webp' | 'png' | 'jpg';
+  effect?: string;
 }
 
-// Simplified CloudinaryService
-class CloudinaryService {
-  createImage(url: string): CloudinaryImage {
-    return {
-      url,
-      getWidth: () => null,
-      getHeight: () => null,
-      getCrop: () => null,
-    };
-  }
-}
-
-// Singleton instance
-const cloudinaryService = new CloudinaryService();
-
-const useCloudinaryImage = (imageUrl: string) => {
-  const [image, setImage] = useState<CloudinaryImage | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<Error | null>(null);
-
+/**
+ * Hook for transforming Cloudinary image URLs
+ * @param publicId The Cloudinary public ID of the image
+ * @param options Options for image transformation
+ * @returns The transformed Cloudinary URL
+ */
+const useCloudinaryImage = (
+  publicId: string | null | undefined,
+  options: CloudinaryImageOptions = {}
+): string | null => {
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'demo';
+  
   useEffect(() => {
-    if (!imageUrl) {
-      setLoading(false);
-      setImage(null);
+    if (!publicId) {
+      setImageUrl(null);
       return;
     }
-
-    try {
-      const cloudinaryImage = cloudinaryService.createImage(imageUrl);
-      setImage(cloudinaryImage);
-      setLoading(false);
-    } catch (err) {
-      console.error('Error creating Cloudinary image:', err);
-      setError(err instanceof Error ? err : new Error('Unknown error occurred'));
-      setLoading(false);
-    }
-  }, [imageUrl]);
-
-  const getWidth = () => {
-    return image?.getWidth() || 0;
-  };
-
-  const getHeight = () => {
-    return image?.getHeight() || 0;
-  };
-
-  const getCrop = () => {
-    return image?.getCrop() || 'fill';
-  };
-
-  return {
-    image,
-    loading,
-    error,
-    getWidth,
-    getHeight,
-    getCrop,
-  };
+    
+    // Build transformation string
+    const transformations: string[] = [];
+    
+    if (options.width) transformations.push(`w_${options.width}`);
+    if (options.height) transformations.push(`h_${options.height}`);
+    if (options.crop) transformations.push(`c_${options.crop}`);
+    if (options.quality) transformations.push(`q_${options.quality}`);
+    if (options.format) transformations.push(`f_${options.format}`);
+    if (options.effect) transformations.push(`e_${options.effect}`);
+    
+    // Default quality if not specified
+    if (!options.quality) transformations.push('q_auto');
+    
+    // Default format if not specified
+    if (!options.format) transformations.push('f_auto');
+    
+    const transformationString = transformations.length > 0 
+      ? transformations.join(',') + '/'
+      : '';
+    
+    // Construct the URL
+    const url = `https://res.cloudinary.com/${cloudName}/image/upload/${transformationString}${publicId}`;
+    setImageUrl(url);
+  }, [publicId, options, cloudName]);
+  
+  return imageUrl;
 };
 
 export default useCloudinaryImage;

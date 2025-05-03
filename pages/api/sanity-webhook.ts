@@ -59,10 +59,12 @@ function logWebhookEvent(event: any): void {
   // Store webhook events in Supabase for auditing (optional)
   try {
     supabase.from('webhook_logs').insert({
+      event_type: 'sanity_webhook',
       document_id: documentId,
       document_type: documentType,
       operation: operation,
       payload: event,
+      status: 'received',
       processed_at: new Date().toISOString()
     }).then(response => {
       if (response.error) {
