@@ -1,165 +1,81 @@
+
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { Match } from "@/types/match";
 
 /**
- * Merges Tailwind CSS classes
+ * Combines class names using clsx and tailwind-merge
+ * @param inputs Class names to combine
+ * @returns Combined class string
  */
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
 /**
- * Safely transforms data with proper error handling
- * @param data Data to transform
- * @param transformFn Function to transform the data
- * @param fallback Fallback value if transformation fails
- * @returns Transformed data or fallback
+ * Formats a date string to a readable format
+ * @param dateString ISO date string
+ * @param withTime Include time in the output
+ * @returns Formatted date string
  */
-export function safeTransform<T, R>(
-  data: T | null | undefined, 
-  transformFn: (data: T) => R, 
-  fallback: R
-): R {
+export function formatDate(dateString: string, withTime = false): string {
   try {
-    if (data === null || data === undefined) {
-      console.warn("No data provided for transformation");
-      return fallback;
-    }
-    
-    return transformFn(data);
+    const date = new Date(dateString);
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      ...(withTime && { hour: '2-digit', minute: '2-digit' })
+    };
+    return new Intl.DateTimeFormat('en-GB', options).format(date);
   } catch (error) {
-    console.error("Error transforming data:", error, { inputData: data });
-    return fallback;
+    console.error('Error formatting date:', error);
+    return dateString; // Return original if formatting fails
   }
 }
 
 /**
- * Formats match data from Supabase to the format expected by components
- * Enhanced with better error handling
+ * Truncates text to a maximum length
+ * @param text Text to truncate
+ * @param maxLength Maximum length
+ * @returns Truncated text
  */
-export function formatMatchData(matches: any[], isCompleted: boolean = false): Match[] {
-  if (!matches || !Array.isArray(matches)) {
-    console.warn("Invalid matches data provided:", matches);
-    return [];
-  }
-  
+export function truncateText(text: string, maxLength: number): string {
+  if (text.length <= maxLength) return text;
+  return `${text.slice(0, maxLength).trim()}...`;
+}
+
+/**
+ * Validates if a string is a valid URL
+ * @param url URL to validate
+ * @returns Boolean indicating if URL is valid
+ */
+export function isValidUrl(url: string): boolean {
   try {
-    return matches.map(match => {
-      try {
-        // Ensure we have required properties
-        if (!match || !match.match_date || !match.home_team_id || !match.away_team_id) {
-          console.warn("Match is missing required properties:", match);
-          throw new Error("Invalid match data structure");
-        }
-        
-        // Transform match data to expected shape
-        const formattedMatch: Match = {
-          id: match.id,
-          date: match.match_date,
-          time: match.match_time || "",
-          venue: match.venue || "TBC",
-          homeTeam: {
-            id: match.home_team_id?.id || "unknown",
-            name: match.home_team_id?.name || "Unknown Team",
-            logo: match.home_team_id?.logo_url || "",
-          },
-          awayTeam: {
-            id: match.away_team_id?.id || "unknown",
-            name: match.away_team_id?.name || "Unknown Team",
-            logo: match.away_team_id?.logo_url || "",
-          },
-          competition: {
-            id: match.competition_id?.id || "unknown",
-            name: match.competition_id?.name || "Unknown Competition",
-            shortName: match.competition_id?.short_name || "",
-            logo: match.competition_id?.logo_url || "",
-          },
-          ticketLink: match.ticket_link || "",
-          status: match.status || "scheduled",
-          isCompleted: isCompleted
-        };
-        
-        // Add result if this is a completed match
-        if (isCompleted && typeof match.home_score === 'number' && typeof match.away_score === 'number') {
-          formattedMatch.result = {
-            homeScore: match.home_score,
-            awayScore: match.away_score,
-            matchReportLink: match.match_report_link || "",
-          };
-        }
-        
-        return formattedMatch;
-      } catch (error) {
-        console.error("Error formatting individual match:", error, { match });
-        // Return a placeholder match object instead of failing completely
-        return {
-          id: match?.id || `error-${Date.now()}`,
-          date: match?.match_date || new Date().toISOString().split('T')[0],
-          time: match?.match_time || "",
-          venue: "Data Error",
-          homeTeam: { id: "error", name: "Error", logo: "" },
-          awayTeam: { id: "error", name: "Error", logo: "" },
-          competition: { id: "error", name: "Error", shortName: "", logo: "" },
-          ticketLink: "",
-          status: "error",
-          isCompleted
-        };
-      }
-    });
-  } catch (error) {
-    console.error("Error formatting match data:", error);
-    return [];
+    new URL(url);
+    return true;
+  } catch {
+    return false;
   }
 }
 
 /**
- * Formats currency amounts
+ * Safely accesses a deeply nested object property
+ * @param obj Object to access
+ * @param path Path to property
+ * @param fallback Fallback value
+ * @returns Property value or fallback
  */
-export function formatCurrency(amount: number) {
-  return new Intl.NumberFormat('en-GB', {
-    style: 'currency',
-    currency: 'GBP',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0
-  }).format(amount);
+export function getNestedValue<T>(obj: any, path: string, fallback: T): T {
+  return path.split('.').reduce((prev, curr) => {
+    return prev && prev[curr] !== undefined ? prev[curr] : fallback;
+  }, obj);
 }
 
-/**
- * Formats dates in the UK format
- */
-export function formatDate(date: Date | string, includeYear: boolean = true) {
-  if (!date) return '';
-  const d = typeof date === 'string' ? new Date(date) : date;
-  return d.toLocaleDateString('en-GB', {
-    day: 'numeric',
-    month: 'short',
-    year: includeYear ? 'numeric' : undefined
-  });
-}
-
-/**
- * Truncate text with ellipsis
- */
-export function truncateText(text: string, maxLength: number) {
-  if (!text || text.length <= maxLength) return text;
-  return `${text.slice(0, maxLength)}...`;
-}
-
-/**
- * Formats time from 24h to 12h format
- */
-export function formatTime(time: string): string {
-  if (!time) return '';
-  
-  const [hours, minutes] = time.split(':').map(num => parseInt(num, 10));
-  
-  if (isNaN(hours) || isNaN(minutes)) {
-    return time;
-  }
-  
-  const period = hours >= 12 ? 'PM' : 'AM';
-  const hour12 = hours % 12 || 12;
-  
-  return `${hour12}:${minutes.toString().padStart(2, '0')} ${period}`;
+export function getInitials(name: string): string {
+  return name
+    .split(' ')
+    .map(part => part[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
 }

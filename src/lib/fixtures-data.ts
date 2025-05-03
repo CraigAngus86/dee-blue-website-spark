@@ -1,100 +1,98 @@
 
-// Fixture data type
 export interface Fixture {
   id: string;
   competition: string;
   date: string;
   time: string;
   venue: string;
-  home: string;
-  away: string;
+  home: {
+    name: string;
+    logo: string;
+  };
+  away: {
+    name: string;
+    logo: string;
+  };
   result?: {
     homeScore: number;
     awayScore: number;
+    matchReportLink?: string;
   };
   ticketLink?: string;
 }
 
-// Sample fixtures data
+// Mock data to help with development and testing
 export const fixtures: Fixture[] = [
   {
     id: "1",
     competition: "Highland League",
-    date: "2023-10-15",
+    date: "2024-10-15",
     time: "15:00",
     venue: "Spain Park",
-    home: "Banks o' Dee",
-    away: "Buckie Thistle",
-    result: {
-      homeScore: 2,
-      awayScore: 1
+    home: {
+      name: "Banks o' Dee",
+      logo: "/assets/images/logos/BOD_Logo_Navy_square.png"
+    },
+    away: {
+      name: "Buckie Thistle",
+      logo: "/assets/images/competitors/Buckie.png"
     }
   },
   {
     id: "2",
     competition: "Highland League",
-    date: "2023-10-22",
+    date: "2024-10-22",
     time: "15:00",
-    venue: "Spain Park",
-    home: "Banks o' Dee",
-    away: "Formartine United"
-  },
+    venue: "Harmsworth Park",
+    home: {
+      name: "Wick Academy",
+      logo: "/assets/images/competitors/Wick.png"
+    },
+    away: {
+      name: "Banks o' Dee",
+      logo: "/assets/images/logos/BOD_Logo_Navy_square.png"
+    }
+  }
+];
+
+export const results: Fixture[] = [
   {
     id: "3",
-    competition: "North of Scotland Cup",
-    date: "2023-10-29",
+    competition: "Highland League",
+    date: "2024-10-08",
     time: "15:00",
-    venue: "Victoria Park",
-    home: "Fraserburgh",
-    away: "Banks o' Dee",
+    venue: "Spain Park",
+    home: {
+      name: "Banks o' Dee",
+      logo: "/assets/images/logos/BOD_Logo_Navy_square.png"
+    },
+    away: {
+      name: "Formartine United",
+      logo: "/assets/images/competitors/Formartine.png"
+    },
     result: {
-      homeScore: 0,
-      awayScore: 2
+      homeScore: 2,
+      awayScore: 1,
+      matchReportLink: "/news/banks-o-dee-2-1-formartine-united"
     }
   },
   {
     id: "4",
     competition: "Highland League",
-    date: "2023-11-05",
+    date: "2024-10-01",
     time: "15:00",
-    venue: "Spain Park",
-    home: "Banks o' Dee",
-    away: "Keith"
-  },
-  {
-    id: "5", 
-    competition: "Scottish Cup",
-    date: "2023-11-12",
-    time: "15:00",
-    venue: "Spain Park",
-    home: "Banks o' Dee",
-    away: "Brechin City",
-    ticketLink: "https://tickets.banksofdeefc.co.uk"
-  },
-  {
-    id: "6",
-    competition: "Highland League",
-    date: "2023-10-08",
-    time: "15:00",
-    venue: "Princess Royal Park",
-    home: "Deveronvale",
-    away: "Banks o' Dee",
-    result: {
-      homeScore: 1,
-      awayScore: 3
-    }
-  },
-  {
-    id: "7",
-    competition: "Highland League",
-    date: "2023-10-01",
-    time: "15:00",
-    venue: "Mosset Park",
-    home: "Forres Mechanics",
-    away: "Banks o' Dee",
+    venue: "Kynoch Park",
+    home: {
+      name: "Keith",
+      logo: "/assets/images/competitors/Keith.png"
+    },
+    away: {
+      name: "Banks o' Dee",
+      logo: "/assets/images/logos/BOD_Logo_Navy_square.png"
+    },
     result: {
       homeScore: 0,
-      awayScore: 2
+      awayScore: 3
     }
   }
 ];

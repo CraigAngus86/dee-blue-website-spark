@@ -13,7 +13,7 @@ interface NewsGridProps {
   initialCategory?: string;
 }
 
-function NewsGrid({ news, categories = [], initialCategory = 'all' }: NewsGridProps) {
+function NewsGrid({ news = [], categories = [], initialCategory = 'all' }: NewsGridProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory);
   const [filteredNews, setFilteredNews] = useState<NewsItem[]>([]);
   const searchParams = useSearchParams();

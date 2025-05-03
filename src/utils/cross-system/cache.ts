@@ -1,107 +1,80 @@
-
 /**
- * Simple in-memory cache for cross-system references
+ * Simple cache system for cross-system references
  */
 
-interface CacheItem<T> {
+interface CacheEntry<T> {
   value: T;
   timestamp: number;
 }
 
-interface CacheOptions {
-  ttl?: number; // Time-to-live in milliseconds
-}
-
 class ReferenceCache {
-  private cache: Map<string, CacheItem<any>> = new Map();
-  private defaultTtl: number = 5 * 60 * 1000; // 5 minutes default TTL
+  private cache: Record<string, CacheEntry<any>> = {};
+  private readonly ttlMs: number = 5 * 60 * 1000; // 5 minutes default TTL
 
-  /**
-   * Get an item from the cache
-   * @param key Cache key
-   * @returns Cached value or undefined if not found or expired
-   */
-  get<T>(key: string): T | undefined {
-    const item = this.cache.get(key);
-    
-    if (!item) return undefined;
-    
-    // Check if the item has expired
-    if (Date.now() - item.timestamp > this.defaultTtl) {
-      this.delete(key);
-      return undefined;
+  constructor(ttlMs?: number) {
+    if (ttlMs) {
+      this.ttlMs = ttlMs;
     }
-    
-    return item.value as T;
   }
 
   /**
-   * Set a value in the cache
-   * @param key Cache key
-   * @param value Value to cache
-   * @param options Cache options
+   * Get a value from the cache or set it if not present
    */
-  set<T>(key: string, value: T, options: CacheOptions = {}): void {
-    this.cache.set(key, {
+  async getOrSet<T>(key: string, fetcher: () => Promise<T>, skipCache = false): Promise<T> {
+    // If skipCache is true or we're in development, bypass cache
+    if (skipCache || process.env.NODE_ENV === 'development') {
+      return await fetcher();
+    }
+
+    const now = Date.now();
+    const cachedEntry = this.cache[key];
+
+    // Return cached value if present and not expired
+    if (cachedEntry && now - cachedEntry.timestamp < this.ttlMs) {
+      return cachedEntry.value;
+    }
+
+    // Otherwise fetch fresh data
+    const value = await fetcher();
+    this.cache[key] = { value, timestamp: now };
+    return value;
+  }
+
+  /**
+   * Manually set a value in the cache
+   */
+  set<T>(key: string, value: T): void {
+    this.cache[key] = {
       value,
       timestamp: Date.now()
-    });
+    };
   }
 
   /**
-   * Delete an item from the cache
-   * @param key Cache key
+   * Manually invalidate a cache entry
    */
-  delete(key: string): void {
-    this.cache.delete(key);
+  invalidate(key: string): boolean {
+    if (this.cache[key]) {
+      delete this.cache[key];
+      return true;
+    }
+    return false;
   }
 
   /**
-   * Clear all items from the cache
+   * Clear all cache entries
    */
   clear(): void {
-    this.cache.clear();
+    this.cache = {};
   }
 
   /**
-   * Check if a key exists in the cache
-   * @param key Cache key
-   * @returns Whether the key exists and is not expired
+   * Get the size of the cache
    */
-  has(key: string): boolean {
-    const item = this.cache.get(key);
-    
-    if (!item) return false;
-    
-    // Check if the item has expired
-    if (Date.now() - item.timestamp > this.defaultTtl) {
-      this.delete(key);
-      return false;
-    }
-    
-    return true;
-  }
-
-  /**
-   * Execute a function and cache its result
-   * @param key Cache key
-   * @param fn Function to execute if cache miss
-   * @param skipCache Whether to skip the cache
-   * @returns Function result, either from cache or fresh execution
-   */
-  async getOrSet<T>(key: string, fn: () => Promise<T>, skipCache: boolean = false): Promise<T> {
-    if (!skipCache) {
-      const cached = this.get<T>(key);
-      if (cached !== undefined) {
-        return cached;
-      }
-    }
-    
-    const result = await fn();
-    this.set(key, result);
-    return result;
+  get size(): number {
+    return Object.keys(this.cache).length;
   }
 }
 
-// Export singleton instance
+// Export a singleton instance
 export const referenceCache = new ReferenceCache();

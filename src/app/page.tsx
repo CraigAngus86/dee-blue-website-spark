@@ -12,6 +12,7 @@ import MatchCenter from "@/components/ui/sections/MatchCenter";
 import PlayersSection from "@/components/ui/sections/PlayersSection";
 import { fetchSanityData } from "@/lib/sanity/client";
 import { supabase } from "@/lib/supabase/client";
+import { convertSupabaseMatchToMatch } from "@/types/match";
 
 export const metadata: Metadata = {
   title: "Home | Banks o' Dee FC",
