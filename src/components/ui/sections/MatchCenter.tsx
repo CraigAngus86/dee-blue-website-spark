@@ -6,19 +6,22 @@ import { format } from 'date-fns';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import MatchCarousel from '@/components/ui/match/MatchCarousel';
 import { Match } from '@/types/match';
+import { Fixture } from '@/lib/fixtures-data';
 import Heading from '@/components/ui/typography/Heading';
 import Text from '@/components/ui/typography/Text';
 
 interface MatchCenterProps {
-  upcomingMatches: Match[];
-  recentResults: Match[];
-  highlighedMatch?: Match;
+  upcomingMatches?: Match[] | Fixture[];
+  recentResults?: Match[] | Fixture[];
+  highlighedMatch?: Match | Fixture;
+  leagueTable?: any[];
 }
 
 const MatchCenter: React.FC<MatchCenterProps> = ({
-  upcomingMatches,
-  recentResults,
-  highlighedMatch
+  upcomingMatches = [],
+  recentResults = [],
+  highlighedMatch,
+  leagueTable
 }) => {
   const [activeTab, setActiveTab] = useState("fixtures");
 
@@ -60,7 +63,7 @@ const MatchCenter: React.FC<MatchCenterProps> = ({
         {activeTab === "fixtures" && (
           <MatchCarousel 
             title="Upcoming Fixtures"
-            fixtures={upcomingMatches}
+            matches={upcomingMatches as Match[]}
           />
         )}
         
@@ -68,7 +71,7 @@ const MatchCenter: React.FC<MatchCenterProps> = ({
         {activeTab === "results" && (
           <MatchCarousel 
             title="Recent Results"
-            fixtures={recentResults}
+            matches={recentResults as Match[]}
           />
         )}
       </div>

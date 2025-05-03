@@ -1,98 +1,112 @@
 
 import React from 'react';
-import Image from 'next/image';
+import Link from 'next/link';
 import { format, parseISO } from 'date-fns';
-import { Separator } from '@/components/ui/separator';
-import { Team } from '@/lib/fixtures-data';
+import { ArrowRight, Calendar, Clock, MapPin, Ticket } from 'lucide-react';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 
-interface MatchCardProps {
+export interface MatchCardProps {
   competition: string;
   date: string;
-  time: string;
-  venue: string;
-  home: Team;
-  away: Team;
+  time?: string;
+  venue?: string;
+  home: string;
+  away: string;
   result?: {
     homeScore: number;
     awayScore: number;
     matchReportLink?: string;
   };
+  ticketLink?: string;
 }
 
-export const TeamDisplay = ({ team, isHome = false }: { team: Team, isHome?: boolean }) => (
-  <div className={`flex ${isHome ? 'flex-row' : 'flex-row-reverse'} items-center gap-3`}>
-    <div className="w-10 h-10 relative">
-      <Image 
-        src={team.logo} 
-        alt={`${team.name} logo`} 
-        fill
-        className="object-contain"
-      />
-    </div>
-    <span className="font-semibold">{team.name}</span>
-  </div>
-);
+export const MatchCardNew: React.FC<MatchCardProps> = ({
+  competition,
+  date,
+  time,
+  venue,
+  home,
+  away,
+  result,
+  ticketLink,
+}) => {
+  // Format the date to be more readable
+  const formattedDate = React.useMemo(() => {
+    try {
+      // Try to parse and format the date
+      return format(parseISO(date), 'EEE, dd MMM yyyy');
+    } catch (error) {
+      // If parsing fails, return the original date
+      return date;
+    }
+  }, [date]);
 
-export const MatchCardNew = ({ 
-  competition, 
-  date, 
-  time, 
-  venue, 
-  home, 
-  away, 
-  result 
-}: MatchCardProps) => {
-  const isMatchOver = Boolean(result);
-  const dateObj = parseISO(date);
-  
+  const isCompleted = !!result;
+
   return (
-    <div className="bg-white rounded-lg shadow-md p-4">
-      <div className="text-sm text-gray-600 mb-2">
-        {competition} • {format(dateObj, 'dd MMM yyyy')} • {time} • {venue}
-      </div>
-      
-      <div className="flex justify-between items-center my-4">
-        <div className="flex-1">
-          <TeamDisplay team={home} isHome={true} />
-        </div>
-        
-        <div className="mx-4 text-center">
-          {isMatchOver ? (
-            <div className="flex items-center justify-center">
-              <span className="text-2xl font-bold">{result?.homeScore}</span>
-              <span className="mx-2 text-gray-400">-</span>
-              <span className="text-2xl font-bold">{result?.awayScore}</span>
+    <Card className="overflow-hidden h-full flex flex-col">
+      <CardHeader className="bg-primary text-white py-3 px-4">
+        <div className="font-semibold truncate text-sm">{competition}</div>
+      </CardHeader>
+      <CardContent className="flex-grow flex flex-col p-4">
+        {/* Date, Time, and Venue */}
+        <div className="space-y-1 text-sm text-gray-600 mb-4">
+          <div className="flex items-center gap-2">
+            <Calendar size={16} />
+            <span>{formattedDate}</span>
+          </div>
+          {time && (
+            <div className="flex items-center gap-2">
+              <Clock size={16} />
+              <span>{time}</span>
             </div>
-          ) : (
-            <div className="text-lg font-semibold">VS</div>
+          )}
+          {venue && (
+            <div className="flex items-center gap-2">
+              <MapPin size={16} />
+              <span>{venue}</span>
+            </div>
           )}
         </div>
         
-        <div className="flex-1 text-right">
-          <TeamDisplay team={away} isHome={false} />
+        {/* Teams and Scores */}
+        <div className="flex items-center justify-between gap-2 mb-4">
+          <div className="flex flex-col items-center text-center w-5/12">
+            <span className="font-semibold truncate w-full">{home}</span>
+          </div>
+          
+          <div className="flex items-center justify-center w-2/12">
+            {isCompleted ? (
+              <div className="text-center bg-gray-100 rounded-lg py-1 px-3">
+                <span className="font-bold">{result.homeScore}</span>
+                <span className="mx-1">-</span>
+                <span className="font-bold">{result.awayScore}</span>
+              </div>
+            ) : (
+              <div className="text-center text-gray-500">vs</div>
+            )}
+          </div>
+          
+          <div className="flex flex-col items-center text-center w-5/12">
+            <span className="font-semibold truncate w-full">{away}</span>
+          </div>
         </div>
-      </div>
-      
-      <Separator className="my-3" />
-      
-      <div className="flex justify-between items-center">
-        <div className="text-sm">
-          {isMatchOver ? (
-            <span className="text-green-600 font-medium">Final Result</span>
-          ) : (
-            <span className="text-blue-600 font-medium">Upcoming Match</span>
-          )}
-        </div>
-        
-        {isMatchOver && result?.matchReportLink && (
-          <a 
-            href={result.matchReportLink} 
-            className="text-sm text-blue-600 hover:text-blue-800 underline"
-          >
-            Match Report
-          </a>
-        )}
-      </div>
-    </div>
+      </CardContent>
+      <CardFooter className="p-0">
+        {isCompleted && result.matchReportLink ? (
+          <Link href={result.matchReportLink} className="w-full">
+            <div className="bg-blue-100 text-blue-700 py-2 text-center text-sm font-medium hover:bg-blue-200 transition-colors flex items-center justify-center">
+              Match Report <ArrowRight size={16} className="ml-1" />
+            </div>
+          </Link>
+        ) : ticketLink ? (
+          <Link href={ticketLink} className="w-full">
+            <div className="bg-green-100 text-green-700 py-2 text-center text-sm font-medium hover:bg-green-200 transition-colors flex items-center justify-center">
+              <Ticket size={16} className="mr-1" /> Buy Tickets
+            </div>
+          </Link>
+        ) : null}
+      </CardFooter>
+    </Card>
   );
 };

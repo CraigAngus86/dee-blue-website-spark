@@ -103,10 +103,11 @@ async function getMatches() {
       throw recentError;
     }
 
-    return {
-      upcoming: upcomingMatches || [],
-      recent: recentMatches || []
-    };
+    // Convert Supabase data to our app's Match format
+    const upcoming = (upcomingMatches || []).map(match => convertSupabaseMatchToMatch(match));
+    const recent = (recentMatches || []).map(match => convertSupabaseMatchToMatch(match));
+
+    return { upcoming, recent };
   } catch (error) {
     console.error("Error fetching matches:", error);
     // Return empty arrays as fallback to prevent runtime crashes
