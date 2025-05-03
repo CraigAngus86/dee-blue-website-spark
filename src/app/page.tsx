@@ -1,3 +1,4 @@
+
 import { Metadata } from "next";
 import { getHeroSlides } from "@/lib/sanity/queries/heroSlides";
 import HeroSection from "@/components/ui/home/HeroSection";
