@@ -1,14 +1,24 @@
-
 export default {
   name: 'cloudinaryImage',
   title: 'Cloudinary Image',
   type: 'object',
   fields: [
     {
-      name: 'image',
-      title: 'Image',
-      type: 'cloudinary.asset',
-      description: 'Upload or select an image from Cloudinary'
+      name: 'asset',
+      title: 'Asset',
+      type: 'object',
+      fields: [
+        {
+          name: 'url',
+          title: 'URL',
+          type: 'string'
+        },
+        {
+          name: 'public_id',
+          title: 'Public ID',
+          type: 'string'
+        }
+      ]
     },
     {
       name: 'alt',
@@ -48,7 +58,6 @@ export default {
   ],
   preview: {
     select: {
-      media: 'image',
       title: 'alt',
       subtitle: 'caption'
     }
