@@ -1,67 +1,57 @@
 
-"use client";
-
 import React from 'react';
 import { 
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-import MatchCardNew from "@/components/ui/image/MatchCardNew";
-import LoadingState from "@/components/ui/common/LoadingState";
-import { Match } from '@/types/match';
+  Carousel, 
+  CarouselContent, 
+  CarouselItem, 
+  CarouselNext, 
+  CarouselPrevious 
+} from '@/components/ui/carousel';
+import { MatchCardNew } from '@/components/ui/image/MatchCardNew';
+import { Fixture } from '@/lib/fixtures-data';
 
 interface MatchCarouselProps {
-  matches: Match[];
-  isLoading?: boolean;
+  fixtures: Fixture[];
+  title?: string;
 }
 
-/**
- * Interactive match carousel component
- * Client component as it uses Carousel which requires browser APIs
- */
-const MatchCarousel: React.FC<MatchCarouselProps> = ({ matches, isLoading = false }) => {
-  if (isLoading) {
-    return <LoadingState count={3} />;
+const MatchCarousel: React.FC<MatchCarouselProps> = ({ fixtures, title }) => {
+  if (!fixtures || fixtures.length === 0) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-muted-foreground">No fixtures to display</p>
+      </div>
+    );
   }
 
-  // Find the index of the next match (first upcoming match)
-  const nextMatchIndex = matches.findIndex(match => !match.isCompleted);
-  
   return (
-    <div className="relative">
-      <Carousel
-        className="w-full"
-        opts={{
-          align: "center",
-          loop: false,
-          startIndex: Math.max(0, nextMatchIndex),
-        }}
-      >
+    <div className="w-full">
+      {title && (
+        <h2 className="text-xl font-bold mb-4">{title}</h2>
+      )}
+      
+      <Carousel className="w-full">
         <CarouselContent>
-          {matches.length > 0 ? matches.map((match, index) => (
-            <CarouselItem key={match.id} className="md:basis-1/2 lg:basis-1/3">
-              <div className="p-1">
+          {fixtures.map((fixture) => (
+            <CarouselItem key={fixture.id} className="md:basis-1/2 lg:basis-1/3">
+              <div className="p-2">
                 <MatchCardNew
-                  match={match}
-                  variant={match.isCompleted ? "past" : 
-                    (index === nextMatchIndex ? "next" : "future")}
-                  className="h-full"
+                  competition={fixture.competition}
+                  date={fixture.date}
+                  time={fixture.time}
+                  venue={fixture.venue}
+                  home={fixture.home}
+                  away={fixture.away}
+                  result={fixture.result}
                 />
               </div>
             </CarouselItem>
-          )) : (
-            <CarouselItem className="w-full">
-              <div className="p-8 text-center text-gray-500">
-                No matches found
-              </div>
-            </CarouselItem>
-          )}
+          ))}
         </CarouselContent>
-        <CarouselPrevious className="hidden md:flex left-1 bg-white hover:bg-gray-100" />
-        <CarouselNext className="hidden md:flex right-1 bg-white hover:bg-gray-100" />
+        <div className="hidden sm:flex justify-end gap-2 mt-4">
+          <CarouselPrevious className="relative inset-auto transform-none" />
+          <CarouselNext className="relative inset-auto transform-none" />
+        </div>
       </Carousel>
     </div>
   );

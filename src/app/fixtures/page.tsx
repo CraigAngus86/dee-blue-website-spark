@@ -63,7 +63,7 @@ export default function FixturesPage() {
               <label className="block text-sm font-medium mb-1">Competition</label>
               <SelectCompat
                 value={selectedCompetition}
-                onValueChange={(value) => setSelectedCompetition(value)}
+                onValueChange={(value: string) => setSelectedCompetition(value)}
                 className="w-full"
               >
                 <option value="All">All Competitions</option>
@@ -77,7 +77,7 @@ export default function FixturesPage() {
               <label className="block text-sm font-medium mb-1">Season</label>
               <SelectCompat
                 value={selectedSeason}
-                onValueChange={(val) => setSelectedSeason(val)}
+                onValueChange={(val: string) => setSelectedSeason(val)}
                 className="w-full"
               >
                 {seasons.map(season => (
@@ -115,7 +115,7 @@ export default function FixturesPage() {
               <label className="block text-sm font-medium mb-1">Competition</label>
               <SelectCompat
                 value={selectedCompetition}
-                onValueChange={(value) => setSelectedCompetition(value)}
+                onValueChange={(value: string) => setSelectedCompetition(value)}
                 className="w-full"
               >
                 <option value="All">All Competitions</option>
@@ -129,7 +129,7 @@ export default function FixturesPage() {
               <label className="block text-sm font-medium mb-1">Month</label>
               <SelectCompat
                 value={selectedMonth}
-                onValueChange={(value) => setSelectedMonth(value)}
+                onValueChange={(value: string) => setSelectedMonth(value)}
                 className="w-full"
               >
                 <option value="All">All Months</option>
@@ -170,7 +170,7 @@ export default function FixturesPage() {
             <div className="w-40">
               <SelectCompat
                 value={selectedSeason}
-                onValueChange={(value) => setSelectedSeason(value)}
+                onValueChange={(value: string) => setSelectedSeason(value)}
               >
                 {seasons.map(season => (
                   <option key={season} value={season}>{season}</option>
