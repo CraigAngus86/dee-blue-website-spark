@@ -1,9 +1,8 @@
 import React from 'react';
-import Container from '@/components/ui/layout/Container';
-import Section from '@/components/ui/layout/Section';
-import { CardNew, CardNewContent, CardNewMedia } from '@/components/ui/CardNew';
-import { Sparkles } from 'lucide-react';
-import { useCloudinaryImage } from '@/hooks/useCloudinaryImage';
+import Image from 'next/image';
+import { LucideIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import useCloudinaryImage from '@/hooks/useCloudinaryImage';
 
 const WhyPartnerSection = () => {
   return (

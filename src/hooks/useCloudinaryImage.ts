@@ -1,60 +1,74 @@
 
 import { useState, useEffect } from 'react';
 
-interface CloudinaryImageOptions {
+interface CloudinaryOptions {
   width?: number;
   height?: number;
-  crop?: 'fill' | 'scale' | 'fit' | 'limit' | 'mfit' | 'pad';
+  crop?: string;
   quality?: number;
-  format?: 'auto' | 'webp' | 'png' | 'jpg';
-  effect?: string;
+  format?: string;
 }
 
 /**
- * Hook for transforming Cloudinary image URLs
- * @param publicId The Cloudinary public ID of the image
- * @param options Options for image transformation
- * @returns The transformed Cloudinary URL
+ * Hook to optimize and transform Cloudinary images
+ * @param imageUrl The original image URL (can be Cloudinary or other source)
+ * @param options Cloudinary transformation options
+ * @returns The optimized image URL
  */
-const useCloudinaryImage = (
-  publicId: string | null | undefined,
-  options: CloudinaryImageOptions = {}
-): string | null => {
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'demo';
-  
+export default function useCloudinaryImage(
+  imageUrl: string | null,
+  options: CloudinaryOptions = {}
+): string | null {
+  const [optimizedUrl, setOptimizedUrl] = useState<string | null>(imageUrl);
+
   useEffect(() => {
-    if (!publicId) {
-      setImageUrl(null);
+    if (!imageUrl) {
+      setOptimizedUrl(null);
       return;
     }
-    
-    // Build transformation string
-    const transformations: string[] = [];
-    
-    if (options.width) transformations.push(`w_${options.width}`);
-    if (options.height) transformations.push(`h_${options.height}`);
-    if (options.crop) transformations.push(`c_${options.crop}`);
-    if (options.quality) transformations.push(`q_${options.quality}`);
-    if (options.format) transformations.push(`f_${options.format}`);
-    if (options.effect) transformations.push(`e_${options.effect}`);
-    
-    // Default quality if not specified
-    if (!options.quality) transformations.push('q_auto');
-    
-    // Default format if not specified
-    if (!options.format) transformations.push('f_auto');
-    
-    const transformationString = transformations.length > 0 
-      ? transformations.join(',') + '/'
-      : '';
-    
-    // Construct the URL
-    const url = `https://res.cloudinary.com/${cloudName}/image/upload/${transformationString}${publicId}`;
-    setImageUrl(url);
-  }, [publicId, options, cloudName]);
-  
-  return imageUrl;
-};
 
-export default useCloudinaryImage;
+    // Check if it's already a Cloudinary URL
+    const isCloudinaryUrl = imageUrl.includes('res.cloudinary.com');
+    
+    if (!isCloudinaryUrl) {
+      // If not a Cloudinary URL, just return the original
+      setOptimizedUrl(imageUrl);
+      return;
+    }
+
+    try {
+      // For Cloudinary URLs, apply transformations
+      const urlParts = imageUrl.split('/upload/');
+      if (urlParts.length !== 2) {
+        setOptimizedUrl(imageUrl);
+        return;
+      }
+
+      // Build transformation string
+      const transformations = [];
+      
+      if (options.width) transformations.push(`w_${options.width}`);
+      if (options.height) transformations.push(`h_${options.height}`);
+      if (options.crop) transformations.push(`c_${options.crop}`);
+      if (options.quality) transformations.push(`q_${options.quality}`);
+      if (options.format) transformations.push(`f_${options.format}`);
+      
+      // If no transformations, return original URL
+      if (transformations.length === 0) {
+        setOptimizedUrl(imageUrl);
+        return;
+      }
+      
+      // Create transformed URL
+      const transformationString = transformations.join(',');
+      const optimizedUrl = `${urlParts[0]}/upload/${transformationString}/${urlParts[1]}`;
+      
+      setOptimizedUrl(optimizedUrl);
+    } catch (error) {
+      console.error('Error optimizing Cloudinary image:', error);
+      setOptimizedUrl(imageUrl); // Fallback to original URL
+    }
+  }, [imageUrl, options.width, options.height, options.crop, options.quality, options.format]);
+
+  return optimizedUrl;
+}

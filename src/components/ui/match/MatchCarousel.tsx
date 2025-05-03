@@ -52,8 +52,8 @@ const MatchCarousel: React.FC<MatchCarouselProps> = ({ fixtures, matches, title 
                     date={match.date}
                     time={match.time}
                     venue={match.venue}
-                    home={match.homeTeam}
-                    away={match.awayTeam}
+                    home={match.homeTeam || match.home || ""}
+                    away={match.awayTeam || match.away || ""}
                     result={match.result}
                   />
                 </div>

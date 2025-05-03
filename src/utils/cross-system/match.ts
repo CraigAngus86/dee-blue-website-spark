@@ -1,132 +1,139 @@
+
 /**
- * Match-specific reference resolution utilities
+ * Cross-system utility for match data management
  */
 
-import { supabase } from '@/lib/supabase/client';
-import { sanityClient } from '@/lib/sanity/client';
-import { 
-  SanityMatchGallery,
-  SupabaseMatch,
-  ReferenceOptions 
-} from './types';
-import { resolveSupabaseReference } from './resolveSupabaseReference';
-import { resolveSanityDocumentBySupabaseId } from './resolveSanityReference';
+import { supabase } from '@/lib/supabase/client'; 
+import { fetchSanityData } from '@/lib/sanity/client';
 import { referenceCache } from './cache';
+import { resolveSupabaseReference } from './resolveSupabaseReference';
+import { resolveSanityReference } from './resolveSanityReference';
 
-/**
- * Resolve a match from a Sanity match gallery
- * @param matchGallery Sanity match gallery document
- * @param options Resolution options
- * @returns Referenced match from Supabase
- */
-export async function resolveMatchFromGallery(
-  matchGallery: SanityMatchGallery | null,
-  options: ReferenceOptions = {}
-): Promise<SupabaseMatch | null> {
-  return resolveSupabaseReference<SupabaseMatch>(matchGallery, 'match', options);
+// Match types
+export interface MatchSupabase {
+  id: string;
+  match_date: string;
+  match_time?: string;
+  venue?: string;
+  status: 'scheduled' | 'live' | 'completed' | 'postponed' | 'cancelled';
+  home_team_id: string;
+  away_team_id: string;
+  competition_id: string;
+  home_score?: number;
+  away_score?: number;
+  ticket_link?: string;
+  match_report_link?: string;
+  sanity_id?: string;
+}
+
+export interface MatchSanity {
+  _id: string;
+  _type: 'match';
+  date: string;
+  time?: string;
+  venue?: string;
+  status: 'scheduled' | 'live' | 'completed' | 'postponed' | 'cancelled';
+  homeTeam: {
+    _ref: string;
+    _type: 'reference';
+  };
+  awayTeam: {
+    _ref: string;
+    _type: 'reference';
+  };
+  competition: {
+    _ref: string;
+    _type: 'reference';
+  };
+  homeScore?: number;
+  awayScore?: number;
+  ticketLink?: string;
+  matchReport?: {
+    _ref: string;
+    _type: 'reference';
+  };
+  supabaseId?: string;
 }
 
 /**
- * Resolve a Sanity match gallery from a Supabase match record
- * @param match Supabase match record
- * @param options Resolution options
- * @returns Referenced Sanity match gallery
+ * Get a match from Supabase by ID
  */
-export async function resolveMatchGalleryFromMatch(
-  match: SupabaseMatch | null,
-  options: ReferenceOptions = {}
-): Promise<SanityMatchGallery | null> {
-  if (!match) return null;
-  
-  // First try to find by sanity_id if present
-  if (match.sanity_id) {
-    const query = `*[_type == "matchGallery" && _id == $sanityId][0]`;
-    const gallery = await sanityClient.fetch(query, { sanityId: match.sanity_id });
-    
-    if (gallery) return gallery as SanityMatchGallery;
-  }
-  
-  // Otherwise find by supabaseId field
-  return resolveSanityDocumentBySupabaseId<SanityMatchGallery>(match.id, 'matchGallery', options);
-}
-
-/**
- * Resolve news articles related to a match
- * @param match Supabase match record
- * @param options Resolution options
- * @returns Array of related news articles
- */
-export async function resolveNewsArticlesForMatch(
-  match: SupabaseMatch | null,
-  options: ReferenceOptions = {}
-): Promise<any[]> {
-  if (!match) return [];
-  
-  const { skipCache = false } = options;
-  const cacheKey = `match:relatedNews:${match.id}`;
-  
+export async function getMatchById(id: string): Promise<MatchSupabase | null> {
   try {
-    return await referenceCache.getOrSet(
-      cacheKey,
-      async () => {
-        const query = `*[_type == "newsArticle" && relatedMatchId == $matchId]`;
-        const articles = await sanityClient.fetch(query, { matchId: match.id });
-        
-        return articles || [];
-      },
-      skipCache
-    );
+    const { data, error } = await supabase
+      .from('match')
+      .select(`
+        *,
+        home_team:teams!match_home_team_id_fkey(*),
+        away_team:teams!match_away_team_id_fkey(*),
+        competition:competitions!match_competition_id_fkey(*)
+      `)
+      .eq('id', id)
+      .single();
+
+    if (error) throw error;
+    return data as unknown as MatchSupabase;
   } catch (error) {
-    console.error('Error fetching news articles for match:', error);
-    return [];
+    console.error('Error fetching match by ID:', error);
+    return null;
   }
 }
 
 /**
- * Get a match with its associated Sanity content
- * @param matchId Supabase match ID
- * @param options Resolution options
- * @returns Match with related content
+ * Get a match from Sanity by ID
  */
-export async function getMatchWithContent(
-  matchId: string,
-  options: ReferenceOptions = {}
-): Promise<{ 
-  match: SupabaseMatch | null, 
-  gallery: SanityMatchGallery | null,
-  newsArticles: any[]
-}> {
-  const { skipCache = false } = options;
-  const cacheKey = `match:withContent:${matchId}`;
-  
+export async function getMatchByIdFromSanity(id: string): Promise<MatchSanity | null> {
   try {
-    return await referenceCache.getOrSet(
-      cacheKey,
-      async () => {
-        const { data: match, error } = await supabase
-          .from('match')
-          .select('*')
-          .eq('id', matchId)
-          .single();
-          
-        if (error || !match) {
-          return { match: null, gallery: null, newsArticles: [] };
-        }
-        
-        const typedMatch = match as SupabaseMatch;
-        const gallery = await resolveMatchGalleryFromMatch(typedMatch, options);
-        const newsArticles = await resolveNewsArticlesForMatch(typedMatch, options);
-        
-        return { 
-          match: typedMatch,
-          gallery,
-          newsArticles
-        };
-      },
-      skipCache
-    );
+    const query = `*[_type == "match" && _id == $id][0]`;
+    const match = await fetchSanityData(query, { id });
+    return match as MatchSanity;
   } catch (error) {
-    console.error('Error fetching match with content:', error);
-    return { match: null, gallery: null, newsArticles: [] };
+    console.error('Error fetching match from Sanity by ID:', error);
+    return null;
   }
+}
+
+/**
+ * Get a match by either Supabase ID or Sanity ID
+ */
+export async function getMatchByAnyId(id: string, source?: 'supabase' | 'sanity'): Promise<MatchSupabase | MatchSanity | null> {
+  if (source === 'supabase') {
+    return getMatchById(id);
+  } else if (source === 'sanity') {
+    return getMatchByIdFromSanity(id);
+  }
+
+  // Try both if source is not specified
+  const supabaseMatch = await getMatchById(id);
+  if (supabaseMatch) return supabaseMatch;
+
+  return getMatchByIdFromSanity(id);
+}
+
+/**
+ * Resolve related Sanity match document from a Supabase match record
+ */
+export async function resolveMatchSanityDocument(
+  supabaseMatch: MatchSupabase
+): Promise<MatchSanity | null> {
+  if (!supabaseMatch || !supabaseMatch.sanity_id) return null;
+  
+  return resolveSanityReference<MatchSanity>(
+    { sanity_id: supabaseMatch.sanity_id },
+    'match'
+  );
+}
+
+/**
+ * Resolve related Supabase match record from a Sanity match document
+ */
+export async function resolveMatchSupabaseRecord(
+  sanityMatch: MatchSanity
+): Promise<MatchSupabase | null> {
+  if (!sanityMatch || !sanityMatch.supabaseId) return null;
+  
+  return resolveSupabaseReference<MatchSupabase>(
+    { _id: sanityMatch._id, _type: 'match', supabaseId: sanityMatch.supabaseId },
+    'match'
+  );
 }

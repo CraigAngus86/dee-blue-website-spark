@@ -1,146 +1,120 @@
+
 /**
- * Sponsor-specific reference resolution utilities
+ * Cross-system utility for sponsor data management
  */
 
-import { supabase } from '@/lib/supabase/client';
-import { sanityClient } from '@/lib/sanity/client';
-import { 
-  SanitySponsor,
-  SupabaseSponsor,
-  ReferenceOptions 
-} from './types';
-import { resolveSupabaseReference } from './resolveSupabaseReference';
-import { resolveSanityDocumentBySupabaseId } from './resolveSanityReference';
+import { supabase } from '@/lib/supabase/client'; 
+import { fetchSanityData } from '@/lib/sanity/client';
 import { referenceCache } from './cache';
+import { resolveSupabaseReference } from './resolveSupabaseReference';
+import { resolveSanityReference } from './resolveSanityReference';
 
-/**
- * Resolve a sponsor from a Sanity sponsor document
- * @param sponsorDoc Sanity sponsor document
- * @param options Resolution options
- * @returns Referenced sponsor from Supabase
- */
-export async function resolveSponsorFromDocument(
-  sponsorDoc: SanitySponsor | null,
-  options: ReferenceOptions = {}
-): Promise<SupabaseSponsor | null> {
-  return resolveSupabaseReference<SupabaseSponsor>(sponsorDoc, 'sponsors', options);
+// Sponsor types
+export interface SponsorSupabase {
+  id: string;
+  name: string;
+  logo_url?: string;
+  logo_dark_url?: string;
+  website?: string;
+  tier?: string;
+  featured?: boolean;
+  sanity_id?: string;
+}
+
+export interface SponsorSanity {
+  _id: string;
+  _type: 'sponsor';
+  name: string;
+  logo?: {
+    asset: {
+      _ref: string;
+    };
+  };
+  logoDark?: {
+    asset: {
+      _ref: string;
+    };
+  };
+  website?: string;
+  tier?: string;
+  featured?: boolean;
+  supabaseId?: string;
 }
 
 /**
- * Resolve a Sanity sponsor document from a Supabase sponsor record
- * @param sponsor Supabase sponsor record
- * @param options Resolution options
- * @returns Referenced Sanity sponsor document
+ * Get a sponsor from Supabase by ID
  */
-export async function resolveSponsorDocumentFromRecord(
-  sponsor: SupabaseSponsor | null,
-  options: ReferenceOptions = {}
-): Promise<SanitySponsor | null> {
-  if (!sponsor) return null;
-  
-  // First try to find by sanity_id if present
-  if (sponsor.sanity_id) {
-    const query = `*[_type == "sponsor" && _id == $sanityId][0]`;
-    const sponsorDoc = await sanityClient.fetch(query, { sanityId: sponsor.sanity_id });
-    
-    if (sponsorDoc) return sponsorDoc as SanitySponsor;
-  }
-  
-  // Otherwise find by supabaseId field
-  return resolveSanityDocumentBySupabaseId<SanitySponsor>(sponsor.id, 'sponsor', options);
-}
-
-/**
- * Get a sponsor with its associated Sanity content
- * @param sponsorId Supabase sponsor ID
- * @param options Resolution options
- * @returns Sponsor with related content
- */
-export async function getSponsorWithContent(
-  sponsorId: string,
-  options: ReferenceOptions = {}
-): Promise<{ 
-  sponsor: SupabaseSponsor | null, 
-  sponsorDocument: SanitySponsor | null 
-}> {
-  const { skipCache = false } = options;
-  const cacheKey = `sponsor:withContent:${sponsorId}`;
-  
+export async function getSponsorById(id: string): Promise<SponsorSupabase | null> {
   try {
-    return await referenceCache.getOrSet(
-      cacheKey,
-      async () => {
-        const { data: sponsor, error } = await supabase
-          .from('sponsors')
-          .select('*')
-          .eq('id', sponsorId)
-          .single();
-          
-        if (error || !sponsor) {
-          return { sponsor: null, sponsorDocument: null };
-        }
-        
-        const sponsorDocument = await resolveSponsorDocumentFromRecord(sponsor as SupabaseSponsor, options);
-        
-        return { 
-          sponsor: sponsor as SupabaseSponsor,
-          sponsorDocument
-        };
-      },
-      skipCache
-    );
+    const { data, error } = await supabase
+      .from('sponsors')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) throw error;
+    return data as SponsorSupabase;
   } catch (error) {
-    console.error('Error fetching sponsor with content:', error);
-    return { sponsor: null, sponsorDocument: null };
+    console.error('Error fetching sponsor by ID:', error);
+    return null;
   }
 }
 
 /**
- * Get all sponsors with their associated Sanity content
- * @param options Resolution options
- * @returns Array of sponsors with related content
+ * Get a sponsor from Sanity by ID
  */
-export async function getAllSponsorsWithContent(
-  options: ReferenceOptions = {}
-): Promise<Array<{ 
-  sponsor: SupabaseSponsor, 
-  sponsorDocument: SanitySponsor | null 
-}>> {
-  const { skipCache = false } = options;
-  const cacheKey = 'sponsors:withContent';
-  
+export async function getSponsorByIdFromSanity(id: string): Promise<SponsorSanity | null> {
   try {
-    return await referenceCache.getOrSet(
-      cacheKey,
-      async () => {
-        const { data: sponsors, error } = await supabase
-          .from('sponsors')
-          .select('*');
-          
-        if (error || !sponsors) {
-          return [];
-        }
-        
-        const results = await Promise.all(
-          sponsors.map(async (sponsor) => {
-            const sponsorDocument = await resolveSponsorDocumentFromRecord(
-              sponsor as SupabaseSponsor, 
-              options
-            );
-            
-            return {
-              sponsor: sponsor as SupabaseSponsor,
-              sponsorDocument
-            };
-          })
-        );
-        
-        return results;
-      },
-      skipCache
-    );
+    const query = `*[_type == "sponsor" && _id == $id][0]`;
+    const sponsor = await fetchSanityData(query, { id });
+    return sponsor as SponsorSanity;
   } catch (error) {
-    console.error('Error fetching all sponsors with content:', error);
-    return [];
+    console.error('Error fetching sponsor from Sanity by ID:', error);
+    return null;
   }
+}
+
+/**
+ * Get a sponsor by either Supabase ID or Sanity ID
+ */
+export async function getSponsorByAnyId(id: string, source?: 'supabase' | 'sanity'): Promise<SponsorSupabase | SponsorSanity | null> {
+  if (source === 'supabase') {
+    return getSponsorById(id);
+  } else if (source === 'sanity') {
+    return getSponsorByIdFromSanity(id);
+  }
+
+  // Try both if source is not specified
+  const supabaseSponsor = await getSponsorById(id);
+  if (supabaseSponsor) return supabaseSponsor;
+
+  return getSponsorByIdFromSanity(id);
+}
+
+/**
+ * Resolve related Sanity sponsor document from a Supabase sponsor record
+ */
+export async function resolveSponsorSanityDocument(
+  supabaseSponsor: SponsorSupabase
+): Promise<SponsorSanity | null> {
+  if (!supabaseSponsor || !supabaseSponsor.sanity_id) return null;
+  
+  return resolveSanityReference<SponsorSanity>(
+    { sanity_id: supabaseSponsor.sanity_id },
+    'sponsor'
+  );
+}
+
+/**
+ * Resolve related Supabase sponsor record from a Sanity sponsor document
+ */
+export async function resolveSponsorSupabaseRecord(
+  sanitySponsor: SponsorSanity
+): Promise<SponsorSupabase | null> {
+  if (!sanitySponsor || !sanitySponsor.supabaseId) return null;
+  
+  return resolveSupabaseReference<SponsorSupabase>(
+    { _id: sanitySponsor._id, _type: 'sponsor', supabaseId: sanitySponsor.supabaseId },
+    'sponsors'
+  );
 }

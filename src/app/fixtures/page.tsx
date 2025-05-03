@@ -1,190 +1,116 @@
 
-"use client";
-
-import React, { useState } from 'react';
-import { format, parseISO } from 'date-fns';
+import React from 'react';
 import { fixtures } from '@/lib/fixtures-data';
-import { MatchCardNew } from '@/components/ui/image/MatchCardNew';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { SelectCompat } from '@/components/ui/select';
-import LeagueTable from '@/components/ui/match/LeagueTable';
+import { Metadata } from 'next';
+import GradientSeparator from '@/components/ui/separators/GradientSeparator';
+import MatchCarousel from '@/components/ui/match/MatchCarousel';
+import FixturesCard from '@/components/ui/match/FixturesCard';
+import { formatDate } from '@/lib/utils';
+import { Match } from '@/types/match';
 
-// Mock data for the league table
-const mockLeagueData = [
-  { position: 1, team: 'Banks o\' Dee', played: 10, won: 8, drawn: 1, lost: 1, goalsFor: 24, goalsAgainst: 7, goalDifference: 17, points: 25 },
-  { position: 2, team: 'Formartine United', played: 10, won: 7, drawn: 2, lost: 1, goalsFor: 22, goalsAgainst: 8, goalDifference: 14, points: 23 },
-  { position: 3, team: 'Buckie Thistle', played: 10, won: 7, drawn: 1, lost: 2, goalsFor: 19, goalsAgainst: 9, goalDifference: 10, points: 22 },
-  { position: 4, team: 'Brechin City', played: 10, won: 6, drawn: 2, lost: 2, goalsFor: 18, goalsAgainst: 10, goalDifference: 8, points: 20 },
-  { position: 5, team: 'Fraserburgh', played: 10, won: 5, drawn: 3, lost: 2, goalsFor: 15, goalsAgainst: 10, goalDifference: 5, points: 18 },
-];
+export const metadata: Metadata = {
+  title: 'Fixtures | Banks o\' Dee FC',
+  description: 'View upcoming fixtures for Banks o\' Dee Football Club',
+};
 
-// Get unique competitions from fixtures
-const competitions = Array.from(new Set(fixtures.map(fixture => fixture.competition)));
+// Helper function to convert fixture format
+function convertFixtureToMatch(fixture: any): Match {
+  return {
+    id: fixture.id,
+    competition: fixture.competition,
+    date: fixture.date,
+    time: fixture.time,
+    venue: fixture.venue,
+    homeTeam: fixture.home.name,
+    awayTeam: fixture.away.name,
+    result: fixture.result,
+    ticketLink: fixture.ticketLink,
+    // Add home and away directly for backward compatibility
+    home: fixture.home.name,
+    away: fixture.away.name
+  };
+}
 
-// Get unique seasons - normally would come from API
-const seasons = ['2023/24', '2022/23', '2021/22'];
+export default async function FixturesPage() {
+  // Divide fixtures into groups by month
+  const fixturesByMonth: { [key: string]: any[] } = {};
 
-export default function FixturesPage() {
-  const [activeTab, setActiveTab] = useState<string>('fixtures');
-  const [selectedCompetition, setSelectedCompetition] = useState<string>('All');
-  const [selectedSeason, setSelectedSeason] = useState<string>(seasons[0]);
-  const [selectedMonth, setSelectedMonth] = useState<string>('All');
-  
-  // Filter fixtures by competition if not 'All'
-  const filteredFixtures = selectedCompetition === 'All' 
-    ? fixtures
-    : fixtures.filter(fixture => fixture.competition === selectedCompetition);
-  
-  // Split into upcoming and past matches
-  const now = new Date();
-  const upcomingFixtures = filteredFixtures.filter(fixture => 
-    new Date(`${fixture.date}T${fixture.time}`) > now).sort((a, b) => 
-    new Date(a.date).getTime() - new Date(b.date).getTime());
-  
-  const pastFixtures = filteredFixtures.filter(fixture => 
-    new Date(`${fixture.date}T${fixture.time}`) <= now && fixture.result).sort((a, b) => 
-    new Date(b.date).getTime() - new Date(a.date).getTime());
+  fixtures.forEach(fixture => {
+    try {
+      // Format date to get month and year
+      const date = new Date(fixture.date);
+      const monthYear = date.toLocaleString('default', { month: 'long', year: 'numeric' });
+      
+      if (!fixturesByMonth[monthYear]) {
+        fixturesByMonth[monthYear] = [];
+      }
+      
+      fixturesByMonth[monthYear].push(fixture);
+    } catch (e) {
+      console.error(`Error processing fixture: ${fixture.id}`, e);
+    }
+  });
+
+  // Sort months chronologically
+  const sortedMonths = Object.keys(fixturesByMonth).sort((a, b) => {
+    const dateA = new Date(fixturesByMonth[a][0].date);
+    const dateB = new Date(fixturesByMonth[b][0].date);
+    return dateA.getTime() - dateB.getTime();
+  });
+
+  // Convert fixtures to Match format for MatchCarousel
+  const matchFixtures: Match[] = fixtures.map(convertFixtureToMatch);
 
   return (
-    <main className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Fixtures & Results</h1>
-      
-      <Tabs defaultValue="fixtures" value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="mb-6">
-          <TabsTrigger value="fixtures" className="px-6">Fixtures</TabsTrigger>
-          <TabsTrigger value="results" className="px-6">Results</TabsTrigger>
-          <TabsTrigger value="table" className="px-6">League Table</TabsTrigger>
-        </TabsList>
-        
-        {/* Fixtures Tab */}
-        <TabsContent value="fixtures" className="space-y-6">
-          <div className="flex flex-col md:flex-row gap-4 mb-6">
-            <div className="w-full md:w-1/3">
-              <label className="block text-sm font-medium mb-1">Competition</label>
-              <SelectCompat
-                value={selectedCompetition}
-                onValueChange={(value: string) => setSelectedCompetition(value)}
-                className="w-full"
-              >
-                <option value="All">All Competitions</option>
-                {competitions.map(comp => (
-                  <option key={comp} value={comp}>{comp}</option>
-                ))}
-              </SelectCompat>
-            </div>
-            
-            <div className="w-full md:w-1/3">
-              <label className="block text-sm font-medium mb-1">Season</label>
-              <SelectCompat
-                value={selectedSeason}
-                onValueChange={(val: string) => setSelectedSeason(val)}
-                className="w-full"
-              >
-                {seasons.map(season => (
-                  <option key={season} value={season}>{season}</option>
-                ))}
-              </SelectCompat>
-            </div>
-          </div>
+    <main className="min-h-screen">
+      <div className="bg-gradient-to-b from-primary/10 to-transparent py-16 md:py-24">
+        <div className="container mx-auto px-4">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Fixtures</h1>
+          <p className="text-lg text-muted-foreground mb-8">
+            Upcoming fixtures for Banks o&apos; Dee FC
+          </p>
           
-          {upcomingFixtures.length > 0 ? (
-            <div className="grid gap-6">
-              {upcomingFixtures.map(fixture => (
-                <MatchCardNew
-                  key={fixture.id}
-                  competition={fixture.competition}
-                  date={fixture.date}
-                  time={fixture.time}
-                  venue={fixture.venue}
-                  home={fixture.home}
-                  away={fixture.away}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12 bg-gray-50 rounded-lg">
-              <p className="text-lg text-gray-600">No upcoming fixtures found</p>
-            </div>
-          )}
-        </TabsContent>
-        
-        {/* Results Tab */}
-        <TabsContent value="results" className="space-y-6">
-          <div className="flex flex-col md:flex-row gap-4 mb-6">
-            <div className="w-full md:w-1/3">
-              <label className="block text-sm font-medium mb-1">Competition</label>
-              <SelectCompat
-                value={selectedCompetition}
-                onValueChange={(value: string) => setSelectedCompetition(value)}
-                className="w-full"
-              >
-                <option value="All">All Competitions</option>
-                {competitions.map(comp => (
-                  <option key={comp} value={comp}>{comp}</option>
-                ))}
-              </SelectCompat>
-            </div>
-            
-            <div className="w-full md:w-1/3">
-              <label className="block text-sm font-medium mb-1">Month</label>
-              <SelectCompat
-                value={selectedMonth}
-                onValueChange={(value: string) => setSelectedMonth(value)}
-                className="w-full"
-              >
-                <option value="All">All Months</option>
-                <option value="Aug">August</option>
-                <option value="Sep">September</option>
-                <option value="Oct">October</option>
-                {/* Add more months as needed */}
-              </SelectCompat>
-            </div>
+          {/* Fixtures Carousel */}
+          <div className="mt-8">
+            <MatchCarousel 
+              fixtures={fixtures}
+              title="Upcoming Fixtures"
+            />
           </div>
-          
-          {pastFixtures.length > 0 ? (
-            <div className="grid gap-6">
-              {pastFixtures.map(fixture => (
-                <MatchCardNew
-                  key={fixture.id}
-                  competition={fixture.competition}
-                  date={fixture.date}
-                  time={fixture.time}
-                  venue={fixture.venue}
-                  home={fixture.home}
-                  away={fixture.away}
-                  result={fixture.result}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12 bg-gray-50 rounded-lg">
-              <p className="text-lg text-gray-600">No past results found</p>
-            </div>
-          )}
-        </TabsContent>
+        </div>
+      </div>
+
+      <GradientSeparator />
+
+      <div className="container mx-auto px-4 py-12">
+        <h2 className="text-2xl font-bold mb-8">All Fixtures</h2>
         
-        {/* League Table Tab */}
-        <TabsContent value="table" className="space-y-6">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold">Highland League Table</h2>
-            <div className="w-40">
-              <SelectCompat
-                value={selectedSeason}
-                onValueChange={(value: string) => setSelectedSeason(value)}
-              >
-                {seasons.map(season => (
-                  <option key={season} value={season}>{season}</option>
+        {sortedMonths.length > 0 ? (
+          sortedMonths.map((month) => (
+            <div key={month} className="mb-12">
+              <h3 className="text-xl font-semibold mb-4 pb-2 border-b">{month}</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {fixturesByMonth[month].map((fixture) => (
+                  <FixturesCard
+                    key={fixture.id}
+                    competition={fixture.competition}
+                    date={formatDate(fixture.date)}
+                    time={fixture.time}
+                    venue={fixture.venue}
+                    home={fixture.home.name}
+                    away={fixture.away.name}
+                    result={fixture.result}
+                  />
                 ))}
-              </SelectCompat>
+              </div>
             </div>
+          ))
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-lg text-gray-500">No fixtures currently available.</p>
           </div>
-          
-          <LeagueTable
-            selectedSeason={selectedSeason}
-            data={mockLeagueData}
-          />
-        </TabsContent>
-      </Tabs>
+        )}
+      </div>
     </main>
   );
 }

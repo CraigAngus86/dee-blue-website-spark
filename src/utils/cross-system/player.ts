@@ -1,139 +1,123 @@
+
 /**
- * Player-specific reference resolution utilities
+ * Cross-system utility for player data management
  */
 
-import { supabase } from '@/lib/supabase/client';
-import { sanityClient } from '@/lib/sanity/client';
-import { 
-  SanityPlayerProfile, 
-  SupabasePerson,
-  ReferenceOptions 
-} from './types';
-import { resolveSupabaseReference } from './resolveSupabaseReference';
-import { resolveSanityDocumentBySupabaseId } from './resolveSanityReference';
+import { supabase } from '@/lib/supabase/client'; 
+import { fetchSanityData } from '@/lib/sanity/client';
 import { referenceCache } from './cache';
+import { resolveSupabaseReference } from './resolveSupabaseReference';
+import { resolveSanityReference } from './resolveSanityReference';
 
-/**
- * Resolve a player from a Sanity player profile
- * @param playerProfile Sanity player profile document
- * @param options Resolution options
- * @returns Referenced player from Supabase
- */
-export async function resolvePlayerFromProfile(
-  playerProfile: SanityPlayerProfile | null,
-  options: ReferenceOptions = {}
-): Promise<SupabasePerson | null> {
-  return resolveSupabaseReference<SupabasePerson>(playerProfile, 'people', options);
+// Player types
+export interface PlayerSupabase {
+  id: string;
+  name: string;
+  first_name: string;
+  last_name: string;
+  image_url?: string;
+  jersey_number?: number;
+  nationality?: string;
+  position?: string;
+  bio?: string;
+  joined_date?: string;
+  sanity_id?: string;
+}
+
+export interface PlayerSanity {
+  _id: string;
+  _type: 'player';
+  name: string;
+  firstName: string;
+  lastName: string;
+  position: string;
+  profileImage?: {
+    asset: {
+      _ref: string;
+    };
+  };
+  bio?: {
+    _type: 'block';
+    children: any[];
+  }[];
+  joinedDate?: string;
+  supabaseId?: string;
 }
 
 /**
- * Resolve a Sanity player profile from a Supabase player record
- * @param player Supabase player record
- * @param options Resolution options
- * @returns Referenced Sanity player profile
+ * Get a player from Supabase by ID
  */
-export async function resolveProfileFromPlayer(
-  player: SupabasePerson | null,
-  options: ReferenceOptions = {}
-): Promise<SanityPlayerProfile | null> {
-  if (!player) return null;
-  
-  const { includeRelated = false } = options;
-  
-  // First try to find by sanity_id if present
-  if (player.sanity_id) {
-    const query = `*[_type == "playerProfile" && _id == $sanityId][0]`;
-    const profile = await sanityClient.fetch(query, { sanityId: player.sanity_id });
-    
-    if (profile) return profile as SanityPlayerProfile;
-  }
-  
-  // Otherwise find by supabaseId field
-  return resolveSanityDocumentBySupabaseId<SanityPlayerProfile>(player.id, 'playerProfile', options);
-}
-
-/**
- * Get a player with their associated Sanity profile data
- * @param playerId Supabase player ID
- * @param options Resolution options
- * @returns Player with profile data
- */
-export async function getPlayerWithProfile(
-  playerId: string,
-  options: ReferenceOptions = {}
-): Promise<{ player: SupabasePerson | null, profile: SanityPlayerProfile | null }> {
-  const { skipCache = false } = options;
-  const cacheKey = `player:withProfile:${playerId}`;
-  
+export async function getPlayerById(id: string): Promise<PlayerSupabase | null> {
   try {
-    return await referenceCache.getOrSet(
-      cacheKey,
-      async () => {
-        const { data: player, error } = await supabase
-          .from('people')
-          .select('*')
-          .eq('id', playerId)
-          .single();
-          
-        if (error || !player) {
-          return { player: null, profile: null };
-        }
-        
-        const profile = await resolveProfileFromPlayer(player as SupabasePerson, options);
-        
-        return { 
-          player: player as SupabasePerson,
-          profile
-        };
-      },
-      skipCache
-    );
+    const { data, error } = await supabase
+      .from('players')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) throw error;
+    return data as PlayerSupabase;
   } catch (error) {
-    console.error('Error fetching player with profile:', error);
-    return { player: null, profile: null };
+    console.error('Error fetching player by ID:', error);
+    return null;
   }
 }
 
 /**
- * Get all players with their associated Sanity profile data
- * @param options Resolution options
- * @returns Array of players with profile data
+ * Get a player from Sanity by ID
  */
-export async function getAllPlayersWithProfiles(
-  options: ReferenceOptions = {}
-): Promise<Array<{ player: SupabasePerson, profile: SanityPlayerProfile | null }>> {
-  const { skipCache = false } = options;
-  const cacheKey = 'players:withProfiles';
-  
+export async function getPlayerByIdFromSanity(id: string): Promise<PlayerSanity | null> {
   try {
-    return await referenceCache.getOrSet(
-      cacheKey,
-      async () => {
-        const { data: players, error } = await supabase
-          .from('people')
-          .select('*')
-          .is('player_position', 'not.null');
-          
-        if (error || !players) {
-          return [];
-        }
-        
-        const results = await Promise.all(
-          players.map(async (player) => {
-            const profile = await resolveProfileFromPlayer(player as SupabasePerson, options);
-            return {
-              player: player as SupabasePerson,
-              profile
-            };
-          })
-        );
-        
-        return results;
-      },
-      skipCache
-    );
+    const query = `*[_type == "player" && _id == $id][0]`;
+    const player = await fetchSanityData(query, { id });
+    return player as PlayerSanity;
   } catch (error) {
-    console.error('Error fetching all players with profiles:', error);
-    return [];
+    console.error('Error fetching player from Sanity by ID:', error);
+    return null;
   }
+}
+
+/**
+ * Get a player by either Supabase ID or Sanity ID
+ */
+export async function getPlayerByAnyId(id: string, source?: 'supabase' | 'sanity'): Promise<PlayerSupabase | PlayerSanity | null> {
+  if (source === 'supabase') {
+    return getPlayerById(id);
+  } else if (source === 'sanity') {
+    return getPlayerByIdFromSanity(id);
+  }
+
+  // Try both if source is not specified
+  const supabasePlayer = await getPlayerById(id);
+  if (supabasePlayer) return supabasePlayer;
+
+  return getPlayerByIdFromSanity(id);
+}
+
+/**
+ * Resolve related Sanity player document from a Supabase player record
+ */
+export async function resolvePlayerSanityDocument(
+  supabasePlayer: PlayerSupabase
+): Promise<PlayerSanity | null> {
+  if (!supabasePlayer || !supabasePlayer.sanity_id) return null;
+  
+  return resolveSanityReference<PlayerSanity>(
+    { sanity_id: supabasePlayer.sanity_id },
+    'player'
+  );
+}
+
+/**
+ * Resolve related Supabase player record from a Sanity player document
+ */
+export async function resolvePlayerSupabaseRecord(
+  sanityPlayer: PlayerSanity
+): Promise<PlayerSupabase | null> {
+  if (!sanityPlayer || !sanityPlayer.supabaseId) return null;
+  
+  return resolveSupabaseReference<PlayerSupabase>(
+    { _id: sanityPlayer._id, _type: 'player', supabaseId: sanityPlayer.supabaseId },
+    'players'
+  );
 }

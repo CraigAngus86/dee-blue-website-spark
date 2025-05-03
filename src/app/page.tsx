@@ -105,8 +105,51 @@ async function getMatches() {
     }
 
     // Convert Supabase data to our app's Match format
-    const upcoming = (upcomingMatches || []).map(match => convertSupabaseMatchToMatch(match));
-    const recent = (recentMatches || []).map(match => convertSupabaseMatchToMatch(match));
+    const upcoming = (upcomingMatches || []).map(match => {
+      if (!match.home_team_id || !match.away_team_id) {
+        console.error("Invalid match data:", match);
+        return null;
+      }
+      
+      return {
+        id: match.id,
+        competition: match.competition_id?.name || "",
+        date: match.match_date,
+        time: match.match_time || "",
+        venue: match.venue || "",
+        homeTeam: match.home_team_id.name,
+        awayTeam: match.away_team_id.name,
+        home: match.home_team_id.name,
+        away: match.away_team_id.name,
+        ticketLink: match.ticket_link
+      };
+    }).filter(Boolean);
+    
+    const recent = (recentMatches || []).map(match => {
+      if (!match.home_team_id || !match.away_team_id) {
+        console.error("Invalid match data:", match);
+        return null;
+      }
+      
+      return {
+        id: match.id,
+        competition: match.competition_id?.name || "",
+        date: match.match_date,
+        time: match.match_time || "",
+        venue: match.venue || "",
+        homeTeam: match.home_team_id.name,
+        awayTeam: match.away_team_id.name,
+        home: match.home_team_id.name,
+        away: match.away_team_id.name,
+        result: match.home_score !== undefined && match.away_score !== undefined
+          ? {
+              homeScore: match.home_score,
+              awayScore: match.away_score,
+              matchReportLink: match.match_report_link
+            }
+          : undefined,
+      };
+    }).filter(Boolean);
 
     return { upcoming, recent };
   } catch (error) {
