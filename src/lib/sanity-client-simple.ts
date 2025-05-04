@@ -27,7 +27,7 @@ export function createSimpleSanityClient(): SanityClient {
     tokenAvailable: !!TOKEN
   });
   
-  // Create with minimal configuration
+  // Create with minimal configuration - explicitly no withCredentials
   return createClient({
     projectId: PROJECT_ID,
     dataset: DATASET,

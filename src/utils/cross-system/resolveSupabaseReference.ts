@@ -25,6 +25,7 @@ export default async function resolveSupabaseReference<T = any>(
     async () => {
       try {
         console.log(`Resolving Supabase reference: ${tableName} with ID ${id}`);
+        
         const { data, error } = await supabase
           .from(tableName)
           .select('*')
@@ -32,13 +33,13 @@ export default async function resolveSupabaseReference<T = any>(
           .single();
           
         if (error) {
-          console.error(`Error resolving Supabase reference for ${tableName}:${id}:`, error);
+          console.error(`Error fetching ${tableName} with ID ${id}:`, error);
           return null;
         }
         
-        return data as T;
+        return data;
       } catch (error) {
-        console.error(`Exception resolving Supabase reference for ${tableName}:${id}:`, error);
+        console.error(`Error resolving Supabase reference for ${tableName}:${id}:`, error);
         return null;
       }
     },
