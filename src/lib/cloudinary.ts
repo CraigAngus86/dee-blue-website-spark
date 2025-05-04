@@ -1,6 +1,7 @@
 
 import { Cloudinary } from '@cloudinary/url-gen';
 
+// Initialize Cloudinary with cloud configuration
 export const cloudinary = new Cloudinary({
   cloud: {
     cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'dlkpaw2a0'
@@ -9,3 +10,24 @@ export const cloudinary = new Cloudinary({
     secure: true
   }
 });
+
+// Helper functions for working with Cloudinary
+export const getCloudinaryImageUrl = (publicId: string, options: any = {}) => {
+  if (!publicId) return '';
+  
+  const { width, height, crop, quality } = options;
+  
+  let url = cloudinary.image(publicId);
+  
+  if (width || height) {
+    url = url.resize(`${crop || 'fill'}_${width || 'auto'}_${height || 'auto'}`);
+  }
+  
+  if (quality) {
+    url = url.quality(quality);
+  }
+  
+  return url.toURL();
+};
+
+// Export additional Cloudinary utility functions if needed

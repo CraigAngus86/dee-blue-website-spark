@@ -2,7 +2,7 @@
 import { NextResponse } from 'next/server';
 import { v2 as cloudinary } from 'cloudinary';
 
-// Configure Cloudinary
+// Configure Cloudinary with proper environment variables
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'dlkpaw2a0',
   api_key: process.env.CLOUDINARY_API_KEY || '336893478695244',
@@ -40,21 +40,6 @@ export async function POST(request: Request) {
       metadataJson: metadataJson ? 'provided' : 'not provided' 
     });
     
-    // Determine upload preset
-    let uploadPreset = 'banks-o-dee';  // Default preset
-    
-    if (type === 'player') {
-      uploadPreset = 'player-upload';
-    } else if (type === 'news') {
-      uploadPreset = 'news-upload';
-    } else if (type === 'match') {
-      uploadPreset = 'match-gallery-upload';
-    } else if (type === 'sponsor') {
-      uploadPreset = 'sponsor-upload';
-    } else if (type === 'stadium') {
-      uploadPreset = 'stadium-upload';
-    }
-    
     // Determine folder
     let folder = 'banksofdeefc/other';
     
@@ -78,10 +63,7 @@ export async function POST(request: Request) {
       }
     }
     
-    console.log('Upload configuration:', { 
-      folder,
-      uploadPreset 
-    });
+    console.log('Upload configuration:', { folder });
     
     // Parse metadata
     let context = {};
@@ -109,10 +91,10 @@ export async function POST(request: Request) {
     // Upload to Cloudinary
     const result = await cloudinary.uploader.upload(fileUri, {
       folder: folder,
-      upload_preset: uploadPreset,
+      // For direct upload without preset
+      resource_type: 'auto',
       tags: tagsList,
       context: context,
-      resource_type: 'auto',
     });
     
     console.log('Cloudinary upload successful:', { 

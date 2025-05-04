@@ -20,8 +20,7 @@ interface UploadError {
 }
 
 /**
- * Custom hook for uploading images to Cloudinary via our secure API route
- * Must be client-side as it uses browser File API and FormData
+ * Custom hook for uploading images to Cloudinary via API route
  */
 export function useCloudinaryUpload() {
   const [isUploading, setIsUploading] = useState(false);
@@ -65,43 +64,44 @@ export function useCloudinaryUpload() {
         formData.append('metadata', JSON.stringify(metadata.metadata));
       }
       
-      // Progress simulation - we don't have real progress from fetch
+      // Simulate progress since we don't have real-time progress
       const progressInterval = setInterval(() => {
         setProgress(prev => {
-          const newProgress = prev + Math.random() * 10;
-          return newProgress >= 90 ? 90 : newProgress;
+          const increment = Math.random() * 10;
+          return prev + increment > 90 ? 90 : prev + increment;
         });
-      }, 300);
+      }, 200);
       
-      console.log('Sending upload request to API route');
+      console.log('Sending upload request to API route:', '/api/cloudinary/upload');
       
-      // Make request to our API route
+      // Send request to API route
       const response = await fetch('/api/cloudinary/upload', {
         method: 'POST',
-        body: formData
+        body: formData,
       });
       
       clearInterval(progressInterval);
       
       if (!response.ok) {
         const errorData = await response.json();
-        console.error('Upload request failed:', errorData);
-        throw new Error(errorData.error?.message || 'Upload failed');
+        console.error('Upload failed with status:', response.status, errorData);
+        throw new Error(errorData.error?.message || `Upload failed with status: ${response.status}`);
       }
       
       const data = await response.json();
       console.log('Upload successful, received:', data);
-      setProgress(100);
       
-      // Set result
+      setProgress(100);
       setResult(data);
       return data;
     } catch (err) {
       console.error('Error uploading file to Cloudinary:', err);
+      
       const uploadError: UploadError = {
         message: err instanceof Error ? err.message : 'Failed to upload image',
         details: err
       };
+      
       setError(uploadError);
       return null;
     } finally {

@@ -10,6 +10,7 @@ export const client = createClient({
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
   apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION || "2023-06-21",
   useCdn: process.env.NODE_ENV === "production",
+  token: process.env.SANITY_API_TOKEN, // Add token for authenticated requests if available
 });
 
 // Configure Sanity image builder
@@ -19,6 +20,7 @@ const builder = imageUrlBuilder(client);
  * Get image URL from Sanity image reference
  */
 export function urlFor(source: SanityImageSource) {
+  if (!source) return "";
   return builder.image(source);
 }
 
@@ -54,7 +56,13 @@ export function cloudinaryUrlFor(publicId: string, options: any = {}) {
  * Helper function to get a Cloudinary URL from a Sanity Cloudinary image object
  */
 export function getCloudinaryUrl(image: any, options: any = {}) {
-  if (!image || !image.asset || !image.asset.public_id) return "";
+  if (!image || !image.asset || !image.asset.public_id) {
+    // Check for direct URL in asset
+    if (image && image.asset && image.asset.url) {
+      return image.asset.url;
+    }
+    return "";
+  }
   return cloudinaryUrlFor(image.asset.public_id, options);
 }
 

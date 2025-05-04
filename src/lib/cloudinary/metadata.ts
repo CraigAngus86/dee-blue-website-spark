@@ -2,21 +2,38 @@
 /**
  * Types for Cloudinary metadata
  */
-
 export enum ContentType {
-  PLAYER = 'player',
   NEWS = 'news',
+  PLAYER = 'player',
   MATCH = 'match',
-  STADIUM = 'stadium',
+  TEAM = 'team',
   SPONSOR = 'sponsor',
-  FAN = 'fan',
-  GENERAL = 'general'
+  STADIUM = 'stadium',
+  OTHER = 'other'
 }
 
 export interface CloudinaryMetadata {
-  contentType: ContentType;
+  contentType: ContentType | string;
   entityId?: string;
   type?: string;
-  tags?: string[];
   metadata?: Record<string, any>;
+  tags?: string[];
+}
+
+export function createMetadata(
+  contentType: ContentType | string,
+  entityId: string,
+  altText: string,
+  metadata: Record<string, any> = {}
+): Record<string, any> {
+  return {
+    contentType,
+    entityId,
+    altText,
+    ...metadata
+  };
+}
+
+export function formatTags(tags: string[], contentType: ContentType | string): string[] {
+  return [contentType, ...tags].filter(Boolean);
 }
