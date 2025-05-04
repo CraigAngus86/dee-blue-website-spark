@@ -1,4 +1,3 @@
-
 import { Metadata } from "next";
 import { getHeroSlides } from "@/lib/sanity/queries/heroSlides";
 import HeroSection from "@/components/ui/home/HeroSection";
@@ -152,11 +151,14 @@ async function getMatches() {
       };
     }).filter(Boolean) as Match[];
 
-    return { upcoming, recent };
+    // For the featured match, use the first upcoming match if available
+    const featuredMatch = upcoming.length > 0 ? upcoming[0] : undefined;
+
+    return { upcoming, recent, featuredMatch };
   } catch (error) {
     console.error("Error fetching matches:", error);
     // Return empty arrays as fallback to prevent runtime crashes
-    return { upcoming: [], recent: [] };
+    return { upcoming: [], recent: [], featuredMatch: undefined };
   }
 }
 
@@ -294,7 +296,8 @@ export default async function HomePage() {
             <MatchCenter 
               upcomingMatches={matches.upcoming}
               recentResults={matches.recent}
-              leagueTable={leagueTable} 
+              leagueTable={leagueTable}
+              featuredMatch={matches.featuredMatch}
             />
           </FadeIn>
         </Section>

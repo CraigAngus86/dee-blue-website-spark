@@ -13,7 +13,7 @@ const MatchDayHospitalitySection = () => {
   const allHospitalityOptions = [...premiumSponsorship, fanzoneSponsorship];
 
   return (
-    <Section background="white" spacing="md" id="matchday-hospitality">
+    <Section background="light" spacing="md" id="matchday-hospitality">
       <Container>
         <div className="max-w-3xl mx-auto text-center mb-8">
           <Heading as="h2" size="2xl" className="mb-4">

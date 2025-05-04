@@ -14,6 +14,11 @@ interface MatchCenterProps {
   featuredMatch?: Match;
 }
 
+interface LeagueTableProps {
+  data: any[];
+  selectedSeason?: string;
+}
+
 const MatchCenter: React.FC<MatchCenterProps> = ({
   upcomingMatches = [],
   recentResults = [],
@@ -51,7 +56,7 @@ const MatchCenter: React.FC<MatchCenterProps> = ({
         </TabsList>
         <TabsContent value="fixtures" className="w-full">
           {upcomingMatches.length > 0 ? (
-            <MatchCarousel matches={upcomingMatches} type="fixture" />
+            <MatchCarousel matches={upcomingMatches} />
           ) : (
             <div className="text-center py-8">
               <p className="text-muted-foreground">No upcoming fixtures at this time.</p>
@@ -60,7 +65,7 @@ const MatchCenter: React.FC<MatchCenterProps> = ({
         </TabsContent>
         <TabsContent value="results">
           {recentResults.length > 0 ? (
-            <MatchCarousel matches={recentResults} type="result" />
+            <MatchCarousel matches={recentResults} />
           ) : (
             <div className="text-center py-8">
               <p className="text-muted-foreground">No recent results to show.</p>
@@ -69,7 +74,7 @@ const MatchCenter: React.FC<MatchCenterProps> = ({
         </TabsContent>
         <TabsContent value="table">
           {leagueTable.length > 0 ? (
-            <LeagueTable data={leagueTable} />
+            <LeagueTable data={leagueTable} selectedSeason="2023/24" />
           ) : (
             <div className="text-center py-8">
               <p className="text-muted-foreground">League table is not available.</p>

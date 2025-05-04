@@ -1,3 +1,4 @@
+
 /**
  * Cross-system reference resolution utilities
  * 
@@ -8,8 +9,8 @@
 // Re-export all utilities
 export * from './types';
 export * from './cache';
-export * from './resolveSupabaseReference';
-export * from './resolveSanityReference';
+export { default as resolveSupabaseReference } from './resolveSupabaseReference';
+export { default as resolveSanityReference } from './resolveSanityReference';
 export * from './player';
 export * from './match';
 export * from './sponsor';

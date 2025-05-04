@@ -1,135 +1,136 @@
-/**
- * Sponsor-specific reference resolution utilities
- */
 
-import { supabase } from '@/integrations/supabase/client';
-import { fetchSanity } from '@/lib/sanity';
+import { supabase } from '@/lib/supabase/client';
+import { client } from '@/lib/sanity/client';
+import { ReferenceOptions } from './types';
 import { referenceCache } from './cache';
-import { SanityDocument, SupabaseRecord, ReferenceOptions } from './types';
+import resolveSupabaseReference from './resolveSupabaseReference';
+import resolveSanityReference from './resolveSanityReference';
 
-// Define types specific to sponsors
-export interface SanitySponsor extends SanityDocument {
-  _type: 'sponsor';
-  name: string;
-  tier?: string;
-  logo?: {
-    asset: {
-      _ref: string;
-      _type: 'reference';
-    };
-  };
-  website?: string;
+/**
+ * Interface for sponsor details that can be resolved from both systems
+ */
+export interface CrossSystemSponsor {
+  id?: string | number;
+  sanityId?: string;
+  supabaseId?: number;
+  name?: string;
   description?: string;
-  supabaseId?: string;
-}
-
-export interface SupabaseSponsor extends SupabaseRecord {
-  name: string;
-  logo_url?: string;
-  logo_dark_url?: string;
-  tier?: string;
   website?: string;
-  description?: string;
-  featured: boolean;
-  sanity_id?: string;
+  logoUrl?: string;
+  featured?: boolean;
+  tier?: string;
+  startDate?: string;
+  endDate?: string;
 }
 
 /**
- * Resolve a sponsor in Supabase from a Sanity sponsor document
+ * Resolves a sponsor reference from Supabase
  */
-export async function resolveSponsorSupabaseRecord(
-  sponsor: SanitySponsor | null,
+export async function resolveSupabaseSponsor(
+  id: number | string | null | undefined,
   options: ReferenceOptions = {}
-): Promise<SupabaseSponsor | null> {
-  if (!sponsor || !sponsor.supabaseId) {
-    return null;
-  }
-
-  const { supabaseId } = sponsor;
-  const cacheKey = `supabase:sponsor:${supabaseId}`;
-  const { skipCache = false } = options;
-
-  try {
-    return await referenceCache.getOrSet<SupabaseSponsor | null>(
-      cacheKey,
-      async () => {
+): Promise<CrossSystemSponsor | null> {
+  if (!id) return null;
+  
+  const cacheKey = `supabase:sponsor:${id}`;
+  
+  return referenceCache.getOrSet(
+    cacheKey,
+    async () => {
+      try {
         const { data, error } = await supabase
           .from('sponsors')
           .select('*')
-          .eq('id', supabaseId)
+          .eq('id', id)
           .single();
-
+          
         if (error) {
-          console.error(`Error fetching sponsor record:`, error);
+          console.error(`Error resolving Supabase sponsor ${id}:`, error);
           return null;
         }
-
-        return data as SupabaseSponsor;
-      },
-      skipCache
-    );
-  } catch (error) {
-    console.error(`Error resolving Supabase sponsor for Sanity sponsor document:`, error);
-    return null;
-  }
+        
+        if (!data) {
+          return null;
+        }
+        
+        return {
+          id: data.id,
+          supabaseId: data.id,
+          name: data.name,
+          description: data.description,
+          website: data.website,
+          logoUrl: data.logo_url,
+          featured: data.featured,
+          tier: data.sponsor_tier,
+          startDate: data.start_date,
+          endDate: data.end_date
+        };
+      } catch (error) {
+        console.error(`Error resolving Supabase sponsor ${id}:`, error);
+        return null;
+      }
+    },
+    options.skipCache
+  );
 }
 
 /**
- * Resolve a sponsor in Sanity from a Supabase sponsor record
+ * Get all sponsors from Supabase with optional filtering
  */
-export async function resolveSponsorSanityDocument(
-  sponsor: SupabaseSponsor | null,
-  options: ReferenceOptions = {}
-): Promise<SanitySponsor | null> {
-  if (!sponsor) return null;
+export async function getSupabaseSponsors(
+  options: ReferenceOptions & { 
+    featuredOnly?: boolean;
+    tier?: string;
+    limit?: number;
+  } = {}
+): Promise<CrossSystemSponsor[]> {
+  const { featuredOnly, tier, limit = 100 } = options;
+  const cacheKey = `supabase:all-sponsors:${featuredOnly ? 'featured' : 'all'}:${tier || 'all'}:${limit}`;
   
-  // First try to find by sanity_id if present
-  if (sponsor.sanity_id) {
-    const query = `*[_type == "sponsor" && _id == $sanityId][0]`;
-    const sanitySponsor = await fetchSanity(query, { sanityId: sponsor.sanity_id });
-    
-    if (sanitySponsor) return sanitySponsor as SanitySponsor;
-  }
-  
-  // Otherwise find by supabaseId field
-  const query = `*[_type == "sponsor" && supabaseId == $supabaseId][0]`;
-  const sanitySponsor = await fetchSanity(query, { supabaseId: sponsor.id });
-  
-  return sanitySponsor as SanitySponsor | null;
-}
-
-/**
- * Get featured sponsors from Supabase
- */
-export async function getFeaturedSponsors(
-  limit: number = 8,
-  options: ReferenceOptions = {}
-): Promise<SupabaseSponsor[]> {
-  const { skipCache = false } = options;
-  const cacheKey = `sponsors:featured:${limit}`;
-  
-  try {
-    return await referenceCache.getOrSet(
-      cacheKey,
-      async () => {
-        const { data, error } = await supabase
-          .from('sponsors')
-          .select('*')
-          .eq('featured', true)
-          .order('created_at', { ascending: false })
+  return referenceCache.getOrSet(
+    cacheKey,
+    async () => {
+      try {
+        let query = supabase.from('sponsors').select('*');
+          
+        if (featuredOnly) {
+          query = query.eq('featured', true);
+        }
+        
+        if (tier) {
+          query = query.eq('sponsor_tier', tier);
+        }
+        
+        const { data, error } = await query
+          .order('featured', { ascending: false })
           .limit(limit);
           
         if (error) {
-          console.error('Error fetching featured sponsors:', error);
+          console.error('Error fetching sponsors:', error);
           return [];
         }
         
-        return data as SupabaseSponsor[];
-      },
-      skipCache
-    );
-  } catch (error) {
-    console.error('Error fetching featured sponsors:', error);
-    return [];
-  }
+        if (!data || !data.length) {
+          return [];
+        }
+        
+        return data.map(sponsor => ({
+          id: sponsor.id,
+          supabaseId: sponsor.id,
+          name: sponsor.name,
+          description: sponsor.description,
+          website: sponsor.website,
+          logoUrl: sponsor.logo_url,
+          featured: sponsor.featured,
+          tier: sponsor.sponsor_tier,
+          startDate: sponsor.start_date,
+          endDate: sponsor.end_date
+        }));
+      } catch (error) {
+        console.error('Error fetching sponsors:', error);
+        return [];
+      }
+    },
+    options.skipCache
+  );
 }

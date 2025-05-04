@@ -1,160 +1,162 @@
-/**
- * Player-specific reference resolution utilities
- */
 
-import { supabase } from '@/integrations/supabase/client';
-import { fetchSanity } from '@/lib/sanity';
+import { supabase } from '@/lib/supabase/client';
+import { client } from '@/lib/sanity/client';
+import { ReferenceOptions } from './types';
 import { referenceCache } from './cache';
-import { resolveSupabaseReference } from './resolveSupabaseReference';
-import { resolveSanityDocumentBySupabaseId } from './resolveSanityReference';
-import { SanityDocument, SupabaseRecord, ReferenceOptions } from './types';
 
-// Define types specific to players
-export interface SanityPlayerProfile extends SanityDocument {
-  playerName?: string;
+/**
+ * Interface for player details that can be resolved from both systems
+ */
+export interface CrossSystemPlayer {
+  id?: string | number;
+  sanityId?: string;
+  supabaseId?: number;
   firstName?: string;
   lastName?: string;
+  fullName?: string;
   position?: string;
-  profileImage?: {
-    asset: {
-      _ref: string;
-    };
-  };
   jerseyNumber?: number;
+  dateOfBirth?: string;
+  height?: number;
+  weight?: number;
   nationality?: string;
   bio?: string;
-  member_type?: string;
-  didYouKnow?: string;
-  stats?: any;
-}
-
-export interface SupabasePerson extends SupabaseRecord {
-  first_name: string;
-  last_name: string;
-  name: string;
-  player_position?: string;
-  staff_role?: string;
-  position?: string;
-  image_url?: string;
-  jersey_number?: number;
-  nationality?: string;
-  bio?: string;
-  joined_date?: string;
-  social_media?: Record<string, string>;
-  academy_player?: boolean;
-  did_you_know?: string;
+  imageUrl?: string;
+  stats?: {
+    appearances?: number;
+    goals?: number;
+    assists?: number;
+    cleanSheets?: number;
+    yellowCards?: number;
+    redCards?: number;
+  };
 }
 
 /**
- * Resolve a player from a Sanity player profile
+ * Resolves a player reference from Supabase
  */
-export async function resolvePlayerFromProfile(
-  playerProfile: SanityPlayerProfile | null,
+export async function resolveSupabasePlayer(
+  id: number | string | null | undefined,
   options: ReferenceOptions = {}
-): Promise<SupabasePerson | null> {
-  return resolveSupabaseReference<SupabasePerson>(playerProfile, 'people', options);
-}
-
-/**
- * Resolve a Sanity player profile from a Supabase player record
- */
-export async function resolveProfileFromPlayer(
-  player: SupabasePerson | null,
-  options: ReferenceOptions = {}
-): Promise<SanityPlayerProfile | null> {
-  if (!player) return null;
+): Promise<CrossSystemPlayer | null> {
+  if (!id) return null;
   
-  const { includeRelated = false } = options;
+  const cacheKey = `supabase:player:${id}`;
   
-  // First try to find by sanity_id if present
-  if (player.sanity_id) {
-    const query = `*[_type == "playerProfile" && _id == $sanityId][0]`;
-    const profile = await fetchSanity(query, { sanityId: player.sanity_id });
-    
-    if (profile) return profile as SanityPlayerProfile;
-  }
-  
-  // Otherwise find by supabaseId field
-  return resolveSanityDocumentBySupabaseId<SanityPlayerProfile>(player.id, 'playerProfile', options);
-}
-
-/**
- * Get a player with their associated Sanity profile data
- */
-export async function getPlayerWithProfile(
-  playerId: string,
-  options: ReferenceOptions = {}
-): Promise<{ player: SupabasePerson | null, profile: SanityPlayerProfile | null }> {
-  const { skipCache = false } = options;
-  const cacheKey = `player:withProfile:${playerId}`;
-  
-  try {
-    return await referenceCache.getOrSet(
-      cacheKey,
-      async () => {
-        const { data: player, error } = await supabase
+  return referenceCache.getOrSet(
+    cacheKey,
+    async () => {
+      try {
+        const { data, error } = await supabase
           .from('people')
           .select('*')
-          .eq('id', playerId)
+          .eq('id', id)
           .single();
           
-        if (error || !player) {
-          return { player: null, profile: null };
+        if (error) {
+          console.error(`Error resolving Supabase player ${id}:`, error);
+          return null;
         }
         
-        const profile = await resolveProfileFromPlayer(player as SupabasePerson, options);
+        if (!data) {
+          return null;
+        }
         
-        return { 
-          player: player as SupabasePerson,
-          profile
+        return {
+          id: data.id,
+          supabaseId: data.id,
+          firstName: data.first_name,
+          lastName: data.last_name,
+          fullName: `${data.first_name} ${data.last_name}`,
+          position: data.player_position,
+          jerseyNumber: data.jersey_number,
+          dateOfBirth: data.date_of_birth,
+          nationality: data.nationality,
+          bio: data.bio,
+          imageUrl: data.image_url,
+          stats: {
+            appearances: data.appearances,
+            goals: data.goals,
+            assists: data.assists,
+            cleanSheets: data.clean_sheets,
+            yellowCards: data.yellow_cards,
+            redCards: data.red_cards
+          }
         };
-      },
-      skipCache
-    );
-  } catch (error) {
-    console.error('Error fetching player with profile:', error);
-    return { player: null, profile: null };
-  }
+      } catch (error) {
+        console.error(`Error resolving Supabase player ${id}:`, error);
+        return null;
+      }
+    },
+    options.skipCache
+  );
 }
 
 /**
- * Get all players with their associated Sanity profile data
+ * Get all players from Supabase with optional filtering
  */
-export async function getAllPlayersWithProfiles(
-  options: ReferenceOptions = {}
-): Promise<Array<{ player: SupabasePerson, profile: SanityPlayerProfile | null }>> {
-  const { skipCache = false } = options;
-  const cacheKey = 'players:withProfiles';
+export async function getSupabasePlayers(
+  options: ReferenceOptions & { 
+    positionFilter?: string;
+    limit?: number;
+    includeRelated?: boolean;
+  } = {}
+): Promise<CrossSystemPlayer[]> {
+  const { positionFilter, limit = 100 } = options;
+  const cacheKey = `supabase:all-players:${positionFilter || 'all'}:${limit}`;
   
-  try {
-    return await referenceCache.getOrSet(
-      cacheKey,
-      async () => {
-        const { data: players, error } = await supabase
+  return referenceCache.getOrSet(
+    cacheKey,
+    async () => {
+      try {
+        let query = supabase
           .from('people')
           .select('*')
           .is('player_position', 'not.null');
           
-        if (error || !players) {
+        if (positionFilter) {
+          query = query.eq('player_position', positionFilter);
+        }
+        
+        const { data, error } = await query
+          .order('jersey_number', { ascending: true })
+          .limit(limit);
+          
+        if (error) {
+          console.error('Error fetching players:', error);
           return [];
         }
         
-        const results = await Promise.all(
-          players.map(async (player) => {
-            const profile = await resolveProfileFromPlayer(player as SupabasePerson, options);
-            return {
-              player: player as SupabasePerson,
-              profile
-            };
-          })
-        );
+        if (!data || !data.length) {
+          return [];
+        }
         
-        return results;
-      },
-      skipCache
-    );
-  } catch (error) {
-    console.error('Error fetching all players with profiles:', error);
-    return [];
-  }
+        return data.map(player => ({
+          id: player.id,
+          supabaseId: player.id,
+          firstName: player.first_name,
+          lastName: player.last_name,
+          fullName: `${player.first_name} ${player.last_name}`,
+          position: player.player_position,
+          jerseyNumber: player.jersey_number,
+          dateOfBirth: player.date_of_birth,
+          nationality: player.nationality,
+          bio: player.bio,
+          imageUrl: player.image_url,
+          stats: {
+            appearances: player.appearances,
+            goals: player.goals,
+            assists: player.assists,
+            cleanSheets: player.clean_sheets,
+            yellowCards: player.yellow_cards,
+            redCards: player.red_cards
+          }
+        }));
+      } catch (error) {
+        console.error('Error fetching players:', error);
+        return [];
+      }
+    },
+    options.skipCache
+  );
 }

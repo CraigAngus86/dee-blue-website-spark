@@ -1,102 +1,51 @@
 
-/**
- * Utility to resolve Supabase entities from Sanity document references
- */
-
-import { supabase } from '@/integrations/supabase/client';
+import { ReferenceOptions } from './types';
+import { supabase } from '@/lib/supabase/client';
 import { referenceCache } from './cache';
-import { SanityDocument, SupabaseRecord, ReferenceOptions } from './types';
 
 /**
- * Resolve a Supabase entity referenced by a Sanity document
+ * Resolves a reference to a Supabase record
+ * 
+ * @param table - Supabase table name
+ * @param id - Record ID to fetch
+ * @param options - Options for resolving the reference
+ * @returns The resolved record or null if not found
  */
-export async function resolveSupabaseReference<T extends SupabaseRecord>(
-  document: SanityDocument | null,
-  tableName: string,
+async function resolveSupabaseReference<T = any>(
+  table: string,
+  id: string | number | null | undefined,
   options: ReferenceOptions = {}
 ): Promise<T | null> {
-  if (!document || !document.supabaseId) {
-    console.warn(`Invalid document or missing supabaseId for ${document?._type} document`);
+  if (!id) {
     return null;
   }
-
-  const { supabaseId } = document;
-  const cacheKey = `supabase:${tableName}:${supabaseId}`;
-  const { skipCache = false } = options;
-
-  try {
-    return await referenceCache.getOrSet<T | null>(
-      cacheKey,
-      async () => {
-        // Use type assertion to handle the dynamic table name
+  
+  // Generate cache key
+  const cacheKey = `supabase:${table}:${id}`;
+  
+  return referenceCache.getOrSet(
+    cacheKey,
+    async () => {
+      try {
         const { data, error } = await supabase
-          .from(tableName as any)
+          .from(table)
           .select('*')
-          .eq('id', supabaseId)
+          .eq('id', id)
           .single();
-
+          
         if (error) {
-          console.error(`Error fetching ${tableName} record:`, error);
+          console.error(`Error resolving Supabase reference ${table}:${id}:`, error);
           return null;
         }
-
-        return data as unknown as T;
-      },
-      skipCache
-    );
-  } catch (error) {
-    console.error(`Error resolving Supabase reference for ${document._type}:`, error);
-    return null;
-  }
+        
+        return data as T;
+      } catch (error) {
+        console.error(`Error resolving Supabase reference ${table}:${id}:`, error);
+        return null;
+      }
+    },
+    options.skipCache
+  );
 }
 
-/**
- * Resolve multiple Supabase entities referenced by Sanity documents
- */
-export async function resolveSupabaseReferences<T extends SupabaseRecord>(
-  documents: SanityDocument[] | null,
-  tableName: string,
-  options: ReferenceOptions = {}
-): Promise<T[]> {
-  if (!documents || documents.length === 0) {
-    return [];
-  }
-
-  const validDocuments = documents.filter(doc => doc && doc.supabaseId);
-  
-  // Filter out any undefined supabase IDs and ensure they're strings
-  const supabaseIds = validDocuments
-    .map(doc => doc.supabaseId)
-    .filter((id): id is string => id !== undefined && id !== null);
-  
-  if (supabaseIds.length === 0) {
-    return [];
-  }
-
-  const cacheKey = `supabase:${tableName}:multiple:${supabaseIds.join(',')}`;
-  const { skipCache = false } = options;
-
-  try {
-    return await referenceCache.getOrSet<T[]>(
-      cacheKey,
-      async () => {
-        // Use type assertion to handle the dynamic table name
-        const { data, error } = await supabase
-          .from(tableName as any)
-          .select('*')
-          .in('id', supabaseIds);
-
-        if (error) {
-          console.error(`Error fetching ${tableName} records:`, error);
-          return [];
-        }
-
-        return data as unknown as T[];
-      },
-      skipCache
-    );
-  } catch (error) {
-    console.error(`Error resolving multiple Supabase references:`, error);
-    return [];
-  }
-}
+export default resolveSupabaseReference;
