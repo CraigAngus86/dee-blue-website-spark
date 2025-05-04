@@ -7,6 +7,8 @@ import { supabase } from '@/lib/supabase/client';
 import { sanityClient } from '@/lib/sanity/sanityClient';
 import { ReferenceOptions } from './types';
 import { referenceCache } from './cache';
+import resolveSupabaseReference from './resolveSupabaseReference';
+import resolveSanityReference from './resolveSanityReference';
 
 /**
  * Resolve a sponsor from a Sanity sponsor document
@@ -22,32 +24,7 @@ export async function resolveSponsorFromDocument(
     return null;
   }
   
-  const { skipCache = false } = options;
-  const cacheKey = `sponsor:${sponsorDocument.supabaseId}`;
-  
-  return referenceCache.getOrSet(
-    cacheKey,
-    async () => {
-      try {
-        const { data, error } = await supabase
-          .from('sponsors')
-          .select('*')
-          .eq('id', sponsorDocument.supabaseId)
-          .single();
-          
-        if (error || !data) {
-          console.error(`Error resolving sponsor ${sponsorDocument.supabaseId}:`, error);
-          return null;
-        }
-        
-        return data;
-      } catch (error) {
-        console.error(`Error resolving sponsor ${sponsorDocument.supabaseId}:`, error);
-        return null;
-      }
-    },
-    skipCache
-  );
+  return resolveSupabaseReference('sponsors', sponsorDocument.supabaseId, options);
 }
 
 /**
@@ -62,26 +39,7 @@ export async function resolveDocumentFromSponsor(
 ): Promise<any | null> {
   if (!sponsor || !sponsor.id) return null;
   
-  const { skipCache = false } = options;
-  const cacheKey = `sponsorDocument:${sponsor.id}`;
-  
-  return referenceCache.getOrSet(
-    cacheKey,
-    async () => {
-      try {
-        const query = `*[_type == "sponsor" && supabaseId == $supabaseId][0]`;
-        const params = { supabaseId: sponsor.id };
-        
-        const document = await sanityClient.fetch(query, params);
-        
-        return document || null;
-      } catch (error) {
-        console.error(`Error resolving sponsor document for ${sponsor.id}:`, error);
-        return null;
-      }
-    },
-    skipCache
-  );
+  return resolveSanityReference('sponsor', sponsor.id, options);
 }
 
 /**

@@ -7,6 +7,8 @@ import { supabase } from '@/lib/supabase/client';
 import { sanityClient } from '@/lib/sanity/sanityClient';
 import { ReferenceOptions } from './types';
 import { referenceCache } from './cache';
+import resolveSupabaseReference from './resolveSupabaseReference';
+import resolveSanityReference from './resolveSanityReference';
 
 /**
  * Resolve a match from Sanity match document
@@ -22,37 +24,7 @@ export async function resolveMatchFromDocument(
     return null;
   }
   
-  const { skipCache = false } = options;
-  const cacheKey = `match:${matchDocument.supabaseId}`;
-  
-  return referenceCache.getOrSet(
-    cacheKey,
-    async () => {
-      try {
-        const { data, error } = await supabase
-          .from('match')
-          .select(`
-            *,
-            home_team_id(*),
-            away_team_id(*),
-            competition_id(*)
-          `)
-          .eq('id', matchDocument.supabaseId)
-          .single();
-          
-        if (error || !data) {
-          console.error(`Error resolving match ${matchDocument.supabaseId}:`, error);
-          return null;
-        }
-        
-        return data;
-      } catch (error) {
-        console.error(`Error resolving match ${matchDocument.supabaseId}:`, error);
-        return null;
-      }
-    },
-    skipCache
-  );
+  return resolveSupabaseReference('match', matchDocument.supabaseId, options);
 }
 
 /**
@@ -67,26 +39,7 @@ export async function resolveDocumentFromMatch(
 ): Promise<any | null> {
   if (!match || !match.id) return null;
   
-  const { skipCache = false } = options;
-  const cacheKey = `matchDocument:${match.id}`;
-  
-  return referenceCache.getOrSet(
-    cacheKey,
-    async () => {
-      try {
-        const query = `*[_type == "match" && supabaseId == $supabaseId][0]`;
-        const params = { supabaseId: match.id };
-        
-        const document = await sanityClient.fetch(query, params);
-        
-        return document || null;
-      } catch (error) {
-        console.error(`Error resolving match document for ${match.id}:`, error);
-        return null;
-      }
-    },
-    skipCache
-  );
+  return resolveSanityReference('match', match.id, options);
 }
 
 /**
@@ -113,9 +66,9 @@ export async function getUpcomingMatches(
           .from("match")
           .select(`
             id, match_date, match_time, venue, status, ticketco_event_id, ticket_link,
-            home_team_id(*),
-            away_team_id(*),
-            competition_id(*)
+            home_team:home_team_id(*),
+            away_team:away_team_id(*),
+            competition:competition_id(*)
           `)
           .gte("match_date", today)
           .order("match_date", { ascending: true })
@@ -126,19 +79,7 @@ export async function getUpcomingMatches(
           return [];
         }
         
-        return matches.map(match => {
-          return {
-            id: match.id,
-            match_date: match.match_date,
-            match_time: match.match_time,
-            venue: match.venue,
-            status: match.status,
-            ticket_link: match.ticket_link,
-            home_team: match.home_team_id,
-            away_team: match.away_team_id,
-            competition: match.competition_id
-          };
-        });
+        return matches;
       },
       skipCache
     );
@@ -169,9 +110,9 @@ export async function getRecentMatches(
           .from("match")
           .select(`
             id, match_date, match_time, venue, status, home_score, away_score, match_report_link,
-            home_team_id(*),
-            away_team_id(*),
-            competition_id(*)
+            home_team:home_team_id(*),
+            away_team:away_team_id(*),
+            competition:competition_id(*)
           `)
           .eq("status", "completed")
           .order("match_date", { ascending: false })
@@ -182,21 +123,7 @@ export async function getRecentMatches(
           return [];
         }
         
-        return matches.map(match => {
-          return {
-            id: match.id,
-            match_date: match.match_date,
-            match_time: match.match_time,
-            venue: match.venue,
-            status: match.status,
-            home_score: match.home_score,
-            away_score: match.away_score,
-            match_report_link: match.match_report_link,
-            home_team: match.home_team_id,
-            away_team: match.away_team_id,
-            competition: match.competition_id
-          };
-        });
+        return matches;
       },
       skipCache
     );

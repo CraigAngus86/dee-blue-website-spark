@@ -6,7 +6,12 @@
 /**
  * Resolve image path to the correct URL format based on source
  */
-export function resolveImagePath(src: string): string {
+export function resolveImagePath(src: string | undefined | null): string {
+  // If src is undefined or null, return a placeholder or empty string
+  if (src === undefined || src === null) {
+    return '';
+  }
+  
   // If it's already a URL, return it as is
   if (src.startsWith('http') || src.startsWith('data:')) {
     return src;

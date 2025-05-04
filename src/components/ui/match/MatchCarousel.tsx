@@ -14,10 +14,16 @@ import { Match } from '@/types/match';
 export interface MatchCarouselProps {
   fixtures?: Fixture[];
   matches?: Match[];
+  type?: 'fixture' | 'result';
   title?: string;
 }
 
-const MatchCarousel: React.FC<MatchCarouselProps> = ({ fixtures, matches, title }) => {
+export const MatchCarousel: React.FC<MatchCarouselProps> = ({ 
+  fixtures, 
+  matches, 
+  type = 'fixture',
+  title 
+}) => {
   // Support both fixtures and matches props
   const displayFixtures = fixtures || [];
   const displayMatches = matches || [];
@@ -48,13 +54,13 @@ const MatchCarousel: React.FC<MatchCarouselProps> = ({ fixtures, matches, title 
               <CarouselItem key={match.id} className="md:basis-1/2 lg:basis-1/3">
                 <div className="p-2">
                   <MatchCardNew
-                    competition={match.competition}
-                    date={match.date}
-                    time={match.time}
-                    venue={match.venue}
-                    home={match.homeTeam || match.home || ""}
-                    away={match.awayTeam || match.away || ""}
-                    result={match.result}
+                    competition={match.competition.name}
+                    date={match.match_date}
+                    time={match.match_time?.toString() || ''}
+                    venue={match.venue || ''}
+                    home={match.home_team.name}
+                    away={match.away_team.name}
+                    result={type === 'result' ? `${match.home_score}-${match.away_score}` : undefined}
                   />
                 </div>
               </CarouselItem>

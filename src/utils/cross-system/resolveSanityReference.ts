@@ -1,50 +1,51 @@
 
+import { sanityClient } from '@/lib/sanity/sanityClient';
 import { ReferenceOptions } from './types';
 import { referenceCache } from './cache';
-import { sanityClient } from '@/lib/sanity/client';
 
 /**
- * Resolves a reference to a Sanity document
- * 
- * @param documentType - Sanity document type
- * @param id - Document ID to fetch
- * @param options - Options for resolving the reference
- * @returns The resolved document or null if not found
+ * Resolve a reference to a Sanity document
+ * @param documentType Sanity document type
+ * @param id Document ID (could be _id or a reference field)
+ * @param options Resolution options
+ * @returns Referenced Sanity document or null if not found
  */
-async function resolveSanityReference<T = any>(
+export default async function resolveSanityReference<T = any>(
   documentType: string,
   id: string | null | undefined,
   options: ReferenceOptions = {}
 ): Promise<T | null> {
-  if (!id) {
-    return null;
-  }
+  if (!id) return null;
   
-  // Generate cache key
+  const { skipCache = false } = options;
   const cacheKey = `sanity:${documentType}:${id}`;
   
   return referenceCache.getOrSet(
     cacheKey,
     async () => {
       try {
-        // Build the GROQ query
-        const query = `*[_type == "${documentType}" && _id == "${id}"][0]`;
+        console.log(`Resolving Sanity reference: ${documentType} with ID ${id}`);
         
-        // Execute the query
-        const document = await sanityClient.fetch<T>(query);
+        // Determine if it's a direct _id reference or a field match
+        const isDirectId = id.startsWith('drafts.') || id.includes('-');
         
-        if (!document) {
-          return null;
-        }
+        // Construct appropriate query
+        const query = isDirectId
+          ? `*[_type == $docType && _id == $id][0]`
+          : `*[_type == $docType && supabaseId == $id][0]`;
         
-        return document;
+        const params = {
+          docType: documentType,
+          id: id
+        };
+        
+        const document = await sanityClient.fetch(query, params);
+        return document || null;
       } catch (error) {
-        console.error(`Error resolving Sanity reference ${documentType}:${id}:`, error);
+        console.error(`Error resolving Sanity reference for ${documentType}:${id}:`, error);
         return null;
       }
     },
-    options.skipCache
+    skipCache
   );
 }
-
-export default resolveSanityReference;

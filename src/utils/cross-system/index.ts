@@ -12,11 +12,10 @@ export * from './types';
 // Export cache utilities
 export * from './cache';
 
-// Export core utilities (directly implement these here since imports are failing)
-// We'll provide simple implementations here to avoid import errors
+// Export stub implementations for core utilities
 export async function resolveSupabaseReference<T = any>(
-  sourceObject: any | null | undefined,
   tableName: string,
+  id: string | null | undefined,
   options: any = {}
 ): Promise<T | null> {
   console.warn('Using stub implementation of resolveSupabaseReference');
@@ -33,7 +32,6 @@ export async function resolveSanityReference<T = any>(
 }
 
 // Re-export entity-specific utilities
-// Due to import issues, we're exporting from the local files directly
 export * from './player';
 export * from './match';
 export * from './sponsor';

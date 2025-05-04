@@ -1,28 +1,52 @@
 
-import { Metadata } from 'next';
-import CommercialHeroSection from '@/components/commercial/CommercialHeroSection';
-import { WhyPartnerSection } from '@/components/commercial/WhyPartnerSection';
-import SponsorshipTiersSection from '@/components/commercial/sponsorship/SponsorshipTiersSection';
-import MatchDayHospitalitySection from '@/components/commercial/hospitality/MatchDayHospitalitySection';
-import ContactDownloadSection from '@/components/commercial/contact/ContactDownloadSection';
-import UpcomingFixturesSection from '@/components/commercial/fixtures/UpcomingFixturesSection';
-import ComparisonSection from '@/components/commercial/comparison/ComparisonSection';
+import React from "react";
+import { Metadata } from "next";
+import HeroSection from "@/components/ui/hero/HeroSection";
+import CommercialCallToActionSection from "@/components/commercial/CTA/CommercialCallToActionSection";
+import AdPackagesSection from "@/components/commercial/advertising/AdPackagesSection";
+import SponsorshipPackagesSection from "@/components/commercial/sponsorship/SponsorshipPackagesSection";
+import MatchDayHospitalitySection from "@/components/commercial/hospitality/MatchDayHospitalitySection";
+import ContactDownloadSection from "@/components/commercial/contact/ContactDownloadSection";
+import UpcomingFixturesSection from "@/components/commercial/fixtures/UpcomingFixturesSection";
+import ComparisonSection from "@/components/commercial/comparison/ComparisonSection";
 
 export const metadata: Metadata = {
-  title: 'Commercial Partnerships | Banks o\' Dee FC',
-  description: 'Partner with Banks o\' Dee FC and grow your brand through our range of commercial and sponsorship opportunities',
+  title: "Commercial Opportunities | Banks o' Dee FC",
+  description:
+    "Discover commercial partnership opportunities with Banks o' Dee Football Club - sponsorships, advertising, and hospitality packages.",
 };
 
-export default function CommercialPage() {
+export default async function CommercialPage() {
+  // This would be fetched from your API in a real application
+  const dummyMatches = [
+    // Add dummy match data here if needed
+  ];
+
   return (
-    <>
-      <CommercialHeroSection />
-      <WhyPartnerSection />
-      <SponsorshipTiersSection />
+    <main>
+      <HeroSection
+        title="Commercial Partnerships"
+        subtitle="Sponsorship, advertising and hospitality opportunities"
+        imageSrc="/images/stadium/main-stand.jpg"
+        imageAlt="Banks o' Dee Stadium"
+        overlay="dark"
+      />
+
+      <CommercialCallToActionSection />
+      
+      <SponsorshipPackagesSection />
+      
+      <AdPackagesSection />
+      
       <MatchDayHospitalitySection />
-      <UpcomingFixturesSection />
+      
+      {dummyMatches.length > 0 && (
+        <UpcomingFixturesSection matches={dummyMatches} />
+      )}
+      
       <ComparisonSection />
+      
       <ContactDownloadSection />
-    </>
+    </main>
   );
 }

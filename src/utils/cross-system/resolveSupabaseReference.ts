@@ -4,55 +4,44 @@ import { ReferenceOptions } from './types';
 import { referenceCache } from './cache';
 
 /**
- * Resolves a reference to a Supabase record
- * 
- * @param sourceObject - The source document containing information about the reference
- * @param tableName - Supabase table name to query
- * @param options - Options for resolving the reference
- * @returns The resolved record or null if not found
+ * Resolve a reference to a Supabase record
+ * @param tableName Supabase table name
+ * @param id Record ID
+ * @param options Resolution options
+ * @returns Referenced Supabase record or null if not found
  */
-async function resolveSupabaseReference<T = any>(
-  sourceObject: any | null | undefined,
+export default async function resolveSupabaseReference<T = any>(
   tableName: string,
+  id: string | null | undefined,
   options: ReferenceOptions = {}
 ): Promise<T | null> {
-  if (!sourceObject) {
-    return null;
-  }
+  if (!id) return null;
   
-  // Check for supabaseId in the source object
-  const supabaseId = sourceObject.supabaseId || sourceObject.id;
-  
-  if (!supabaseId) {
-    return null;
-  }
-  
-  // Generate cache key
-  const cacheKey = `supabase:${tableName}:${supabaseId}`;
+  const { skipCache = false } = options;
+  const cacheKey = `supabase:${tableName}:${id}`;
   
   return referenceCache.getOrSet(
     cacheKey,
     async () => {
       try {
+        console.log(`Resolving Supabase reference: ${tableName} with ID ${id}`);
         const { data, error } = await supabase
           .from(tableName)
           .select('*')
-          .eq('id', supabaseId)
+          .eq('id', id)
           .single();
           
-        if (error || !data) {
-          console.error(`Error resolving Supabase reference ${tableName}:${supabaseId}:`, error);
+        if (error) {
+          console.error(`Error resolving Supabase reference for ${tableName}:${id}:`, error);
           return null;
         }
         
         return data as T;
       } catch (error) {
-        console.error(`Error resolving Supabase reference ${tableName}:${supabaseId}:`, error);
+        console.error(`Exception resolving Supabase reference for ${tableName}:${id}:`, error);
         return null;
       }
     },
-    options.skipCache
+    skipCache
   );
 }
-
-export default resolveSupabaseReference;

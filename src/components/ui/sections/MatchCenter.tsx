@@ -1,8 +1,8 @@
 
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MatchCarousel } from '../match/MatchCarousel';
-import { LeagueTable } from '../match/LeagueTable';
+import MatchCarousel from '../match/MatchCarousel';
+import LeagueTable from '../match/LeagueTable';
 import SectionHeader from './SectionHeader';
 import FeaturedMatch from './FeaturedMatch';
 

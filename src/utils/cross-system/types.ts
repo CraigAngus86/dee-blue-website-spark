@@ -1,56 +1,29 @@
 
 /**
- * Cross-system reference types
+ * Types for cross-system reference handling
  */
 
-// Base interfaces for documents/records
-export interface SanityDocument {
-  _id: string;
-  _type: string;
-  _rev?: string;
-  _createdAt?: string;
-  _updatedAt?: string;
-  supabaseId?: string;
-}
-
-export interface SupabaseRecord {
-  id: string;
-  created_at?: string;
-  updated_at?: string;
-  sanity_id?: string;
-}
-
-// Reference resolution options
 export interface ReferenceOptions {
+  /** Skip cache and force fresh lookup */
   skipCache?: boolean;
-  usePreview?: boolean;
+  /** Additional fetch options */
+  fetchOptions?: RequestInit;
+  /** Include related documents */
+  includeRelated?: boolean;
+  /** Deep populate nested references */
+  deepPopulate?: boolean;
 }
 
-// Team types
-export interface SanityTeam extends SanityDocument {
-  _type: 'team';
-  name: string;
-  shortName?: string;
-  logo?: {
-    asset: {
-      _ref: string;
-      _type: 'reference';
-    };
-  };
-  supabaseId?: string;
+export interface ResolvedReference<T, U> {
+  source: T;
+  target: U;
+  resolvedAt: Date;
 }
 
-export interface SupabaseTeam extends SupabaseRecord {
-  name: string;
-  short_name?: string;
-  logo_url?: string;
-  sanity_id?: string;
-}
-
-// Cache interface
-export interface ReferenceCache {
-  getOrSet<T>(key: string, factory: () => Promise<T>, skipCache?: boolean): Promise<T>;
-  get<T>(key: string): Promise<T | null>;
+export class ReferenceCache {
+  get<T>(key: string): T | undefined;
   set<T>(key: string, value: T): void;
+  getOrSet<T>(key: string, factory: () => Promise<T>, skipCache?: boolean): Promise<T>;
   clear(): void;
+  delete(key: string): boolean;
 }

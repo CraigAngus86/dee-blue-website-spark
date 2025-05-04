@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Section } from '@/components/ui/layout/Section';
+import Section from '@/components/ui/layout/Section';
 import { FixturesCard } from '@/components/ui/match/FixturesCard';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar, MapPin, Clock, Ticket } from 'lucide-react';
@@ -115,3 +115,5 @@ export function UpcomingFixturesSection({
     </Section>
   );
 }
+
+export default UpcomingFixturesSection;
