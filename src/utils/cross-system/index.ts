@@ -9,12 +9,21 @@
 // Re-export all utilities
 export * from './types';
 export * from './cache';
-export * from './resolveSupabaseReference';
-export * from './resolveSanityReference';
 
-// Export specific utility modules
-// Note: We'll export these once they are properly fixed
-// export * from './player';
-// export * from './match';
-// export * from './sponsor';
-// export * from './team';
+// Export the reference resolution functions directly from the module
+export { 
+  resolveSupabaseReference, 
+  resolveSupabaseReferences 
+} from './resolveSupabaseReference';
+
+export { 
+  resolveSanityReference, 
+  resolveSanityReferences,
+  resolveSanityDocumentBySupabaseId 
+} from './resolveSanityReference';
+
+// Export specific utility modules for entity types
+export * from './player';
+export * from './match';
+export * from './sponsor';
+export * from './team';

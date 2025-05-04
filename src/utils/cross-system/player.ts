@@ -115,14 +115,21 @@ export async function resolvePlayerSupabaseRecord(
 ): Promise<PlayerSupabase | null> {
   if (!sanityPlayer || !sanityPlayer.supabaseId) return null;
   
-  return supabase
-    .from('players')
-    .select('*')
-    .eq('id', sanityPlayer.supabaseId)
-    .single()
-    .then(({ data }) => data as PlayerSupabase)
-    .catch(error => {
+  try {
+    const { data, error } = await supabase
+      .from('players')
+      .select('*')
+      .eq('id', sanityPlayer.supabaseId)
+      .single();
+      
+    if (error) {
       console.error('Error resolving player Supabase record:', error);
       return null;
-    });
+    }
+    
+    return data as PlayerSupabase;
+  } catch (error) {
+    console.error('Error resolving player Supabase record:', error);
+    return null;
+  }
 }

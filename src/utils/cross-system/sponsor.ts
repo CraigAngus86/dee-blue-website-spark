@@ -112,14 +112,21 @@ export async function resolveSponsorSupabaseRecord(
 ): Promise<SponsorSupabase | null> {
   if (!sanitySponsor || !sanitySponsor.supabaseId) return null;
   
-  return supabase
-    .from('sponsors')
-    .select('*')
-    .eq('id', sanitySponsor.supabaseId)
-    .single()
-    .then(({ data }) => data as SponsorSupabase)
-    .catch(error => {
+  try {
+    const { data, error } = await supabase
+      .from('sponsors')
+      .select('*')
+      .eq('id', sanitySponsor.supabaseId)
+      .single();
+      
+    if (error) {
       console.error('Error resolving sponsor Supabase record:', error);
       return null;
-    });
+    }
+    
+    return data as SponsorSupabase;
+  } catch (error) {
+    console.error('Error resolving sponsor Supabase record:', error);
+    return null;
+  }
 }

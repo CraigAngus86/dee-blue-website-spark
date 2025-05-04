@@ -131,19 +131,26 @@ export async function resolveMatchSupabaseRecord(
 ): Promise<MatchSupabase | null> {
   if (!sanityMatch || !sanityMatch.supabaseId) return null;
   
-  return supabase
-    .from('match')
-    .select(`
-      *,
-      home_team:teams!match_home_team_id_fkey(*),
-      away_team:teams!match_away_team_id_fkey(*),
-      competition:competitions!match_competition_id_fkey(*)
-    `)
-    .eq('id', sanityMatch.supabaseId)
-    .single()
-    .then(({ data }) => data as unknown as MatchSupabase)
-    .catch(error => {
+  try {
+    const { data, error } = await supabase
+      .from('match')
+      .select(`
+        *,
+        home_team:teams!match_home_team_id_fkey(*),
+        away_team:teams!match_away_team_id_fkey(*),
+        competition:competitions!match_competition_id_fkey(*)
+      `)
+      .eq('id', sanityMatch.supabaseId)
+      .single();
+      
+    if (error) {
       console.error('Error resolving match Supabase record:', error);
       return null;
-    });
+    }
+    
+    return data as unknown as MatchSupabase;
+  } catch (error) {
+    console.error('Error resolving match Supabase record:', error);
+    return null;
+  }
 }

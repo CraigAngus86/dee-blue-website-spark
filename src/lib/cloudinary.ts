@@ -20,7 +20,12 @@ export const getCloudinaryImageUrl = (publicId: string, options: any = {}) => {
   let url = cloudinary.image(publicId);
   
   if (width || height) {
-    url = url.resize(`${crop || 'fill'}_${width || 'auto'}_${height || 'auto'}`);
+    // Handle the resize transformation properly with string parameters
+    const cropMode = crop || 'fill';
+    const widthParam = width || 'auto';
+    const heightParam = height || 'auto';
+    
+    url = url.resize(`${cropMode}_${widthParam}_${heightParam}`);
   }
   
   if (quality) {

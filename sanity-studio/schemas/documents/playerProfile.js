@@ -26,12 +26,16 @@ export default {
         name: 'supabaseId',
         title: 'Supabase ID',
         type: 'string',
-        description: 'UUID from Supabase for this player',
-        validation: Rule => Rule.required().regex(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/, {
-          name: 'UUID',
-          invert: false,
-          message: 'Must be a valid UUID format (example: 123e4567-e89b-12d3-a456-426614174000)'
-        }),
+        description: 'UUID from Supabase for this player (optional)',
+        validation: Rule => 
+          Rule.custom(supabaseId => {
+            if (!supabaseId) return true; // Make it optional
+            
+            // If provided, ensure it's a valid UUID
+            return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(supabaseId) 
+              ? true 
+              : 'Must be a valid UUID format';
+          }),
         group: 'reference'
       },
       {
@@ -50,9 +54,52 @@ export default {
         group: 'basic'
       },
       {
+        name: 'firstName',
+        title: 'First Name',
+        type: 'string',
+        description: 'Player first name',
+        group: 'basic'
+      },
+      {
+        name: 'lastName',
+        title: 'Last Name',
+        type: 'string',
+        description: 'Player last name',
+        group: 'basic'
+      },
+      {
+        name: 'position',
+        title: 'Position',
+        type: 'string',
+        options: {
+          list: [
+            { title: 'Goalkeeper', value: 'goalkeeper' },
+            { title: 'Defender', value: 'defender' },
+            { title: 'Midfielder', value: 'midfielder' },
+            { title: 'Forward', value: 'forward' },
+            { title: 'Manager', value: 'manager' },
+            { title: 'Coach', value: 'coach' },
+            { title: 'Staff', value: 'staff' }
+          ]
+        },
+        group: 'basic'
+      },
+      {
+        name: 'jerseyNumber',
+        title: 'Jersey Number',
+        type: 'number',
+        group: 'basic'
+      },
+      {
+        name: 'nationality',
+        title: 'Nationality',
+        type: 'string',
+        group: 'basic'
+      },
+      {
         name: 'profileImage',
         title: 'Profile Image',
-        type: 'image',
+        type: 'cloudinaryImage',
         options: {
           hotspot: true
         },
@@ -63,7 +110,7 @@ export default {
         title: 'Additional Profile Images',
         type: 'array',
         of: [{
-          type: 'image', 
+          type: 'cloudinaryImage', 
           options: {
             hotspot: true
           }
@@ -226,6 +273,14 @@ export default {
           title,
           media
         }
+      }
+    },
+    initialValue: {
+      // Generate a random UUID for new documents
+      supabaseId: () => {
+        // This function generates a UUID v4
+        // It will be replaced later if the document is synced with Supabase
+        return crypto.randomUUID ? crypto.randomUUID() : null;
       }
     }
   }
