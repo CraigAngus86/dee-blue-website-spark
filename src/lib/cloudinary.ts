@@ -1,5 +1,7 @@
 
 import { Cloudinary } from '@cloudinary/url-gen';
+import { Resize } from '@cloudinary/url-gen/actions/resize';
+import { Quality } from '@cloudinary/url-gen/actions/delivery';
 
 // Initialize Cloudinary with cloud configuration
 export const cloudinary = new Cloudinary({
@@ -17,22 +19,33 @@ export const getCloudinaryImageUrl = (publicId: string, options: any = {}) => {
   
   const { width, height, crop, quality } = options;
   
-  let url = cloudinary.image(publicId);
+  let image = cloudinary.image(publicId);
   
   if (width || height) {
-    // Handle the resize transformation properly with string parameters
+    // Use proper SDK methods for resizing
     const cropMode = crop || 'fill';
-    const widthParam = width || 'auto';
-    const heightParam = height || 'auto';
     
-    url = url.resize(`${cropMode}_${widthParam}_${heightParam}`);
+    switch(cropMode) {
+      case 'fill':
+        image = image.resize(Resize.fill(width, height));
+        break;
+      case 'scale':
+        image = image.resize(Resize.scale(width, height));
+        break;
+      case 'crop':
+        image = image.resize(Resize.crop(width, height));
+        break;
+      case 'thumb':
+        image = image.resize(Resize.thumbnail(width, height));
+        break;
+    }
   }
   
   if (quality) {
-    url = url.quality(quality);
+    image = image.delivery(Quality.level(quality));
   }
   
-  return url.toURL();
+  return image.toURL();
 };
 
 // Export additional Cloudinary utility functions if needed

@@ -5,24 +5,33 @@ import { v2 as cloudinary } from 'cloudinary';
 // Configure Cloudinary with proper environment variables
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'dlkpaw2a0',
-  api_key: process.env.CLOUDINARY_API_KEY || '336893478695244',
-  api_secret: process.env.CLOUDINARY_API_SECRET || 'AUF4vnt0LCLEZdy6J4jv3L3081o',
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
   secure: true
 });
 
 export async function POST(request: Request) {
   try {
-    console.log('Cloudinary upload API route called');
+    console.log('[API] Cloudinary upload API route called');
+    
+    // Check if the request is from Sanity Studio
+    const headers = new Headers(request.headers);
+    const isSanityRequest = headers.get('x-sanity-studio') === 'true';
+    
+    if (isSanityRequest) {
+      console.log('[API] Request from Sanity Studio detected');
+    }
+    
     const formData = await request.formData();
     const file = formData.get('file') as File;
     
     if (!file) {
-      console.error('No file provided');
+      console.error('[API] No file provided');
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
     }
     
     // Log file details
-    console.log('File received:', { 
+    console.log('[API] File received:', { 
       name: file.name, 
       type: file.type, 
       size: file.size 
@@ -35,7 +44,7 @@ export async function POST(request: Request) {
     const tags = formData.get('tags') as string;
     const metadataJson = formData.get('metadata') as string;
     
-    console.log('Metadata received:', { 
+    console.log('[API] Metadata received:', { 
       contentType, entityId, type, tags,
       metadataJson: metadataJson ? 'provided' : 'not provided' 
     });
@@ -46,37 +55,43 @@ export async function POST(request: Request) {
     if (contentType && entityId) {
       switch (contentType) {
         case 'news':
+        case 'newsArticle':
           folder = `banksofdeefc/news/article-${entityId}`;
           break;
         case 'player':
+        case 'playerProfile':
           folder = `banksofdeefc/people/person-${entityId}`;
           break;
         case 'match':
+        case 'matchGallery':
           folder = `banksofdeefc/matches/match-${entityId}/gallery`;
           break;
         case 'sponsor':
           folder = `banksofdeefc/sponsors/sponsor-${entityId}`;
           break;
         case 'stadium':
+        case 'stadiumInfo':
           folder = 'banksofdeefc/stadium';
           break;
       }
     }
     
-    console.log('Upload configuration:', { folder });
+    console.log('[API] Upload configuration:', { folder });
     
     // Parse metadata
     let context = {};
     if (metadataJson) {
       try {
         context = JSON.parse(metadataJson);
+        console.log('[API] Parsed metadata context:', context);
       } catch (e) {
-        console.error('Error parsing metadata:', e);
+        console.error('[API] Error parsing metadata:', e);
       }
     }
     
     // Parse tags
     const tagsList = tags ? tags.split(',') : [];
+    console.log('[API] Tags for upload:', tagsList);
     
     // Convert file to buffer
     const bytes = await file.arrayBuffer();
@@ -86,18 +101,17 @@ export async function POST(request: Request) {
     const base64 = buffer.toString('base64');
     const fileUri = `data:${file.type};base64,${base64}`;
     
-    console.log('Uploading to Cloudinary...');
+    console.log('[API] Starting Cloudinary upload...');
     
     // Upload to Cloudinary
     const result = await cloudinary.uploader.upload(fileUri, {
       folder: folder,
-      // For direct upload without preset
       resource_type: 'auto',
       tags: tagsList,
       context: context,
     });
     
-    console.log('Cloudinary upload successful:', { 
+    console.log('[API] Cloudinary upload successful:', { 
       publicId: result.public_id,
       url: result.secure_url,
       format: result.format
@@ -113,7 +127,7 @@ export async function POST(request: Request) {
       height: result.height
     });
   } catch (error) {
-    console.error('Error uploading to Cloudinary:', error);
+    console.error('[API] Error uploading to Cloudinary:', error);
     return NextResponse.json({ 
       error: { 
         message: error instanceof Error ? error.message : 'Upload failed',

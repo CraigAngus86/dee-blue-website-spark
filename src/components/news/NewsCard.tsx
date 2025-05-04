@@ -1,4 +1,3 @@
-
 "use client";
 
 import React from "react";
@@ -7,7 +6,7 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import useCloudinaryImage from "@/hooks/useCloudinaryImage";
+import { useCloudinaryImage } from "@/hooks/useCloudinaryImage";
 
 export interface NewsCardProps {
   id?: string;
@@ -37,7 +36,7 @@ const NewsCard: React.FC<NewsCardProps> = ({
     }
   }, [date]);
 
-  const optimizedImageUrl = useCloudinaryImage(
+  const { imageUrl: optimizedImageUrl } = useCloudinaryImage(
     imageUrl || null,
     {
       width: 600,

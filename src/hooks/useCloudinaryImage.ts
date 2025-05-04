@@ -1,6 +1,8 @@
 
 import { useState, useEffect } from 'react';
 import { cloudinary } from '@/lib/cloudinary';
+import { Resize } from '@cloudinary/url-gen/actions/resize';
+import { Quality } from '@cloudinary/url-gen/actions/delivery';
 
 export interface CloudinaryImageOptions {
   width?: number;
@@ -38,14 +40,28 @@ export const useCloudinaryImage = (
       // Apply transformations based on provided options
       if (options.width || options.height) {
         const cropMode = options.crop || 'fill';
-        const widthValue = options.width ? options.width.toString() : 'auto';
-        const heightValue = options.height ? options.height.toString() : 'auto';
+        const width = options.width;
+        const height = options.height;
         
-        image = image.resize(`${cropMode}_${widthValue}_${heightValue}`);
+        // Use the proper Cloudinary SDK methods
+        switch(cropMode) {
+          case 'fill':
+            image = image.resize(Resize.fill(width, height));
+            break;
+          case 'scale':
+            image = image.resize(Resize.scale(width, height));
+            break;
+          case 'crop':
+            image = image.resize(Resize.crop(width, height));
+            break;
+          case 'thumb':
+            image = image.resize(Resize.thumbnail(width, height));
+            break;
+        }
       }
       
       if (options.quality) {
-        image = image.quality(options.quality);
+        image = image.delivery(Quality.level(options.quality));
       }
       
       // Generate the URL
