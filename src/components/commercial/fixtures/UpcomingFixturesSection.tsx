@@ -1,80 +1,117 @@
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import Heading from '@/components/ui/typography/Heading';
+import { Section } from '@/components/ui/layout/Section';
+import { FixturesCard } from '@/components/ui/match/FixturesCard';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Calendar, MapPin, Clock, Ticket } from 'lucide-react';
 import { Match } from '@/types/match';
-import { Calendar } from 'lucide-react';
 
 interface UpcomingFixturesSectionProps {
-  fixtures?: Match[];
+  matches: Match[];
+  title?: string;
+  description?: string;
 }
 
-const UpcomingFixturesSection: React.FC<UpcomingFixturesSectionProps> = ({ 
-  fixtures = [] 
-}) => {
+export function UpcomingFixturesSection({
+  matches,
+  title = 'Upcoming Fixtures',
+  description = 'Our upcoming fixtures with hospitality packages available',
+}: UpcomingFixturesSectionProps) {
+  if (!matches || matches.length === 0) {
+    return null;
+  }
+
   return (
-    <section className="py-16 bg-slate-50">
+    <Section background="light" spacing="lg">
       <div className="container mx-auto">
-        <div className="text-center mb-12">
-          <Heading as="h2" size="2xl" className="mb-4">Upcoming Fixtures</Heading>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Plan your matchday hospitality for these upcoming fixtures at Spain Park
-          </p>
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold mb-2">{title}</h2>
+          <p className="text-slate-600">{description}</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {fixtures.length > 0 ? (
-            fixtures.map((fixture) => (
-              <Card key={fixture.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader className="pb-2">
-                  <CardTitle className="flex items-center gap-2">
-                    <Calendar className="h-5 w-5 text-primary" />
-                    {fixture.competition}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex justify-between items-center mb-4">
-                    <div className="flex items-center gap-3">
-                      {fixture.homeTeamLogo && (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          {matches.map((match) => (
+            <Card key={match.id} className="overflow-hidden">
+              <CardHeader className="bg-primary/5">
+                <CardTitle>{match.competition.name}</CardTitle>
+                <CardDescription>
+                  <span className="font-medium">{match.home_team.name}</span> vs <span className="font-medium">{match.away_team.name}</span>
+                </CardDescription>
+              </CardHeader>
+              
+              <CardContent className="pt-6 pb-4">
+                <div className="grid grid-cols-3 items-center mb-6">
+                  {/* Home Team Logo */}
+                  <div className="flex flex-col items-center">
+                    {match.home_team.logo_url && (
+                      <div className="h-16 w-16 mb-2">
                         <img 
-                          src={fixture.homeTeamLogo} 
-                          alt={fixture.homeTeam} 
-                          className="w-10 h-10 object-contain"
+                          src={match.home_team.logo_url} 
+                          alt={match.home_team.name}
+                          className="h-full w-full object-contain"
                         />
-                      )}
-                      <span className="font-medium">{fixture.homeTeam}</span>
-                    </div>
-                    <span className="font-bold">vs</span>
-                    <div className="flex items-center gap-3">
-                      <span className="font-medium">{fixture.awayTeam}</span>
-                      {fixture.awayTeamLogo && (
-                        <img 
-                          src={fixture.awayTeamLogo} 
-                          alt={fixture.awayTeam} 
-                          className="w-10 h-10 object-contain"
-                        />
-                      )}
-                    </div>
+                      </div>
+                    )}
+                    <p className="text-center text-sm font-medium">{match.home_team.name}</p>
                   </div>
                   
-                  <div className="text-sm text-muted-foreground mb-1">
-                    <span>{fixture.matchDate}</span>
-                    {fixture.matchTime && <span> • {fixture.matchTime}</span>}
+                  {/* VS */}
+                  <div className="flex justify-center">
+                    <span className="text-lg font-medium text-slate-400">VS</span>
                   </div>
                   
-                  <div className="text-sm font-medium">{fixture.venue}</div>
-                </CardContent>
-              </Card>
-            ))
-          ) : (
-            <div className="col-span-full text-center py-10">
-              <p className="text-muted-foreground">No upcoming fixtures available.</p>
-            </div>
-          )}
+                  {/* Away Team Logo */}
+                  <div className="flex flex-col items-center">
+                    {match.away_team.logo_url && (
+                      <div className="h-16 w-16 mb-2">
+                        <img 
+                          src={match.away_team.logo_url} 
+                          alt={match.away_team.name}
+                          className="h-full w-full object-contain"
+                        />
+                      </div>
+                    )}
+                    <p className="text-center text-sm font-medium">{match.away_team.name}</p>
+                  </div>
+                </div>
+                
+                <div className="space-y-3 text-sm">
+                  <div className="flex items-center">
+                    <Calendar className="h-4 w-4 mr-2 text-slate-500" />
+                    <span>{match.match_date}</span>
+                  </div>
+                  
+                  <div className="flex items-center">
+                    <Clock className="h-4 w-4 mr-2 text-slate-500" />
+                    <span>{match.match_time || 'TBA'}</span>
+                  </div>
+                  
+                  {match.venue && (
+                    <div className="flex items-center">
+                      <MapPin className="h-4 w-4 mr-2 text-slate-500" />
+                      <span>{match.venue}</span>
+                    </div>
+                  )}
+                  
+                  {match.ticket_link && (
+                    <div className="flex items-center text-primary">
+                      <Ticket className="h-4 w-4 mr-2" />
+                      <a 
+                        href={match.ticket_link} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="hover:underline"
+                      >
+                        Buy tickets
+                      </a>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </div>
-    </section>
+    </Section>
   );
-};
-
-export default UpcomingFixturesSection;
+}

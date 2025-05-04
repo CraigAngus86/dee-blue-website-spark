@@ -21,6 +21,7 @@ import { importPlayersToSanity, importSponsorsToSanity, ImportResult } from '@/u
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { toast } from '@/components/ui/use-toast';
 import { Input } from '@/components/ui/input';
+import { testSanityConnection } from '@/lib/sanity/sanityClient';
 
 interface SyncResult {
   created: number;
@@ -32,6 +33,7 @@ export function SyncAdmin() {
   const [loading, setLoading] = useState({
     players: false,
     sponsors: false,
+    test: false,
   });
   
   const [results, setResults] = useState<{
@@ -43,7 +45,36 @@ export function SyncAdmin() {
   const [verboseMode, setVerboseMode] = useState(true); // Default to verbose mode for better error visibility
   const [dryRun, setDryRun] = useState(false);
   const [testSinglePlayerId, setTestSinglePlayerId] = useState('');
-  const [debugMode, setDebugMode] = useState(false);
+  const [debugMode, setDebugMode] = useState(true); // Default to debug mode for better troubleshooting
+  const [connectionStatus, setConnectionStatus] = useState<string | null>(null);
+  
+  // Test Sanity connection
+  const testConnection = async () => {
+    setLoading({ ...loading, test: true });
+    setConnectionStatus(null);
+    
+    try {
+      const isConnected = await testSanityConnection();
+      setConnectionStatus(isConnected ? 'success' : 'failed');
+      toast({
+        title: isConnected ? "Connection Successful" : "Connection Failed",
+        description: isConnected 
+          ? "Successfully connected to Sanity API" 
+          : "Failed to connect to Sanity API. Check console for details.",
+        variant: isConnected ? "default" : "destructive",
+      });
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      setConnectionStatus('failed');
+      toast({
+        variant: "destructive",
+        title: "Connection test failed",
+        description: errorMessage,
+      });
+    } finally {
+      setLoading({ ...loading, test: false });
+    }
+  };
   
   const importPlayers = async () => {
     setLoading({ ...loading, players: true });
@@ -75,7 +106,8 @@ export function SyncAdmin() {
           setResults(prev => ({ ...prev, players: stats }));
         },
         dryRun,
-        testSinglePlayer: testSinglePlayerId || null,
+        testSinglePlayer: testSinglePlayerId || undefined,
+        debug: debugMode
       });
       
       setResults(prev => ({ ...prev, players: result }));
@@ -136,7 +168,8 @@ export function SyncAdmin() {
         onProgress: (stats) => {
           setResults(prev => ({ ...prev, sponsors: stats }));
         },
-        dryRun
+        dryRun,
+        debug: debugMode
       });
       
       setResults(prev => ({ ...prev, sponsors: result }));
@@ -200,6 +233,52 @@ export function SyncAdmin() {
           <Label htmlFor="debug-mode">Debug Mode</Label>
         </div>
       </div>
+      
+      <Card className="bg-amber-50 border-amber-200">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Bug className="h-5 w-5" />
+            Sanity Connection Test
+          </CardTitle>
+          <CardDescription>
+            Test the connection to Sanity API before attempting imports
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center gap-4">
+            <Button 
+              onClick={testConnection} 
+              disabled={loading.test}
+              variant="secondary"
+            >
+              {loading.test ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Testing...
+                </>
+              ) : (
+                <>Test Sanity Connection</>
+              )}
+            </Button>
+            
+            {connectionStatus && (
+              <span className={`flex items-center ${connectionStatus === 'success' ? 'text-green-600' : 'text-red-600'}`}>
+                {connectionStatus === 'success' ? (
+                  <>
+                    <CheckCircle2 className="h-5 w-5 mr-1" />
+                    Connection successful
+                  </>
+                ) : (
+                  <>
+                    <XCircle className="h-5 w-5 mr-1" />
+                    Connection failed
+                  </>
+                )}
+              </span>
+            )}
+          </div>
+        </CardContent>
+      </Card>
       
       {debugMode && (
         <Card className="bg-amber-50 border-amber-200">

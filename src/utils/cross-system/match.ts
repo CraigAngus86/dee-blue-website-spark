@@ -1,225 +1,207 @@
 
+/**
+ * Match-specific reference resolution utilities
+ */
+
 import { supabase } from '@/lib/supabase/client';
-import { sanityClient } from '@/lib/sanity/client';
+import { sanityClient } from '@/lib/sanity/sanityClient';
 import { ReferenceOptions } from './types';
 import { referenceCache } from './cache';
 
 /**
- * Interface for match details that can be resolved from both systems
+ * Resolve a match from Sanity match document
+ * @param matchDocument Sanity match document
+ * @param options Resolution options
+ * @returns Referenced match from Supabase
  */
-export interface CrossSystemMatch {
-  id?: string;
-  matchDate: string;
-  matchTime?: string;
-  homeTeam: string;
-  awayTeam: string;
-  homeTeamLogo?: string;
-  awayTeamLogo?: string;
-  competition: string;
-  venue?: string;
-  homeScore?: number;
-  awayScore?: number;
-  status?: string;
-  ticketLink?: string;
-  matchReportLink?: string;
-}
-
-/**
- * Gets upcoming matches from Supabase
- */
-export async function getUpcomingMatches(
-  options: ReferenceOptions & {
-    limit?: number;
-    competitionId?: string;
-    teamId?: string;
-    days?: number;
-  } = {}
-): Promise<CrossSystemMatch[]> {
-  const { limit = 5, competitionId, teamId, days = 30, skipCache = false } = options;
+export async function resolveMatchFromDocument(
+  matchDocument: any | null,
+  options: ReferenceOptions = {}
+): Promise<any | null> {
+  if (!matchDocument || !matchDocument.supabaseId) {
+    return null;
+  }
   
-  // Create a cache key based on the query parameters
-  const cacheKey = `supabase:upcoming-matches:${limit}:${competitionId || 'all'}:${teamId || 'all'}:${days}`;
+  const { skipCache = false } = options;
+  const cacheKey = `match:${matchDocument.supabaseId}`;
   
   return referenceCache.getOrSet(
     cacheKey,
     async () => {
       try {
-        // Get today's date
-        const today = new Date();
-        
-        // Calculate the end date (today + days)
-        const endDate = new Date();
-        endDate.setDate(today.getDate() + days);
-        
-        // Format dates for Supabase
-        const formattedToday = today.toISOString().split('T')[0];
-        const formattedEndDate = endDate.toISOString().split('T')[0];
-        
-        // Start building the query
-        let query = supabase
+        const { data, error } = await supabase
           .from('match')
           .select(`
             *,
-            home_team:home_team_id(id, name, short_name, logo_url),
-            away_team:away_team_id(id, name, logo_url),
-            competition:competition_id(id, name, short_name)
+            home_team_id(*),
+            away_team_id(*),
+            competition_id(*)
           `)
-          .gte('match_date', formattedToday)
-          .lte('match_date', formattedEndDate)
-          .order('match_date', { ascending: true });
-        
-        // Add competition filter if specified
-        if (competitionId) {
-          query = query.eq('competition_id', competitionId);
+          .eq('id', matchDocument.supabaseId)
+          .single();
+          
+        if (error || !data) {
+          console.error(`Error resolving match ${matchDocument.supabaseId}:`, error);
+          return null;
         }
         
-        // Add team filter if specified
-        if (teamId) {
-          query = query.or(`home_team_id.eq.${teamId},away_team_id.eq.${teamId}`);
-        }
+        return data;
+      } catch (error) {
+        console.error(`Error resolving match ${matchDocument.supabaseId}:`, error);
+        return null;
+      }
+    },
+    skipCache
+  );
+}
+
+/**
+ * Resolve a Sanity match document from a Supabase match record
+ * @param match Supabase match record
+ * @param options Resolution options
+ * @returns Referenced Sanity match document
+ */
+export async function resolveDocumentFromMatch(
+  match: any | null,
+  options: ReferenceOptions = {}
+): Promise<any | null> {
+  if (!match || !match.id) return null;
+  
+  const { skipCache = false } = options;
+  const cacheKey = `matchDocument:${match.id}`;
+  
+  return referenceCache.getOrSet(
+    cacheKey,
+    async () => {
+      try {
+        const query = `*[_type == "match" && supabaseId == $supabaseId][0]`;
+        const params = { supabaseId: match.id };
         
-        // Execute the query with limit
-        const { data, error } = await query.limit(limit);
+        const document = await sanityClient.fetch(query, params);
         
-        if (error) {
+        return document || null;
+      } catch (error) {
+        console.error(`Error resolving match document for ${match.id}:`, error);
+        return null;
+      }
+    },
+    skipCache
+  );
+}
+
+/**
+ * Get upcoming matches with extended team and competition data
+ * @param limit Number of matches to retrieve
+ * @param options Resolution options
+ * @returns Array of upcoming matches
+ */
+export async function getUpcomingMatches(
+  limit = 5,
+  options: ReferenceOptions = {}
+): Promise<any[]> {
+  const { skipCache = false } = options;
+  const cacheKey = `matches:upcoming:${limit}`;
+  
+  try {
+    return await referenceCache.getOrSet(
+      cacheKey,
+      async () => {
+        // Get current date in ISO format
+        const today = new Date().toISOString().split('T')[0];
+        
+        const { data: matches, error } = await supabase
+          .from("match")
+          .select(`
+            id, match_date, match_time, venue, status, ticketco_event_id, ticket_link,
+            home_team_id(*),
+            away_team_id(*),
+            competition_id(*)
+          `)
+          .gte("match_date", today)
+          .order("match_date", { ascending: true })
+          .limit(limit);
+          
+        if (error || !matches) {
           console.error('Error fetching upcoming matches:', error);
           return [];
         }
         
-        if (!data || !data.length) {
-          return [];
-        }
-        
-        // Map the data to our CrossSystemMatch interface
-        return data.map(match => {
-          // Extract competition data
-          const competition = match.competition as any;
-          
-          // Extract team data
-          const homeTeam = match.home_team as any;
-          const awayTeam = match.away_team as any;
-          
+        return matches.map(match => {
           return {
             id: match.id,
-            matchDate: match.match_date,
-            matchTime: match.match_time,
-            competition: competition ? competition.name : 'Unknown Competition',
-            homeTeam: homeTeam ? homeTeam.name : 'Unknown Team',
-            awayTeam: awayTeam ? awayTeam.name : 'Unknown Team',
-            homeTeamLogo: homeTeam ? homeTeam.logo_url : undefined,
-            awayTeamLogo: awayTeam ? awayTeam.logo_url : undefined,
-            venue: match.venue || 'Spain Park',
-            status: match.status || 'scheduled',
-            ticketLink: match.ticket_link,
+            match_date: match.match_date,
+            match_time: match.match_time,
+            venue: match.venue,
+            status: match.status,
+            ticket_link: match.ticket_link,
+            home_team: match.home_team_id,
+            away_team: match.away_team_id,
+            competition: match.competition_id
           };
         });
-      } catch (error) {
-        console.error('Error fetching upcoming matches:', error);
-        return [];
-      }
-    },
-    skipCache
-  );
+      },
+      skipCache
+    );
+  } catch (error) {
+    console.error('Error fetching upcoming matches:', error);
+    return [];
+  }
 }
 
 /**
- * Gets recent results from Supabase
+ * Get recent matches with extended team and competition data
+ * @param limit Number of matches to retrieve
+ * @param options Resolution options
+ * @returns Array of recent matches
  */
-export async function getRecentResults(
-  options: ReferenceOptions & {
-    limit?: number;
-    competitionId?: string;
-    teamId?: string;
-    days?: number;
-  } = {}
-): Promise<CrossSystemMatch[]> {
-  const { limit = 5, competitionId, teamId, days = 30, skipCache = false } = options;
+export async function getRecentMatches(
+  limit = 5,
+  options: ReferenceOptions = {}
+): Promise<any[]> {
+  const { skipCache = false } = options;
+  const cacheKey = `matches:recent:${limit}`;
   
-  // Create a cache key based on the query parameters
-  const cacheKey = `supabase:recent-results:${limit}:${competitionId || 'all'}:${teamId || 'all'}:${days}`;
-  
-  return referenceCache.getOrSet(
-    cacheKey,
-    async () => {
-      try {
-        // Get today's date
-        const today = new Date();
-        
-        // Calculate the start date (today - days)
-        const startDate = new Date();
-        startDate.setDate(today.getDate() - days);
-        
-        // Format dates for Supabase
-        const formattedToday = today.toISOString().split('T')[0];
-        const formattedStartDate = startDate.toISOString().split('T')[0];
-        
-        // Start building the query
-        let query = supabase
-          .from('match')
+  try {
+    return await referenceCache.getOrSet(
+      cacheKey,
+      async () => {
+        const { data: matches, error } = await supabase
+          .from("match")
           .select(`
-            *,
-            home_team:home_team_id(id, name, short_name, logo_url),
-            away_team:away_team_id(id, name, logo_url),
-            competition:competition_id(id, name, short_name)
+            id, match_date, match_time, venue, status, home_score, away_score, match_report_link,
+            home_team_id(*),
+            away_team_id(*),
+            competition_id(*)
           `)
-          .lte('match_date', formattedToday)
-          .gte('match_date', formattedStartDate)
-          .not('home_score', 'is', null)
-          .not('away_score', 'is', null)
-          .order('match_date', { ascending: false });
-        
-        // Add competition filter if specified
-        if (competitionId) {
-          query = query.eq('competition_id', competitionId);
-        }
-        
-        // Add team filter if specified
-        if (teamId) {
-          query = query.or(`home_team_id.eq.${teamId},away_team_id.eq.${teamId}`);
-        }
-        
-        // Execute the query with limit
-        const { data, error } = await query.limit(limit);
-        
-        if (error) {
-          console.error('Error fetching recent results:', error);
+          .eq("status", "completed")
+          .order("match_date", { ascending: false })
+          .limit(limit);
+          
+        if (error || !matches) {
+          console.error('Error fetching recent matches:', error);
           return [];
         }
         
-        if (!data || !data.length) {
-          return [];
-        }
-        
-        // Map the data to our CrossSystemMatch interface
-        return data.map(match => {
-          // Extract competition data
-          const competition = match.competition as any;
-          
-          // Extract team data
-          const homeTeam = match.home_team as any;
-          const awayTeam = match.away_team as any;
-          
+        return matches.map(match => {
           return {
             id: match.id,
-            matchDate: match.match_date,
-            matchTime: match.match_time,
-            competition: competition ? competition.name : 'Unknown Competition',
-            homeTeam: homeTeam ? homeTeam.name : 'Unknown Team',
-            awayTeam: awayTeam ? awayTeam.name : 'Unknown Team',
-            homeTeamLogo: homeTeam ? homeTeam.logo_url : undefined,
-            awayTeamLogo: awayTeam ? awayTeam.logo_url : undefined,
-            venue: match.venue || 'Spain Park',
-            homeScore: match.home_score,
-            awayScore: match.away_score,
-            status: 'completed',
-            matchReportLink: match.match_report_link,
+            match_date: match.match_date,
+            match_time: match.match_time,
+            venue: match.venue,
+            status: match.status,
+            home_score: match.home_score,
+            away_score: match.away_score,
+            match_report_link: match.match_report_link,
+            home_team: match.home_team_id,
+            away_team: match.away_team_id,
+            competition: match.competition_id
           };
         });
-      } catch (error) {
-        console.error('Error fetching recent results:', error);
-        return [];
-      }
-    },
-    skipCache
-  );
+      },
+      skipCache
+    );
+  } catch (error) {
+    console.error('Error fetching recent matches:', error);
+    return [];
+  }
 }

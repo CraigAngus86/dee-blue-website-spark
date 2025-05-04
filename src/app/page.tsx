@@ -1,6 +1,6 @@
+
 import { Metadata } from "next";
-import { getHeroSlides } from "@/lib/sanity/queries/heroSlides";
-import HeroSection from "@/components/ui/home/HeroSection";
+import HeroSection from "@/components/ui/hero/HeroSection";
 import OverlappingNewsCards from "@/components/ui/sections/OverlappingNewsCards";
 import Section from "@/components/ui/layout/Section";
 import FanZoneSection from "@/components/ui/sections/FanZoneSection";
@@ -10,9 +10,10 @@ import FadeIn from "@/components/ui/animations/FadeIn";
 import PatternOverlay from "@/components/ui/backgrounds/PatternOverlay";
 import MatchCenter from "@/components/ui/sections/MatchCenter";
 import PlayersSection from "@/components/ui/sections/PlayersSection";
-import { fetchSanityData } from "@/lib/sanity/client";
+import { fetchSanityData } from "@/lib/sanity/sanityClient";
 import { supabase } from "@/lib/supabase/client";
-import { Match } from "@/types/match";
+import { getUpcomingMatches, getRecentMatches } from "@/utils/cross-system/match";
+import { Match, Competition, Team } from "@/types/match";
 
 export const metadata: Metadata = {
   title: "Home | Banks o' Dee FC",
@@ -62,107 +63,80 @@ async function getRecentNews(limit = 6) {
   }
 }
 
-// Enhanced fetching of upcoming and recent matches with explicit relationship and error handling
+// Fetch upcoming and recent matches with proper type mapping
 async function getMatches() {
-  // Get current date in ISO format without time
-  const today = new Date().toISOString().split('T')[0];
-  
   try {
-    // Fetch upcoming matches with explicit relationship references
-    const { data: upcomingMatches, error: upcomingError } = await supabase
-      .from("match")
-      .select(`
-        id, match_date, match_time, venue, status, ticketco_event_id, ticket_link,
-        home_team_id:teams!match_home_team_id_fkey(id, name, logo_url),
-        away_team_id:teams!match_away_team_id_fkey(id, name, logo_url),
-        competitions!match_competition_id_fkey(id, name, short_name, logo_url)
-      `)
-      .gte("match_date", today)
-      .order("match_date", { ascending: true })
-      .limit(5);
-
-    if (upcomingError) {
-      console.error("Error fetching upcoming matches:", upcomingError.message, upcomingError.details);
-      throw upcomingError;
-    }
-
-    // Fetch recent results with explicit relationship references
-    const { data: recentMatches, error: recentError } = await supabase
-      .from("match")
-      .select(`
-        id, match_date, match_time, venue, status, home_score, away_score, match_report_link,
-        home_team_id:teams!match_home_team_id_fkey(id, name, logo_url),
-        away_team_id:teams!match_away_team_id_fkey(id, name, logo_url),
-        competitions!match_competition_id_fkey(id, name, short_name, logo_url)
-      `)
-      .eq("status", "completed")
-      .order("match_date", { ascending: false })
-      .limit(5);
-
-    if (recentError) {
-      console.error("Error fetching recent matches:", recentError.message, recentError.details);
-      throw recentError;
-    }
-
-    // Convert Supabase data to our app's Match format
-    const upcoming = (upcomingMatches || []).map(match => {
-      if (!match.home_team_id || !match.away_team_id || !match.competitions) {
-        console.error("Invalid match data:", match);
-        return null;
-      }
-      
+    // Fetch upcoming matches and map to proper type
+    const upcomingMatchesRaw = await getUpcomingMatches(5);
+    const upcomingMatches = upcomingMatchesRaw.map(match => {
       return {
         id: match.id,
-        competition: match.competitions.name || "",
-        date: match.match_date,
-        time: match.match_time || "",
-        venue: match.venue || "",
-        homeTeam: match.home_team_id.name,
-        awayTeam: match.away_team_id.name,
-        home: match.home_team_id.name,
-        away: match.away_team_id.name,
-        ticketLink: match.ticket_link
-      };
-    }).filter(Boolean) as Match[];
-    
-    const recent = (recentMatches || []).map(match => {
-      if (!match.home_team_id || !match.away_team_id || !match.competitions) {
-        console.error("Invalid match data:", match);
-        return null;
-      }
-      
+        match_date: match.match_date,
+        match_time: match.match_time,
+        venue: match.venue || '',
+        status: match.status,
+        ticket_link: match.ticket_link,
+        home_team: {
+          id: match.home_team.id,
+          name: match.home_team.name,
+          logo_url: match.home_team.logo_url
+        },
+        away_team: {
+          id: match.away_team.id,
+          name: match.away_team.name,
+          logo_url: match.away_team.logo_url
+        },
+        competition: {
+          id: match.competition.id,
+          name: match.competition.name,
+          short_name: match.competition.short_name,
+          logo_url: match.competition.logo_url
+        }
+      } as Match;
+    });
+
+    // Fetch recent matches and map to proper type
+    const recentMatchesRaw = await getRecentMatches(5);
+    const recentMatches = recentMatchesRaw.map(match => {
       return {
         id: match.id,
-        competition: match.competitions.name || "",
-        date: match.match_date,
-        time: match.match_time || "",
-        venue: match.venue || "",
-        homeTeam: match.home_team_id.name,
-        awayTeam: match.away_team_id.name,
-        home: match.home_team_id.name,
-        away: match.away_team_id.name,
-        result: match.home_score !== undefined && match.away_score !== undefined
-          ? {
-              homeScore: match.home_score,
-              awayScore: match.away_score,
-              matchReportLink: match.match_report_link
-            }
-          : undefined,
-      };
-    }).filter(Boolean) as Match[];
+        match_date: match.match_date,
+        match_time: match.match_time,
+        venue: match.venue || '',
+        status: match.status,
+        home_score: match.home_score,
+        away_score: match.away_score,
+        match_report_link: match.match_report_link,
+        home_team: {
+          id: match.home_team.id,
+          name: match.home_team.name,
+          logo_url: match.home_team.logo_url
+        },
+        away_team: {
+          id: match.away_team.id,
+          name: match.away_team.name,
+          logo_url: match.away_team.logo_url
+        },
+        competition: {
+          id: match.competition.id,
+          name: match.competition.name,
+          short_name: match.competition.short_name,
+          logo_url: match.competition.logo_url
+        }
+      } as Match;
+    });
 
-    // For the featured match, use the first upcoming match if available
-    const featuredMatch = upcoming.length > 0 ? upcoming[0] : undefined;
-
-    return { upcoming, recent, featuredMatch };
+    return {
+      upcoming: upcomingMatches,
+      recent: recentMatches
+    };
   } catch (error) {
     console.error("Error fetching matches:", error);
-    // Return empty arrays as fallback to prevent runtime crashes
-    return { upcoming: [], recent: [], featuredMatch: undefined };
+    return { upcoming: [], recent: [] };
   }
 }
 
-// Fetch league table with enhanced error handling
+// Fetch league table
 async function getLeagueTable() {
   try {
     const { data: leagueTable, error } = await supabase
@@ -170,11 +144,7 @@ async function getLeagueTable() {
       .select("*")
       .order("position", { ascending: true });
 
-    if (error) {
-      console.error("Error fetching league table:", error.message, error.details);
-      throw error;
-    }
-
+    if (error) throw error;
     return leagueTable || [];
   } catch (error) {
     console.error("Error fetching league table:", error);
@@ -182,7 +152,7 @@ async function getLeagueTable() {
   }
 }
 
-// Fetch sponsors with enhanced error handling
+// Fetch sponsors
 async function getSponsors() {
   try {
     const { data: sponsors, error } = await supabase
@@ -190,11 +160,7 @@ async function getSponsors() {
       .select("*")
       .order("featured", { ascending: false });
 
-    if (error) {
-      console.error("Error fetching sponsors:", error.message, error.details);
-      throw error;
-    }
-
+    if (error) throw error;
     return sponsors || [];
   } catch (error) {
     console.error("Error fetching sponsors:", error);
@@ -202,7 +168,7 @@ async function getSponsors() {
   }
 }
 
-// Fetch fan of the month with enhanced error handling
+// Fetch fan of the month
 async function getFanOfMonth() {
   try {
     const { data: fanOfMonth, error } = await supabase
@@ -210,11 +176,7 @@ async function getFanOfMonth() {
       .select("*")
       .maybeSingle();
 
-    if (error && error.code !== 'PGRST116') {
-      console.error("Error fetching fan of the month:", error.message, error.details);
-      throw error;
-    }
-
+    if (error && error.code !== 'PGRST116') throw error;
     return fanOfMonth;
   } catch (error) {
     console.error("Error fetching fan of the month:", error);
@@ -222,7 +184,7 @@ async function getFanOfMonth() {
   }
 }
 
-// Fetch featured players with enhanced error handling
+// Fetch featured players
 async function getFeaturedPlayers() {
   try {
     const { data: players, error } = await supabase
@@ -232,11 +194,7 @@ async function getFeaturedPlayers() {
       .order("jersey_number", { ascending: true })
       .limit(8);
 
-    if (error) {
-      console.error("Error fetching players:", error.message, error.details);
-      throw error;
-    }
-
+    if (error) throw error;
     return players || [];
   } catch (error) {
     console.error("Error fetching players:", error);
@@ -245,92 +203,86 @@ async function getFeaturedPlayers() {
 }
 
 export default async function HomePage() {
-  try {
-    // Fetch hero slides separately from other data
-    const heroSlides = await getHeroSlides();
-    
-    // Fetch all other data in parallel
-    const [
-      recentNews, 
-      matches, 
-      leagueTable,
-      sponsors,
-      fanOfMonth,
-      featuredPlayers
-    ] = await Promise.all([
-      getRecentNews(),
-      getMatches(),
-      getLeagueTable(),
-      getSponsors(),
-      getFanOfMonth(),
-      getFeaturedPlayers()
-    ]);
+  // Fetch all data in parallel
+  const [
+    featuredNewsArticle, 
+    recentNews, 
+    matches, 
+    leagueTable,
+    sponsors,
+    fanOfMonth,
+    featuredPlayers
+  ] = await Promise.all([
+    getFeaturedNewsArticle(),
+    getRecentNews(),
+    getMatches(),
+    getLeagueTable(),
+    getSponsors(),
+    getFanOfMonth(),
+    getFeaturedPlayers()
+  ]);
 
-    // Convert to the format expected by components
-    const cardShadowStyle = {
-      "--card-shadow": "0 10px 25px -5px rgba(0, 16, 90, 0.1), 0 8px 10px -6px rgba(0, 16, 90, 0.05)",
-      "--card-hover-shadow": "0 20px 25px -5px rgba(0, 16, 90, 0.15), 0 10px 10px -5px rgba(0, 16, 90, 0.1)"
-    } as React.CSSProperties;
+  // Convert to the format expected by components
+  const cardShadowStyle = {
+    "--card-shadow": "0 10px 25px -5px rgba(0, 16, 90, 0.1), 0 8px 10px -6px rgba(0, 16, 90, 0.05)",
+    "--card-hover-shadow": "0 20px 25px -5px rgba(0, 16, 90, 0.15), 0 10px 10px -5px rgba(0, 16, 90, 0.1)"
+  } as React.CSSProperties;
 
-    return (
-      <div className="min-h-screen flex flex-col" style={cardShadowStyle}>
-        {/* Hero Section */}
-        <HeroSection slides={heroSlides} />
-        
-        {/* News Cards Section */}
-        <div className="py-12">
-          <FadeIn>
-            <OverlappingNewsCards articles={recentNews} count={6} />
-          </FadeIn>
-        </div>
-        
-        {/* Gradient Separator */}
-        <GradientSeparator />
-        
-        {/* Match Center Section */}
-        <Section 
-          background="light"
-          spacing="lg"
-        >
-          <FadeIn>
-            <MatchCenter 
-              upcomingMatches={matches.upcoming}
-              recentResults={matches.recent}
-              leagueTable={leagueTable}
-              featuredMatch={matches.featuredMatch}
-            />
-          </FadeIn>
-        </Section>
-        
-        {/* Gradient Separator */}
-        <GradientSeparator />
-        
-        {/* Fan Zone Section */}
-        <div className="py-12">
-          <FanZoneSection fanOfMonth={fanOfMonth} />
-        </div>
-        
-        {/* Gradient Separator before Players Section */}
-        <GradientSeparator />
-        
-        {/* Players Section */}
-        <PlayersSection players={featuredPlayers} />
-        
-        {/* Gradient Separator before Sponsors Section */}
-        <GradientSeparator />
-        
-        {/* Sponsors Section */}
-        <SponsorsSection sponsors={sponsors} />
+  return (
+    <div className="min-h-screen flex flex-col" style={cardShadowStyle}>
+      {/* Hero Section */}
+      {featuredNewsArticle && (
+        <HeroSection
+          title={featuredNewsArticle.title}
+          category={featuredNewsArticle.category || "CLUB NEWS"}
+          timestamp={new Date(featuredNewsArticle.publishedAt).toLocaleString()}
+          backgroundImage={featuredNewsArticle.mainImage}
+        />
+      )}
+      
+      {/* News Cards Section */}
+      <div className="py-12">
+        <FadeIn>
+          <OverlappingNewsCards articles={recentNews} count={6} />
+        </FadeIn>
       </div>
-    );
-  } catch (error) {
-    console.error("Error in HomePage:", error);
-    // Return a minimal fallback UI if something goes wrong
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center">
-        <h1 className="text-2xl font-bold text-red-600">Temporarily Unavailable</h1>
-        <p className="mt-2">Our team is working to restore service. Please check back later.</p>
+      
+      {/* Gradient Separator */}
+      <GradientSeparator />
+      
+      {/* Match Center Section */}
+      <Section 
+        background="light"
+        spacing="lg"
+      >
+        <FadeIn>
+          <MatchCenter 
+            upcomingMatches={matches.upcoming} 
+            recentResults={matches.recent} 
+            leagueTable={leagueTable} 
+          />
+        </FadeIn>
+      </Section>
+      
+      {/* Gradient Separator */}
+      <GradientSeparator />
+      
+      {/* Fan Zone Section */}
+      <div className="py-12">
+        <FanZoneSection fanOfMonth={fanOfMonth} />
       </div>
-    );
-  }
+      
+      {/* Gradient Separator before Players Section */}
+      <GradientSeparator />
+      
+      {/* Players Section */}
+      <PlayersSection players={featuredPlayers} />
+      
+      {/* Gradient Separator before Sponsors Section */}
+      <GradientSeparator />
+      
+      {/* Sponsors Section */}
+      <SponsorsSection sponsors={sponsors} />
+    </div>
+  );
 }

@@ -1,19 +1,11 @@
+
 /**
  * Enhanced utility for syncing data from Supabase to Sanity
  * with detailed error logging and validation
  */
 
-import { createClient } from '@sanity/client';
+import { sanityAdminClient } from '@/lib/sanity/sanityClient';
 import { supabase } from '@/lib/supabase/client';
-
-// Initialize Sanity client for data import
-const sanityClient = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'gxtptap2',
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
-  apiVersion: '2024-04-30', // Updated to match the API version in the error message
-  token: process.env.SANITY_API_TOKEN,
-  useCdn: false,
-});
 
 // Import result interface
 export interface ImportResult {
@@ -33,6 +25,7 @@ export interface ImportOptions {
   onProgress?: (stats: ImportResult) => void;
   dryRun?: boolean;
   testSinglePlayer?: string; // Option to test import with a single player by ID
+  debug?: boolean; // Option to enable debug mode
 }
 
 /**
@@ -63,7 +56,7 @@ function mapPlayerFields(player: any) {
  * Import Supabase players to Sanity with enhanced error handling
  */
 export async function importPlayersToSanity(options: ImportOptions = {}): Promise<ImportResult> {
-  const { batchSize = 5, onProgress, dryRun = false, testSinglePlayer = null } = options;
+  const { batchSize = 5, onProgress, dryRun = false, testSinglePlayer = null, debug = false } = options;
   
   const result: ImportResult = {
     created: 0,
@@ -122,14 +115,19 @@ export async function importPlayersToSanity(options: ImportOptions = {}): Promis
           const query = `*[_type == "playerProfile" && supabaseId == $supabaseId][0]`;
           const params = { supabaseId: player.id };
           
-          // Log the exact query for debugging
-          console.log('Query:', query);
-          console.log('Params:', params);
+          if (debug) {
+            // Log the exact query for debugging
+            console.log('Query:', query);
+            console.log('Params:', JSON.stringify(params, null, 2));
+          }
           
           try {
-            // Try to fetch the existing player profile
-            const existingPlayer = await sanityClient.fetch(query, params);
-            console.log('Existing player:', existingPlayer);
+            // Try to fetch the existing player profile with our new client
+            const existingPlayer = await sanityAdminClient.fetch(query, params);
+            
+            if (debug) {
+              console.log('Existing player:', existingPlayer);
+            }
             
             // Map player fields for Sanity
             const playerDoc = mapPlayerFields(player);
@@ -143,7 +141,8 @@ export async function importPlayersToSanity(options: ImportOptions = {}): Promis
             
             if (existingPlayer) {
               // Update existing player
-              const updated = await sanityClient.patch(existingPlayer._id)
+              const updated = await sanityAdminClient
+                .patch(existingPlayer._id)
                 .set(playerDoc)
                 .commit();
                 
@@ -151,7 +150,7 @@ export async function importPlayersToSanity(options: ImportOptions = {}): Promis
               result.updated++;
             } else {
               // Create new player
-              const newPlayer = await sanityClient.create(playerDoc);
+              const newPlayer = await sanityAdminClient.create(playerDoc);
               
               console.log(`Created player profile for ${player.name || `${player.first_name} ${player.last_name}`} with ID ${newPlayer._id}`);
               result.created++;
@@ -160,7 +159,7 @@ export async function importPlayersToSanity(options: ImportOptions = {}): Promis
             // Handle Sanity API errors specifically
             const errorMessage = sanityError instanceof Error ? sanityError.message : String(sanityError);
             console.error(`Sanity API error for ${player.name || `${player.first_name} ${player.last_name}`}:`, sanityError);
-            throw new Error(`Request error while attempting to reach ${params.supabaseId}: ${errorMessage}`);
+            throw new Error(`Error processing player ${player.id}: ${errorMessage}`);
           }
           
           // Call progress callback if provided
@@ -199,7 +198,7 @@ export async function importPlayersToSanity(options: ImportOptions = {}): Promis
  * Import Supabase sponsors to Sanity with enhanced error handling
  */
 export async function importSponsorsToSanity(options: ImportOptions = {}): Promise<ImportResult> {
-  const { batchSize = 5, onProgress, dryRun = false } = options;
+  const { batchSize = 5, onProgress, dryRun = false, debug = false } = options;
   
   const result: ImportResult = {
     created: 0,
@@ -242,7 +241,7 @@ export async function importSponsorsToSanity(options: ImportOptions = {}): Promi
           }
           
           // Check if sponsor already exists in Sanity
-          const existingSponsor = await sanityClient.fetch(
+          const existingSponsor = await sanityAdminClient.fetch(
             `*[_type == "sponsor" && supabaseId == $supabaseId][0]`,
             { supabaseId: sponsor.id }
           );
@@ -265,7 +264,8 @@ export async function importSponsorsToSanity(options: ImportOptions = {}): Promi
           
           if (existingSponsor) {
             // Update existing sponsor
-            const updated = await sanityClient.patch(existingSponsor._id)
+            const updated = await sanityAdminClient
+              .patch(existingSponsor._id)
               .set(sponsorDoc)
               .commit();
               
@@ -273,7 +273,7 @@ export async function importSponsorsToSanity(options: ImportOptions = {}): Promi
             result.updated++;
           } else {
             // Create new sponsor
-            const newSponsor = await sanityClient.create(sponsorDoc);
+            const newSponsor = await sanityAdminClient.create(sponsorDoc);
             
             console.log(`Created sponsor profile for ${sponsor.name} with ID ${newSponsor._id}`);
             result.created++;

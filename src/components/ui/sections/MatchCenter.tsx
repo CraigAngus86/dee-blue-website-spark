@@ -1,47 +1,82 @@
 
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import MatchCarousel from '@/components/ui/match/MatchCarousel';
-import LeagueTable from '@/components/ui/match/LeagueTable';
-import FeaturedMatch from '@/components/ui/sections/FeaturedMatch';
-import { Match } from '@/types/match';
-import Heading from '@/components/ui/typography/Heading';
+import { MatchCarousel } from '../match/MatchCarousel';
+import { LeagueTable } from '../match/LeagueTable';
+import SectionHeader from './SectionHeader';
+import FeaturedMatch from './FeaturedMatch';
+
+interface MatchData {
+  id: string;
+  matchDate: string;
+  matchTime?: string;
+  competition: string;
+  homeTeam: string;
+  awayTeam: string; 
+  homeTeamLogo?: string;
+  awayTeamLogo?: string;
+  venue: string;
+  ticketLink?: string;
+}
+
+interface ResultData extends MatchData {
+  homeScore: number;
+  awayScore: number;
+  matchReport?: string;
+}
 
 interface MatchCenterProps {
-  upcomingMatches?: Match[];
-  recentResults?: Match[];
-  leagueTable?: any[];
-  featuredMatch?: Match;
+  upcomingMatches: any[];
+  recentResults: any[];
+  leagueTable: any[];
 }
 
-interface LeagueTableProps {
-  data: any[];
-  selectedSeason?: string;
-}
+export default function MatchCenter({
+  upcomingMatches,
+  recentResults,
+  leagueTable
+}: MatchCenterProps) {
+  // Format upcoming matches for the carousel
+  const formattedUpcoming = upcomingMatches.map(match => ({
+    id: match.id,
+    matchDate: match.match_date,
+    matchTime: match.match_time,
+    competition: match.competition.name,
+    homeTeam: match.home_team.name,
+    awayTeam: match.away_team.name,
+    homeTeamLogo: match.home_team.logo_url,
+    awayTeamLogo: match.away_team.logo_url,
+    venue: match.venue || 'TBA',
+    ticketLink: match.ticket_link
+  }));
 
-const MatchCenter: React.FC<MatchCenterProps> = ({
-  upcomingMatches = [],
-  recentResults = [],
-  leagueTable = [],
-  featuredMatch
-}) => {
-  const hasData = upcomingMatches.length > 0 || recentResults.length > 0 || leagueTable.length > 0;
-  
-  if (!hasData) {
-    return null;
-  }
+  // Format recent results for the carousel
+  const formattedResults = recentResults.map(match => ({
+    id: match.id,
+    matchDate: match.match_date,
+    matchTime: match.match_time,
+    competition: match.competition.name,
+    homeTeam: match.home_team.name,
+    awayTeam: match.away_team.name,
+    homeTeamLogo: match.home_team.logo_url,
+    awayTeamLogo: match.away_team.logo_url,
+    venue: match.venue || 'TBA',
+    homeScore: match.home_score,
+    awayScore: match.away_score,
+    matchReport: match.match_report_link
+  }));
+
+  // Featured match (most recent upcoming match)
+  const featuredMatch = formattedUpcoming.length > 0 ? formattedUpcoming[0] : null;
 
   return (
-    <div className="space-y-8">
-      <div className="text-center max-w-2xl mx-auto">
-        <Heading as="h2" size="2xl" className="mb-4">
-          Match Center
-        </Heading>
-        <p className="text-muted-foreground">
-          Stay updated with the latest fixtures, results, and the current league table.
-        </p>
-      </div>
+    <div className="w-full">
+      <SectionHeader 
+        title="Match Center" 
+        subtitle="Latest fixtures, results and league table"
+      />
 
+      {/* Featured Match */}
       {featuredMatch && (
         <div className="mb-8">
           <FeaturedMatch match={featuredMatch} />
@@ -54,36 +89,19 @@ const MatchCenter: React.FC<MatchCenterProps> = ({
           <TabsTrigger value="results">Results</TabsTrigger>
           <TabsTrigger value="table">League Table</TabsTrigger>
         </TabsList>
-        <TabsContent value="fixtures" className="w-full">
-          {upcomingMatches.length > 0 ? (
-            <MatchCarousel matches={upcomingMatches} />
-          ) : (
-            <div className="text-center py-8">
-              <p className="text-muted-foreground">No upcoming fixtures at this time.</p>
-            </div>
-          )}
+
+        <TabsContent value="fixtures" className="mt-0">
+          <MatchCarousel matches={formattedUpcoming} type="fixture" />
         </TabsContent>
-        <TabsContent value="results">
-          {recentResults.length > 0 ? (
-            <MatchCarousel matches={recentResults} />
-          ) : (
-            <div className="text-center py-8">
-              <p className="text-muted-foreground">No recent results to show.</p>
-            </div>
-          )}
+
+        <TabsContent value="results" className="mt-0">
+          <MatchCarousel matches={formattedResults} type="result" />
         </TabsContent>
-        <TabsContent value="table">
-          {leagueTable.length > 0 ? (
-            <LeagueTable data={leagueTable} selectedSeason="2023/24" />
-          ) : (
-            <div className="text-center py-8">
-              <p className="text-muted-foreground">League table is not available.</p>
-            </div>
-          )}
+
+        <TabsContent value="table" className="mt-0">
+          <LeagueTable tableData={leagueTable} />
         </TabsContent>
       </Tabs>
     </div>
   );
-};
-
-export default MatchCenter;
+}
