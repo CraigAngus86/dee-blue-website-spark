@@ -1,3 +1,4 @@
+
 // src/lib/sanity/sanityClient.ts
 import { sanitySimple, fetchSanityData } from './sanity-simple';
 

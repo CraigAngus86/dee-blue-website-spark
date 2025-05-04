@@ -1,7 +1,8 @@
+
 const token = process.env.SANITY_API_TOKEN;
 const projectId = 'gxtptap2';
 const dataset = 'production';
-const apiVersion = '2024-04-30';
+const apiVersion = '2021-10-21';
 
 // A super minimal test function that uses no client libraries
 export async function testMinimalSanityConnection() {
@@ -34,12 +35,13 @@ export async function testMinimalSanityConnection() {
     const data = await response.json();
     console.log('Response data sample:', data.result ? 'Data received' : 'No data');
     
-    return { success: true, message: 'Connection successful' };
+    return { success: true, message: 'Connection successful', data: data };
   } catch (error) {
     console.error('Test connection error:', error);
     return {
       success: false,
-      message: `Connection test failed: ${error.message}`
+      message: `Connection test failed: ${error.message}`,
+      error
     };
   }
 }

@@ -6,15 +6,11 @@
  * Sanity CMS documents and Supabase records.
  */
 
-// Export types
+// Re-export all utilities
 export * from './types';
-
-// Export cache utilities
 export * from './cache';
-
-// Export the resolver functions
 export { default as resolveSupabaseReference } from './resolveSupabaseReference';
 export { default as resolveSanityReference } from './resolveSanityReference';
-
-// Re-export match-specific utilities if they exist
-// Note: These will be implemented as needed for completeness
+export * from './player';
+export * from './match';
+export * from './sponsor';

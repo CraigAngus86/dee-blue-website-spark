@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState } from 'react';
@@ -23,26 +24,6 @@ import { Input } from '@/components/ui/input';
 import { testSanityConnection } from '@/lib/sanity/sanity-simple';
 import { testMinimalSanityConnection } from '@/lib/sanity/test-connection';
 
-// ...
-
-const handleTestConnection = async () => {
-  setConnectionStatus('testing');
-  try {
-    const result = await testSanityConnection();
-    setConnectionStatus(result.success ? 'success' : 'failed');
-    setConnectionMessage(result.message);
-  } catch (error) {
-    setConnectionStatus('failed');
-    setConnectionMessage(`Error: ${error.message}`);
-  }
-};
-
-interface SyncResult {
-  created: number;
-  updated: number;
-  failed: number;
-}
-
 export function SyncAdmin() {
   const [loading, setLoading] = useState({
     players: false,
@@ -61,27 +42,55 @@ export function SyncAdmin() {
   const [testSinglePlayerId, setTestSinglePlayerId] = useState('');
   const [debugMode, setDebugMode] = useState(true); // Default to debug mode for better troubleshooting
   const [connectionStatus, setConnectionStatus] = useState<string | null>(null);
+  const [connectionMessage, setConnectionMessage] = useState<string | null>(null);
   const [includeStaff, setIncludeStaff] = useState(true); // New option to include staff members
   
   // Test Sanity connection
   const testConnection = async () => {
     setLoading({ ...loading, test: true });
-    setConnectionStatus(null);
+    setConnectionStatus('testing');
+    setConnectionMessage(null);
     
     try {
-      const result = await testMinimalSanityConnection();
-      setConnectionStatus(result.success ? 'success' : 'failed');
-      toast({
-        title: result.success ? "Connection Successful" : "Connection Failed",
-        description: result.message,
-        variant: result.success ? "default" : "destructive",
-      });
+      // First try the client-based approach
+      const result = await testSanityConnection();
+      
+      if (result.success) {
+        setConnectionStatus('success');
+        setConnectionMessage('Connection successful using Sanity client');
+        toast({
+          title: "Connection Successful",
+          description: result.message,
+        });
+      } else {
+        // If client approach fails, try minimal fetch approach
+        const minimalResult = await testMinimalSanityConnection();
+        
+        if (minimalResult.success) {
+          setConnectionStatus('warning');
+          setConnectionMessage('Connection succeeded with direct fetch but failed with client');
+          toast({
+            variant: "warning",
+            title: "Partial Connection Success",
+            description: "Direct API connection works but client connection failed",
+          });
+        } else {
+          setConnectionStatus('failed');
+          setConnectionMessage(`All connection methods failed: ${result.message}`);
+          toast({
+            variant: "destructive",
+            title: "Connection Failed",
+            description: result.message,
+          });
+        }
+      }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : String(err);
       setConnectionStatus('failed');
+      setConnectionMessage(`Error during connection test: ${errorMessage}`);
       toast({
         variant: "destructive",
-        title: "Connection test failed",
+        title: "Connection test error",
         description: errorMessage,
       });
     } finally {
@@ -268,37 +277,66 @@ export function SyncAdmin() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex items-center gap-4">
-            <Button 
-              onClick={testConnection} 
-              disabled={loading.test}
-              variant="secondary"
-            >
-              {loading.test ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Testing...
-                </>
-              ) : (
-                <>Test Sanity Connection</>
-              )}
-            </Button>
-            
-            {connectionStatus && (
-              <span className={`flex items-center ${connectionStatus === 'success' ? 'text-green-600' : 'text-red-600'}`}>
-                {connectionStatus === 'success' ? (
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-4">
+              <Button 
+                onClick={testConnection} 
+                disabled={loading.test}
+                variant="secondary"
+              >
+                {loading.test ? (
                   <>
-                    <CheckCircle2 className="h-5 w-5 mr-1" />
-                    Connection successful
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Testing...
                   </>
                 ) : (
-                  <>
-                    <XCircle className="h-5 w-5 mr-1" />
-                    Connection failed
-                  </>
+                  <>Test Sanity Connection</>
                 )}
-              </span>
+              </Button>
+              
+              {connectionStatus && (
+                <span className={`flex items-center ${
+                  connectionStatus === 'success' ? 'text-green-600' : 
+                  connectionStatus === 'warning' ? 'text-amber-600' :
+                  'text-red-600'
+                }`}>
+                  {connectionStatus === 'success' ? (
+                    <>
+                      <CheckCircle2 className="h-5 w-5 mr-1" />
+                      Connection successful
+                    </>
+                  ) : connectionStatus === 'warning' ? (
+                    <>
+                      <AlertTriangle className="h-5 w-5 mr-1" />
+                      Partially successful
+                    </>
+                  ) : (
+                    <>
+                      <XCircle className="h-5 w-5 mr-1" />
+                      Connection failed
+                    </>
+                  )}
+                </span>
+              )}
+            </div>
+            
+            {connectionMessage && (
+              <p className="text-sm bg-white p-3 rounded border">
+                {connectionMessage}
+              </p>
             )}
+            
+            <div className="text-sm">
+              <p>For detailed connection testing and diagnostics, visit:</p>
+              <Button variant="link" className="h-auto p-0" asChild>
+                <a href="/admin/test-sanity" target="_blank" rel="noopener noreferrer" className="flex items-center">
+                  Advanced Connection Test Page
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 ml-1">
+                    <path fillRule="evenodd" d="M5.22 14.78a.75.75 0 001.06 0l7.22-7.22v5.69a.75.75 0 001.5 0v-7.5a.75.75 0 00-.75-.75h-7.5a.75.75 0 000 1.5h5.69l-7.22 7.22a.75.75 0 000 1.06z" clipRule="evenodd" />
+                  </svg>
+                </a>
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>

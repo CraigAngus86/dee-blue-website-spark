@@ -1,3 +1,4 @@
+
 /**
  * Enhanced utility for syncing data from Supabase to Sanity
  * with detailed error logging and validation
@@ -27,11 +28,6 @@ export interface ImportOptions {
   debug?: boolean; // Option to enable debug mode
   includeStaff?: boolean; // Option to include staff members
 }
-
-// Create a direct Sanity client specifically for imports to bypass any issues
-const createDirectSanityClient = () => {
-  return sanitySimple;
-};
 
 /**
  * Field mapping helper to transform Supabase data to Sanity format
@@ -98,9 +94,6 @@ export async function importPlayersToSanity(options: ImportOptions = {}): Promis
       processed: 0
     }
   };
-  
-  // Create a direct Sanity client for the import operation
-  const importSanityClient = createDirectSanityClient();
 
   try {
     console.log('Fetching personnel from Supabase...');
@@ -168,13 +161,12 @@ export async function importPlayersToSanity(options: ImportOptions = {}): Promis
           let existingPerson;
           
           try {
-            // Use the direct Sanity client created specifically for imports
-            existingPerson = await importSanityClient.fetch(query, params);
+            existingPerson = await sanitySimple.fetch(query, params);
             
             if (debug) {
               console.log('Existing person record:', existingPerson ? 'Found' : 'Not found');
             }
-          } catch (sanityFetchError) {
+          } catch (sanityFetchError: any) {
             console.error('Sanity fetch error:', sanityFetchError);
             // Change the error message to avoid any string concatenation issues
             throw new Error(`Sanity fetch failed - check server logs for details`);
@@ -193,25 +185,25 @@ export async function importPlayersToSanity(options: ImportOptions = {}): Promis
           if (existingPerson) {
             // Update existing person
             try {
-              const updated = await importSanityClient
+              const updated = await sanitySimple
                 .patch(existingPerson._id)
                 .set(personDoc)
                 .commit();
                 
               console.log(`Updated profile for ${person.name || `${person.first_name} ${person.last_name}`}`);
               result.updated++;
-            } catch (updateError) {
+            } catch (updateError: any) {
               console.error('Error updating person:', updateError);
               throw new Error(`Update failed: ${updateError instanceof Error ? updateError.message : String(updateError)}`);
             }
           } else {
             // Create new person
             try {
-              const newPerson = await importSanityClient.create(personDoc);
+              const newPerson = await sanitySimple.create(personDoc);
               
               console.log(`Created profile for ${person.name || `${person.first_name} ${person.last_name}`} with ID ${newPerson._id}`);
               result.created++;
-            } catch (createError) {
+            } catch (createError: any) {
               console.error('Error creating person:', createError);
               throw new Error(`Creation failed: ${createError instanceof Error ? createError.message : String(createError)}`);
             }
@@ -266,9 +258,6 @@ export async function importSponsorsToSanity(options: ImportOptions = {}): Promi
     }
   };
 
-  // Create a direct Sanity client for the import operation
-  const importSanityClient = createDirectSanityClient();
-  
   try {
     console.log('Fetching sponsors from Supabase...');
     const { data: sponsors, error } = await supabase
@@ -301,7 +290,7 @@ export async function importSponsorsToSanity(options: ImportOptions = {}): Promi
           // Check if sponsor already exists in Sanity
           let existingSponsor;
           try {
-            existingSponsor = await importSanityClient.fetch(
+            existingSponsor = await sanitySimple.fetch(
               `*[_type == "sponsor" && supabaseId == $supabaseId][0]`,
               { supabaseId: sponsor.id }
             );
@@ -329,7 +318,7 @@ export async function importSponsorsToSanity(options: ImportOptions = {}): Promi
           if (existingSponsor) {
             // Update existing sponsor
             try {
-              const updated = await importSanityClient
+              const updated = await sanitySimple
                 .patch(existingSponsor._id)
                 .set(sponsorDoc)
                 .commit();
@@ -343,7 +332,7 @@ export async function importSponsorsToSanity(options: ImportOptions = {}): Promi
           } else {
             // Create new sponsor
             try {
-              const newSponsor = await importSanityClient.create(sponsorDoc);
+              const newSponsor = await sanitySimple.create(sponsorDoc);
               
               console.log(`Created sponsor profile for ${sponsor.name} with ID ${newSponsor._id}`);
               result.created++;
