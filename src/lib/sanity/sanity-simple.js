@@ -2,14 +2,19 @@
 // src/lib/sanity/sanity-simple.js
 import { createClient } from '@sanity/client';
 
-// Get the token from environment variables with fallback mechanism
+// Get the token from environment variables with improved logging
 const token = process.env.SANITY_API_TOKEN;
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'gxtptap2';
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production';
 const apiVersion = 'v2021-10-21';
 
-// Log token availability for debugging
+// Enhanced logging for token detection
 console.log('Initializing Sanity client with token available:', !!token);
+console.log('Environment variables available:', {
+  NEXT_PUBLIC_SANITY_PROJECT_ID: !!process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+  NEXT_PUBLIC_SANITY_DATASET: !!process.env.NEXT_PUBLIC_SANITY_DATASET,
+  SANITY_API_TOKEN: !!process.env.SANITY_API_TOKEN,
+});
 
 // Create a simple Sanity client with minimal configuration
 export const sanitySimple = createClient({

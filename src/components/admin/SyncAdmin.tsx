@@ -1,7 +1,6 @@
-
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { 
@@ -17,12 +16,11 @@ import {
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { ImportProgress, ImportStats } from '@/components/admin/ImportProgress';
-import { importPlayersToSanity, importSponsorsToSanity, ImportResult } from '@/utils/sync/SupabaseToSanitySync';
+import { ImportResult } from '@/utils/sync/SupabaseToSanitySync';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { toast } from '@/components/ui/use-toast';
 import { Input } from '@/components/ui/input';
-import { testSanityConnection } from '@/lib/sanity/sanity-simple';
-import { testMinimalSanityConnection } from '@/lib/sanity/test-connection';
+import { importPlayers, importSponsors } from '@/app/actions/sanity-import';
 
 export function SyncAdmin() {
   const [loading, setLoading] = useState({
@@ -43,46 +41,46 @@ export function SyncAdmin() {
   const [debugMode, setDebugMode] = useState(true); // Default to debug mode for better troubleshooting
   const [connectionStatus, setConnectionStatus] = useState<string | null>(null);
   const [connectionMessage, setConnectionMessage] = useState<string | null>(null);
-  const [includeStaff, setIncludeStaff] = useState(true); // New option to include staff members
+  const [includeStaff, setIncludeStaff] = useState(true); // Option to include staff members
+  const [sanityTokenAvailable, setSanityTokenAvailable] = useState<boolean | null>(null);
   
-  // Test Sanity connection
+  // Test Sanity connection - now uses API route
   const testConnection = async () => {
     setLoading({ ...loading, test: true });
     setConnectionStatus('testing');
     setConnectionMessage(null);
     
     try {
-      // First try the client-based approach
-      const result = await testSanityConnection();
+      // Use API route to test connection
+      const response = await fetch('/api/sanity-test?type=all');
+      const data = await response.json();
       
-      if (result.success) {
+      // Update token availability status
+      setSanityTokenAvailable(data.tokenAvailable);
+      
+      if (data.clientTest?.success) {
         setConnectionStatus('success');
-        setConnectionMessage('Connection successful using Sanity client');
+        setConnectionMessage(`Connection successful using Sanity client. Token available: ${data.tokenAvailable ? 'Yes' : 'No'}`);
         toast({
           title: "Connection Successful",
-          description: result.message,
+          description: data.clientTest.message,
+        });
+      } else if (data.minimalTest?.success) {
+        setConnectionStatus('warning');
+        setConnectionMessage(`Connection succeeded with direct fetch but failed with client. Token available: ${data.tokenAvailable ? 'Yes' : 'No'}`);
+        toast({
+          variant: "warning",
+          title: "Partial Connection Success",
+          description: "Direct API connection works but client connection failed",
         });
       } else {
-        // If client approach fails, try minimal fetch approach
-        const minimalResult = await testMinimalSanityConnection();
-        
-        if (minimalResult.success) {
-          setConnectionStatus('warning');
-          setConnectionMessage('Connection succeeded with direct fetch but failed with client');
-          toast({
-            variant: "warning",
-            title: "Partial Connection Success",
-            description: "Direct API connection works but client connection failed",
-          });
-        } else {
-          setConnectionStatus('failed');
-          setConnectionMessage(`All connection methods failed: ${result.message}`);
-          toast({
-            variant: "destructive",
-            title: "Connection Failed",
-            description: result.message,
-          });
-        }
+        setConnectionStatus('failed');
+        setConnectionMessage(`All connection methods failed. Token available: ${data.tokenAvailable ? 'Yes' : 'No'}`);
+        toast({
+          variant: "destructive",
+          title: "Connection Failed",
+          description: data.clientTest?.message || data.minimalTest?.message || "Unknown error",
+        });
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : String(err);
@@ -98,7 +96,12 @@ export function SyncAdmin() {
     }
   };
   
-  const importPlayers = async () => {
+  // Check connection status when component mounts
+  useEffect(() => {
+    testConnection();
+  }, []);
+  
+  const handleImportPlayers = async () => {
     setLoading({ ...loading, players: true });
     setError(null);
     
@@ -123,10 +126,8 @@ export function SyncAdmin() {
         description: `Importing ${includeStaff ? 'players and staff' : 'players only'} from Supabase to Sanity...`,
       });
       
-      const result = await importPlayersToSanity({
-        onProgress: (stats) => {
-          setResults(prev => ({ ...prev, players: stats }));
-        },
+      // Call server action without progress callback
+      const result = await importPlayers({
         dryRun,
         testSinglePlayer: testSinglePlayerId || undefined,
         debug: debugMode,
@@ -162,7 +163,7 @@ export function SyncAdmin() {
     }
   };
   
-  const importSponsors = async () => {
+  const handleImportSponsors = async () => {
     setLoading({ ...loading, sponsors: true });
     setError(null);
     
@@ -187,10 +188,8 @@ export function SyncAdmin() {
         description: "Importing sponsor data from Supabase to Sanity...",
       });
       
-      const result = await importSponsorsToSanity({
-        onProgress: (stats) => {
-          setResults(prev => ({ ...prev, sponsors: stats }));
-        },
+      // Call server action without progress callback
+      const result = await importSponsors({
         dryRun,
         debug: debugMode
       });
@@ -326,6 +325,24 @@ export function SyncAdmin() {
               </p>
             )}
             
+            {sanityTokenAvailable !== null && (
+              <div className={`flex items-center gap-2 p-3 rounded ${
+                sanityTokenAvailable ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'
+              }`}>
+                {sanityTokenAvailable ? (
+                  <>
+                    <CheckCircle2 className="h-5 w-5 text-green-600" />
+                    <span>Sanity API Token is available on the server</span>
+                  </>
+                ) : (
+                  <>
+                    <AlertTriangle className="h-5 w-5 text-red-600" />
+                    <span>Sanity API Token is NOT available on the server. Authentication will fail.</span>
+                  </>
+                )}
+              </div>
+            )}
+            
             <div className="text-sm">
               <p>For detailed connection testing and diagnostics, visit:</p>
               <Button variant="link" className="h-auto p-0" asChild>
@@ -364,7 +381,7 @@ export function SyncAdmin() {
                 />
                 <Button 
                   variant="secondary" 
-                  onClick={importPlayers} 
+                  onClick={handleImportPlayers} 
                   disabled={loading.players || !testSinglePlayerId}
                 >
                   Test
@@ -430,7 +447,7 @@ export function SyncAdmin() {
           <CardFooter>
             <Button 
               variant="default" 
-              onClick={importPlayers} 
+              onClick={handleImportPlayers} 
               disabled={loading.players || loading.sponsors}
             >
               {loading.players ? (
@@ -479,7 +496,7 @@ export function SyncAdmin() {
           <CardFooter>
             <Button 
               variant="default" 
-              onClick={importSponsors} 
+              onClick={handleImportSponsors} 
               disabled={loading.players || loading.sponsors}
             >
               {loading.sponsors ? (

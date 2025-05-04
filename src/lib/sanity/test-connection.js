@@ -12,6 +12,11 @@ export async function testMinimalSanityConnection() {
   try {
     console.log('Testing minimal Sanity connection...');
     console.log('Token available:', !!token); // Don't log the actual token!
+    console.log('Environment variables available:', {
+      NEXT_PUBLIC_SANITY_PROJECT_ID: !!process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+      NEXT_PUBLIC_SANITY_DATASET: !!process.env.NEXT_PUBLIC_SANITY_DATASET,
+      SANITY_API_TOKEN: !!process.env.SANITY_API_TOKEN,
+    });
     
     // Very simple query that should work even if there's no data
     const query = encodeURIComponent('*[_type == "sanity.imageAsset"][0..1]');
