@@ -12,7 +12,7 @@ import { SanityDocument, SupabaseRecord, ReferenceOptions } from './types';
  */
 export async function resolveSupabaseReference<T extends SupabaseRecord>(
   document: SanityDocument | null,
-  table: string,
+  tableName: string,
   options: ReferenceOptions = {}
 ): Promise<T | null> {
   if (!document || !document.supabaseId) {
@@ -21,25 +21,26 @@ export async function resolveSupabaseReference<T extends SupabaseRecord>(
   }
 
   const { supabaseId } = document;
-  const cacheKey = `supabase:${table}:${supabaseId}`;
+  const cacheKey = `supabase:${tableName}:${supabaseId}`;
   const { skipCache = false } = options;
 
   try {
     return await referenceCache.getOrSet<T | null>(
       cacheKey,
       async () => {
+        // Use type assertion to handle the dynamic table name
         const { data, error } = await supabase
-          .from(table)
+          .from(tableName as any)
           .select('*')
           .eq('id', supabaseId)
           .single();
 
         if (error) {
-          console.error(`Error fetching ${table} record:`, error);
+          console.error(`Error fetching ${tableName} record:`, error);
           return null;
         }
 
-        return data as T;
+        return data as unknown as T;
       },
       skipCache
     );
@@ -54,7 +55,7 @@ export async function resolveSupabaseReference<T extends SupabaseRecord>(
  */
 export async function resolveSupabaseReferences<T extends SupabaseRecord>(
   documents: SanityDocument[] | null,
-  table: string,
+  tableName: string,
   options: ReferenceOptions = {}
 ): Promise<T[]> {
   if (!documents || documents.length === 0) {
@@ -62,30 +63,35 @@ export async function resolveSupabaseReferences<T extends SupabaseRecord>(
   }
 
   const validDocuments = documents.filter(doc => doc && doc.supabaseId);
-  const supabaseIds = validDocuments.map(doc => doc.supabaseId).filter(Boolean);
+  
+  // Filter out any undefined supabase IDs and ensure they're strings
+  const supabaseIds = validDocuments
+    .map(doc => doc.supabaseId)
+    .filter((id): id is string => id !== undefined && id !== null);
   
   if (supabaseIds.length === 0) {
     return [];
   }
 
-  const cacheKey = `supabase:${table}:multiple:${supabaseIds.join(',')}`;
+  const cacheKey = `supabase:${tableName}:multiple:${supabaseIds.join(',')}`;
   const { skipCache = false } = options;
 
   try {
     return await referenceCache.getOrSet<T[]>(
       cacheKey,
       async () => {
+        // Use type assertion to handle the dynamic table name
         const { data, error } = await supabase
-          .from(table)
+          .from(tableName as any)
           .select('*')
           .in('id', supabaseIds);
 
         if (error) {
-          console.error(`Error fetching ${table} records:`, error);
+          console.error(`Error fetching ${tableName} records:`, error);
           return [];
         }
 
-        return data as T[];
+        return data as unknown as T[];
       },
       skipCache
     );

@@ -1,3 +1,4 @@
+
 /**
  * Match-specific reference resolution utilities
  */
@@ -127,7 +128,12 @@ export async function getUpcomingMatches(
       async () => {
         const { data, error } = await supabase
           .from('match')
-          .select('*')
+          .select(`
+            id, match_date, match_time, venue, status, ticketco_event_id, ticket_link,
+            home_team_id:teams!match_home_team_id_fkey(id, name, logo_url),
+            away_team_id:teams!match_away_team_id_fkey(id, name, logo_url),
+            competitions!match_competition_id_fkey(id, name, short_name, logo_url)
+          `)
           .gte('match_date', new Date().toISOString().split('T')[0])
           .order('match_date', { ascending: true })
           .limit(limit);
@@ -137,12 +143,53 @@ export async function getUpcomingMatches(
           return [];
         }
         
-        return data as SupabaseMatch[];
+        return data as unknown as SupabaseMatch[];
       },
       skipCache
     );
   } catch (error) {
     console.error('Error fetching upcoming matches:', error);
+    return [];
+  }
+}
+
+/**
+ * Get recent results from Supabase
+ */
+export async function getRecentResults(
+  limit: number = 5,
+  options: ReferenceOptions = {}
+): Promise<SupabaseMatch[]> {
+  const { skipCache = false } = options;
+  const cacheKey = `matches:recent:${limit}`;
+  
+  try {
+    return await referenceCache.getOrSet(
+      cacheKey,
+      async () => {
+        const { data, error } = await supabase
+          .from('match')
+          .select(`
+            id, match_date, match_time, venue, status, home_score, away_score, match_report_link,
+            home_team_id:teams!match_home_team_id_fkey(id, name, logo_url),
+            away_team_id:teams!match_away_team_id_fkey(id, name, logo_url),
+            competitions!match_competition_id_fkey(id, name, short_name, logo_url)
+          `)
+          .eq('status', 'completed')
+          .order('match_date', { ascending: false })
+          .limit(limit);
+          
+        if (error) {
+          console.error('Error fetching recent results:', error);
+          return [];
+        }
+        
+        return data as unknown as SupabaseMatch[];
+      },
+      skipCache
+    );
+  } catch (error) {
+    console.error('Error fetching recent results:', error);
     return [];
   }
 }

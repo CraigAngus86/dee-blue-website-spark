@@ -1,4 +1,3 @@
-
 /**
  * Cross-system reference resolution utilities
  * 
@@ -13,6 +12,7 @@ export * from './resolveSupabaseReference';
 export * from './resolveSanityReference';
 export * from './player';
 export * from './match';
+export * from './sponsor';
 
-// Export sponsor separately once it's implemented
-// export * from './sponsor';
+// Note: ReferenceCache is exported from both types.ts and cache.ts
+// We're keeping both exports for backward compatibility

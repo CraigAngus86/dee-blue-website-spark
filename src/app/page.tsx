@@ -13,7 +13,7 @@ import MatchCenter from "@/components/ui/sections/MatchCenter";
 import PlayersSection from "@/components/ui/sections/PlayersSection";
 import { fetchSanityData } from "@/lib/sanity/client";
 import { supabase } from "@/lib/supabase/client";
-import { convertSupabaseMatchToMatch } from "@/types/match";
+import { Match } from "@/types/match";
 
 export const metadata: Metadata = {
   title: "Home | Banks o' Dee FC",
@@ -76,7 +76,7 @@ async function getMatches() {
         id, match_date, match_time, venue, status, ticketco_event_id, ticket_link,
         home_team_id:teams!match_home_team_id_fkey(id, name, logo_url),
         away_team_id:teams!match_away_team_id_fkey(id, name, logo_url),
-        competition_id(id, name, short_name, logo_url)
+        competitions!match_competition_id_fkey(id, name, short_name, logo_url)
       `)
       .gte("match_date", today)
       .order("match_date", { ascending: true })
@@ -94,7 +94,7 @@ async function getMatches() {
         id, match_date, match_time, venue, status, home_score, away_score, match_report_link,
         home_team_id:teams!match_home_team_id_fkey(id, name, logo_url),
         away_team_id:teams!match_away_team_id_fkey(id, name, logo_url),
-        competition_id(id, name, short_name, logo_url)
+        competitions!match_competition_id_fkey(id, name, short_name, logo_url)
       `)
       .eq("status", "completed")
       .order("match_date", { ascending: false })
@@ -107,14 +107,14 @@ async function getMatches() {
 
     // Convert Supabase data to our app's Match format
     const upcoming = (upcomingMatches || []).map(match => {
-      if (!match.home_team_id || !match.away_team_id) {
+      if (!match.home_team_id || !match.away_team_id || !match.competitions) {
         console.error("Invalid match data:", match);
         return null;
       }
       
       return {
         id: match.id,
-        competition: match.competition_id?.name || "",
+        competition: match.competitions.name || "",
         date: match.match_date,
         time: match.match_time || "",
         venue: match.venue || "",
@@ -124,17 +124,17 @@ async function getMatches() {
         away: match.away_team_id.name,
         ticketLink: match.ticket_link
       };
-    }).filter(Boolean);
+    }).filter(Boolean) as Match[];
     
     const recent = (recentMatches || []).map(match => {
-      if (!match.home_team_id || !match.away_team_id) {
+      if (!match.home_team_id || !match.away_team_id || !match.competitions) {
         console.error("Invalid match data:", match);
         return null;
       }
       
       return {
         id: match.id,
-        competition: match.competition_id?.name || "",
+        competition: match.competitions.name || "",
         date: match.match_date,
         time: match.match_time || "",
         venue: match.venue || "",
@@ -150,7 +150,7 @@ async function getMatches() {
             }
           : undefined,
       };
-    }).filter(Boolean);
+    }).filter(Boolean) as Match[];
 
     return { upcoming, recent };
   } catch (error) {
@@ -292,8 +292,8 @@ export default async function HomePage() {
         >
           <FadeIn>
             <MatchCenter 
-              upcomingMatches={matches.upcoming} 
-              recentResults={matches.recent} 
+              upcomingMatches={matches.upcoming}
+              recentResults={matches.recent}
               leagueTable={leagueTable} 
             />
           </FadeIn>

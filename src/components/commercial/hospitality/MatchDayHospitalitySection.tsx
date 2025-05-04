@@ -1,64 +1,44 @@
+
 import React from 'react';
 import Container from '@/components/ui/layout/Container';
 import Section from '@/components/ui/layout/Section';
 import Heading from '@/components/ui/typography/Heading';
-import Text from '@/components/ui/typography/Text';
-import { Button } from "@/components/ui/button";
+import SponsorshipCard from '../sponsorship/SponsorshipCard';
+import { premiumSponsorship, fanzoneSponsorship } from '../sponsorship/sponsorshipData';
+import ComparisonTable from '../comparison/ComparisonTable';
+import { comparisonData, packagePrices } from '../comparison/comparisonData';
+import HoverEffect from '@/components/ui/animations/HoverEffect';
 
 const MatchDayHospitalitySection = () => {
+  const allHospitalityOptions = [...premiumSponsorship, fanzoneSponsorship];
+
   return (
-    <>
-      <section className="bg-primary py-16 px-4">
-        <Container>
-          <div className="text-center max-w-3xl mx-auto mb-12">
-            <Section background="light" spacing="md">
-              <div className="text-center">
-                <Heading level={2} color="primary" className="mb-4">
-                  Match Day Hospitality
-                </Heading>
-                <Text color="muted" className="mb-8">
-                  Experience Banks o' Dee FC in style with our exclusive match day hospitality packages.
-                </Text>
-              </div>
-            </Section>
-            
-            <Text className="text-white text-lg mt-8">
-              Enjoy premium seating, pre-match meals, and exclusive access to the hospitality suite.
-            </Text>
-            <Button variant="secondary" size="lg" className="mt-8">
-              Enquire Now
-            </Button>
-          </div>
-        </Container>
-      </section>
-      <section className="bg-gray-100 py-12 px-4">
-        <Container>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-              <Heading level={3} color="primary" className="mb-4">
-                Package Includes
-              </Heading>
-              <ul className="list-disc list-inside text-gray-700">
-                <li>Premium match seating</li>
-                <li>Pre-match three-course meal</li>
-                <li>Half-time refreshments</li>
-                <li>Access to exclusive hospitality suite</li>
-                <li>Meet and greet with players</li>
-                <li>Match day program</li>
-              </ul>
-            </div>
-            <div>
-              <Heading level={3} color="primary" className="mb-4">
-                Pricing
-              </Heading>
-              <Text color="muted">
-                Contact us for pricing and availability.
-              </Text>
-            </div>
-          </div>
-        </Container>
-      </section>
-    </>
+    <Section background="white" spacing="md" id="matchday-hospitality">
+      <Container>
+        <div className="max-w-3xl mx-auto text-center mb-8">
+          <Heading as="h2" size="2xl" className="mb-4">
+            Match Day Hospitality
+          </Heading>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          {allHospitalityOptions.map((item) => (
+            <HoverEffect key={item.title} effect="lift" duration="fast">
+              <SponsorshipCard 
+                key={item.title} 
+                {...item} 
+                hideViewDetails 
+                compact
+              />
+            </HoverEffect>
+          ))}
+        </div>
+      </Container>
+      
+      <div className="bg-primary/5 px-4 py-6 rounded-lg">
+        <ComparisonTable data={comparisonData} prices={packagePrices} />
+      </div>
+    </Section>
   );
 };
 
