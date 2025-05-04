@@ -1,4 +1,3 @@
-
 /**
  * Enhanced utility for syncing data from Supabase to Sanity
  * with detailed error logging and validation
@@ -11,7 +10,7 @@ import { supabase } from '@/lib/supabase/client';
 const sanityClient = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'gxtptap2',
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
-  apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION || '2023-06-21',
+  apiVersion: '2024-04-30', // Updated to match the API version in the error message
   token: process.env.SANITY_API_TOKEN,
   useCdn: false,
 });
@@ -127,34 +126,41 @@ export async function importPlayersToSanity(options: ImportOptions = {}): Promis
           console.log('Query:', query);
           console.log('Params:', params);
           
-          // Try to fetch the existing player profile
-          const existingPlayer = await sanityClient.fetch(query, params);
-          console.log('Existing player:', existingPlayer);
-          
-          // Map player fields for Sanity
-          const playerDoc = mapPlayerFields(player);
-          
-          // Skip actual writing if in dry run mode
-          if (dryRun) {
-            console.log(`[DRY RUN] Would ${existingPlayer ? 'update' : 'create'} player ${player.name || `${player.first_name} ${player.last_name}`}`);
-            existingPlayer ? result.updated++ : result.created++;
-            continue;
-          }
-          
-          if (existingPlayer) {
-            // Update existing player
-            const updated = await sanityClient.patch(existingPlayer._id)
-              .set(playerDoc)
-              .commit();
-              
-            console.log(`Updated player profile for ${player.name || `${player.first_name} ${player.last_name}`}`);
-            result.updated++;
-          } else {
-            // Create new player
-            const newPlayer = await sanityClient.create(playerDoc);
+          try {
+            // Try to fetch the existing player profile
+            const existingPlayer = await sanityClient.fetch(query, params);
+            console.log('Existing player:', existingPlayer);
             
-            console.log(`Created player profile for ${player.name || `${player.first_name} ${player.last_name}`} with ID ${newPlayer._id}`);
-            result.created++;
+            // Map player fields for Sanity
+            const playerDoc = mapPlayerFields(player);
+            
+            // Skip actual writing if in dry run mode
+            if (dryRun) {
+              console.log(`[DRY RUN] Would ${existingPlayer ? 'update' : 'create'} player ${player.name || `${player.first_name} ${player.last_name}`}`);
+              existingPlayer ? result.updated++ : result.created++;
+              continue;
+            }
+            
+            if (existingPlayer) {
+              // Update existing player
+              const updated = await sanityClient.patch(existingPlayer._id)
+                .set(playerDoc)
+                .commit();
+                
+              console.log(`Updated player profile for ${player.name || `${player.first_name} ${player.last_name}`}`);
+              result.updated++;
+            } else {
+              // Create new player
+              const newPlayer = await sanityClient.create(playerDoc);
+              
+              console.log(`Created player profile for ${player.name || `${player.first_name} ${player.last_name}`} with ID ${newPlayer._id}`);
+              result.created++;
+            }
+          } catch (sanityError) {
+            // Handle Sanity API errors specifically
+            const errorMessage = sanityError instanceof Error ? sanityError.message : String(sanityError);
+            console.error(`Sanity API error for ${player.name || `${player.first_name} ${player.last_name}`}:`, sanityError);
+            throw new Error(`Request error while attempting to reach ${params.supabaseId}: ${errorMessage}`);
           }
           
           // Call progress callback if provided
@@ -165,7 +171,7 @@ export async function importPlayersToSanity(options: ImportOptions = {}): Promis
           const errorMessage = error instanceof Error ? error.message : String(error);
           console.error(`Error processing player ${player.name || `${player.first_name} ${player.last_name}`}:`, error);
           result.failed++;
-          result.errors[player.id] = `Error with ${player.name || player.first_name}: ${errorMessage}`;
+          result.errors[player.id] = `Error with ${player.name || player.first_name} ${player.last_name}: ${errorMessage}`;
           
           // Call progress callback if provided
           if (onProgress) {
