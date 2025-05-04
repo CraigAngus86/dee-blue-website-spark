@@ -1,156 +1,148 @@
-
 /**
- * Cross-system utility for match data management
+ * Match-specific reference resolution utilities
  */
 
-import { supabase } from './resolveSupabaseReference'; 
+import { supabase } from '@/integrations/supabase/client';
 import { fetchSanity } from '@/lib/sanity';
 import { referenceCache } from './cache';
-import { resolveSanityReference, resolveSanityDocumentBySupabaseId } from './resolveSanityReference';
+import { SanityDocument, SupabaseRecord, ReferenceOptions } from './types';
 
-// Match types
-export interface MatchSupabase {
-  id: string;
-  match_date: string;
-  match_time?: string;
-  venue?: string;
-  status: 'scheduled' | 'live' | 'completed' | 'postponed' | 'cancelled';
-  home_team_id: string;
-  away_team_id: string;
-  competition_id: string;
-  home_score?: number;
-  away_score?: number;
-  ticket_link?: string;
-  match_report_link?: string;
-  sanity_id?: string;
-}
-
-export interface MatchSanity {
-  _id: string;
+// Define types specific to matches
+export interface SanityMatch extends SanityDocument {
   _type: 'match';
-  date: string;
-  time?: string;
-  venue?: string;
-  status: 'scheduled' | 'live' | 'completed' | 'postponed' | 'cancelled';
-  homeTeam: {
+  title?: string;
+  date?: string;
+  result?: string;
+  homeTeam?: {
     _ref: string;
     _type: 'reference';
   };
-  awayTeam: {
+  awayTeam?: {
     _ref: string;
     _type: 'reference';
   };
-  competition: {
-    _ref: string;
-    _type: 'reference';
-  };
-  homeScore?: number;
-  awayScore?: number;
-  ticketLink?: string;
-  matchReport?: {
+  competition?: {
     _ref: string;
     _type: 'reference';
   };
   supabaseId?: string;
 }
 
-/**
- * Get a match from Supabase by ID
- */
-export async function getMatchById(id: string): Promise<MatchSupabase | null> {
-  try {
-    const { data, error } = await supabase
-      .from('match')
-      .select(`
-        *,
-        home_team:teams!match_home_team_id_fkey(*),
-        away_team:teams!match_away_team_id_fkey(*),
-        competition:competitions!match_competition_id_fkey(*)
-      `)
-      .eq('id', id)
-      .single();
-
-    if (error) throw error;
-    return data as unknown as MatchSupabase;
-  } catch (error) {
-    console.error('Error fetching match by ID:', error);
-    return null;
-  }
+export interface SupabaseMatch extends SupabaseRecord {
+  season_id: string;
+  competition_id: string;
+  home_team_id: string;
+  away_team_id: string;
+  match_date: string;
+  match_time?: string;
+  venue?: string;
+  home_score?: number;
+  away_score?: number;
+  status: 'scheduled' | 'in_progress' | 'completed' | 'postponed' | 'cancelled';
+  home_scorers?: string[];
+  away_scorers?: string[];
+  attendance?: number;
+  is_highlighted?: boolean;
+  match_report_link?: string;
+  sanity_id?: string;
 }
 
 /**
- * Get a match from Sanity by ID
- */
-export async function getMatchByIdFromSanity(id: string): Promise<MatchSanity | null> {
-  try {
-    const query = `*[_type == "match" && _id == $id][0]`;
-    const match = await fetchSanity<MatchSanity>(query, { id });
-    return match;
-  } catch (error) {
-    console.error('Error fetching match from Sanity by ID:', error);
-    return null;
-  }
-}
-
-/**
- * Get a match by either Supabase ID or Sanity ID
- */
-export async function getMatchByAnyId(id: string, source?: 'supabase' | 'sanity'): Promise<MatchSupabase | MatchSanity | null> {
-  if (source === 'supabase') {
-    return getMatchById(id);
-  } else if (source === 'sanity') {
-    return getMatchByIdFromSanity(id);
-  }
-
-  // Try both if source is not specified
-  const supabaseMatch = await getMatchById(id);
-  if (supabaseMatch) return supabaseMatch;
-
-  return getMatchByIdFromSanity(id);
-}
-
-/**
- * Resolve related Sanity match document from a Supabase match record
- */
-export async function resolveMatchSanityDocument(
-  supabaseMatch: MatchSupabase
-): Promise<MatchSanity | null> {
-  if (!supabaseMatch || !supabaseMatch.sanity_id) return null;
-  
-  return resolveSanityReference<MatchSanity>(
-    { id: supabaseMatch.id, sanity_id: supabaseMatch.sanity_id },
-    'match'
-  );
-}
-
-/**
- * Resolve related Supabase match record from a Sanity match document
+ * Resolve a match in Supabase from a Sanity match document
  */
 export async function resolveMatchSupabaseRecord(
-  sanityMatch: MatchSanity
-): Promise<MatchSupabase | null> {
-  if (!sanityMatch || !sanityMatch.supabaseId) return null;
+  match: SanityMatch | null,
+  options: ReferenceOptions = {}
+): Promise<SupabaseMatch | null> {
+  if (!match || !match.supabaseId) {
+    return null;
+  }
+
+  const { supabaseId } = match;
+  const cacheKey = `supabase:match:${supabaseId}`;
+  const { skipCache = false } = options;
+
+  try {
+    return await referenceCache.getOrSet<SupabaseMatch | null>(
+      cacheKey,
+      async () => {
+        const { data, error } = await supabase
+          .from('match')
+          .select('*')
+          .eq('id', supabaseId)
+          .single();
+
+        if (error) {
+          console.error(`Error fetching match record:`, error);
+          return null;
+        }
+
+        return data as SupabaseMatch;
+      },
+      skipCache
+    );
+  } catch (error) {
+    console.error(`Error resolving Supabase match for Sanity match document:`, error);
+    return null;
+  }
+}
+
+/**
+ * Resolve a match in Sanity from a Supabase match record
+ */
+export async function resolveMatchSanityDocument(
+  match: SupabaseMatch | null,
+  options: ReferenceOptions = {}
+): Promise<SanityMatch | null> {
+  if (!match) return null;
+  
+  // First try to find by sanity_id if present
+  if (match.sanity_id) {
+    const query = `*[_type == "match" && _id == $sanityId][0]`;
+    const sanityMatch = await fetchSanity(query, { sanityId: match.sanity_id });
+    
+    if (sanityMatch) return sanityMatch as SanityMatch;
+  }
+  
+  // Otherwise find by supabaseId field
+  const query = `*[_type == "match" && supabaseId == $supabaseId][0]`;
+  const sanityMatch = await fetchSanity(query, { supabaseId: match.id });
+  
+  return sanityMatch as SanityMatch | null;
+}
+
+/**
+ * Get upcoming matches from Supabase
+ */
+export async function getUpcomingMatches(
+  limit: number = 5,
+  options: ReferenceOptions = {}
+): Promise<SupabaseMatch[]> {
+  const { skipCache = false } = options;
+  const cacheKey = `matches:upcoming:${limit}`;
   
   try {
-    const { data, error } = await supabase
-      .from('match')
-      .select(`
-        *,
-        home_team:teams!match_home_team_id_fkey(*),
-        away_team:teams!match_away_team_id_fkey(*),
-        competition:competitions!match_competition_id_fkey(*)
-      `)
-      .eq('id', sanityMatch.supabaseId)
-      .single();
-      
-    if (error) {
-      console.error('Error resolving match Supabase record:', error);
-      return null;
-    }
-    
-    return data as unknown as MatchSupabase;
+    return await referenceCache.getOrSet(
+      cacheKey,
+      async () => {
+        const { data, error } = await supabase
+          .from('match')
+          .select('*')
+          .gte('match_date', new Date().toISOString().split('T')[0])
+          .order('match_date', { ascending: true })
+          .limit(limit);
+          
+        if (error) {
+          console.error('Error fetching upcoming matches:', error);
+          return [];
+        }
+        
+        return data as SupabaseMatch[];
+      },
+      skipCache
+    );
   } catch (error) {
-    console.error('Error resolving match Supabase record:', error);
-    return null;
+    console.error('Error fetching upcoming matches:', error);
+    return [];
   }
 }

@@ -1,18 +1,21 @@
-
 "use client";
 
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
 import { 
   ArrowDownUp, 
   ArrowRightLeft, 
   CheckCircle2, 
   AlertTriangle, 
-  XCircle 
+  XCircle,
+  Loader2,
 } from 'lucide-react';
-import { importPlayersToSanity, importSponsorsToSanity } from '@/utils/sync/SupabaseToSanitySync';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { ImportProgress, ImportStats } from '@/components/admin/ImportProgress';
+import { importPlayersToSanity, importSponsorsToSanity, ImportResult } from '@/utils/sync/SupabaseToSanitySync';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface SyncResult {
   created: number;
@@ -27,19 +30,47 @@ export function SyncAdmin() {
   });
   
   const [results, setResults] = useState<{
-    players?: SyncResult;
-    sponsors?: SyncResult;
+    players?: ImportResult;
+    sponsors?: ImportResult;
   }>({});
   
   const [error, setError] = useState<string | null>(null);
+  const [verboseMode, setVerboseMode] = useState(false);
+  const [dryRun, setDryRun] = useState(false);
   
   const importPlayers = async () => {
     setLoading({ ...loading, players: true });
     setError(null);
     
     try {
-      const result = await importPlayersToSanity();
-      setResults({ ...results, players: result });
+      // Reset previous results but keep structure
+      setResults(prev => ({
+        ...prev,
+        players: {
+          created: 0,
+          updated: 0,
+          failed: 0,
+          errors: {},
+          processingStats: {
+            total: 0,
+            processed: 0
+          }
+        }
+      }));
+      
+      const result = await importPlayersToSanity({
+        onProgress: (stats) => {
+          setResults(prev => ({ ...prev, players: stats }));
+        },
+        dryRun
+      });
+      
+      setResults(prev => ({ ...prev, players: result }));
+      
+      // Show error message if there were any failures
+      if (result.failed > 0) {
+        setError(`Warning: ${result.failed} player imports failed. Check the details in verbose mode.`);
+      }
     } catch (err) {
       setError(`Error importing players: ${err instanceof Error ? err.message : String(err)}`);
     } finally {
@@ -52,8 +83,34 @@ export function SyncAdmin() {
     setError(null);
     
     try {
-      const result = await importSponsorsToSanity();
-      setResults({ ...results, sponsors: result });
+      // Reset previous results but keep structure
+      setResults(prev => ({
+        ...prev,
+        sponsors: {
+          created: 0,
+          updated: 0,
+          failed: 0,
+          errors: {},
+          processingStats: {
+            total: 0,
+            processed: 0
+          }
+        }
+      }));
+      
+      const result = await importSponsorsToSanity({
+        onProgress: (stats) => {
+          setResults(prev => ({ ...prev, sponsors: stats }));
+        },
+        dryRun
+      });
+      
+      setResults(prev => ({ ...prev, sponsors: result }));
+      
+      // Show error message if there were any failures
+      if (result.failed > 0) {
+        setError(`Warning: ${result.failed} sponsor imports failed. Check the details in verbose mode.`);
+      }
     } catch (err) {
       setError(`Error importing sponsors: ${err instanceof Error ? err.message : String(err)}`);
     } finally {
@@ -65,11 +122,33 @@ export function SyncAdmin() {
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">Sanity-Supabase Sync</h2>
       
-      {error && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-md text-red-800 flex items-start gap-2">
-          <XCircle className="h-5 w-5 mt-0.5 flex-shrink-0" />
-          <div>{error}</div>
+      <div className="flex flex-wrap items-center gap-6 mb-4">
+        <div className="flex items-center space-x-2">
+          <Switch 
+            id="verbose-mode" 
+            checked={verboseMode} 
+            onCheckedChange={setVerboseMode} 
+          />
+          <Label htmlFor="verbose-mode">Verbose Mode</Label>
         </div>
+        
+        <div className="flex items-center space-x-2">
+          <Switch 
+            id="dry-run" 
+            checked={dryRun} 
+            onCheckedChange={setDryRun} 
+          />
+          <Label htmlFor="dry-run">Dry Run (Preview Only)</Label>
+        </div>
+      </div>
+      
+      {error && (
+        <Alert variant="destructive">
+          <AlertDescription className="flex items-start gap-2">
+            <XCircle className="h-5 w-5 mt-0.5 flex-shrink-0" />
+            <div>{error}</div>
+          </AlertDescription>
+        </Alert>
       )}
       
       <div className="grid md:grid-cols-2 gap-6">
@@ -83,43 +162,41 @@ export function SyncAdmin() {
           <CardContent>
             <p className="text-sm mb-4">
               This will create or update player profiles in Sanity based on the data in Supabase.
-              Existing players will be updated with the latest data from Supabase.
+              {dryRun && " (Dry Run Mode: No changes will be made)"}
             </p>
             
-            {loading.players && (
-              <div className="space-y-2">
-                <Progress value={50} />
-                <p className="text-xs text-center">Importing players...</p>
-              </div>
-            )}
-            
             {results.players && (
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="flex items-center gap-1">
-                    <CheckCircle2 className="h-4 w-4 text-green-500" />
-                    Created: {results.players.created}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <ArrowRightLeft className="h-4 w-4 text-blue-500" />
-                    Updated: {results.players.updated}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <AlertTriangle className="h-4 w-4 text-amber-500" />
-                    Failed: {results.players.failed}
-                  </span>
-                </div>
-              </div>
+              <ImportProgress 
+                stats={{
+                  total: results.players.processingStats.total,
+                  processed: results.players.processingStats.processed,
+                  created: results.players.created,
+                  updated: results.players.updated,
+                  failed: results.players.failed,
+                  errors: results.players.errors
+                }}
+                isImporting={loading.players}
+                showDetails={verboseMode}
+              />
             )}
           </CardContent>
           <CardFooter>
             <Button 
               variant="default" 
               onClick={importPlayers} 
-              disabled={loading.players}
+              disabled={loading.players || loading.sponsors}
             >
-              <ArrowDownUp className="mr-2 h-4 w-4" />
-              {loading.players ? 'Importing...' : 'Import Players'}
+              {loading.players ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Importing...
+                </>
+              ) : (
+                <>
+                  <ArrowDownUp className="mr-2 h-4 w-4" />
+                  {dryRun ? 'Preview Import Players' : 'Import Players'}
+                </>
+              )}
             </Button>
           </CardFooter>
         </Card>
@@ -134,43 +211,41 @@ export function SyncAdmin() {
           <CardContent>
             <p className="text-sm mb-4">
               This will create or update sponsor profiles in Sanity based on the data in Supabase.
-              Existing sponsors will be updated with the latest data from Supabase.
+              {dryRun && " (Dry Run Mode: No changes will be made)"}
             </p>
             
-            {loading.sponsors && (
-              <div className="space-y-2">
-                <Progress value={50} />
-                <p className="text-xs text-center">Importing sponsors...</p>
-              </div>
-            )}
-            
             {results.sponsors && (
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="flex items-center gap-1">
-                    <CheckCircle2 className="h-4 w-4 text-green-500" />
-                    Created: {results.sponsors.created}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <ArrowRightLeft className="h-4 w-4 text-blue-500" />
-                    Updated: {results.sponsors.updated}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <AlertTriangle className="h-4 w-4 text-amber-500" />
-                    Failed: {results.sponsors.failed}
-                  </span>
-                </div>
-              </div>
+              <ImportProgress 
+                stats={{
+                  total: results.sponsors.processingStats.total,
+                  processed: results.sponsors.processingStats.processed,
+                  created: results.sponsors.created,
+                  updated: results.sponsors.updated,
+                  failed: results.sponsors.failed,
+                  errors: results.sponsors.errors
+                }}
+                isImporting={loading.sponsors}
+                showDetails={verboseMode}
+              />
             )}
           </CardContent>
           <CardFooter>
             <Button 
               variant="default" 
               onClick={importSponsors} 
-              disabled={loading.sponsors}
+              disabled={loading.players || loading.sponsors}
             >
-              <ArrowDownUp className="mr-2 h-4 w-4" />
-              {loading.sponsors ? 'Importing...' : 'Import Sponsors'}
+              {loading.sponsors ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Importing...
+                </>
+              ) : (
+                <>
+                  <ArrowDownUp className="mr-2 h-4 w-4" />
+                  {dryRun ? 'Preview Import Sponsors' : 'Import Sponsors'}
+                </>
+              )}
             </Button>
           </CardFooter>
         </Card>

@@ -1,80 +1,95 @@
 
 /**
- * Simple cache implementation for cross-system references
+ * Cache utility for cross-system reference resolution
+ * to avoid repeated API calls for the same data
  */
 
-import { ReferenceCache } from './types';
+type CacheEntry<T> = {
+  value: T;
+  timestamp: number;
+};
 
-// Simple in-memory cache implementation
-class InMemoryCache implements ReferenceCache {
-  private cache: Map<string, any>;
+interface CacheOptions {
+  ttl?: number; // Time-to-live in milliseconds
+  maxSize?: number; // Maximum number of entries in cache
+}
+
+class ReferenceCache {
+  private cache: Map<string, CacheEntry<any>>;
+  private ttl: number;
   private maxSize: number;
-  
-  constructor(maxSize = 100) {
+
+  constructor(options: CacheOptions = {}) {
+    const { ttl = 5 * 60 * 1000, maxSize = 1000 } = options; // Default 5 mins TTL, 1000 max entries
     this.cache = new Map();
+    this.ttl = ttl;
     this.maxSize = maxSize;
   }
-  
+
   /**
-   * Get a value from cache or compute and store it
+   * Get a value from cache or create it using the provided factory function
    */
-  async getOrSet<T>(key: string, factory: () => Promise<T>, skipCache = false): Promise<T> {
-    // Skip cache if requested
-    if (skipCache) {
-      const value = await factory();
-      this.set(key, value);
-      return value;
-    }
+  async getOrSet<T>(key: string | null | undefined, factory: () => Promise<T>, skipCache: boolean = false): Promise<T> {
+    // Convert undefined/null keys to string to avoid errors
+    const cacheKey = key || 'null-key';
     
-    // Ensure we have a valid key
-    if (!key) {
-      console.warn('Invalid cache key provided');
-      return await factory();
+    if (!skipCache) {
+      const cached = this.get<T>(cacheKey);
+      if (cached !== null) {
+        return cached;
+      }
     }
-    
-    // Check cache first
-    const cachedValue = this.cache.get(key);
-    if (cachedValue !== undefined) {
-      return cachedValue as T;
-    }
-    
-    // Compute value and store in cache
+
     const value = await factory();
-    this.set(key, value);
+    this.set(cacheKey, value);
     return value;
   }
-  
+
   /**
-   * Get a value from cache
+   * Get a value from cache if it exists and is not expired
    */
-  async get<T>(key: string): Promise<T | null> {
-    if (!key) return null;
-    const value = this.cache.get(key);
-    return value !== undefined ? value as T : null;
+  get<T>(key: string): T | null {
+    const entry = this.cache.get(key);
+    
+    if (!entry) {
+      return null;
+    }
+
+    // Check if expired
+    if (Date.now() - entry.timestamp > this.ttl) {
+      this.cache.delete(key);
+      return null;
+    }
+
+    return entry.value as T;
   }
-  
+
   /**
-   * Set a value in cache
+   * Set a value in the cache
    */
   set<T>(key: string, value: T): void {
-    if (!key) return;
-    
-    // Implement LRU eviction if cache is full
+    // If at max size, remove oldest entry
     if (this.cache.size >= this.maxSize) {
       const oldestKey = this.cache.keys().next().value;
       this.cache.delete(oldestKey);
     }
-    
-    this.cache.set(key, value);
+
+    this.cache.set(key, {
+      value,
+      timestamp: Date.now(),
+    });
   }
-  
+
   /**
-   * Clear the cache
+   * Clear the entire cache
    */
   clear(): void {
     this.cache.clear();
   }
 }
 
-// Create and export the cache instance
-export const referenceCache = new InMemoryCache();
+// Singleton instance for use throughout the app
+export const referenceCache = new ReferenceCache();
+
+// Export class for custom instances
+export { ReferenceCache };

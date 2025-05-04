@@ -2,6 +2,7 @@
 import React from 'react';
 import { SyncAdmin } from '@/components/admin/SyncAdmin';
 import { WebhookSetup } from '@/components/admin/WebhookSetup';
+import { SyncDocumentation } from '@/components/admin/SyncDocumentation';
 
 export default function SyncPage() {
   return (
@@ -14,6 +15,7 @@ export default function SyncPage() {
       <div className="space-y-10">
         <WebhookSetup />
         <SyncAdmin />
+        <SyncDocumentation />
       </div>
     </div>
   );

@@ -1,9 +1,11 @@
 
 /**
- * Utility for syncing data from Supabase to Sanity
+ * Enhanced utility for syncing data from Supabase to Sanity
+ * with detailed error logging and validation
  */
 
 import { createClient } from '@sanity/client';
+import { supabase } from '@/integrations/supabase/client';
 
 // Initialize Sanity client for data import
 const sanityClient = createClient({
@@ -14,109 +16,187 @@ const sanityClient = createClient({
   useCdn: false,
 });
 
-/**
- * Import Supabase players to Sanity
- */
-export async function importPlayersToSanity(): Promise<{
+// Import result interface
+export interface ImportResult {
   created: number;
   updated: number;
   failed: number;
-}> {
-  const result = {
+  errors: Record<string, string>;
+  processingStats: {
+    total: number;
+    processed: number;
+  };
+}
+
+// Import options interface
+export interface ImportOptions {
+  batchSize?: number;
+  onProgress?: (stats: ImportResult) => void;
+  dryRun?: boolean;
+}
+
+/**
+ * Field mapping helper to transform Supabase data to Sanity format
+ */
+function mapPlayerFields(player: any) {
+  return {
+    _type: 'playerProfile',
+    playerName: player.name,
+    firstName: player.first_name,
+    lastName: player.last_name,
+    position: player.player_position?.toLowerCase() || undefined,
+    jerseyNumber: player.jersey_number,
+    nationality: player.nationality || 'Scotland',
+    supabaseId: player.id,
+    // Set defaults for required fields
+    accolades: [],
+    personalFacts: player.did_you_know ? [
+      {
+        question: 'Did you know?',
+        answer: player.did_you_know
+      }
+    ] : [],
+  };
+}
+
+/**
+ * Import Supabase players to Sanity with enhanced error handling
+ */
+export async function importPlayersToSanity(options: ImportOptions = {}): Promise<ImportResult> {
+  const { batchSize = 5, onProgress, dryRun = false } = options;
+  
+  const result: ImportResult = {
     created: 0,
     updated: 0,
     failed: 0,
+    errors: {},
+    processingStats: {
+      total: 0,
+      processed: 0
+    }
   };
   
   try {
-    // Import from Supabase module
-    const { supabase } = await import('@/integrations/supabase/client');
-    
     console.log('Fetching players from Supabase...');
     const { data: players, error } = await supabase
       .from('people')
       .select('*')
+      .is('player_position', 'not.null')
       .order('name');
       
     if (error) {
       console.error('Error fetching players:', error);
+      result.errors['fetch'] = `Failed to fetch players: ${error.message}`;
       return result;
     }
     
-    console.log(`Found ${players.length} players in Supabase`);
+    const validPlayers = players.filter(player => 
+      player.first_name && 
+      player.last_name && 
+      player.name
+    );
     
-    // Process each player
-    for (const player of players) {
-      try {
-        // Check if player already exists in Sanity
-        const existingPlayer = await sanityClient.fetch(
-          `*[_type == "playerProfile" && supabaseId == $supabaseId][0]`,
-          { supabaseId: player.id }
-        );
-        
-        if (existingPlayer) {
-          // Update existing player
-          const updated = await sanityClient.patch(existingPlayer._id)
-            .set({
-              playerName: player.name,
-              firstName: player.first_name,
-              lastName: player.last_name,
-              position: player.player_position,
-              supabaseId: player.id,
-              // Don't update image or other content that might be managed in Sanity
-            })
-            .commit();
-            
-          console.log(`Updated player profile for ${player.name}`);
-          result.updated++;
-        } else {
-          // Create new player
-          const newPlayer = await sanityClient.create({
-            _type: 'playerProfile',
-            playerName: player.name,
-            firstName: player.first_name,
-            lastName: player.last_name,
-            position: player.player_position,
-            supabaseId: player.id,
-            // Set defaults for required fields
-            accolades: [],
-            personalFacts: [],
-          });
+    console.log(`Found ${players.length} players in Supabase, ${validPlayers.length} with valid data`);
+    
+    result.processingStats.total = validPlayers.length;
+    
+    // Process players in batches to avoid rate limits
+    for (let i = 0; i < validPlayers.length; i += batchSize) {
+      const batch = validPlayers.slice(i, i + batchSize);
+      
+      // Process batch sequentially to avoid conflicts
+      for (const player of batch) {
+        try {
+          result.processingStats.processed++;
           
-          console.log(`Created player profile for ${player.name} with ID ${newPlayer._id}`);
-          result.created++;
+          // Check if player already exists in Sanity
+          const existingPlayer = await sanityClient.fetch(
+            `*[_type == "playerProfile" && supabaseId == $supabaseId][0]`,
+            { supabaseId: player.id }
+          );
+
+          // Map player fields for Sanity
+          const playerDoc = mapPlayerFields(player);
+          
+          // Skip actual writing if in dry run mode
+          if (dryRun) {
+            console.log(`[DRY RUN] Would ${existingPlayer ? 'update' : 'create'} player ${player.name}`);
+            existingPlayer ? result.updated++ : result.created++;
+            continue;
+          }
+          
+          if (existingPlayer) {
+            // Update existing player
+            const updated = await sanityClient.patch(existingPlayer._id)
+              .set(playerDoc)
+              .commit();
+              
+            console.log(`Updated player profile for ${player.name}`);
+            result.updated++;
+          } else {
+            // Create new player
+            const newPlayer = await sanityClient.create(playerDoc);
+            
+            // Update Supabase record with Sanity ID reference
+            await supabase
+              .from('people')
+              .update({ sanity_id: newPlayer._id })
+              .eq('id', player.id);
+            
+            console.log(`Created player profile for ${player.name} with ID ${newPlayer._id}`);
+            result.created++;
+          }
+          
+          // Call progress callback if provided
+          if (onProgress) {
+            onProgress({ ...result });
+          }
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : String(error);
+          console.error(`Error processing player ${player.name}:`, error);
+          result.failed++;
+          result.errors[player.id] = `Error with ${player.name}: ${errorMessage}`;
+          
+          // Call progress callback if provided
+          if (onProgress) {
+            onProgress({ ...result });
+          }
         }
-      } catch (error) {
-        console.error(`Error processing player ${player.name}:`, error);
-        result.failed++;
+      }
+      
+      // Small delay between batches to avoid rate limits
+      if (i + batchSize < validPlayers.length) {
+        await new Promise(resolve => setTimeout(resolve, 500));
       }
     }
     
     return result;
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
     console.error('Error importing players to Sanity:', error);
+    result.errors['general'] = `General import error: ${errorMessage}`;
     return result;
   }
 }
 
 /**
- * Import Supabase sponsors to Sanity
+ * Import Supabase sponsors to Sanity with enhanced error handling
  */
-export async function importSponsorsToSanity(): Promise<{
-  created: number;
-  updated: number;
-  failed: number;
-}> {
-  const result = {
+export async function importSponsorsToSanity(options: ImportOptions = {}): Promise<ImportResult> {
+  const { batchSize = 5, onProgress, dryRun = false } = options;
+  
+  const result: ImportResult = {
     created: 0,
     updated: 0,
     failed: 0,
+    errors: {},
+    processingStats: {
+      total: 0,
+      processed: 0
+    }
   };
   
   try {
-    // Import from Supabase module
-    const { supabase } = await import('@/integrations/supabase/client');
-    
     console.log('Fetching sponsors from Supabase...');
     const { data: sponsors, error } = await supabase
       .from('sponsors')
@@ -125,58 +205,98 @@ export async function importSponsorsToSanity(): Promise<{
       
     if (error) {
       console.error('Error fetching sponsors:', error);
+      result.errors['fetch'] = `Failed to fetch sponsors: ${error.message}`;
       return result;
     }
     
     console.log(`Found ${sponsors.length} sponsors in Supabase`);
+    result.processingStats.total = sponsors.length;
     
-    // Process each sponsor
-    for (const sponsor of sponsors) {
-      try {
-        // Check if sponsor already exists in Sanity
-        const existingSponsor = await sanityClient.fetch(
-          `*[_type == "sponsor" && supabaseId == $supabaseId][0]`,
-          { supabaseId: sponsor.id }
-        );
-        
-        if (existingSponsor) {
-          // Update existing sponsor
-          const updated = await sanityClient.patch(existingSponsor._id)
-            .set({
-              name: sponsor.name,
-              website: sponsor.website,
-              tier: sponsor.tier,
-              featured: sponsor.featured,
-              supabaseId: sponsor.id,
-              // Don't update image or other content that might be managed in Sanity
-            })
-            .commit();
-            
-          console.log(`Updated sponsor profile for ${sponsor.name}`);
-          result.updated++;
-        } else {
-          // Create new sponsor
-          const newSponsor = await sanityClient.create({
+    // Process sponsors in batches
+    for (let i = 0; i < sponsors.length; i += batchSize) {
+      const batch = sponsors.slice(i, i + batchSize);
+      
+      // Process batch sequentially
+      for (const sponsor of batch) {
+        try {
+          result.processingStats.processed++;
+          
+          if (!sponsor.name) {
+            throw new Error('Sponsor name is required');
+          }
+          
+          // Check if sponsor already exists in Sanity
+          const existingSponsor = await sanityClient.fetch(
+            `*[_type == "sponsor" && supabaseId == $supabaseId][0]`,
+            { supabaseId: sponsor.id }
+          );
+          
+          // Skip actual writing if in dry run mode
+          if (dryRun) {
+            console.log(`[DRY RUN] Would ${existingSponsor ? 'update' : 'create'} sponsor ${sponsor.name}`);
+            existingSponsor ? result.updated++ : result.created++;
+            continue;
+          }
+          
+          const sponsorDoc = {
             _type: 'sponsor',
             name: sponsor.name,
             website: sponsor.website,
             tier: sponsor.tier,
             featured: sponsor.featured,
             supabaseId: sponsor.id,
-          });
+          };
           
-          console.log(`Created sponsor profile for ${sponsor.name} with ID ${newSponsor._id}`);
-          result.created++;
+          if (existingSponsor) {
+            // Update existing sponsor
+            const updated = await sanityClient.patch(existingSponsor._id)
+              .set(sponsorDoc)
+              .commit();
+              
+            console.log(`Updated sponsor profile for ${sponsor.name}`);
+            result.updated++;
+          } else {
+            // Create new sponsor
+            const newSponsor = await sanityClient.create(sponsorDoc);
+            
+            // Update Supabase record with Sanity ID reference
+            await supabase
+              .from('sponsors')
+              .update({ sanity_id: newSponsor._id })
+              .eq('id', sponsor.id);
+            
+            console.log(`Created sponsor profile for ${sponsor.name} with ID ${newSponsor._id}`);
+            result.created++;
+          }
+          
+          // Call progress callback if provided
+          if (onProgress) {
+            onProgress({ ...result });
+          }
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : String(error);
+          console.error(`Error processing sponsor ${sponsor.name}:`, error);
+          result.failed++;
+          result.errors[sponsor.id] = `Error with ${sponsor.name}: ${errorMessage}`;
+          
+          // Call progress callback if provided
+          if (onProgress) {
+            onProgress({ ...result });
+          }
         }
-      } catch (error) {
-        console.error(`Error processing sponsor ${sponsor.name}:`, error);
-        result.failed++;
+      }
+      
+      // Small delay between batches
+      if (i + batchSize < sponsors.length) {
+        await new Promise(resolve => setTimeout(resolve, 500));
       }
     }
     
     return result;
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
     console.error('Error importing sponsors to Sanity:', error);
+    result.errors['general'] = `General import error: ${errorMessage}`;
     return result;
   }
 }

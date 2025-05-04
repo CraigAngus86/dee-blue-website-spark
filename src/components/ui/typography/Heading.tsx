@@ -2,42 +2,49 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 
-interface HeadingProps {
-  level?: 1 | 2 | 3 | 4 | 5 | 6;
+export interface HeadingProps extends React.HTMLAttributes<HTMLHeadingElement> {
+  as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
+  weight?: 'normal' | 'medium' | 'semibold' | 'bold';
   children: React.ReactNode;
-  color?: 'default' | 'primary' | 'secondary' | 'muted';
-  className?: string;
 }
 
-const Heading = ({ 
-  level = 2, 
-  children, 
-  color = 'default', 
-  className 
-}: HeadingProps) => {
-  const colorClasses = {
-    default: 'text-foreground',
-    primary: 'text-primary',
-    secondary: 'text-secondary',
-    muted: 'text-muted-foreground',
+export function Heading({
+  as: Component = 'h2',
+  size = 'lg',
+  weight = 'bold',
+  className,
+  children,
+  ...props
+}: HeadingProps) {
+  // Size to class mapping
+  const sizeClasses = {
+    xs: 'text-xs',
+    sm: 'text-sm',
+    md: 'text-base',
+    lg: 'text-lg',
+    xl: 'text-xl',
+    '2xl': 'text-2xl',
+    '3xl': 'text-3xl',
+    '4xl': 'text-4xl',
   };
 
-  const Tag = `h${level}` as keyof JSX.IntrinsicElements;
-  
-  const baseClasses = {
-    h1: 'text-4xl font-bold tracking-tight lg:text-5xl',
-    h2: 'text-3xl font-bold tracking-tight lg:text-4xl',
-    h3: 'text-2xl font-bold tracking-tight',
-    h4: 'text-xl font-bold',
-    h5: 'text-lg font-bold',
-    h6: 'text-base font-bold',
-  }[`h${level}`];
+  // Weight to class mapping
+  const weightClasses = {
+    normal: 'font-normal',
+    medium: 'font-medium',
+    semibold: 'font-semibold',
+    bold: 'font-bold',
+  };
 
   return (
-    <Tag className={cn(baseClasses, colorClasses[color], className)}>
+    <Component
+      className={cn(sizeClasses[size], weightClasses[weight], className)}
+      {...props}
+    >
       {children}
-    </Tag>
+    </Component>
   );
-};
+}
 
 export default Heading;

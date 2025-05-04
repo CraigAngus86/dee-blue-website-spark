@@ -3,22 +3,12 @@
  * Utility to resolve Supabase entities from Sanity document references
  */
 
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '@/integrations/supabase/client';
 import { referenceCache } from './cache';
 import { SanityDocument, SupabaseRecord, ReferenceOptions } from './types';
 
-// Initialize Supabase client (using any available environment variables)
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://your-project.supabase.co';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
 /**
  * Resolve a Supabase entity referenced by a Sanity document
- * @param document Sanity document containing a supabaseId field
- * @param table Supabase table name to query
- * @param options Resolution options
- * @returns Referenced Supabase entity or null if not found
  */
 export async function resolveSupabaseReference<T extends SupabaseRecord>(
   document: SanityDocument | null,
@@ -61,10 +51,6 @@ export async function resolveSupabaseReference<T extends SupabaseRecord>(
 
 /**
  * Resolve multiple Supabase entities referenced by Sanity documents
- * @param documents Array of Sanity documents containing supabaseId fields
- * @param table Supabase table name to query
- * @param options Resolution options
- * @returns Array of referenced Supabase entities (null values filtered out)
  */
 export async function resolveSupabaseReferences<T extends SupabaseRecord>(
   documents: SanityDocument[] | null,
@@ -76,7 +62,7 @@ export async function resolveSupabaseReferences<T extends SupabaseRecord>(
   }
 
   const validDocuments = documents.filter(doc => doc && doc.supabaseId);
-  const supabaseIds = validDocuments.map(doc => doc.supabaseId as string);
+  const supabaseIds = validDocuments.map(doc => doc.supabaseId).filter(Boolean);
   
   if (supabaseIds.length === 0) {
     return [];
