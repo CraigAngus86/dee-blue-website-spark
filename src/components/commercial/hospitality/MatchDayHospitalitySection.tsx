@@ -1,12 +1,13 @@
 
 import React from 'react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Users, Coffee, UtensilsCrossed, Wine } from 'lucide-react';
+import { Wine, Users, Utensils, CalendarDays } from 'lucide-react';
+import Image from 'next/image';
 
 interface HospitalityPackage {
   id: string;
-  name: string;
+  title: string;
   price: string;
   icon: React.ReactNode;
   description: string;
@@ -15,103 +16,126 @@ interface HospitalityPackage {
 
 const hospitalityPackages: HospitalityPackage[] = [
   {
-    id: 'standard',
-    name: 'Standard Hospitality',
-    price: '£40 per person',
-    icon: <Coffee className="h-8 w-8 text-primary" />,
-    description: 'A great matchday experience for supporters and guests',
-    features: [
-      'Reserved premium seating',
-      'Pre-match meal',
-      'Matchday program',
-      'Tea and coffee at half-time'
-    ]
-  },
-  {
-    id: 'business',
-    name: 'Business Package',
-    price: '£75 per person',
-    icon: <UtensilsCrossed className="h-8 w-8 text-primary" />,
-    description: 'Perfect for entertaining business clients and partners',
-    features: [
-      'VIP reserved seating',
-      'Three-course pre-match meal',
-      'Complimentary bar (beer & wine)',
-      'Matchday program',
-      'Team sheet',
-      'Post-match player interviews'
-    ]
-  },
-  {
-    id: 'executive',
-    name: 'Executive Experience',
-    price: '£120 per person',
+    id: 'vip-package',
+    title: 'VIP Matchday Package',
+    price: 'From £80 per person',
     icon: <Wine className="h-8 w-8 text-primary" />,
     description: 'The ultimate VIP matchday experience at Spain Park',
     features: [
-      'Directors' box seating',
+      "Directors' box seating",
       'Premium three-course meal',
       'Full complimentary bar',
       'Matchday program and team merchandise',
-      'Meet the manager and captain',
-      'Photograph opportunities',
-      'Post-match reception'
+      'Meet the players after the match'
+    ]
+  },
+  {
+    id: 'group-package',
+    title: 'Group Experience',
+    price: 'From £60 per person',
+    icon: <Users className="h-8 w-8 text-primary" />,
+    description: 'Perfect for groups of 10+ supporters',
+    features: [
+      'Reserved premium seating',
+      'Two-course pre-match meal',
+      'Welcome drink on arrival',
+      'Matchday program',
+      'Group photo opportunity'
+    ]
+  },
+  {
+    id: 'dining-package',
+    title: 'Pre-Match Dining',
+    price: 'From £45 per person',
+    icon: <Utensils className="h-8 w-8 text-primary" />,
+    description: 'Enjoy fine dining before watching the match',
+    features: [
+      'Two-course meal in our restaurant',
+      'Reserved standard seating',
+      'Cash bar available',
+      'Matchday program',
+      'Early access to the ground'
     ]
   }
 ];
 
 const MatchDayHospitalitySection: React.FC = () => {
   return (
-    <section id="hospitality" className="py-16 bg-gray-100">
+    <section className="py-16 bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-primary mb-4">Matchday Hospitality</h2>
-          <p className="text-gray-600 max-w-3xl mx-auto">
-            Experience Banks o' Dee match days in style with our premium hospitality packages, perfect for special occasions or business entertainment.
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Matchday Hospitality</h2>
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+            Experience Banks o' Dee FC matches in style with our premium hospitality packages.
+            Perfect for entertaining clients or enjoying a special day out with family and friends.
           </p>
         </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
           {hospitalityPackages.map((pkg) => (
-            <Card key={pkg.id} className="overflow-hidden">
-              <CardHeader className="text-center pb-2">
-                <div className="mx-auto mb-4">
+            <Card key={pkg.id} className="overflow-hidden transition-all hover:shadow-lg">
+              <div className="p-6">
+                <div className="flex items-center mb-4">
                   {pkg.icon}
+                  <h3 className="text-xl font-bold ml-3">{pkg.title}</h3>
                 </div>
-                <CardTitle className="text-xl font-bold">{pkg.name}</CardTitle>
-                <CardDescription className="text-2xl font-bold text-primary mt-2">
-                  {pkg.price}
-                </CardDescription>
-              </CardHeader>
-              
-              <CardContent>
-                <p className="text-gray-600 mb-4 text-center">{pkg.description}</p>
-                <ul className="space-y-2 text-sm">
+                <p className="text-2xl font-semibold text-primary mb-2">{pkg.price}</p>
+                <p className="text-gray-600 mb-6">{pkg.description}</p>
+                <ul className="space-y-2 mb-6">
                   {pkg.features.map((feature, index) => (
-                    <li key={index} className="flex items-center">
-                      <span className="w-1.5 h-1.5 bg-primary rounded-full mr-2"></span>
-                      <span className="text-gray-700">{feature}</span>
+                    <li key={index} className="flex items-start">
+                      <span className="text-primary font-bold mr-2">✓</span>
+                      <span>{feature}</span>
                     </li>
                   ))}
                 </ul>
+              </div>
+              <CardContent className="bg-gray-50 border-t p-6">
+                <Button className="w-full">Enquire Now</Button>
               </CardContent>
-              
-              <CardFooter>
-                <Button className="w-full">Book Hospitality</Button>
-              </CardFooter>
             </Card>
           ))}
         </div>
-        
-        <div className="mt-12 max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-sm">
-          <div className="flex flex-col md:flex-row items-center gap-4">
-            <Users className="h-12 w-12 text-primary" />
-            <div className="text-center md:text-left">
-              <h3 className="font-bold text-lg">Group Bookings Available</h3>
-              <p className="text-gray-600">Special rates available for groups of 10 or more. Contact us for custom packages.</p>
+
+        <div className="mt-16 bg-primary rounded-lg overflow-hidden shadow-xl">
+          <div className="grid grid-cols-1 md:grid-cols-2">
+            <div className="p-8 md:p-12 flex flex-col justify-center">
+              <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
+                Private Box Experiences
+              </h3>
+              <p className="text-white/90 mb-6">
+                For the ultimate matchday experience, our private boxes offer unparalleled luxury
+                and the best views of the action at Spain Park. Available for season-long rental
+                or on a match-by-match basis.
+              </p>
+              <div className="mt-4">
+                <Button variant="secondary">
+                  Request Information
+                </Button>
+              </div>
             </div>
-            <Button className="md:ml-auto whitespace-nowrap">Enquire Now</Button>
+            <div className="relative h-64 md:h-auto">
+              <Image
+                src="/images/stadium/hospitality-box.jpg"
+                alt="VIP Hospitality Box"
+                fill
+                style={{ objectFit: 'cover' }}
+              />
+            </div>
           </div>
+        </div>
+
+        <div className="text-center mt-16">
+          <h3 className="text-2xl font-bold mb-4">
+            <CalendarDays className="inline-block mr-2 h-6 w-6 text-primary" />
+            Upcoming Hospitality Fixtures
+          </h3>
+          <p className="text-gray-600 mb-6">
+            Plan ahead and secure your hospitality experience at one of our upcoming fixtures.
+          </p>
+          <Button size="lg">
+            View Fixtures
+          </Button>
         </div>
       </div>
     </section>

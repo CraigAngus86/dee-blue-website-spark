@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState } from 'react';
@@ -47,6 +46,7 @@ export function SyncAdmin() {
   const [testSinglePlayerId, setTestSinglePlayerId] = useState('');
   const [debugMode, setDebugMode] = useState(true); // Default to debug mode for better troubleshooting
   const [connectionStatus, setConnectionStatus] = useState<string | null>(null);
+  const [includeStaff, setIncludeStaff] = useState(true); // New option to include staff members
   
   // Test Sanity connection
   const testConnection = async () => {
@@ -54,14 +54,12 @@ export function SyncAdmin() {
     setConnectionStatus(null);
     
     try {
-      const isConnected = await testSanityConnection();
-      setConnectionStatus(isConnected ? 'success' : 'failed');
+      const result = await testSanityConnection();
+      setConnectionStatus(result.success ? 'success' : 'failed');
       toast({
-        title: isConnected ? "Connection Successful" : "Connection Failed",
-        description: isConnected 
-          ? "Successfully connected to Sanity API" 
-          : "Failed to connect to Sanity API. Check console for details.",
-        variant: isConnected ? "default" : "destructive",
+        title: result.success ? "Connection Successful" : "Connection Failed",
+        description: result.message,
+        variant: result.success ? "default" : "destructive",
       });
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : String(err);
@@ -98,7 +96,7 @@ export function SyncAdmin() {
       
       toast({
         title: "Import started",
-        description: "Importing player data from Supabase to Sanity...",
+        description: `Importing ${includeStaff ? 'players and staff' : 'players only'} from Supabase to Sanity...`,
       });
       
       const result = await importPlayersToSanity({
@@ -107,14 +105,15 @@ export function SyncAdmin() {
         },
         dryRun,
         testSinglePlayer: testSinglePlayerId || undefined,
-        debug: debugMode
+        debug: debugMode,
+        includeStaff
       });
       
       setResults(prev => ({ ...prev, players: result }));
       
       // Show success or warning message
       if (result.failed > 0) {
-        setError(`Warning: ${result.failed} player imports failed. Check the details in verbose mode.`);
+        setError(`Warning: ${result.failed} personnel imports failed. Check the details in verbose mode.`);
         toast({
           variant: "destructive",
           title: "Import completed with errors",
@@ -128,7 +127,7 @@ export function SyncAdmin() {
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : String(err);
-      setError(`Error importing players: ${errorMessage}`);
+      setError(`Error importing personnel: ${errorMessage}`);
       toast({
         variant: "destructive",
         title: "Import failed",
@@ -232,6 +231,15 @@ export function SyncAdmin() {
           />
           <Label htmlFor="debug-mode">Debug Mode</Label>
         </div>
+        
+        <div className="flex items-center space-x-2">
+          <Switch 
+            id="include-staff" 
+            checked={includeStaff} 
+            onCheckedChange={setIncludeStaff} 
+          />
+          <Label htmlFor="include-staff">Include Staff</Label>
+        </div>
       </div>
       
       <Card className="bg-amber-50 border-amber-200">
@@ -293,11 +301,11 @@ export function SyncAdmin() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label htmlFor="test-player-id">Test Single Player Import (by ID)</Label>
+              <Label htmlFor="test-player-id">Test Single Personnel Import (by ID)</Label>
               <div className="flex gap-2 mt-1">
                 <Input 
                   id="test-player-id" 
-                  placeholder="Enter player ID" 
+                  placeholder="Enter person ID" 
                   value={testSinglePlayerId}
                   onChange={(e) => setTestSinglePlayerId(e.target.value)}
                 />
@@ -310,7 +318,7 @@ export function SyncAdmin() {
                 </Button>
               </div>
               <p className="text-xs text-muted-foreground mt-2">
-                Enter a Supabase player ID to test import for a single player.
+                Enter a Supabase person ID to test import for a single player or staff member.
               </p>
             </div>
           </CardContent>
@@ -338,16 +346,17 @@ export function SyncAdmin() {
       <div className="grid md:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Import Players</CardTitle>
+            <CardTitle>Import Personnel</CardTitle>
             <CardDescription>
-              Import player data from Supabase to Sanity
+              Import player and staff data from Supabase to Sanity
             </CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-sm mb-4">
-              This will create or update player profiles in Sanity based on the data in Supabase.
+              This will create or update player and staff profiles in Sanity based on the data in Supabase.
               {dryRun && " (Dry Run Mode: No changes will be made)"}
-              {testSinglePlayerId && " (Testing single player only)"}
+              {testSinglePlayerId && " (Testing single person only)"}
+              {!includeStaff && " (Players only, excluding staff)"}
             </p>
             
             {results.players && (
@@ -379,7 +388,7 @@ export function SyncAdmin() {
               ) : (
                 <>
                   <ArrowDownUp className="mr-2 h-4 w-4" />
-                  {dryRun ? 'Preview Import Players' : 'Import Players'}
+                  {dryRun ? 'Preview Import Personnel' : 'Import Personnel'}
                 </>
               )}
             </Button>

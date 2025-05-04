@@ -1,4 +1,3 @@
-
 /**
  * Enhanced utility for syncing data from Supabase to Sanity
  * with detailed error logging and validation
@@ -6,6 +5,7 @@
 
 import { sanityAdminClient } from '@/lib/sanity/sanityClient';
 import { supabase } from '@/lib/supabase/client';
+import { createClient } from '@sanity/client';
 
 // Import result interface
 export interface ImportResult {
@@ -26,37 +26,85 @@ export interface ImportOptions {
   dryRun?: boolean;
   testSinglePlayer?: string; // Option to test import with a single player by ID
   debug?: boolean; // Option to enable debug mode
+  includeStaff?: boolean; // Option to include staff members
 }
+
+// Create a direct Sanity client specifically for imports to bypass any issues
+// in the project-wide Sanity client
+const createDirectSanityClient = () => {
+  // Environment variables
+  const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'gxtptap2';
+  const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production';
+  const apiVersion = process.env.NEXT_PUBLIC_SANITY_API_VERSION || '2023-06-21';
+  const token = process.env.SANITY_API_TOKEN;
+
+  if (!projectId || !dataset) {
+    throw new Error('Sanity projectId and dataset are required');
+  }
+
+  return createClient({
+    projectId,
+    dataset,
+    apiVersion,
+    token,
+    useCdn: false,
+  });
+};
 
 /**
  * Field mapping helper to transform Supabase data to Sanity format
  */
-function mapPlayerFields(player: any) {
-  return {
+function mapPlayerFields(person: any) {
+  // Base fields for all personnel
+  const baseFields = {
     _type: 'playerProfile',
-    playerName: player.name || `${player.first_name} ${player.last_name}`,
-    firstName: player.first_name,
-    lastName: player.last_name,
-    position: player.player_position?.toLowerCase() || undefined,
-    jerseyNumber: player.jersey_number,
-    nationality: player.nationality || 'Scotland',
-    supabaseId: player.id,
+    playerName: person.name || `${person.first_name} ${person.last_name}`,
+    firstName: person.first_name,
+    lastName: person.last_name,
+    nationality: person.nationality || 'Scotland',
+    supabaseId: person.id,
     // Set defaults for required fields
     accolades: [],
-    personalFacts: player.did_you_know ? [
+    personalFacts: person.did_you_know ? [
       {
         question: 'Did you know?',
-        answer: player.did_you_know
+        answer: person.did_you_know
       }
     ] : [],
   };
+
+  // Add player-specific fields if it's a player
+  if (person.player_position) {
+    return {
+      ...baseFields,
+      position: person.player_position?.toLowerCase() || undefined,
+      jerseyNumber: person.jersey_number,
+    };
+  } 
+  // Add staff-specific fields if it's a staff member
+  else if (person.staff_role) {
+    return {
+      ...baseFields,
+      staffRole: person.staff_role?.toLowerCase() || undefined,
+    };
+  }
+
+  // For any other personnel type
+  return baseFields;
 }
 
 /**
- * Import Supabase players to Sanity with enhanced error handling
+ * Import Supabase personnel (players and staff) to Sanity with enhanced error handling
  */
 export async function importPlayersToSanity(options: ImportOptions = {}): Promise<ImportResult> {
-  const { batchSize = 5, onProgress, dryRun = false, testSinglePlayer = null, debug = false } = options;
+  const { 
+    batchSize = 5, 
+    onProgress, 
+    dryRun = false, 
+    testSinglePlayer = null, 
+    debug = false,
+    includeStaff = true
+  } = options;
   
   const result: ImportResult = {
     created: 0,
@@ -69,51 +117,65 @@ export async function importPlayersToSanity(options: ImportOptions = {}): Promis
     }
   };
   
+  // Create a direct Sanity client for the import operation
+  const importSanityClient = createDirectSanityClient();
+
   try {
-    console.log('Fetching players from Supabase...');
+    console.log('Fetching personnel from Supabase...');
     
     let query = supabase.from('people').select('*');
     
-    // Filter for players by checking if player_position is not null
-    query = query.not('player_position', 'is', null);
+    // If not including staff or only testing with a single player ID, adjust the query
+    if (!includeStaff) {
+      query = query.not('player_position', 'is', null);
+    }
     
     // If testing with a single player
     if (testSinglePlayer) {
       query = query.eq('id', testSinglePlayer);
     }
     
-    const { data: players, error } = await query;
+    const { data: people, error } = await query;
       
     if (error) {
-      console.error('Error fetching players:', error);
-      result.errors['fetch'] = `Failed to fetch players: ${error.message}`;
+      console.error('Error fetching personnel:', error);
+      result.errors['fetch'] = `Failed to fetch personnel: ${error.message}`;
       return result;
     }
     
-    const validPlayers = players.filter(player => 
-      player.first_name && 
-      player.last_name
+    // Filter out entries without first_name and last_name as these are required
+    const validPeople = people.filter(person => 
+      person.first_name && 
+      person.last_name
     );
     
-    console.log(`Found ${players.length} players in Supabase, ${validPlayers.length} with valid data`);
+    console.log(`Found ${people.length} personnel in Supabase, ${validPeople.length} with valid data`);
+    if (debug) {
+      console.log('Personnel breakdown:');
+      console.log(`- Players: ${people.filter(p => p.player_position).length}`);
+      console.log(`- Staff: ${people.filter(p => p.staff_role && !p.player_position).length}`);
+      console.log(`- Other: ${people.filter(p => !p.player_position && !p.staff_role).length}`);
+    }
     
-    result.processingStats.total = validPlayers.length;
+    result.processingStats.total = validPeople.length;
     
-    // Process players in batches to avoid rate limits
-    for (let i = 0; i < validPlayers.length; i += batchSize) {
-      const batch = validPlayers.slice(i, i + batchSize);
+    // Process personnel in batches to avoid rate limits
+    for (let i = 0; i < validPeople.length; i += batchSize) {
+      const batch = validPeople.slice(i, i + batchSize);
       
       // Process batch sequentially to avoid conflicts
-      for (const player of batch) {
+      for (const person of batch) {
         try {
           result.processingStats.processed++;
           
-          // Check if player already exists in Sanity
-          console.log(`Checking if player ${player.first_name} ${player.last_name} exists in Sanity (supabaseId: ${player.id})...`);
+          // Check if person already exists in Sanity
+          if (debug) {
+            console.log(`Checking if ${person.first_name} ${person.last_name} exists in Sanity (supabaseId: ${person.id})...`);
+          }
           
           // Build the query with proper syntax
           const query = `*[_type == "playerProfile" && supabaseId == $supabaseId][0]`;
-          const params = { supabaseId: player.id };
+          const params = { supabaseId: person.id };
           
           if (debug) {
             // Log the exact query for debugging
@@ -121,45 +183,55 @@ export async function importPlayersToSanity(options: ImportOptions = {}): Promis
             console.log('Params:', JSON.stringify(params, null, 2));
           }
           
+          let existingPerson;
+          
           try {
-            // Try to fetch the existing player profile with our new client
-            const existingPlayer = await sanityAdminClient.fetch(query, params);
+            // Use the direct Sanity client created specifically for imports
+            existingPerson = await importSanityClient.fetch(query, params);
             
             if (debug) {
-              console.log('Existing player:', existingPlayer);
+              console.log('Existing person record:', existingPerson ? 'Found' : 'Not found');
             }
-            
-            // Map player fields for Sanity
-            const playerDoc = mapPlayerFields(player);
-            
-            // Skip actual writing if in dry run mode
-            if (dryRun) {
-              console.log(`[DRY RUN] Would ${existingPlayer ? 'update' : 'create'} player ${player.name || `${player.first_name} ${player.last_name}`}`);
-              existingPlayer ? result.updated++ : result.created++;
-              continue;
-            }
-            
-            if (existingPlayer) {
-              // Update existing player
-              const updated = await sanityAdminClient
-                .patch(existingPlayer._id)
-                .set(playerDoc)
+          } catch (sanityFetchError) {
+            console.error('Sanity fetch error:', sanityFetchError);
+            throw new Error(`Sanity fetch failed: ${sanityFetchError instanceof Error ? sanityFetchError.message : String(sanityFetchError)}`);
+          }
+          
+          // Map person fields for Sanity
+          const personDoc = mapPlayerFields(person);
+          
+          // Skip actual writing if in dry run mode
+          if (dryRun) {
+            console.log(`[DRY RUN] Would ${existingPerson ? 'update' : 'create'} ${person.name || `${person.first_name} ${person.last_name}`}`);
+            existingPerson ? result.updated++ : result.created++;
+            continue;
+          }
+          
+          if (existingPerson) {
+            // Update existing person
+            try {
+              const updated = await importSanityClient
+                .patch(existingPerson._id)
+                .set(personDoc)
                 .commit();
                 
-              console.log(`Updated player profile for ${player.name || `${player.first_name} ${player.last_name}`}`);
+              console.log(`Updated profile for ${person.name || `${person.first_name} ${person.last_name}`}`);
               result.updated++;
-            } else {
-              // Create new player
-              const newPlayer = await sanityAdminClient.create(playerDoc);
-              
-              console.log(`Created player profile for ${player.name || `${player.first_name} ${player.last_name}`} with ID ${newPlayer._id}`);
-              result.created++;
+            } catch (updateError) {
+              console.error('Error updating person:', updateError);
+              throw new Error(`Update failed: ${updateError instanceof Error ? updateError.message : String(updateError)}`);
             }
-          } catch (sanityError) {
-            // Handle Sanity API errors specifically
-            const errorMessage = sanityError instanceof Error ? sanityError.message : String(sanityError);
-            console.error(`Sanity API error for ${player.name || `${player.first_name} ${player.last_name}`}:`, sanityError);
-            throw new Error(`Error processing player ${player.id}: ${errorMessage}`);
+          } else {
+            // Create new person
+            try {
+              const newPerson = await importSanityClient.create(personDoc);
+              
+              console.log(`Created profile for ${person.name || `${person.first_name} ${person.last_name}`} with ID ${newPerson._id}`);
+              result.created++;
+            } catch (createError) {
+              console.error('Error creating person:', createError);
+              throw new Error(`Creation failed: ${createError instanceof Error ? createError.message : String(createError)}`);
+            }
           }
           
           // Call progress callback if provided
@@ -168,9 +240,9 @@ export async function importPlayersToSanity(options: ImportOptions = {}): Promis
           }
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : String(error);
-          console.error(`Error processing player ${player.name || `${player.first_name} ${player.last_name}`}:`, error);
+          console.error(`Error processing ${person.name || `${person.first_name} ${person.last_name}`}:`, error);
           result.failed++;
-          result.errors[player.id] = `Error with ${player.name || player.first_name} ${player.last_name}: ${errorMessage}`;
+          result.errors[person.id] = `Error with ${person.name || person.first_name} ${person.last_name}: ${errorMessage}`;
           
           // Call progress callback if provided
           if (onProgress) {
@@ -180,7 +252,7 @@ export async function importPlayersToSanity(options: ImportOptions = {}): Promis
       }
       
       // Small delay between batches to avoid rate limits
-      if (i + batchSize < validPlayers.length) {
+      if (i + batchSize < validPeople.length) {
         await new Promise(resolve => setTimeout(resolve, 500));
       }
     }
@@ -188,7 +260,7 @@ export async function importPlayersToSanity(options: ImportOptions = {}): Promis
     return result;
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    console.error('Error importing players to Sanity:', error);
+    console.error('Error importing personnel to Sanity:', error);
     result.errors['general'] = `General import error: ${errorMessage}`;
     return result;
   }
@@ -210,6 +282,9 @@ export async function importSponsorsToSanity(options: ImportOptions = {}): Promi
       processed: 0
     }
   };
+
+  // Create a direct Sanity client for the import operation
+  const importSanityClient = createDirectSanityClient();
   
   try {
     console.log('Fetching sponsors from Supabase...');
@@ -241,10 +316,16 @@ export async function importSponsorsToSanity(options: ImportOptions = {}): Promi
           }
           
           // Check if sponsor already exists in Sanity
-          const existingSponsor = await sanityAdminClient.fetch(
-            `*[_type == "sponsor" && supabaseId == $supabaseId][0]`,
-            { supabaseId: sponsor.id }
-          );
+          let existingSponsor;
+          try {
+            existingSponsor = await importSanityClient.fetch(
+              `*[_type == "sponsor" && supabaseId == $supabaseId][0]`,
+              { supabaseId: sponsor.id }
+            );
+          } catch (sanityFetchError) {
+            console.error('Sanity fetch error:', sanityFetchError);
+            throw new Error(`Sanity fetch failed: ${sanityFetchError instanceof Error ? sanityFetchError.message : String(sanityFetchError)}`);
+          }
           
           // Skip actual writing if in dry run mode
           if (dryRun) {
@@ -264,19 +345,29 @@ export async function importSponsorsToSanity(options: ImportOptions = {}): Promi
           
           if (existingSponsor) {
             // Update existing sponsor
-            const updated = await sanityAdminClient
-              .patch(existingSponsor._id)
-              .set(sponsorDoc)
-              .commit();
-              
-            console.log(`Updated sponsor profile for ${sponsor.name}`);
-            result.updated++;
+            try {
+              const updated = await importSanityClient
+                .patch(existingSponsor._id)
+                .set(sponsorDoc)
+                .commit();
+                
+              console.log(`Updated sponsor profile for ${sponsor.name}`);
+              result.updated++;
+            } catch (updateError) {
+              console.error('Error updating sponsor:', updateError);
+              throw new Error(`Update failed: ${updateError instanceof Error ? updateError.message : String(updateError)}`);
+            }
           } else {
             // Create new sponsor
-            const newSponsor = await sanityAdminClient.create(sponsorDoc);
-            
-            console.log(`Created sponsor profile for ${sponsor.name} with ID ${newSponsor._id}`);
-            result.created++;
+            try {
+              const newSponsor = await importSanityClient.create(sponsorDoc);
+              
+              console.log(`Created sponsor profile for ${sponsor.name} with ID ${newSponsor._id}`);
+              result.created++;
+            } catch (createError) {
+              console.error('Error creating sponsor:', createError);
+              throw new Error(`Creation failed: ${createError instanceof Error ? createError.message : String(createError)}`);
+            }
           }
           
           // Call progress callback if provided

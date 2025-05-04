@@ -64,7 +64,7 @@ export const sanityAdminClient = createSanityClient({
  */
 export async function fetchSanityData<T = any>(query: string, params = {}): Promise<T> {
   try {
-    console.log('Executing Sanity query:', { query, params });
+    console.log('Executing Sanity query:', { query, params: JSON.stringify(params, null, 2) });
     const result = await sanityClient.fetch<T>(query, params);
     return result;
   } catch (error) {
@@ -94,8 +94,19 @@ export async function testSanityConnection(): Promise<{
 }> {
   try {
     console.log('Testing Sanity connection...');
+    
+    // Create a test client with explicit configuration
+    const testClient = createClient({
+      projectId: PROJECT_ID,
+      dataset: DATASET,
+      apiVersion: API_VERSION,
+      useCdn: false,
+      token: TOKEN
+    });
+    
     // Use a simple query that should work on any project
-    const result = await sanityClient.fetch('*[_id == "drafts.singleton_siteSettings" || _id == "singleton_siteSettings"][0...1]');
+    const result = await testClient.fetch('*[_id == "drafts.singleton_siteSettings" || _id == "singleton_siteSettings"][0...1]');
+    
     console.log('Sanity connection test successful:', result);
     return {
       success: true,
@@ -105,6 +116,16 @@ export async function testSanityConnection(): Promise<{
   } catch (error) {
     console.error('Sanity connection test failed:', error);
     const errorMessage = error instanceof Error ? error.message : String(error);
+    
+    // Log detailed error information
+    if (error instanceof Error) {
+      console.error('Error details:', {
+        message: error.message,
+        name: error.name,
+        stack: error.stack
+      });
+    }
+    
     return {
       success: false,
       message: `Failed to connect to Sanity API: ${errorMessage}`,
