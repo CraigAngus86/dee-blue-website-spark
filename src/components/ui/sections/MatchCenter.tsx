@@ -25,6 +25,21 @@ interface ResultData extends MatchData {
   matchReport?: string;
 }
 
+// Define types to match the MatchCarousel component's expectations
+type Match = {
+  id: string;
+  match_date: string;
+  matchDate?: string; // Alternative property name
+  home_team: any;
+  homeTeam?: string; // Alternative property name
+  away_team: any;
+  awayTeam?: string; // Alternative property name
+  venue?: string;
+  ticketLink?: string;
+  status: string;
+  // Add other required properties
+};
+
 interface MatchCenterProps {
   upcomingMatches: any[];
   recentResults: any[];
@@ -36,35 +51,45 @@ export default function MatchCenter({
   recentResults,
   leagueTable
 }: MatchCenterProps) {
-  // Format upcoming matches for the carousel
+  // Format upcoming matches for the carousel - with type adaptation
   const formattedUpcoming = upcomingMatches.map(match => ({
     id: match.id,
+    match_date: match.match_date,
     matchDate: match.match_date,
     matchTime: match.match_time,
-    competition: match.competition.name,
-    homeTeam: match.home_team.name,
-    awayTeam: match.away_team.name,
-    homeTeamLogo: match.home_team.logo_url,
-    awayTeamLogo: match.away_team.logo_url,
+    competition: match.competition?.name || '',
+    homeTeam: match.home_team?.name || '',
+    awayTeam: match.away_team?.name || '',
+    homeTeamLogo: match.home_team?.logo_url,
+    awayTeamLogo: match.away_team?.logo_url,
     venue: match.venue || 'TBA',
-    ticketLink: match.ticket_link
-  }));
+    ticketLink: match.ticket_link,
+    // Add required properties for Match type
+    home_team: match.home_team,
+    away_team: match.away_team,
+    status: match.status || 'scheduled'
+  } as Match));
 
-  // Format recent results for the carousel
+  // Format recent results for the carousel - with type adaptation
   const formattedResults = recentResults.map(match => ({
     id: match.id,
+    match_date: match.match_date,
     matchDate: match.match_date,
     matchTime: match.match_time,
-    competition: match.competition.name,
-    homeTeam: match.home_team.name,
-    awayTeam: match.away_team.name,
-    homeTeamLogo: match.home_team.logo_url,
-    awayTeamLogo: match.away_team.logo_url,
+    competition: match.competition?.name || '',
+    homeTeam: match.home_team?.name || '',
+    awayTeam: match.away_team?.name || '',
+    homeTeamLogo: match.home_team?.logo_url,
+    awayTeamLogo: match.away_team?.logo_url,
     venue: match.venue || 'TBA',
     homeScore: match.home_score,
     awayScore: match.away_score,
-    matchReport: match.match_report_link
-  }));
+    matchReport: match.match_report_link,
+    // Add required properties for Match type
+    home_team: match.home_team,
+    away_team: match.away_team,
+    status: match.status || 'completed'
+  } as Match));
 
   // Featured match (most recent upcoming match)
   const featuredMatch = formattedUpcoming.length > 0 ? formattedUpcoming[0] : null;

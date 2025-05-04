@@ -27,13 +27,11 @@ console.log('Sanity Client Configuration:', {
 export function createSanityClient(config: {
   useCdn?: boolean;
   token?: string;
-  withCredentials?: boolean;
   apiVersion?: string;
 } = {}): SanityClient {
   const { 
     useCdn = false, 
     token = TOKEN, 
-    withCredentials = false,
     apiVersion = API_VERSION
   } = config;
   
@@ -44,7 +42,7 @@ export function createSanityClient(config: {
     apiVersion,
     useCdn,
     token,
-    withCredentials,
+    // Removed withCredentials as it conflicts with token
     perspective: 'published'
   });
 }
@@ -55,8 +53,7 @@ export const sanityClient = createSanityClient({ useCdn: true });
 // Admin client for mutations (needs token)
 export const sanityAdminClient = createSanityClient({ 
   useCdn: false, 
-  token: TOKEN,
-  withCredentials: true
+  token: TOKEN
 });
 
 /**
@@ -64,7 +61,7 @@ export const sanityAdminClient = createSanityClient({
  */
 export async function fetchSanityData<T = any>(query: string, params = {}): Promise<T> {
   try {
-    console.log('Executing Sanity query:', { query, params: JSON.stringify(params, null, 2) });
+    console.log('Executing Sanity query:', { query, paramsKeys: Object.keys(params) });
     const result = await sanityClient.fetch<T>(query, params);
     return result;
   } catch (error) {
@@ -95,7 +92,7 @@ export async function testSanityConnection(): Promise<{
   try {
     console.log('Testing Sanity connection...');
     
-    // Create a test client with explicit configuration
+    // Create a test client with explicit configuration - without withCredentials
     const testClient = createClient({
       projectId: PROJECT_ID,
       dataset: DATASET,

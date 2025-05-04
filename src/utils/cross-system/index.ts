@@ -12,11 +12,16 @@ export * from './types';
 // Export cache utilities
 export * from './cache';
 
-// Export the core resolver utilities
-export { default as resolveSupabaseReference } from './resolveSupabaseReference';
-export { default as resolveSanityReference } from './resolveSanityReference';
+// Export the core reference utility functions from match.ts
+export { resolveSupabaseReference, resolveSanityReference } from './match';
 
-// Re-export entity-specific utilities
-export * from './player';
-export * from './match';
-export * from './sponsor';
+// Export match-specific utilities
+export { 
+  resolveMatchFromDocument, 
+  resolveDocumentFromMatch,
+  getUpcomingMatches, 
+  getRecentMatches 
+} from './match';
+
+// Explicitly export other utilities as needed
+// For backward compatibility (will export more as implemented)

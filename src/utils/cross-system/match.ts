@@ -7,11 +7,9 @@ import { supabase } from '@/lib/supabase/client';
 import { sanityClient } from '@/lib/sanity/sanityClient';
 import { ReferenceOptions } from './types';
 import { referenceCache } from './cache';
-import resolveSupabaseReference from './resolveSupabaseReference';
-import resolveSanityReference from './resolveSanityReference';
 
 /**
- * Resolve a match from Sanity match document
+ * Resolve a match from a Sanity match document
  * @param matchDocument Sanity match document
  * @param options Resolution options
  * @returns Referenced match from Supabase
@@ -43,6 +41,88 @@ export async function resolveDocumentFromMatch(
 }
 
 /**
+ * Helper function to resolve Supabase references
+ */
+export async function resolveSupabaseReference<T = any>(
+  tableName: string,
+  id: string | null | undefined,
+  options: ReferenceOptions = {}
+): Promise<T | null> {
+  if (!id) return null;
+  
+  const { skipCache = false } = options;
+  const cacheKey = `supabase:${tableName}:${id}`;
+  
+  return referenceCache.getOrSet(
+    cacheKey,
+    async () => {
+      try {
+        console.log(`Resolving Supabase reference: ${tableName} with ID ${id}`);
+        const { data, error } = await supabase
+          .from(tableName)
+          .select('*')
+          .eq('id', id)
+          .single();
+          
+        if (error) {
+          console.error(`Error resolving Supabase reference for ${tableName}:${id}:`, error);
+          return null;
+        }
+        
+        return data as T;
+      } catch (error) {
+        console.error(`Exception resolving Supabase reference for ${tableName}:${id}:`, error);
+        return null;
+      }
+    },
+    skipCache
+  );
+}
+
+/**
+ * Helper function to resolve Sanity references
+ */
+export async function resolveSanityReference<T = any>(
+  documentType: string,
+  id: string | null | undefined,
+  options: ReferenceOptions = {}
+): Promise<T | null> {
+  if (!id) return null;
+  
+  const { skipCache = false } = options;
+  const cacheKey = `sanity:${documentType}:${id}`;
+  
+  return referenceCache.getOrSet(
+    cacheKey,
+    async () => {
+      try {
+        console.log(`Resolving Sanity reference: ${documentType} with ID ${id}`);
+        
+        // Determine if it's a direct _id reference or a field match
+        const isDirectId = id.startsWith('drafts.') || id.includes('-');
+        
+        // Construct appropriate query
+        const query = isDirectId
+          ? `*[_type == $docType && _id == $id][0]`
+          : `*[_type == $docType && supabaseId == $id][0]`;
+        
+        const params = {
+          docType: documentType,
+          id: id
+        };
+        
+        const document = await sanityClient.fetch(query, params);
+        return document || null;
+      } catch (error) {
+        console.error(`Error resolving Sanity reference for ${documentType}:${id}:`, error);
+        return null;
+      }
+    },
+    skipCache
+  );
+}
+
+/**
  * Get upcoming matches with extended team and competition data
  * @param limit Number of matches to retrieve
  * @param options Resolution options
@@ -66,9 +146,9 @@ export async function getUpcomingMatches(
           .from("match")
           .select(`
             id, match_date, match_time, venue, status, ticketco_event_id, ticket_link,
-            home_team:home_team_id(*),
-            away_team:away_team_id(*),
-            competition:competition_id(*)
+            home_team:home_team_id(id, name, short_name, logo_url),
+            away_team:away_team_id(id, name, short_name, logo_url),
+            competition:competition_id(id, name, short_name, logo_url)
           `)
           .gte("match_date", today)
           .order("match_date", { ascending: true })
@@ -110,9 +190,9 @@ export async function getRecentMatches(
           .from("match")
           .select(`
             id, match_date, match_time, venue, status, home_score, away_score, match_report_link,
-            home_team:home_team_id(*),
-            away_team:away_team_id(*),
-            competition:competition_id(*)
+            home_team:home_team_id(id, name, short_name, logo_url),
+            away_team:away_team_id(id, name, short_name, logo_url),
+            competition:competition_id(id, name, short_name, logo_url)
           `)
           .eq("status", "completed")
           .order("match_date", { ascending: false })
