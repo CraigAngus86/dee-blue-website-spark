@@ -1,5 +1,7 @@
+
 import { definePlugin } from 'sanity';
 import { cloudinaryAssetSourcePlugin } from 'sanity-plugin-cloudinary';
+
 /**
  * Custom Cloudinary asset source plugin for Banks o' Dee FC
  * Extends the base Cloudinary plugin with custom folder structure and metadata handling
@@ -9,19 +11,20 @@ export const banksDeeCloudinaryPlugin = definePlugin(() => {
     name: 'banksDeeCloudinaryPlugin',
     plugins: [
       cloudinaryAssetSourcePlugin({
-        // Configuration - these should come from environment variables in production
-        cloudName: 'dlkpaw2a0',
+        // Configuration from environment variables
+        cloudName: process.env.CLOUDINARY_CLOUD_NAME || 'dlkpaw2a0',
         apiKey: process.env.CLOUDINARY_API_KEY,
+        apiSecret: process.env.CLOUDINARY_API_SECRET,
         
-       // Upload presets for different document types
-    uploadPreset: {
-      playerProfile: 'player-upload',
-      newsArticle: 'news-upload',
-      matchGallery: 'match-gallery-upload',
-      sponsor: 'sponsor-upload',
-      stadiumInfo: 'stadium-upload',
-      _default: 'banks-o-dee'
-    },
+        // Upload presets for different document types
+        uploadPreset: {
+          playerProfile: 'player-upload',
+          newsArticle: 'news-upload',
+          matchGallery: 'match-gallery-upload',
+          sponsor: 'sponsor-upload',
+          stadiumInfo: 'stadium-upload',
+          _default: 'banks-o-dee'
+        },
         
         // Folder mapping for different document types
         folders: {
@@ -94,13 +97,8 @@ export const banksDeeCloudinaryPlugin = definePlugin(() => {
           return tags;
         }
       })
-    ],
-    
-    // This section can be used to add custom components or schema types
-    // This would require more complex setup and is left as a placeholder
-    schema: {
-      types: [],
-    }
+    ]
   };
 });
+
 export default banksDeeCloudinaryPlugin;

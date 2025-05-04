@@ -3,9 +3,15 @@
  * Utility to resolve Supabase entities from Sanity document references
  */
 
-import { supabase } from '@/lib/supabase/client';
+import { createClient } from '@supabase/supabase-js';
 import { referenceCache } from './cache';
 import { SanityDocument, SupabaseRecord, ReferenceOptions } from './types';
+
+// Initialize Supabase client (using any available environment variables)
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://your-project.supabase.co';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 /**
  * Resolve a Supabase entity referenced by a Sanity document
@@ -70,7 +76,7 @@ export async function resolveSupabaseReferences<T extends SupabaseRecord>(
   }
 
   const validDocuments = documents.filter(doc => doc && doc.supabaseId);
-  const supabaseIds = validDocuments.map(doc => doc.supabaseId);
+  const supabaseIds = validDocuments.map(doc => doc.supabaseId as string);
   
   if (supabaseIds.length === 0) {
     return [];

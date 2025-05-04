@@ -1,3 +1,4 @@
+
 "use client";
 import { useState } from 'react';
 import { CloudinaryMetadata } from '@/lib/cloudinary/metadata';
@@ -38,6 +39,8 @@ export function useCloudinaryUpload() {
     setResult(null);
 
     try {
+      console.log('Starting Cloudinary upload with metadata:', metadata);
+      
       // Create FormData for upload
       const formData = new FormData();
       formData.append('file', file);
@@ -70,6 +73,8 @@ export function useCloudinaryUpload() {
         });
       }, 300);
       
+      console.log('Sending upload request to API route');
+      
       // Make request to our API route
       const response = await fetch('/api/cloudinary/upload', {
         method: 'POST',
@@ -80,10 +85,12 @@ export function useCloudinaryUpload() {
       
       if (!response.ok) {
         const errorData = await response.json();
+        console.error('Upload request failed:', errorData);
         throw new Error(errorData.error?.message || 'Upload failed');
       }
       
       const data = await response.json();
+      console.log('Upload successful, received:', data);
       setProgress(100);
       
       // Set result

@@ -1,80 +1,71 @@
+
 /**
- * Simple cache system for cross-system references
+ * Simple cache implementation for cross-system references
  */
 
-interface CacheEntry<T> {
-  value: T;
-  timestamp: number;
-}
+import { ReferenceCache } from './types';
 
-class ReferenceCache {
-  private cache: Record<string, CacheEntry<any>> = {};
-  private readonly ttlMs: number = 5 * 60 * 1000; // 5 minutes default TTL
-
-  constructor(ttlMs?: number) {
-    if (ttlMs) {
-      this.ttlMs = ttlMs;
-    }
+// Simple in-memory cache implementation
+class InMemoryCache implements ReferenceCache {
+  private cache: Map<string, any>;
+  private maxSize: number;
+  
+  constructor(maxSize = 100) {
+    this.cache = new Map();
+    this.maxSize = maxSize;
   }
-
+  
   /**
-   * Get a value from the cache or set it if not present
+   * Get a value from cache or compute and store it
    */
-  async getOrSet<T>(key: string, fetcher: () => Promise<T>, skipCache = false): Promise<T> {
-    // If skipCache is true or we're in development, bypass cache
-    if (skipCache || process.env.NODE_ENV === 'development') {
-      return await fetcher();
+  async getOrSet<T>(key: string, factory: () => Promise<T>, skipCache = false): Promise<T> {
+    // Skip cache if requested
+    if (skipCache) {
+      const value = await factory();
+      this.set(key, value);
+      return value;
     }
-
-    const now = Date.now();
-    const cachedEntry = this.cache[key];
-
-    // Return cached value if present and not expired
-    if (cachedEntry && now - cachedEntry.timestamp < this.ttlMs) {
-      return cachedEntry.value;
+    
+    // Check cache first
+    const cachedValue = this.cache.get(key);
+    if (cachedValue !== undefined) {
+      return cachedValue as T;
     }
-
-    // Otherwise fetch fresh data
-    const value = await fetcher();
-    this.cache[key] = { value, timestamp: now };
+    
+    // Compute value and store in cache
+    const value = await factory();
+    this.set(key, value);
     return value;
   }
-
+  
   /**
-   * Manually set a value in the cache
+   * Get a value from cache
+   */
+  async get<T>(key: string): Promise<T | null> {
+    const value = this.cache.get(key);
+    return value !== undefined ? value as T : null;
+  }
+  
+  /**
+   * Set a value in cache
    */
   set<T>(key: string, value: T): void {
-    this.cache[key] = {
-      value,
-      timestamp: Date.now()
-    };
-  }
-
-  /**
-   * Manually invalidate a cache entry
-   */
-  invalidate(key: string): boolean {
-    if (this.cache[key]) {
-      delete this.cache[key];
-      return true;
+    // Implement LRU eviction if cache is full
+    if (this.cache.size >= this.maxSize) {
+      const oldestKey = this.cache.keys().next().value;
+      this.cache.delete(oldestKey);
     }
-    return false;
+    
+    this.cache.set(key, value);
   }
-
+  
   /**
-   * Clear all cache entries
+   * Clear the cache
    */
   clear(): void {
-    this.cache = {};
-  }
-
-  /**
-   * Get the size of the cache
-   */
-  get size(): number {
-    return Object.keys(this.cache).length;
+    this.cache.clear();
   }
 }
 
-// Export a singleton instance
-export const referenceCache = new ReferenceCache();
+// Create and export the cache instance
+export const referenceCache = new InMemoryCache();

@@ -3,10 +3,9 @@
  * Cross-system utility for sponsor data management
  */
 
-import { supabase } from '@/lib/supabase/client'; 
-import { fetchSanityData } from '@/lib/sanity/client';
+import { supabase } from './resolveSupabaseReference'; 
+import { fetchSanity } from '@/lib/sanity';
 import { referenceCache } from './cache';
-import { resolveSupabaseReference } from './resolveSupabaseReference';
 import { resolveSanityReference } from './resolveSanityReference';
 
 // Sponsor types
@@ -66,8 +65,8 @@ export async function getSponsorById(id: string): Promise<SponsorSupabase | null
 export async function getSponsorByIdFromSanity(id: string): Promise<SponsorSanity | null> {
   try {
     const query = `*[_type == "sponsor" && _id == $id][0]`;
-    const sponsor = await fetchSanityData(query, { id });
-    return sponsor as SponsorSanity;
+    const sponsor = await fetchSanity<SponsorSanity>(query, { id });
+    return sponsor;
   } catch (error) {
     console.error('Error fetching sponsor from Sanity by ID:', error);
     return null;
@@ -100,7 +99,7 @@ export async function resolveSponsorSanityDocument(
   if (!supabaseSponsor || !supabaseSponsor.sanity_id) return null;
   
   return resolveSanityReference<SponsorSanity>(
-    { sanity_id: supabaseSponsor.sanity_id },
+    { id: supabaseSponsor.id, sanity_id: supabaseSponsor.sanity_id },
     'sponsor'
   );
 }
@@ -113,8 +112,14 @@ export async function resolveSponsorSupabaseRecord(
 ): Promise<SponsorSupabase | null> {
   if (!sanitySponsor || !sanitySponsor.supabaseId) return null;
   
-  return resolveSupabaseReference<SponsorSupabase>(
-    { _id: sanitySponsor._id, _type: 'sponsor', supabaseId: sanitySponsor.supabaseId },
-    'sponsors'
-  );
+  return supabase
+    .from('sponsors')
+    .select('*')
+    .eq('id', sanitySponsor.supabaseId)
+    .single()
+    .then(({ data }) => data as SponsorSupabase)
+    .catch(error => {
+      console.error('Error resolving sponsor Supabase record:', error);
+      return null;
+    });
 }

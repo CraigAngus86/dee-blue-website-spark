@@ -1,74 +1,93 @@
 
-import { useState, useEffect } from 'react';
+"use client";
 
-interface CloudinaryOptions {
+import { useMemo } from 'react';
+
+interface CloudinaryTransformOptions {
   width?: number;
   height?: number;
-  crop?: string;
+  crop?: 'fill' | 'limit' | 'fit' | 'scale' | 'thumb' | 'crop';
+  gravity?: 'auto' | 'face' | 'faces' | 'center' | 'north' | 'south' | 'east' | 'west';
   quality?: number;
-  format?: string;
+  format?: 'auto' | 'webp' | 'png' | 'jpg' | 'gif';
+  effect?: string;
+  background?: string;
+  secure?: boolean;
 }
 
 /**
- * Hook to optimize and transform Cloudinary images
- * @param imageUrl The original image URL (can be Cloudinary or other source)
- * @param options Cloudinary transformation options
- * @returns The optimized image URL
+ * Custom hook for generating optimized Cloudinary image URLs
+ * @param imageUrl Original image URL or Cloudinary public ID
+ * @param options Transformation options
  */
-export default function useCloudinaryImage(
+function useCloudinaryImage(
   imageUrl: string | null,
-  options: CloudinaryOptions = {}
+  options: CloudinaryTransformOptions = {}
 ): string | null {
-  const [optimizedUrl, setOptimizedUrl] = useState<string | null>(imageUrl);
+  return useMemo(() => {
+    if (!imageUrl) return null;
 
-  useEffect(() => {
-    if (!imageUrl) {
-      setOptimizedUrl(null);
-      return;
-    }
-
-    // Check if it's already a Cloudinary URL
+    // Check if already a Cloudinary URL
     const isCloudinaryUrl = imageUrl.includes('res.cloudinary.com');
     
-    if (!isCloudinaryUrl) {
-      // If not a Cloudinary URL, just return the original
-      setOptimizedUrl(imageUrl);
-      return;
-    }
+    // If not a Cloudinary URL, return the original
+    if (!isCloudinaryUrl) return imageUrl;
 
     try {
-      // For Cloudinary URLs, apply transformations
-      const urlParts = imageUrl.split('/upload/');
-      if (urlParts.length !== 2) {
-        setOptimizedUrl(imageUrl);
-        return;
-      }
-
-      // Build transformation string
+      // Parse the URL and extract components
+      const url = new URL(imageUrl);
+      const pathParts = url.pathname.split('/');
+      
+      // Default transformations
+      const defaultOptions: CloudinaryTransformOptions = {
+        quality: 'auto',
+        format: 'auto',
+        ...options
+      };
+      
+      // Build the transformation string
       const transformations = [];
       
-      if (options.width) transformations.push(`w_${options.width}`);
-      if (options.height) transformations.push(`h_${options.height}`);
-      if (options.crop) transformations.push(`c_${options.crop}`);
-      if (options.quality) transformations.push(`q_${options.quality}`);
-      if (options.format) transformations.push(`f_${options.format}`);
-      
-      // If no transformations, return original URL
-      if (transformations.length === 0) {
-        setOptimizedUrl(imageUrl);
-        return;
+      if (defaultOptions.width || defaultOptions.height) {
+        const dimensions = [];
+        if (defaultOptions.width) dimensions.push(`w_${defaultOptions.width}`);
+        if (defaultOptions.height) dimensions.push(`h_${defaultOptions.height}`);
+        if (defaultOptions.crop) dimensions.push(`c_${defaultOptions.crop}`);
+        if (defaultOptions.gravity) dimensions.push(`g_${defaultOptions.gravity}`);
+        transformations.push(dimensions.join(','));
       }
       
-      // Create transformed URL
-      const transformationString = transformations.join(',');
-      const optimizedUrl = `${urlParts[0]}/upload/${transformationString}/${urlParts[1]}`;
+      if (defaultOptions.quality) {
+        transformations.push(`q_${defaultOptions.quality}`);
+      }
       
-      setOptimizedUrl(optimizedUrl);
+      if (defaultOptions.format) {
+        transformations.push(`f_${defaultOptions.format}`);
+      }
+      
+      if (defaultOptions.effect) {
+        transformations.push(`e_${defaultOptions.effect}`);
+      }
+      
+      if (defaultOptions.background) {
+        transformations.push(`b_${defaultOptions.background}`);
+      }
+      
+      // Find where to insert the transformations in the URL path
+      const insertIndex = pathParts.findIndex(part => part === 'upload') + 1;
+      
+      if (insertIndex > 0 && transformations.length > 0) {
+        pathParts.splice(insertIndex, 0, transformations.join(','));
+      }
+      
+      // Rebuild the URL
+      url.pathname = pathParts.join('/');
+      return url.toString();
     } catch (error) {
-      console.error('Error optimizing Cloudinary image:', error);
-      setOptimizedUrl(imageUrl); // Fallback to original URL
+      console.error('Error transforming Cloudinary URL:', error);
+      return imageUrl;
     }
-  }, [imageUrl, options.width, options.height, options.crop, options.quality, options.format]);
-
-  return optimizedUrl;
+  }, [imageUrl, options]);
 }
+
+export default useCloudinaryImage;

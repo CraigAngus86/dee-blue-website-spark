@@ -1,3 +1,4 @@
+
 export default {
   name: 'cloudinaryImage',
   title: 'Cloudinary Image',
@@ -54,12 +55,32 @@ export default {
       },
       initialValue: 'none',
       description: 'Select a crop preset for this image'
+    },
+    {
+      name: 'hotspot',
+      title: 'Hotspot',
+      type: 'object',
+      fields: [
+        { name: 'x', type: 'number' },
+        { name: 'y', type: 'number' },
+        { name: 'height', type: 'number' },
+        { name: 'width', type: 'number' }
+      ]
     }
   ],
   preview: {
     select: {
       title: 'alt',
-      subtitle: 'caption'
+      subtitle: 'caption',
+      media: 'asset.url'
+    },
+    prepare(selection) {
+      const { title, subtitle, media } = selection;
+      return {
+        title: title || 'Untitled image',
+        subtitle: subtitle || '',
+        media: media ? <img src={media} alt="" /> : null
+      };
     }
   }
 }

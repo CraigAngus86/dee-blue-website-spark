@@ -3,11 +3,10 @@
  * Cross-system utility for match data management
  */
 
-import { supabase } from '@/lib/supabase/client'; 
-import { fetchSanityData } from '@/lib/sanity/client';
+import { supabase } from './resolveSupabaseReference'; 
+import { fetchSanity } from '@/lib/sanity';
 import { referenceCache } from './cache';
-import { resolveSupabaseReference } from './resolveSupabaseReference';
-import { resolveSanityReference } from './resolveSanityReference';
+import { resolveSanityReference, resolveSanityDocumentBySupabaseId } from './resolveSanityReference';
 
 // Match types
 export interface MatchSupabase {
@@ -85,8 +84,8 @@ export async function getMatchById(id: string): Promise<MatchSupabase | null> {
 export async function getMatchByIdFromSanity(id: string): Promise<MatchSanity | null> {
   try {
     const query = `*[_type == "match" && _id == $id][0]`;
-    const match = await fetchSanityData(query, { id });
-    return match as MatchSanity;
+    const match = await fetchSanity<MatchSanity>(query, { id });
+    return match;
   } catch (error) {
     console.error('Error fetching match from Sanity by ID:', error);
     return null;
@@ -119,7 +118,7 @@ export async function resolveMatchSanityDocument(
   if (!supabaseMatch || !supabaseMatch.sanity_id) return null;
   
   return resolveSanityReference<MatchSanity>(
-    { sanity_id: supabaseMatch.sanity_id },
+    { id: supabaseMatch.id, sanity_id: supabaseMatch.sanity_id },
     'match'
   );
 }
@@ -132,8 +131,19 @@ export async function resolveMatchSupabaseRecord(
 ): Promise<MatchSupabase | null> {
   if (!sanityMatch || !sanityMatch.supabaseId) return null;
   
-  return resolveSupabaseReference<MatchSupabase>(
-    { _id: sanityMatch._id, _type: 'match', supabaseId: sanityMatch.supabaseId },
-    'match'
-  );
+  return supabase
+    .from('match')
+    .select(`
+      *,
+      home_team:teams!match_home_team_id_fkey(*),
+      away_team:teams!match_away_team_id_fkey(*),
+      competition:competitions!match_competition_id_fkey(*)
+    `)
+    .eq('id', sanityMatch.supabaseId)
+    .single()
+    .then(({ data }) => data as unknown as MatchSupabase)
+    .catch(error => {
+      console.error('Error resolving match Supabase record:', error);
+      return null;
+    });
 }

@@ -3,10 +3,9 @@
  * Cross-system utility for player data management
  */
 
-import { supabase } from '@/lib/supabase/client'; 
-import { fetchSanityData } from '@/lib/sanity/client';
+import { supabase } from './resolveSupabaseReference'; 
+import { fetchSanity } from '@/lib/sanity';
 import { referenceCache } from './cache';
-import { resolveSupabaseReference } from './resolveSupabaseReference';
 import { resolveSanityReference } from './resolveSanityReference';
 
 // Player types
@@ -69,8 +68,8 @@ export async function getPlayerById(id: string): Promise<PlayerSupabase | null> 
 export async function getPlayerByIdFromSanity(id: string): Promise<PlayerSanity | null> {
   try {
     const query = `*[_type == "player" && _id == $id][0]`;
-    const player = await fetchSanityData(query, { id });
-    return player as PlayerSanity;
+    const player = await fetchSanity<PlayerSanity>(query, { id });
+    return player;
   } catch (error) {
     console.error('Error fetching player from Sanity by ID:', error);
     return null;
@@ -103,7 +102,7 @@ export async function resolvePlayerSanityDocument(
   if (!supabasePlayer || !supabasePlayer.sanity_id) return null;
   
   return resolveSanityReference<PlayerSanity>(
-    { sanity_id: supabasePlayer.sanity_id },
+    { id: supabasePlayer.id, sanity_id: supabasePlayer.sanity_id },
     'player'
   );
 }
@@ -116,8 +115,14 @@ export async function resolvePlayerSupabaseRecord(
 ): Promise<PlayerSupabase | null> {
   if (!sanityPlayer || !sanityPlayer.supabaseId) return null;
   
-  return resolveSupabaseReference<PlayerSupabase>(
-    { _id: sanityPlayer._id, _type: 'player', supabaseId: sanityPlayer.supabaseId },
-    'players'
-  );
+  return supabase
+    .from('players')
+    .select('*')
+    .eq('id', sanityPlayer.supabaseId)
+    .single()
+    .then(({ data }) => data as PlayerSupabase)
+    .catch(error => {
+      console.error('Error resolving player Supabase record:', error);
+      return null;
+    });
 }

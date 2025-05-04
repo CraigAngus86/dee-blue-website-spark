@@ -1,10 +1,16 @@
+
 import { createClient } from '@sanity/client'
 
+// Get environment variables or use defaults
+const projectId = process.env.SANITY_STUDIO_PROJECT_ID || 'gxtptap2';
+const dataset = process.env.SANITY_STUDIO_DATASET || 'production';
+const apiVersion = process.env.SANITY_STUDIO_API_VERSION || '2024-05-04';
+
 const sanityClient = createClient({
-  projectId: 'gxtptap2',
-  dataset: 'production',
-  apiVersion: '2024-04-29', // Use today's date or the latest API version
-  useCdn: true
+  projectId,
+  dataset,
+  apiVersion,
+  useCdn: false // Don't use CDN in studio for latest content
 })
 
 export const fetchSanityData = async (query, params = {}) => {
