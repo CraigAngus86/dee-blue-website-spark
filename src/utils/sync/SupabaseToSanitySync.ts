@@ -1,3 +1,4 @@
+
 /**
  * Enhanced utility for syncing data from Supabase to Sanity
  * with detailed error logging and validation

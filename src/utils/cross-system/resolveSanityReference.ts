@@ -1,5 +1,5 @@
 
-import { sanityClient } from '@/lib/sanity/sanityClient';
+import { simpleSanityClient } from '@/lib/sanity-client-simple';
 import { ReferenceOptions } from './types';
 import { referenceCache } from './cache';
 
@@ -39,7 +39,7 @@ export default async function resolveSanityReference<T = any>(
           id: id
         };
         
-        const document = await sanityClient.fetch(query, params);
+        const document = await simpleSanityClient.fetch(query, params);
         return document || null;
       } catch (error) {
         console.error(`Error resolving Sanity reference for ${documentType}:${id}:`, error);
