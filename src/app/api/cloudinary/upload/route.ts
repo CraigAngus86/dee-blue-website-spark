@@ -1,14 +1,6 @@
 
 import { NextResponse } from 'next/server';
-import { v2 as cloudinary } from 'cloudinary';
-
-// Configure Cloudinary with proper environment variables
-cloudinary.config({
-  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'dlkpaw2a0',
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-  secure: true
-});
+import { cloudinaryServer, getPersonFolderPath } from '@/lib/cloudinary/server';
 
 export async function POST(request: Request) {
   try {
@@ -103,8 +95,19 @@ export async function POST(request: Request) {
     
     console.log('[API] Starting Cloudinary upload...');
     
+    // Check if we have API credentials
+    if (!process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+      console.error('[API] Missing Cloudinary API credentials');
+      return NextResponse.json({ 
+        error: { 
+          message: 'Cloudinary API credentials are not configured on the server',
+          code: 'MISSING_CREDENTIALS'
+        }
+      }, { status: 500 });
+    }
+    
     // Upload to Cloudinary
-    const result = await cloudinary.uploader.upload(fileUri, {
+    const result = await cloudinaryServer.uploader.upload(fileUri, {
       folder: folder,
       resource_type: 'auto',
       tags: tagsList,

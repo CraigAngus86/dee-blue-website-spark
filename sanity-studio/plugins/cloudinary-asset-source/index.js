@@ -10,14 +10,12 @@ import { cloudinaryAssetSourcePlugin } from 'sanity-plugin-cloudinary';
  */
 export const banksDeeCloudinaryPlugin = definePlugin(() => {
   // Get environment variables with fallbacks
-  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'dlkpaw2a0';
-  const apiKey = process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY;
-  const apiSecret = process.env.CLOUDINARY_API_SECRET;
+  const cloudName = process.env.SANITY_STUDIO_CLOUDINARY_CLOUD_NAME || 'dlkpaw2a0';
+  const apiKey = process.env.SANITY_STUDIO_CLOUDINARY_API_KEY;
   
   // Log Cloudinary configuration (without exposing secrets)
   console.log('[Sanity Studio] Configuring Cloudinary plugin with cloud name:', cloudName);
   console.log('[Sanity Studio] API Key available:', !!apiKey);
-  console.log('[Sanity Studio] API Secret available:', !!apiSecret);
   
   return {
     name: 'banksDeeCloudinaryPlugin',
@@ -26,7 +24,6 @@ export const banksDeeCloudinaryPlugin = definePlugin(() => {
         // Configuration from environment variables
         cloudName,
         apiKey,
-        apiSecret,
         
         // Default folder for uploads
         folder: 'banksofdeefc',
@@ -37,7 +34,7 @@ export const banksDeeCloudinaryPlugin = definePlugin(() => {
         // Use the same API endpoint that works in the test page
         customUploadEndpoint: '/api/cloudinary/upload',
         
-        // Specify additional parameters that should be sent with the upload
+        // Add additional request headers for identification
         additionalParams: (file, context) => {
           // Extract document info for better organization
           const docType = context?.document?._type || 'unknown';
@@ -45,8 +42,14 @@ export const banksDeeCloudinaryPlugin = definePlugin(() => {
           
           console.log('[Sanity Studio] Preparing upload for:', { docType, docId, fileName: file.name });
           
+          // Add a custom header to identify requests from Sanity Studio
+          const headers = {
+            'x-sanity-studio': 'true'
+          };
+          
           // Create metadata to be consistent with our test uploader
           return {
+            headers,
             contentType: docType,
             entityId: docId,
             type: context?.field?.name || 'default',

@@ -1,103 +1,122 @@
 
 "use client";
 
-import React, { useState } from 'react';
-import { useCloudinaryUpload } from '@/hooks/useCloudinaryUpload';
-import { ContentType } from '@/lib/cloudinary/metadata';
+import { useState } from 'react';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import ImageUploader from '@/components/ui/cloudinary/ImageUploader';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useToast } from '@/components/ui/use-toast';
+
+interface UploadResult {
+  publicId: string;
+  url: string;
+  secureUrl: string;
+  width: number;
+  height: number;
+  format: string;
+}
 
 export default function TestUploader() {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const { uploadFile, isUploading, progress, error, result, reset } = useCloudinaryUpload();
+  const [entityId, setEntityId] = useState('test-' + Math.random().toString(36).substring(2, 10));
+  const [contentType, setContentType] = useState('playerProfile');
+  const [uploadType, setUploadType] = useState('profile');
+  const [uploadResult, setUploadResult] = useState<UploadResult | null>(null);
+  const { toast } = useToast();
   
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setSelectedFile(e.target.files[0]);
-    }
-  };
-  
-  const handleUpload = async () => {
-    if (!selectedFile) return;
-    
-    await uploadFile(selectedFile, {
-      contentType: ContentType.OTHER,
-      entityId: 'test-upload',
-      type: 'test',
-      metadata: {
-        altText: 'Test upload',
-        description: 'Testing Cloudinary upload functionality'
-      },
-      tags: ['test', 'debug']
+  const handleSuccess = (result: UploadResult) => {
+    setUploadResult(result);
+    toast({
+      title: 'Upload Successful',
+      description: `Image uploaded with public ID: ${result.publicId}`,
     });
   };
   
   return (
-    <Card className="w-full max-w-md mx-auto">
-      <CardHeader>
-        <CardTitle>Test Cloudinary Upload</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div>
-          <input
-            type="file"
-            onChange={handleFileChange}
-            accept="image/*"
-            disabled={isUploading}
-            className="w-full"
-          />
-        </div>
+    <div className="max-w-md mx-auto">
+      <Card>
+        <CardHeader>
+          <CardTitle>Cloudinary Upload Test</CardTitle>
+          <CardDescription>
+            Test the image upload functionality to Cloudinary
+          </CardDescription>
+        </CardHeader>
         
-        {selectedFile && (
-          <div className="text-sm">
-            Selected: {selectedFile.name} ({Math.round(selectedFile.size / 1024)} KB)
-          </div>
-        )}
-        
-        {isUploading && (
+        <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Progress value={progress} />
-            <p className="text-xs text-center">{Math.round(progress)}%</p>
+            <Label htmlFor="entityId">Entity ID</Label>
+            <Input 
+              id="entityId" 
+              value={entityId} 
+              onChange={(e) => setEntityId(e.target.value)} 
+              placeholder="Enter an entity ID"
+            />
           </div>
-        )}
-        
-        {error && (
-          <div className="bg-red-50 text-red-800 p-3 rounded-md">
-            <p className="font-bold">Error:</p>
-            <p>{error.message}</p>
+          
+          <div className="space-y-2">
+            <Label htmlFor="contentType">Content Type</Label>
+            <select
+              id="contentType"
+              value={contentType}
+              onChange={(e) => setContentType(e.target.value)}
+              className="w-full p-2 border rounded-md"
+            >
+              <option value="playerProfile">Player Profile</option>
+              <option value="newsArticle">News Article</option>
+              <option value="matchGallery">Match Gallery</option>
+              <option value="sponsor">Sponsor</option>
+              <option value="stadium">Stadium</option>
+            </select>
           </div>
-        )}
+          
+          <div className="space-y-2">
+            <Label htmlFor="uploadType">Upload Type</Label>
+            <select
+              id="uploadType"
+              value={uploadType}
+              onChange={(e) => setUploadType(e.target.value)}
+              className="w-full p-2 border rounded-md"
+            >
+              <option value="profile">Profile</option>
+              <option value="action">Action</option>
+              <option value="featured">Featured</option>
+              <option value="gallery">Gallery</option>
+              <option value="logo">Logo</option>
+            </select>
+          </div>
+          
+          <div className="mt-4">
+            <ImageUploader
+              contentType={contentType}
+              entityId={entityId}
+              type={uploadType}
+              onSuccess={handleSuccess}
+            />
+          </div>
+        </CardContent>
         
-        {result && (
-          <div className="bg-green-50 text-green-800 p-3 rounded-md">
-            <p className="font-bold">Upload successful!</p>
-            <p className="text-xs break-all">URL: {result.secureUrl}</p>
-            <p className="text-xs break-all">ID: {result.publicId}</p>
-            <div className="mt-2">
+        {uploadResult && (
+          <CardFooter className="flex-col items-start space-y-2 border-t pt-4">
+            <h3 className="font-medium">Upload Result:</h3>
+            <div className="bg-gray-50 p-3 rounded-md w-full overflow-auto text-sm">
+              <p><strong>Public ID:</strong> {uploadResult.publicId}</p>
+              <p><strong>URL:</strong> <a href={uploadResult.secureUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline break-all">{uploadResult.secureUrl}</a></p>
+              <p><strong>Size:</strong> {uploadResult.width}x{uploadResult.height}</p>
+              <p><strong>Format:</strong> {uploadResult.format}</p>
+            </div>
+            
+            <div className="mt-4">
               <img 
-                src={result.secureUrl} 
+                src={uploadResult.secureUrl} 
                 alt="Uploaded image" 
-                className="max-h-48 max-w-full mx-auto"
+                className="max-w-full h-auto rounded-md border" 
+                style={{ maxHeight: '200px' }}
               />
             </div>
-          </div>
+          </CardFooter>
         )}
-      </CardContent>
-      <CardFooter className="flex justify-between">
-        <Button 
-          onClick={handleUpload} 
-          disabled={!selectedFile || isUploading}
-        >
-          {isUploading ? 'Uploading...' : 'Upload to Cloudinary'}
-        </Button>
-        
-        {result && (
-          <Button variant="outline" onClick={reset}>
-            Reset
-          </Button>
-        )}
-      </CardFooter>
-    </Card>
+      </Card>
+    </div>
   );
 }

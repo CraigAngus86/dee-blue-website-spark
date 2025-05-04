@@ -91,6 +91,34 @@ export default {
         group: 'basic'
       },
       {
+        name: 'staffRole',
+        title: 'Staff Role',
+        type: 'string',
+        description: 'Role for staff members (only applicable if position is Manager, Coach or Staff)',
+        options: {
+          list: [
+            { title: 'Manager', value: 'manager' },
+            { title: 'Assistant Manager', value: 'assistant_manager' },
+            { title: 'Coach', value: 'coach' },
+            { title: 'Goalkeeper Coach', value: 'gk_coach' },
+            { title: 'Physiotherapist', value: 'physio' },
+            { title: 'Fitness Coach', value: 'fitness_coach' },
+            { title: 'Club Doctor', value: 'doctor' },
+            { title: 'Kit Manager', value: 'kit_manager' },
+            { title: 'Director', value: 'director' },
+            { title: 'Chairman', value: 'chairman' },
+            { title: 'Secretary', value: 'secretary' },
+            { title: 'Other', value: 'other' }
+          ]
+        },
+        group: 'basic',
+        hidden: ({document}) => {
+          // Only show if position is a staff position
+          const staffPositions = ['manager', 'coach', 'staff'];
+          return !document?.position || !staffPositions.includes(document.position);
+        }
+      },
+      {
         name: 'nationality',
         title: 'Nationality',
         type: 'string',
