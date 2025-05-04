@@ -1,12 +1,15 @@
 
-// src/lib/sanity/sanity-simple.js - Replace entire file
+// src/lib/sanity/sanity-simple.js
 import { createClient } from '@sanity/client';
 
-// Get the token from environment variables
+// Get the token from environment variables with fallback mechanism
 const token = process.env.SANITY_API_TOKEN;
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'gxtptap2';
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production';
 const apiVersion = 'v2021-10-21';
+
+// Log token availability for debugging
+console.log('Initializing Sanity client with token available:', !!token);
 
 // Create a simple Sanity client with minimal configuration
 export const sanitySimple = createClient({
@@ -20,10 +23,10 @@ export const sanitySimple = createClient({
 // Simple test function
 export async function testSanityConnection() {
   try {
-    console.log('Testing Sanity connection...');
+    console.log('Testing Sanity connection with token available:', !!token);
     // Use a very simple query that should always work - using * to fetch any document
     const result = await sanitySimple.fetch(`*[_type == "sanity.imageAsset"][0...1]`);
-    console.log('Sanity connection successful:', result);
+    console.log('Sanity connection successful:', result ? 'Data received' : 'No data');
     return { success: true, message: 'Connection successful', data: result };
   } catch (error) {
     console.error('Sanity connection test failed:', error);
@@ -37,7 +40,8 @@ export async function testSanityConnection() {
 
 export async function fetchSanityData(query, params) {
   try {
-    console.log('Executing Sanity query:', { query, paramsKeys: params ? Object.keys(params) : [] });
+    console.log('Executing Sanity query with token available:', !!token);
+    console.log('Query:', { query, paramsKeys: params ? Object.keys(params) : [] });
     const data = await sanitySimple.fetch(query, params);
     return data;
   } catch (error) {

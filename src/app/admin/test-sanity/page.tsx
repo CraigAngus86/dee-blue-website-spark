@@ -38,6 +38,9 @@ export default function TestSanityPage() {
     }
   }
 
+  // Check token status for display
+  const tokenStatus = process.env.SANITY_API_TOKEN ? 'Present' : 'Missing';
+
   return (
     <div className="container mx-auto py-8">
       <h1 className="text-3xl font-bold mb-8">Sanity Connection Test</h1>
@@ -118,9 +121,15 @@ export default function TestSanityPage() {
                           <td className="py-2 font-medium">API Version</td>
                           <td className="py-2">{testType === 'client' ? 'v2021-10-21' : '2021-10-21'}</td>
                         </tr>
-                        <tr>
+                        <tr className={tokenStatus === 'Present' ? 'border-b bg-green-50' : 'border-b bg-red-50'}>
                           <td className="py-2 font-medium">API Token</td>
-                          <td className="py-2">{process.env.SANITY_API_TOKEN ? 'Present' : 'Missing'}</td>
+                          <td className="py-2 flex items-center gap-2">
+                            {tokenStatus === 'Present' ? (
+                              <><CheckCircle className="h-4 w-4 text-green-600" /> Present</>
+                            ) : (
+                              <><AlertTriangle className="h-4 w-4 text-amber-600" /> Missing</>
+                            )}
+                          </td>
                         </tr>
                       </tbody>
                     </table>
@@ -142,7 +151,7 @@ export default function TestSanityPage() {
                         </tr>
                         <tr>
                           <td className="py-2 font-medium">Using Auth</td>
-                          <td className="py-2">{process.env.SANITY_API_TOKEN ? 'Yes' : 'No'}</td>
+                          <td className="py-2">{tokenStatus === 'Present' ? 'Yes' : 'No'}</td>
                         </tr>
                       </tbody>
                     </table>
@@ -174,6 +183,30 @@ export default function TestSanityPage() {
             </Button>
           </CardFooter>
         </Card>
+      </div>
+
+      <div className="mt-8 p-6 bg-amber-50 border border-amber-200 rounded-md">
+        <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
+          <AlertTriangle className="h-5 w-5 text-amber-600" />
+          Troubleshooting Token Issues
+        </h2>
+        <div className="space-y-4">
+          <div>
+            <h3 className="font-medium text-amber-800">Environment Status:</h3>
+            <p className="text-sm text-amber-700 ml-4">
+              API Token is currently shown as <strong>{tokenStatus}</strong>
+            </p>
+          </div>
+          <div>
+            <h3 className="font-medium text-amber-800">Possible Solutions:</h3>
+            <ul className="list-disc ml-8 text-sm text-amber-700 space-y-1">
+              <li>Verify the token is correctly set in <code>.env.local</code> file</li>
+              <li>Ensure the Next.js server has been restarted after updating environment variables</li>
+              <li>Check that environment variables are properly formatted (no spaces around equals sign)</li>
+              <li>If using Vercel, ensure environment variables are set in project settings</li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
   );
