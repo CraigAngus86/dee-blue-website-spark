@@ -1,146 +1,115 @@
-/**
- * Team-specific reference resolution utilities
- */
 
 import { supabase } from '@/lib/supabase/client';
 import { sanityClient } from '@/lib/sanity/client';
-import { 
-  SanityTeam, 
-  SupabaseTeam,
-  ReferenceOptions 
-} from './types';
-import { resolveSupabaseReference } from './resolveSupabaseReference';
-import { resolveSanityDocumentBySupabaseId } from './resolveSanityReference';
+import { ReferenceOptions } from './types';
 import { referenceCache } from './cache';
+import resolveSupabaseReference from './resolveSupabaseReference';
+import resolveSanityReference from './resolveSanityReference';
 
-/**
- * Resolve a team from a Sanity team document
- * @param teamDoc Sanity team document
- * @param options Resolution options
- * @returns Referenced team from Supabase
- */
-export async function resolveTeamFromDocument(
-  teamDoc: SanityTeam | null,
-  options: ReferenceOptions = {}
-): Promise<SupabaseTeam | null> {
-  return resolveSupabaseReference<SupabaseTeam>(teamDoc, 'teams', options);
+export interface CrossSystemTeam {
+  id: string;
+  name: string;
+  shortName?: string;
+  logoUrl?: string;
+  primaryColor?: string;
+  website?: string;
+  stadiumName?: string;
+  foundedYear?: number;
 }
 
 /**
- * Resolve a Sanity team document from a Supabase team record
- * @param team Supabase team record
- * @param options Resolution options
- * @returns Referenced Sanity team document
+ * Get a team by ID from Supabase
  */
-export async function resolveTeamDocumentFromRecord(
-  team: SupabaseTeam | null,
+export async function getTeam(
+  id: string | undefined | null, 
   options: ReferenceOptions = {}
-): Promise<SanityTeam | null> {
-  if (!team) return null;
+): Promise<CrossSystemTeam | null> {
+  if (!id) return null;
   
-  // First try to find by sanity_id if present
-  if (team.sanity_id) {
-    const query = `*[_type == "team" && _id == $sanityId][0]`;
-    const teamDoc = await sanityClient.fetch(query, { sanityId: team.sanity_id });
-    
-    if (teamDoc) return teamDoc as SanityTeam;
-  }
-  
-  // Otherwise find by supabaseId field
-  return resolveSanityDocumentBySupabaseId<SanityTeam>(team.id, 'team', options);
+  return resolveSupabaseReference<CrossSystemTeam>('teams', id, options);
 }
 
 /**
- * Get a team with its associated Sanity content
- * @param teamId Supabase team ID
- * @param options Resolution options
- * @returns Team with related content
+ * Get all teams from Supabase
  */
-export async function getTeamWithContent(
-  teamId: string,
+export async function getAllTeams(
   options: ReferenceOptions = {}
-): Promise<{ 
-  team: SupabaseTeam | null, 
-  teamDocument: SanityTeam | null 
-}> {
+): Promise<CrossSystemTeam[]> {
   const { skipCache = false } = options;
-  const cacheKey = `team:withContent:${teamId}`;
+  const cacheKey = 'supabase:teams:all';
   
-  try {
-    return await referenceCache.getOrSet(
-      cacheKey,
-      async () => {
-        const { data: team, error } = await supabase
+  return referenceCache.getOrSet(
+    cacheKey,
+    async () => {
+      try {
+        const { data, error } = await supabase
           .from('teams')
           .select('*')
-          .eq('id', teamId)
-          .single();
-          
-        if (error || !team) {
-          return { team: null, teamDocument: null };
-        }
+          .order('name');
         
-        const teamDocument = await resolveTeamDocumentFromRecord(team as SupabaseTeam, options);
-        
-        return { 
-          team: team as SupabaseTeam,
-          teamDocument
-        };
-      },
-      skipCache
-    );
-  } catch (error) {
-    console.error('Error fetching team with content:', error);
-    return { team: null, teamDocument: null };
-  }
-}
-
-/**
- * Get all teams with their associated Sanity content
- * @param options Resolution options
- * @returns Array of teams with related content
- */
-export async function getAllTeamsWithContent(
-  options: ReferenceOptions = {}
-): Promise<Array<{ 
-  team: SupabaseTeam, 
-  teamDocument: SanityTeam | null 
-}>> {
-  const { skipCache = false } = options;
-  const cacheKey = 'teams:withContent';
-  
-  try {
-    return await referenceCache.getOrSet(
-      cacheKey,
-      async () => {
-        const { data: teams, error } = await supabase
-          .from('teams')
-          .select('*');
-          
-        if (error || !teams) {
+        if (error) {
+          console.error('Error fetching teams:', error);
           return [];
         }
         
-        const results = await Promise.all(
-          teams.map(async (team) => {
-            const teamDocument = await resolveTeamDocumentFromRecord(
-              team as SupabaseTeam, 
-              options
-            );
-            
-            return {
-              team: team as SupabaseTeam,
-              teamDocument
-            };
-          })
-        );
+        return data.map(team => ({
+          id: team.id,
+          name: team.name,
+          shortName: team.short_name,
+          logoUrl: team.logo_url,
+          primaryColor: team.primary_color,
+          website: team.website,
+          stadiumName: team.stadium_name,
+          foundedYear: team.founded_year
+        }));
+      } catch (error) {
+        console.error('Error fetching teams:', error);
+        return [];
+      }
+    },
+    skipCache
+  );
+}
+
+/**
+ * Get the Banks o' Dee team
+ */
+export async function getBanksODeeTeam(
+  options: ReferenceOptions = {}
+): Promise<CrossSystemTeam | null> {
+  const { skipCache = false } = options;
+  const cacheKey = 'supabase:team:banks-o-dee';
+  
+  return referenceCache.getOrSet(
+    cacheKey,
+    async () => {
+      try {
+        const { data, error } = await supabase
+          .from('teams')
+          .select('*')
+          .eq('name', 'Banks o\' Dee')
+          .single();
         
-        return results;
-      },
-      skipCache
-    );
-  } catch (error) {
-    console.error('Error fetching all teams with content:', error);
-    return [];
-  }
+        if (error) {
+          console.error('Error fetching Banks o\' Dee team:', error);
+          return null;
+        }
+        
+        return {
+          id: data.id,
+          name: data.name,
+          shortName: data.short_name,
+          logoUrl: data.logo_url,
+          primaryColor: data.primary_color,
+          website: data.website,
+          stadiumName: data.stadium_name,
+          foundedYear: data.founded_year
+        };
+      } catch (error) {
+        console.error('Error fetching Banks o\' Dee team:', error);
+        return null;
+      }
+    },
+    skipCache
+  );
 }

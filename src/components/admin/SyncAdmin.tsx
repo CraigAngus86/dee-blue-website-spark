@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState } from 'react';
@@ -10,12 +11,14 @@ import {
   AlertTriangle, 
   XCircle,
   Loader2,
+  Info,
 } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { ImportProgress, ImportStats } from '@/components/admin/ImportProgress';
 import { importPlayersToSanity, importSponsorsToSanity, ImportResult } from '@/utils/sync/SupabaseToSanitySync';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { toast } from '@/components/ui/use-toast';
 
 interface SyncResult {
   created: number;
@@ -35,7 +38,7 @@ export function SyncAdmin() {
   }>({});
   
   const [error, setError] = useState<string | null>(null);
-  const [verboseMode, setVerboseMode] = useState(false);
+  const [verboseMode, setVerboseMode] = useState(true); // Default to verbose mode for better error visibility
   const [dryRun, setDryRun] = useState(false);
   
   const importPlayers = async () => {
@@ -58,6 +61,11 @@ export function SyncAdmin() {
         }
       }));
       
+      toast({
+        title: "Import started",
+        description: "Importing player data from Supabase to Sanity...",
+      });
+      
       const result = await importPlayersToSanity({
         onProgress: (stats) => {
           setResults(prev => ({ ...prev, players: stats }));
@@ -67,12 +75,28 @@ export function SyncAdmin() {
       
       setResults(prev => ({ ...prev, players: result }));
       
-      // Show error message if there were any failures
+      // Show success or warning message
       if (result.failed > 0) {
         setError(`Warning: ${result.failed} player imports failed. Check the details in verbose mode.`);
+        toast({
+          variant: "destructive",
+          title: "Import completed with errors",
+          description: `Created: ${result.created}, Updated: ${result.updated}, Failed: ${result.failed}`,
+        });
+      } else {
+        toast({
+          title: "Import successful",
+          description: `Created: ${result.created}, Updated: ${result.updated}, Failed: ${result.failed}`,
+        });
       }
     } catch (err) {
-      setError(`Error importing players: ${err instanceof Error ? err.message : String(err)}`);
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      setError(`Error importing players: ${errorMessage}`);
+      toast({
+        variant: "destructive",
+        title: "Import failed",
+        description: errorMessage,
+      });
     } finally {
       setLoading({ ...loading, players: false });
     }
@@ -98,6 +122,11 @@ export function SyncAdmin() {
         }
       }));
       
+      toast({
+        title: "Import started",
+        description: "Importing sponsor data from Supabase to Sanity...",
+      });
+      
       const result = await importSponsorsToSanity({
         onProgress: (stats) => {
           setResults(prev => ({ ...prev, sponsors: stats }));
@@ -107,12 +136,28 @@ export function SyncAdmin() {
       
       setResults(prev => ({ ...prev, sponsors: result }));
       
-      // Show error message if there were any failures
+      // Show success or warning message
       if (result.failed > 0) {
         setError(`Warning: ${result.failed} sponsor imports failed. Check the details in verbose mode.`);
+        toast({
+          variant: "destructive",
+          title: "Import completed with errors",
+          description: `Created: ${result.created}, Updated: ${result.updated}, Failed: ${result.failed}`,
+        });
+      } else {
+        toast({
+          title: "Import successful",
+          description: `Created: ${result.created}, Updated: ${result.updated}, Failed: ${result.failed}`,
+        });
       }
     } catch (err) {
-      setError(`Error importing sponsors: ${err instanceof Error ? err.message : String(err)}`);
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      setError(`Error importing sponsors: ${errorMessage}`);
+      toast({
+        variant: "destructive",
+        title: "Import failed",
+        description: errorMessage,
+      });
     } finally {
       setLoading({ ...loading, sponsors: false });
     }
@@ -150,6 +195,15 @@ export function SyncAdmin() {
           </AlertDescription>
         </Alert>
       )}
+      
+      <Alert variant="default" className="bg-blue-50 border-blue-200">
+        <AlertDescription className="flex items-start gap-2">
+          <Info className="h-5 w-5 mt-0.5 flex-shrink-0 text-blue-500" />
+          <div>
+            Enable Verbose Mode to see detailed error messages. For large imports, use Dry Run first to preview changes without modifying data.
+          </div>
+        </AlertDescription>
+      </Alert>
       
       <div className="grid md:grid-cols-2 gap-6">
         <Card>

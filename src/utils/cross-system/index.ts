@@ -14,6 +14,3 @@ export { default as resolveSanityReference } from './resolveSanityReference';
 export * from './player';
 export * from './match';
 export * from './sponsor';
-
-// Note: ReferenceCache is exported from both types.ts and cache.ts
-// We're keeping both exports for backward compatibility

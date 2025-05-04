@@ -5,7 +5,7 @@
  */
 
 import { createClient } from '@sanity/client';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/supabase/client';
 
 // Initialize Sanity client for data import
 const sanityClient = createClient({
@@ -41,7 +41,7 @@ export interface ImportOptions {
 function mapPlayerFields(player: any) {
   return {
     _type: 'playerProfile',
-    playerName: player.name,
+    playerName: player.name || `${player.first_name} ${player.last_name}`,
     firstName: player.first_name,
     lastName: player.last_name,
     position: player.player_position?.toLowerCase() || undefined,
@@ -81,8 +81,7 @@ export async function importPlayersToSanity(options: ImportOptions = {}): Promis
     const { data: players, error } = await supabase
       .from('people')
       .select('*')
-      .is('player_position', 'not.null')
-      .order('name');
+      .not('player_position', 'is', null);
       
     if (error) {
       console.error('Error fetching players:', error);
@@ -92,8 +91,7 @@ export async function importPlayersToSanity(options: ImportOptions = {}): Promis
     
     const validPlayers = players.filter(player => 
       player.first_name && 
-      player.last_name && 
-      player.name
+      player.last_name
     );
     
     console.log(`Found ${players.length} players in Supabase, ${validPlayers.length} with valid data`);
@@ -137,12 +135,6 @@ export async function importPlayersToSanity(options: ImportOptions = {}): Promis
             // Create new player
             const newPlayer = await sanityClient.create(playerDoc);
             
-            // Update Supabase record with Sanity ID reference
-            await supabase
-              .from('people')
-              .update({ sanity_id: newPlayer._id })
-              .eq('id', player.id);
-            
             console.log(`Created player profile for ${player.name} with ID ${newPlayer._id}`);
             result.created++;
           }
@@ -155,7 +147,7 @@ export async function importPlayersToSanity(options: ImportOptions = {}): Promis
           const errorMessage = error instanceof Error ? error.message : String(error);
           console.error(`Error processing player ${player.name}:`, error);
           result.failed++;
-          result.errors[player.id] = `Error with ${player.name}: ${errorMessage}`;
+          result.errors[player.id] = `Error with ${player.name || player.first_name}: ${errorMessage}`;
           
           // Call progress callback if provided
           if (onProgress) {
@@ -258,12 +250,6 @@ export async function importSponsorsToSanity(options: ImportOptions = {}): Promi
           } else {
             // Create new sponsor
             const newSponsor = await sanityClient.create(sponsorDoc);
-            
-            // Update Supabase record with Sanity ID reference
-            await supabase
-              .from('sponsors')
-              .update({ sanity_id: newSponsor._id })
-              .eq('id', sponsor.id);
             
             console.log(`Created sponsor profile for ${sponsor.name} with ID ${newSponsor._id}`);
             result.created++;

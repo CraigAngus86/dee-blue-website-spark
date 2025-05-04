@@ -1,7 +1,7 @@
 
 import { ReferenceOptions } from './types';
 import { referenceCache } from './cache';
-import { client } from '@/lib/sanity/client';
+import { sanityClient } from '@/lib/sanity/client';
 
 /**
  * Resolves a reference to a Sanity document
@@ -31,7 +31,7 @@ async function resolveSanityReference<T = any>(
         const query = `*[_type == "${documentType}" && _id == "${id}"][0]`;
         
         // Execute the query
-        const document = await client.fetch<T>(query);
+        const document = await sanityClient.fetch<T>(query);
         
         if (!document) {
           return null;

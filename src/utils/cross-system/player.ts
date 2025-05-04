@@ -1,6 +1,6 @@
 
 import { supabase } from '@/lib/supabase/client';
-import { client } from '@/lib/sanity/client';
+import { sanityClient } from '@/lib/sanity/client';
 import { ReferenceOptions } from './types';
 import { referenceCache } from './cache';
 
@@ -10,7 +10,7 @@ import { referenceCache } from './cache';
 export interface CrossSystemPlayer {
   id?: string | number;
   sanityId?: string;
-  supabaseId?: number;
+  supabaseId?: number | string;
   firstName?: string;
   lastName?: string;
   fullName?: string;
@@ -111,8 +111,10 @@ export async function getSupabasePlayers(
       try {
         let query = supabase
           .from('people')
-          .select('*')
-          .is('player_position', 'not.null');
+          .select('*');
+          
+        // Filter for players by checking if player_position is not null
+        query = query.not('player_position', 'is', null);
           
         if (positionFilter) {
           query = query.eq('player_position', positionFilter);

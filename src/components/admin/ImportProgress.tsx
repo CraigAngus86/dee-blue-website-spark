@@ -1,7 +1,8 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Progress } from '@/components/ui/progress';
-import { AlertTriangle, CheckCircle, HelpCircle, Loader2 } from 'lucide-react';
+import { AlertTriangle, CheckCircle, HelpCircle, Loader2, ChevronDown, ChevronUp } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export interface ImportStats {
   total: number;
@@ -25,6 +26,9 @@ export const ImportProgress: React.FC<ImportProgressProps> = ({
 }) => {
   const { total, processed, created, updated, failed, errors = {} } = stats;
   const percentComplete = total > 0 ? Math.round((processed / total) * 100) : 0;
+  const [showErrors, setShowErrors] = useState(true);
+  
+  const totalErrors = Object.keys(errors).length;
   
   return (
     <div className="space-y-3">
@@ -57,27 +61,40 @@ export const ImportProgress: React.FC<ImportProgressProps> = ({
         </div>
       )}
       
-      {showDetails && failed > 0 && (
-        <div className="mt-4">
-          <h4 className="text-sm font-semibold mb-2">Error Details</h4>
-          <div className="max-h-60 overflow-y-auto border rounded-md">
-            <table className="w-full text-xs">
-              <thead className="bg-muted">
-                <tr>
-                  <th className="py-1 px-2 text-left">Record</th>
-                  <th className="py-1 px-2 text-left">Error</th>
-                </tr>
-              </thead>
-              <tbody>
-                {Object.entries(errors).map(([key, message]) => (
-                  <tr key={key} className="border-t">
-                    <td className="py-1 px-2">{key}</td>
-                    <td className="py-1 px-2 text-red-500">{message}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+      {showDetails && failed > 0 && totalErrors > 0 && (
+        <div className="mt-4 border rounded-md overflow-hidden">
+          <div 
+            className="bg-muted p-2 flex justify-between items-center cursor-pointer"
+            onClick={() => setShowErrors(!showErrors)}
+          >
+            <h4 className="text-sm font-semibold">
+              Error Details ({totalErrors})
+            </h4>
+            <Button variant="ghost" size="sm">
+              {showErrors ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+            </Button>
           </div>
+          
+          {showErrors && (
+            <div className="max-h-60 overflow-y-auto">
+              <table className="w-full text-xs">
+                <thead className="bg-muted">
+                  <tr>
+                    <th className="py-1 px-2 text-left">Record</th>
+                    <th className="py-1 px-2 text-left">Error</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.entries(errors).map(([key, message]) => (
+                    <tr key={key} className="border-t">
+                      <td className="py-1 px-2 font-mono">{key}</td>
+                      <td className="py-1 px-2 text-red-500">{message}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       )}
     </div>

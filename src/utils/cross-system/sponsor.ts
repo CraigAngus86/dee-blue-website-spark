@@ -1,33 +1,25 @@
 
 import { supabase } from '@/lib/supabase/client';
-import { client } from '@/lib/sanity/client';
+import { sanityClient } from '@/lib/sanity/client';
 import { ReferenceOptions } from './types';
 import { referenceCache } from './cache';
-import resolveSupabaseReference from './resolveSupabaseReference';
-import resolveSanityReference from './resolveSanityReference';
 
-/**
- * Interface for sponsor details that can be resolved from both systems
- */
 export interface CrossSystemSponsor {
-  id?: string | number;
-  sanityId?: string;
-  supabaseId?: number;
-  name?: string;
-  description?: string;
+  id?: string;
+  name: string;
+  tier?: string;
   website?: string;
   logoUrl?: string;
+  logoDarkUrl?: string;
+  description?: string;
   featured?: boolean;
-  tier?: string;
-  startDate?: string;
-  endDate?: string;
 }
 
 /**
- * Resolves a sponsor reference from Supabase
+ * Resolves a sponsor from Supabase by ID
  */
 export async function resolveSupabaseSponsor(
-  id: number | string | null | undefined,
+  id: string | null | undefined,
   options: ReferenceOptions = {}
 ): Promise<CrossSystemSponsor | null> {
   if (!id) return null;
@@ -44,26 +36,20 @@ export async function resolveSupabaseSponsor(
           .eq('id', id)
           .single();
           
-        if (error) {
+        if (error || !data) {
           console.error(`Error resolving Supabase sponsor ${id}:`, error);
-          return null;
-        }
-        
-        if (!data) {
           return null;
         }
         
         return {
           id: data.id,
-          supabaseId: data.id,
           name: data.name,
-          description: data.description,
+          tier: data.tier,
           website: data.website,
           logoUrl: data.logo_url,
-          featured: data.featured,
-          tier: data.sponsor_tier,
-          startDate: data.start_date,
-          endDate: data.end_date
+          logoDarkUrl: data.logo_dark_url,
+          description: data.description,
+          featured: data.featured
         };
       } catch (error) {
         console.error(`Error resolving Supabase sponsor ${id}:`, error);
@@ -75,56 +61,49 @@ export async function resolveSupabaseSponsor(
 }
 
 /**
- * Get all sponsors from Supabase with optional filtering
+ * Get all sponsors from Supabase
  */
 export async function getSupabaseSponsors(
-  options: ReferenceOptions & { 
-    featuredOnly?: boolean;
+  options: ReferenceOptions & {
     tier?: string;
-    limit?: number;
+    featuredOnly?: boolean;
   } = {}
 ): Promise<CrossSystemSponsor[]> {
-  const { featuredOnly, tier, limit = 100 } = options;
-  const cacheKey = `supabase:all-sponsors:${featuredOnly ? 'featured' : 'all'}:${tier || 'all'}:${limit}`;
+  const { tier, featuredOnly = false } = options;
+  const cacheKey = `supabase:sponsors:${tier || 'all'}:${featuredOnly ? 'featured' : 'all'}`;
   
   return referenceCache.getOrSet(
     cacheKey,
     async () => {
       try {
-        let query = supabase.from('sponsors').select('*');
-          
+        let query = supabase
+          .from('sponsors')
+          .select('*');
+        
+        if (tier) {
+          query = query.eq('tier', tier);
+        }
+        
         if (featuredOnly) {
           query = query.eq('featured', true);
         }
         
-        if (tier) {
-          query = query.eq('sponsor_tier', tier);
-        }
+        const { data, error } = await query.order('name');
         
-        const { data, error } = await query
-          .order('featured', { ascending: false })
-          .limit(limit);
-          
-        if (error) {
+        if (error || !data) {
           console.error('Error fetching sponsors:', error);
-          return [];
-        }
-        
-        if (!data || !data.length) {
           return [];
         }
         
         return data.map(sponsor => ({
           id: sponsor.id,
-          supabaseId: sponsor.id,
           name: sponsor.name,
-          description: sponsor.description,
+          tier: sponsor.tier,
           website: sponsor.website,
           logoUrl: sponsor.logo_url,
-          featured: sponsor.featured,
-          tier: sponsor.sponsor_tier,
-          startDate: sponsor.start_date,
-          endDate: sponsor.end_date
+          logoDarkUrl: sponsor.logo_dark_url,
+          description: sponsor.description,
+          featured: sponsor.featured
         }));
       } catch (error) {
         console.error('Error fetching sponsors:', error);
