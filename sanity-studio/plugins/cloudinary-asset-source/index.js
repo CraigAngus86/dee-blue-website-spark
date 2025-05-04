@@ -29,7 +29,7 @@ export const banksDeeCloudinaryPlugin = definePlugin(() => {
         folder: 'banksofdeefc',
         
         // Custom upload endpoint - this is key to making it work with our solution
-        uploadPreset: undefined, // Don't use upload presets, use our custom endpoint
+        uploadPreset: 'player-upload',
         
         // Use the same API endpoint that works in the test page
         customUploadEndpoint: '/api/cloudinary/upload',

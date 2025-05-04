@@ -1,6 +1,6 @@
 
 import { NextResponse } from 'next/server';
-import { cloudinaryServer, getPersonFolderPath } from '@/lib/cloudinary/server';
+import { cloudinaryServer, getPersonFolderPath, getUploadPreset } from '@/lib/cloudinary/server';
 
 export async function POST(request: Request) {
   try {
@@ -106,9 +106,14 @@ export async function POST(request: Request) {
       }, { status: 500 });
     }
     
+    // Get the appropriate upload preset
+    const uploadPreset = getUploadPreset(contentType);
+    console.log('[API] Using upload preset:', uploadPreset);
+    
     // Upload to Cloudinary
     const result = await cloudinaryServer.uploader.upload(fileUri, {
       folder: folder,
+      upload_preset: uploadPreset,
       resource_type: 'auto',
       tags: tagsList,
       context: context,

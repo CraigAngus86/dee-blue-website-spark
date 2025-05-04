@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Upload, X, Image as ImageIcon, Check } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
+import { UPLOAD_PRESETS } from '@/lib/cloudinary/client';
 
 interface ImageUploaderProps {
   contentType: string; // e.g., 'playerProfile'
@@ -15,6 +16,7 @@ interface ImageUploaderProps {
   className?: string;
   allowedTypes?: string[];
   maxSizeMB?: number;
+  uploadPreset?: string;
 }
 
 interface UploadResult {
@@ -33,7 +35,8 @@ export default function ImageUploader({
   onSuccess,
   className = '',
   allowedTypes = ['image/jpeg', 'image/png', 'image/webp'],
-  maxSizeMB = 5
+  maxSizeMB = 5,
+  uploadPreset
 }: ImageUploaderProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -86,6 +89,11 @@ export default function ImageUploader({
       formData.append('entityId', entityId);
       formData.append('type', type);
       formData.append('tags', [contentType, type].join(','));
+      
+      // Add upload preset if specified
+      if (uploadPreset) {
+        formData.append('uploadPreset', uploadPreset);
+      }
       
       // Metadata
       const metadata = {

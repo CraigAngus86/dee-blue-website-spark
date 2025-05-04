@@ -67,34 +67,47 @@ export default {
         description: 'Player last name',
         group: 'basic'
       },
+      // SPLIT: Replace position field with playerPosition and staffType
       {
-        name: 'position',
-        title: 'Position',
+        name: 'playerPosition',
+        title: 'Player Position',
         type: 'string',
         options: {
           list: [
             { title: 'Goalkeeper', value: 'goalkeeper' },
             { title: 'Defender', value: 'defender' },
             { title: 'Midfielder', value: 'midfielder' },
-            { title: 'Forward', value: 'forward' },
+            { title: 'Forward', value: 'forward' }
+          ]
+        },
+        group: 'basic',
+        hidden: ({document}) => {
+          // Hide player position if this is staff
+          return document?.staffType && document.staffType !== '';
+        }
+      },
+      {
+        name: 'staffType',
+        title: 'Staff Type',
+        type: 'string',
+        options: {
+          list: [
             { title: 'Manager', value: 'manager' },
             { title: 'Coach', value: 'coach' },
             { title: 'Staff', value: 'staff' }
           ]
         },
-        group: 'basic'
-      },
-      {
-        name: 'jerseyNumber',
-        title: 'Jersey Number',
-        type: 'number',
-        group: 'basic'
+        group: 'basic',
+        hidden: ({document}) => {
+          // Hide staff type if this is a player
+          return document?.playerPosition && document.playerPosition !== '';
+        }
       },
       {
         name: 'staffRole',
         title: 'Staff Role',
         type: 'string',
-        description: 'Role for staff members (only applicable if position is Manager, Coach or Staff)',
+        description: 'Specific role for staff members',
         options: {
           list: [
             { title: 'Manager', value: 'manager' },
@@ -113,9 +126,8 @@ export default {
         },
         group: 'basic',
         hidden: ({document}) => {
-          // Only show if position is a staff position
-          const staffPositions = ['manager', 'coach', 'staff'];
-          return !document?.position || !staffPositions.includes(document.position);
+          // Only show if staffType is selected
+          return !document?.staffType || document.staffType === '';
         }
       },
       {
@@ -294,11 +306,14 @@ export default {
     preview: {
       select: {
         title: 'playerName',
+        subtitle: 'playerPosition',
+        staffTitle: 'staffRole',
         media: 'profileImage'
       },
-      prepare({title, media}) {
+      prepare({title, subtitle, staffTitle, media}) {
         return {
           title,
+          subtitle: staffTitle || subtitle,
           media
         }
       }

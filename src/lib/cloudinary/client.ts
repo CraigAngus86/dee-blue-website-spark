@@ -35,3 +35,11 @@ export const getPlayerImageUrl = (publicId: string, options: {
     process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'dlkpaw2a0'
   }/image/upload/c_${crop},w_${width},h_${height}/${publicId}`;
 };
+
+// Default upload presets
+export const UPLOAD_PRESETS = {
+  PLAYER: 'player-upload', // Preset for player profiles
+  NEWS: 'news-upload',     // Preset for news articles
+  MATCH: 'match-upload',   // Preset for match galleries
+  DEFAULT: 'default-upload' // Fallback preset
+};

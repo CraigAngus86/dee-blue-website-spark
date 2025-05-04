@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
+import { UPLOAD_PRESETS } from '@/lib/cloudinary/client';
 
 interface UploadResult {
   publicId: string;
@@ -22,6 +23,7 @@ export default function TestUploader() {
   const [entityId, setEntityId] = useState('test-' + Math.random().toString(36).substring(2, 10));
   const [contentType, setContentType] = useState('playerProfile');
   const [uploadType, setUploadType] = useState('profile');
+  const [usePreset, setUsePreset] = useState(true);
   const [uploadResult, setUploadResult] = useState<UploadResult | null>(null);
   const { toast } = useToast();
   
@@ -86,12 +88,28 @@ export default function TestUploader() {
             </select>
           </div>
           
+          <div className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              id="usePreset"
+              checked={usePreset}
+              onChange={(e) => setUsePreset(e.target.checked)}
+              className="rounded border-gray-300"
+            />
+            <Label htmlFor="usePreset" className="cursor-pointer">Use upload preset</Label>
+          </div>
+          
           <div className="mt-4">
             <ImageUploader
               contentType={contentType}
               entityId={entityId}
               type={uploadType}
               onSuccess={handleSuccess}
+              uploadPreset={usePreset ? 
+                contentType === 'playerProfile' ? UPLOAD_PRESETS.PLAYER : 
+                contentType === 'newsArticle' ? UPLOAD_PRESETS.NEWS :
+                contentType === 'matchGallery' ? UPLOAD_PRESETS.MATCH :
+                UPLOAD_PRESETS.DEFAULT : undefined}
             />
           </div>
         </CardContent>
