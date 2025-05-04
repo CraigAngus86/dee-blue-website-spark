@@ -1,128 +1,152 @@
 
 import React from 'react';
-import Image from 'next/image';
-import { format } from 'date-fns';
-import { CalendarIcon, Clock, MapPinIcon, TicketIcon } from 'lucide-react';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
+import { Match } from '@/types/match';
+import { Calendar, ChevronRight, Loader2 } from 'lucide-react';
 
-interface FixturesCardProps {
-  fixture: {
-    id: string;
-    competition?: string;
-    date: string;
-    time?: string;
-    venue?: string;
-    homeTeam: string;
-    awayTeam: string;
-    home: {
-      name: string;
-      logo?: string;
-    };
-    away: {
-      name: string;
-      logo?: string;
-    };
-    ticketLink?: string;
-  };
+export interface FixturesCardProps {
+  fixture?: Match;
+  upcomingFixtures?: Match[];
+  recentResults?: Match[];
+  isLoading?: boolean;
 }
 
-export function FixturesCard({ fixture }: FixturesCardProps) {
-  // Format date if available
-  const formattedDate = fixture.date ? format(new Date(fixture.date), 'EEE, MMM d, yyyy') : 'TBD';
-  
+export function FixturesCard({ 
+  fixture, 
+  upcomingFixtures = [], 
+  recentResults = [], 
+  isLoading = false 
+}: FixturesCardProps) {
+  if (isLoading) {
+    return (
+      <Card>
+        <CardContent className="p-8 flex justify-center items-center">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
-    <Card className="overflow-hidden">
-      <div className="p-4">
-        {/* Competition name */}
-        {fixture.competition && (
-          <div className="text-sm font-semibold text-primary mb-2">
-            {fixture.competition}
-          </div>
-        )}
-        
-        {/* Teams and logos */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex flex-col items-center w-1/3">
-            {fixture.home.logo ? (
-              <div className="w-16 h-16 relative mb-2">
-                <Image 
-                  src={fixture.home.logo} 
-                  alt={fixture.home.name}
-                  fill
-                  className="object-contain"
-                />
-              </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Fixtures & Results</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Tabs defaultValue="upcoming">
+          <TabsList className="grid grid-cols-2 w-full mb-4">
+            <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
+            <TabsTrigger value="results">Results</TabsTrigger>
+          </TabsList>
+          <TabsContent value="upcoming" className="space-y-4">
+            {upcomingFixtures && upcomingFixtures.length > 0 ? (
+              upcomingFixtures.map((match) => (
+                <MatchItem key={match.id} match={match} type="upcoming" />
+              ))
             ) : (
-              <div className="w-16 h-16 bg-muted mb-2 flex items-center justify-center rounded-full">
-                {fixture.home.name.substring(0, 2)}
+              <div className="text-center py-8">
+                <Calendar className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                <p>No upcoming fixtures at this time</p>
               </div>
             )}
-            <span className="text-sm text-center font-medium">{fixture.home.name}</span>
-          </div>
-          
-          <div className="flex flex-col items-center">
-            <span className="text-lg font-bold">vs</span>
-          </div>
-          
-          <div className="flex flex-col items-center w-1/3">
-            {fixture.away.logo ? (
-              <div className="w-16 h-16 relative mb-2">
-                <Image 
-                  src={fixture.away.logo} 
-                  alt={fixture.away.name}
-                  fill
-                  className="object-contain"
-                />
-              </div>
+          </TabsContent>
+          <TabsContent value="results" className="space-y-4">
+            {recentResults && recentResults.length > 0 ? (
+              recentResults.map((match) => (
+                <MatchItem key={match.id} match={match} type="result" />
+              ))
             ) : (
-              <div className="w-16 h-16 bg-muted mb-2 flex items-center justify-center rounded-full">
-                {fixture.away.name.substring(0, 2)}
+              <div className="text-center py-8">
+                <Calendar className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                <p>No recent results to show</p>
               </div>
             )}
-            <span className="text-sm text-center font-medium">{fixture.away.name}</span>
-          </div>
-        </div>
-        
-        {/* Match details */}
-        <div className="space-y-2 mt-4 text-sm">
-          <div className="flex items-center gap-2">
-            <CalendarIcon className="h-4 w-4 text-muted-foreground" />
-            <span>{formattedDate}</span>
-          </div>
-          
-          {fixture.time && (
-            <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4 text-muted-foreground" />
-              <span>{fixture.time}</span>
-            </div>
-          )}
-          
-          {fixture.venue && (
-            <div className="flex items-center gap-2">
-              <MapPinIcon className="h-4 w-4 text-muted-foreground" />
-              <span>{fixture.venue}</span>
-            </div>
-          )}
-        </div>
-        
-        {/* Ticket link */}
-        {fixture.ticketLink && (
-          <div className="mt-4">
-            <Button 
-              variant="outline" 
-              size="sm"
-              className="w-full"
-              asChild
-            >
-              <a href={fixture.ticketLink} target="_blank" rel="noopener noreferrer">
-                <TicketIcon className="h-4 w-4 mr-2" />
-                Buy Tickets
-              </a>
-            </Button>
-          </div>
+          </TabsContent>
+        </Tabs>
+      </CardContent>
+    </Card>
+  );
+}
+
+interface MatchItemProps {
+  match: Match;
+  type: 'upcoming' | 'result';
+}
+
+function MatchItem({ match, type }: MatchItemProps) {
+  return (
+    <div className="border rounded-md p-4">
+      <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+        <span>{match.competition}</span>
+        <span>•</span>
+        <span>{match.matchDate}</span>
+        {match.matchTime && (
+          <>
+            <span>•</span>
+            <span>{match.matchTime}</span>
+          </>
         )}
       </div>
-    </Card>
+
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-3">
+          {match.homeTeamLogo && (
+            <div className="w-8 h-8 flex items-center justify-center">
+              <img 
+                src={match.homeTeamLogo} 
+                alt={match.homeTeam} 
+                className="max-w-full max-h-full object-contain" 
+              />
+            </div>
+          )}
+          <span className="font-medium">{match.homeTeam}</span>
+        </div>
+
+        {type === 'result' && match.homeScore !== undefined && match.awayScore !== undefined ? (
+          <div className="font-bold text-lg">
+            {match.homeScore} - {match.awayScore}
+          </div>
+        ) : (
+          <div className="font-bold">vs</div>
+        )}
+
+        <div className="flex items-center gap-3">
+          <span className="font-medium">{match.awayTeam}</span>
+          {match.awayTeamLogo && (
+            <div className="w-8 h-8 flex items-center justify-center">
+              <img 
+                src={match.awayTeamLogo} 
+                alt={match.awayTeam} 
+                className="max-w-full max-h-full object-contain" 
+              />
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="text-sm text-muted-foreground">{match.venue}</div>
+      
+      {type === 'upcoming' && match.ticketLink && (
+        <div className="mt-3">
+          <Button size="sm" asChild>
+            <a href={match.ticketLink} target="_blank" rel="noopener noreferrer">
+              Buy Tickets <ChevronRight className="ml-1 h-4 w-4" />
+            </a>
+          </Button>
+        </div>
+      )}
+      
+      {type === 'result' && match.matchReportLink && (
+        <div className="mt-3">
+          <Button size="sm" variant="outline" asChild>
+            <a href={match.matchReportLink} target="_blank" rel="noopener noreferrer">
+              Match Report <ChevronRight className="ml-1 h-4 w-4" />
+            </a>
+          </Button>
+        </div>
+      )}
+    </div>
   );
 }

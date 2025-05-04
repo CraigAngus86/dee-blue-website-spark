@@ -29,9 +29,13 @@ class ReferenceCache {
   /**
    * Get a value from cache or create it using the provided factory function
    */
-  async getOrSet<T>(key: string, factory: () => Promise<T>, skipCache: boolean = false): Promise<T> {
+  async getOrSet<T>(key: string | null | undefined, factory: () => Promise<T>, skipCache: boolean = false): Promise<T> {
     // Ensure we have a valid string key
-    const cacheKey = key || 'null-key';
+    if (!key) {
+      return factory();
+    }
+    
+    const cacheKey = key;
     
     if (!skipCache) {
       const cached = this.get<T>(cacheKey);

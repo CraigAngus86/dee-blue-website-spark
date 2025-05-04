@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { format, parseISO } from 'date-fns';
 import { Card } from '@/components/ui/card';
@@ -21,7 +22,7 @@ interface FeaturedMatchProps {
   className?: string;
 }
 
-export function FeaturedMatch({ match, className = '' }: FeaturedMatchProps) {
+const FeaturedMatch = ({ match, className = '' }: FeaturedMatchProps) => {
   const {
     matchDate,
     matchTime,
@@ -97,4 +98,6 @@ export function FeaturedMatch({ match, className = '' }: FeaturedMatchProps) {
       </div>
     </Card>
   );
-}
+};
+
+export default FeaturedMatch;

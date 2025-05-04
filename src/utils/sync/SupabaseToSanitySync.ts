@@ -33,6 +33,7 @@ export interface ImportOptions {
   batchSize?: number;
   onProgress?: (stats: ImportResult) => void;
   dryRun?: boolean;
+  testSinglePlayer?: string; // Option to test import with a single player by ID
 }
 
 /**
@@ -63,7 +64,7 @@ function mapPlayerFields(player: any) {
  * Import Supabase players to Sanity with enhanced error handling
  */
 export async function importPlayersToSanity(options: ImportOptions = {}): Promise<ImportResult> {
-  const { batchSize = 5, onProgress, dryRun = false } = options;
+  const { batchSize = 5, onProgress, dryRun = false, testSinglePlayer = null } = options;
   
   const result: ImportResult = {
     created: 0,
@@ -78,10 +79,18 @@ export async function importPlayersToSanity(options: ImportOptions = {}): Promis
   
   try {
     console.log('Fetching players from Supabase...');
-    const { data: players, error } = await supabase
-      .from('people')
-      .select('*')
-      .not('player_position', 'is', null);
+    
+    let query = supabase.from('people').select('*');
+    
+    // Filter for players by checking if player_position is not null
+    query = query.not('player_position', 'is', null);
+    
+    // If testing with a single player
+    if (testSinglePlayer) {
+      query = query.eq('id', testSinglePlayer);
+    }
+    
+    const { data: players, error } = await query;
       
     if (error) {
       console.error('Error fetching players:', error);
@@ -108,17 +117,26 @@ export async function importPlayersToSanity(options: ImportOptions = {}): Promis
           result.processingStats.processed++;
           
           // Check if player already exists in Sanity
-          const existingPlayer = await sanityClient.fetch(
-            `*[_type == "playerProfile" && supabaseId == $supabaseId][0]`,
-            { supabaseId: player.id }
-          );
-
+          console.log(`Checking if player ${player.first_name} ${player.last_name} exists in Sanity (supabaseId: ${player.id})...`);
+          
+          // Build the query with proper syntax
+          const query = `*[_type == "playerProfile" && supabaseId == $supabaseId][0]`;
+          const params = { supabaseId: player.id };
+          
+          // Log the exact query for debugging
+          console.log('Query:', query);
+          console.log('Params:', params);
+          
+          // Try to fetch the existing player profile
+          const existingPlayer = await sanityClient.fetch(query, params);
+          console.log('Existing player:', existingPlayer);
+          
           // Map player fields for Sanity
           const playerDoc = mapPlayerFields(player);
           
           // Skip actual writing if in dry run mode
           if (dryRun) {
-            console.log(`[DRY RUN] Would ${existingPlayer ? 'update' : 'create'} player ${player.name}`);
+            console.log(`[DRY RUN] Would ${existingPlayer ? 'update' : 'create'} player ${player.name || `${player.first_name} ${player.last_name}`}`);
             existingPlayer ? result.updated++ : result.created++;
             continue;
           }
@@ -129,13 +147,13 @@ export async function importPlayersToSanity(options: ImportOptions = {}): Promis
               .set(playerDoc)
               .commit();
               
-            console.log(`Updated player profile for ${player.name}`);
+            console.log(`Updated player profile for ${player.name || `${player.first_name} ${player.last_name}`}`);
             result.updated++;
           } else {
             // Create new player
             const newPlayer = await sanityClient.create(playerDoc);
             
-            console.log(`Created player profile for ${player.name} with ID ${newPlayer._id}`);
+            console.log(`Created player profile for ${player.name || `${player.first_name} ${player.last_name}`} with ID ${newPlayer._id}`);
             result.created++;
           }
           
@@ -145,7 +163,7 @@ export async function importPlayersToSanity(options: ImportOptions = {}): Promis
           }
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : String(error);
-          console.error(`Error processing player ${player.name}:`, error);
+          console.error(`Error processing player ${player.name || `${player.first_name} ${player.last_name}`}:`, error);
           result.failed++;
           result.errors[player.id] = `Error with ${player.name || player.first_name}: ${errorMessage}`;
           

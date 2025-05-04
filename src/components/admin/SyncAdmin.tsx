@@ -12,6 +12,7 @@ import {
   XCircle,
   Loader2,
   Info,
+  Bug,
 } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -19,6 +20,7 @@ import { ImportProgress, ImportStats } from '@/components/admin/ImportProgress';
 import { importPlayersToSanity, importSponsorsToSanity, ImportResult } from '@/utils/sync/SupabaseToSanitySync';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { toast } from '@/components/ui/use-toast';
+import { Input } from '@/components/ui/input';
 
 interface SyncResult {
   created: number;
@@ -40,6 +42,8 @@ export function SyncAdmin() {
   const [error, setError] = useState<string | null>(null);
   const [verboseMode, setVerboseMode] = useState(true); // Default to verbose mode for better error visibility
   const [dryRun, setDryRun] = useState(false);
+  const [testSinglePlayerId, setTestSinglePlayerId] = useState('');
+  const [debugMode, setDebugMode] = useState(false);
   
   const importPlayers = async () => {
     setLoading({ ...loading, players: true });
@@ -70,7 +74,8 @@ export function SyncAdmin() {
         onProgress: (stats) => {
           setResults(prev => ({ ...prev, players: stats }));
         },
-        dryRun
+        dryRun,
+        testSinglePlayer: testSinglePlayerId || null,
       });
       
       setResults(prev => ({ ...prev, players: result }));
@@ -185,7 +190,53 @@ export function SyncAdmin() {
           />
           <Label htmlFor="dry-run">Dry Run (Preview Only)</Label>
         </div>
+        
+        <div className="flex items-center space-x-2">
+          <Switch 
+            id="debug-mode" 
+            checked={debugMode} 
+            onCheckedChange={setDebugMode} 
+          />
+          <Label htmlFor="debug-mode">Debug Mode</Label>
+        </div>
       </div>
+      
+      {debugMode && (
+        <Card className="bg-amber-50 border-amber-200">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Bug className="h-5 w-5" />
+              Debug Tools
+            </CardTitle>
+            <CardDescription>
+              Tools for diagnosing and fixing import issues
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label htmlFor="test-player-id">Test Single Player Import (by ID)</Label>
+              <div className="flex gap-2 mt-1">
+                <Input 
+                  id="test-player-id" 
+                  placeholder="Enter player ID" 
+                  value={testSinglePlayerId}
+                  onChange={(e) => setTestSinglePlayerId(e.target.value)}
+                />
+                <Button 
+                  variant="secondary" 
+                  onClick={importPlayers} 
+                  disabled={loading.players || !testSinglePlayerId}
+                >
+                  Test
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                Enter a Supabase player ID to test import for a single player.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
       
       {error && (
         <Alert variant="destructive">
@@ -217,6 +268,7 @@ export function SyncAdmin() {
             <p className="text-sm mb-4">
               This will create or update player profiles in Sanity based on the data in Supabase.
               {dryRun && " (Dry Run Mode: No changes will be made)"}
+              {testSinglePlayerId && " (Testing single player only)"}
             </p>
             
             {results.players && (
