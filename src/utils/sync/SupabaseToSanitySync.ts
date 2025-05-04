@@ -3,9 +3,8 @@
  * with detailed error logging and validation
  */
 
-import { sanityAdminClient } from '@/lib/sanity/sanityClient';
+import { createSimpleSanityClient } from '@/lib/sanity-client-simple';
 import { supabase } from '@/lib/supabase/client';
-import { createClient } from '@sanity/client';
 
 // Import result interface
 export interface ImportResult {
@@ -30,25 +29,8 @@ export interface ImportOptions {
 }
 
 // Create a direct Sanity client specifically for imports to bypass any issues
-// in the project-wide Sanity client
 const createDirectSanityClient = () => {
-  // Environment variables
-  const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'gxtptap2';
-  const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production';
-  const apiVersion = process.env.NEXT_PUBLIC_SANITY_API_VERSION || '2023-06-21';
-  const token = process.env.SANITY_API_TOKEN;
-
-  if (!projectId || !dataset) {
-    throw new Error('Sanity projectId and dataset are required');
-  }
-
-  return createClient({
-    projectId,
-    dataset,
-    apiVersion,
-    token,
-    useCdn: false,
-  });
+  return createSimpleSanityClient();
 };
 
 /**
