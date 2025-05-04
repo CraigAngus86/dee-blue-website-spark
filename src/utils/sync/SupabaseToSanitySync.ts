@@ -1,10 +1,9 @@
-
 /**
  * Enhanced utility for syncing data from Supabase to Sanity
  * with detailed error logging and validation
  */
 
-import { createSimpleSanityClient } from '@/lib/sanity-client-simple';
+import { sanitySimple } from '@/lib/sanity/sanity-simple';
 import { supabase } from '@/lib/supabase/client';
 
 // Import result interface
@@ -31,7 +30,7 @@ export interface ImportOptions {
 
 // Create a direct Sanity client specifically for imports to bypass any issues
 const createDirectSanityClient = () => {
-  return createSimpleSanityClient();
+  return sanitySimple;
 };
 
 /**
@@ -177,7 +176,8 @@ export async function importPlayersToSanity(options: ImportOptions = {}): Promis
             }
           } catch (sanityFetchError) {
             console.error('Sanity fetch error:', sanityFetchError);
-            throw new Error(`Sanity fetch failed: ${sanityFetchError instanceof Error ? sanityFetchError.message : String(sanityFetchError)}`);
+            // Change the error message to avoid any string concatenation issues
+            throw new Error(`Sanity fetch failed - check server logs for details`);
           }
           
           // Map person fields for Sanity

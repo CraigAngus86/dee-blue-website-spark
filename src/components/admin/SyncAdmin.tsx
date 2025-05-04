@@ -20,7 +20,22 @@ import { importPlayersToSanity, importSponsorsToSanity, ImportResult } from '@/u
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { toast } from '@/components/ui/use-toast';
 import { Input } from '@/components/ui/input';
-import { testSimpleSanityConnection } from '@/lib/sanity-client-simple';
+import { testSanityConnection } from '@/lib/sanity/sanity-simple';
+import { testMinimalSanityConnection } from '@/lib/sanity/test-connection';
+
+// ...
+
+const handleTestConnection = async () => {
+  setConnectionStatus('testing');
+  try {
+    const result = await testSanityConnection();
+    setConnectionStatus(result.success ? 'success' : 'failed');
+    setConnectionMessage(result.message);
+  } catch (error) {
+    setConnectionStatus('failed');
+    setConnectionMessage(`Error: ${error.message}`);
+  }
+};
 
 interface SyncResult {
   created: number;
@@ -54,7 +69,7 @@ export function SyncAdmin() {
     setConnectionStatus(null);
     
     try {
-      const result = await testSimpleSanityConnection();
+      const result = await testMinimalSanityConnection();
       setConnectionStatus(result.success ? 'success' : 'failed');
       toast({
         title: result.success ? "Connection Successful" : "Connection Failed",
