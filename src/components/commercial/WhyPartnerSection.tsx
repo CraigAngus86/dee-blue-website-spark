@@ -1,7 +1,10 @@
+
+"use client";
+
 import React from 'react';
-import { Container } from '@/components/ui/layout/Container';
-import { Section } from '@/components/ui/layout/Section';
-import { Heading } from '@/components/ui/typography/Text';
+import Container from '@/components/ui/layout/Container';
+import Section from '@/components/ui/layout/Section';
+import { Heading } from '@/components/ui/typography/Heading';
 import { useCloudinaryImage } from '@/hooks/useCloudinaryImage';
 
 interface WhyPartnerSectionProps {

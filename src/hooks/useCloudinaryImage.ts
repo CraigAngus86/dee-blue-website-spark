@@ -1,8 +1,10 @@
 
+"use client";
+
 import { useState, useEffect } from 'react';
 import { cloudinary } from '@/lib/cloudinary';
 import { Resize } from '@cloudinary/url-gen/actions/resize';
-import { Quality } from '@cloudinary/url-gen/actions/delivery';
+import { quality } from '@cloudinary/url-gen/actions/delivery';
 
 export interface CloudinaryImageOptions {
   width?: number;
@@ -61,7 +63,7 @@ export const useCloudinaryImage = (
       }
       
       if (options.quality) {
-        image = image.delivery(Quality.level(options.quality));
+        image = image.delivery(quality(options.quality));
       }
       
       // Generate the URL

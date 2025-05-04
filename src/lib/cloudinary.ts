@@ -1,7 +1,7 @@
 
 import { Cloudinary } from '@cloudinary/url-gen';
 import { Resize } from '@cloudinary/url-gen/actions/resize';
-import { Quality } from '@cloudinary/url-gen/actions/delivery';
+import { quality } from '@cloudinary/url-gen/actions/delivery';
 
 // Initialize Cloudinary with cloud configuration
 export const cloudinary = new Cloudinary({
@@ -17,7 +17,7 @@ export const cloudinary = new Cloudinary({
 export const getCloudinaryImageUrl = (publicId: string, options: any = {}) => {
   if (!publicId) return '';
   
-  const { width, height, crop, quality } = options;
+  const { width, height, crop, qualityValue } = options;
   
   let image = cloudinary.image(publicId);
   
@@ -41,8 +41,8 @@ export const getCloudinaryImageUrl = (publicId: string, options: any = {}) => {
     }
   }
   
-  if (quality) {
-    image = image.delivery(Quality.level(quality));
+  if (qualityValue) {
+    image = image.delivery(quality(qualityValue));
   }
   
   return image.toURL();
