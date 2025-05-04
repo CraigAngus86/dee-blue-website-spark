@@ -1,6 +1,4 @@
-
 "use client";
-
 import { useState } from 'react';
 import { CloudinaryMetadata } from '@/lib/cloudinary/metadata';
 
@@ -21,7 +19,7 @@ interface UploadError {
 }
 
 /**
- * Custom hook for uploading images to Cloudinary
+ * Custom hook for uploading images to Cloudinary via our secure API route
  * Must be client-side as it uses browser File API and FormData
  */
 export function useCloudinaryUpload() {
@@ -43,7 +41,10 @@ export function useCloudinaryUpload() {
       // Create FormData for upload
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('contentType', metadata.contentType);
+      
+      if (metadata.contentType) {
+        formData.append('contentType', metadata.contentType);
+      }
       
       if (metadata.entityId) {
         formData.append('entityId', metadata.entityId);
@@ -60,42 +61,38 @@ export function useCloudinaryUpload() {
       if (metadata.metadata) {
         formData.append('metadata', JSON.stringify(metadata.metadata));
       }
-
-      // Create a mock progress tracker
-      const mockProgressInterval = setInterval(() => {
-        setProgress(prevProgress => {
-          const newProgress = prevProgress + Math.random() * 15;
+      
+      // Progress simulation - we don't have real progress from fetch
+      const progressInterval = setInterval(() => {
+        setProgress(prev => {
+          const newProgress = prev + Math.random() * 10;
           return newProgress >= 90 ? 90 : newProgress;
         });
       }, 300);
-
-      // In a real implementation, we'd call an actual API endpoint
-      // This is a placeholder for future implementation
-      console.log('Uploading to Cloudinary:', { file, metadata });
       
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Make request to our API route
+      const response = await fetch('/api/cloudinary/upload', {
+        method: 'POST',
+        body: formData
+      });
       
-      clearInterval(mockProgressInterval);
+      clearInterval(progressInterval);
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || 'Upload failed');
+      }
+      
+      const data = await response.json();
       setProgress(100);
-
-      // Mock result
-      const mockResult: UploadResult = {
-        publicId: `${metadata.contentType}/${metadata.entityId || 'unknown'}`,
-        url: URL.createObjectURL(file),
-        secureUrl: URL.createObjectURL(file),
-        originalFilename: file.name,
-        format: file.name.split('.').pop() || 'jpg',
-        width: 800,
-        height: 600
-      };
-
-      setResult(mockResult);
-      return mockResult;
+      
+      // Set result
+      setResult(data);
+      return data;
     } catch (err) {
       console.error('Error uploading file to Cloudinary:', err);
       const uploadError: UploadError = {
-        message: 'Failed to upload image',
+        message: err instanceof Error ? err.message : 'Failed to upload image',
         details: err
       };
       setError(uploadError);
