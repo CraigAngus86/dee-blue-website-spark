@@ -5,7 +5,7 @@ import { createClient } from '@sanity/client';
 const token = process.env.SANITY_API_TOKEN;
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'gxtptap2';
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production';
-const apiVersion = '2024-04-30';
+const apiVersion = 'v2021-10-21';
 
 // Create a simple Sanity client with minimal configuration
 export const sanitySimple = createClient({
