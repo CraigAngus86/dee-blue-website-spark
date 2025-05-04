@@ -37,6 +37,7 @@ type Match = {
   venue?: string;
   ticketLink?: string;
   status: string;
+  competition?: string; // Add competition field to fix type error
   // Add other required properties
 };
 
