@@ -18,7 +18,6 @@ export default async function FixturesPage() {
     <main>
       <HeroSection
         title="Fixtures"
-        subtitle="Upcoming matches for Banks o' Dee FC"
         imageSrc="/images/stadium/spain-park-match.jpg"
         imageAlt="Spain Park on match day"
       />

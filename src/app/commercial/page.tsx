@@ -9,6 +9,8 @@ import MatchDayHospitalitySection from "@/components/commercial/hospitality/Matc
 import ContactDownloadSection from "@/components/commercial/contact/ContactDownloadSection";
 import UpcomingFixturesSection from "@/components/commercial/fixtures/UpcomingFixturesSection";
 import ComparisonSection from "@/components/commercial/comparison/ComparisonSection";
+import { getUpcomingMatches } from "@/utils/cross-system/match";
+import { Match } from "@/types/match";
 
 export const metadata: Metadata = {
   title: "Commercial Opportunities | Banks o' Dee FC",
@@ -17,16 +19,20 @@ export const metadata: Metadata = {
 };
 
 export default async function CommercialPage() {
-  // This would be fetched from your API in a real application
-  const dummyMatches = [
-    // Add dummy match data here if needed
-  ];
+  // Fetch upcoming matches for the fixtures section
+  let matches: Match[] = [];
+  
+  try {
+    matches = await getUpcomingMatches(3);
+  } catch (error) {
+    console.error("Error fetching matches for commercial page:", error);
+    // Continue with empty matches array
+  }
 
   return (
     <main>
       <HeroSection
         title="Commercial Partnerships"
-        subtitle="Sponsorship, advertising and hospitality opportunities"
         imageSrc="/images/stadium/main-stand.jpg"
         imageAlt="Banks o' Dee Stadium"
         overlay="dark"
@@ -40,8 +46,8 @@ export default async function CommercialPage() {
       
       <MatchDayHospitalitySection />
       
-      {dummyMatches.length > 0 && (
-        <UpcomingFixturesSection matches={dummyMatches} />
+      {matches.length > 0 && (
+        <UpcomingFixturesSection matches={matches} />
       )}
       
       <ComparisonSection />

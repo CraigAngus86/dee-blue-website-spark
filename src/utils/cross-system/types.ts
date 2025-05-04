@@ -20,7 +20,8 @@ export interface ResolvedReference<T, U> {
   resolvedAt: Date;
 }
 
-export class ReferenceCache {
+// ReferenceCache is implemented in cache.ts, so we just declare the interface here
+export interface ReferenceCache {
   get<T>(key: string): T | undefined;
   set<T>(key: string, value: T): void;
   getOrSet<T>(key: string, factory: () => Promise<T>, skipCache?: boolean): Promise<T>;

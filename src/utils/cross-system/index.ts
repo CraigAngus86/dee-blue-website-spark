@@ -12,24 +12,9 @@ export * from './types';
 // Export cache utilities
 export * from './cache';
 
-// Export stub implementations for core utilities
-export async function resolveSupabaseReference<T = any>(
-  tableName: string,
-  id: string | null | undefined,
-  options: any = {}
-): Promise<T | null> {
-  console.warn('Using stub implementation of resolveSupabaseReference');
-  return null;
-}
-
-export async function resolveSanityReference<T = any>(
-  documentType: string,
-  id: string | null | undefined,
-  options: any = {}
-): Promise<T | null> {
-  console.warn('Using stub implementation of resolveSanityReference');
-  return null;
-}
+// Export the core resolver utilities
+export { default as resolveSupabaseReference } from './resolveSupabaseReference';
+export { default as resolveSanityReference } from './resolveSanityReference';
 
 // Re-export entity-specific utilities
 export * from './player';

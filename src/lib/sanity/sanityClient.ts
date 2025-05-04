@@ -28,16 +28,24 @@ export function createSanityClient(config: {
   useCdn?: boolean;
   token?: string;
   withCredentials?: boolean;
+  apiVersion?: string;
 } = {}): SanityClient {
-  const { useCdn = false, token = TOKEN, withCredentials = false } = config;
+  const { 
+    useCdn = false, 
+    token = TOKEN, 
+    withCredentials = false,
+    apiVersion = API_VERSION
+  } = config;
   
+  // Create with explicit configuration to avoid any "is" errors
   return createClient({
     projectId: PROJECT_ID,
     dataset: DATASET,
-    apiVersion: API_VERSION,
+    apiVersion,
     useCdn,
     token,
-    withCredentials
+    withCredentials,
+    perspective: 'published'
   });
 }
 
@@ -78,14 +86,29 @@ export async function fetchSanityData<T = any>(query: string, params = {}): Prom
 /**
  * Test function to verify Sanity connection
  */
-export async function testSanityConnection(): Promise<boolean> {
+export async function testSanityConnection(): Promise<{
+  success: boolean;
+  message: string;
+  data?: any;
+  error?: any;
+}> {
   try {
     console.log('Testing Sanity connection...');
-    const result = await sanityClient.fetch('*[_type == "playerProfile"][0...1]');
+    // Use a simple query that should work on any project
+    const result = await sanityClient.fetch('*[_id == "drafts.singleton_siteSettings" || _id == "singleton_siteSettings"][0...1]');
     console.log('Sanity connection test successful:', result);
-    return true;
+    return {
+      success: true,
+      message: 'Successfully connected to Sanity API',
+      data: result
+    };
   } catch (error) {
     console.error('Sanity connection test failed:', error);
-    return false;
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    return {
+      success: false,
+      message: `Failed to connect to Sanity API: ${errorMessage}`,
+      error
+    };
   }
 }
