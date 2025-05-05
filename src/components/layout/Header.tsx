@@ -36,7 +36,7 @@ const Header = () => {
 
   const navigation = [
     { name: "News", href: "/news" },
-    { name: "Team", href: "/team" },
+    { name: "Team & Management", href: "/team" },
     { name: "Match Centre", href: "/fixtures" },
     { name: "Spain Park", href: "/spain-park" },
     { name: "Commercial", href: "/commercial" },

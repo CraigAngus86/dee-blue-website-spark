@@ -1,44 +1,43 @@
 
-"use client";
-
 import React from 'react';
 import { ChevronRight } from 'lucide-react';
-import Image from 'next/image';
+import { TeamMember } from '@/hooks/useTeamData';
 
 interface TeamMemberCardProps {
-  member: {
-    id: string | number;
-    name: string;
-    firstName: string;
-    lastName: string;
-    position: string;
-    nationality?: string;
-    image: string;
-    number: number | null;
-    bio?: string;
-  };
+  member: TeamMember;
   isManagement?: boolean;
   onViewProfile: () => void;
 }
 
-const TeamMemberCard: React.FC<TeamMemberCardProps> = ({ member, isManagement = false, onViewProfile }) => {
+const TeamMemberCard: React.FC<TeamMemberCardProps> = ({ 
+  member, 
+  isManagement = false,
+  onViewProfile
+}) => {
   return (
-    <div className="group relative overflow-hidden transition-all duration-300 hover:shadow-xl">
-      <div className={`relative aspect-square overflow-hidden ${isManagement ? 'bg-navy-800' : member.position === 'Goalkeeper' ? 'bg-[#218F50]' : 'bg-[#00105A]'}`}>
+    <div 
+      className="group relative overflow-hidden transition-all duration-300 hover:shadow-xl"
+    >
+      <div className={`relative aspect-square overflow-hidden ${
+        isManagement 
+          ? 'bg-navy-800' 
+          : member.position.toLowerCase().includes('goalkeeper') 
+            ? 'bg-[#218F50]' 
+            : 'bg-[#00105A]'
+      }`}>
         {/* Background gradient */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/80 z-10"></div>
         
         {/* Player image */}
-        <div className="relative w-full h-full">
-          <Image 
-            src={member.image} 
-            alt={member.name}
-            fill
-            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
-            priority={false}
-          />
-        </div>
+        <img 
+          src={member.image} 
+          alt={member.name}
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.src = '/assets/images/players/headshot_dummy.jpg';
+          }}
+        />
         
         {/* Player number */}
         {!isManagement && member.number && (

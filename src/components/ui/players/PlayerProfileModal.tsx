@@ -1,98 +1,89 @@
 
-"use client";
-
 import React from 'react';
-import Image from 'next/image';
 import { X } from 'lucide-react';
+import { TeamMember } from '@/hooks/useTeamData';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 interface PlayerProfileModalProps {
   isOpen: boolean;
   onClose: () => void;
-  player: any;
+  player: TeamMember | null;
 }
 
-const PlayerProfileModal: React.FC<PlayerProfileModalProps> = ({ isOpen, onClose, player }) => {
-  if (!isOpen || !player) return null;
+const PlayerProfileModal: React.FC<PlayerProfileModalProps> = ({ 
+  isOpen, 
+  onClose, 
+  player 
+}) => {
+  if (!player) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className="relative bg-white rounded-lg shadow-xl w-full max-w-4xl overflow-hidden">
-        {/* Close button */}
-        <button
-          onClick={onClose}
-          className="absolute right-4 top-4 text-gray-500 hover:text-gray-800 focus:outline-none z-10"
-        >
-          <X size={24} />
-        </button>
-
-        {/* Content */}
-        <div className="flex flex-col md:flex-row">
-          {/* Left side - Player image */}
-          <div className="md:w-2/5 bg-[#00105A] relative h-80 md:h-auto">
-            <div className="absolute inset-0">
-              <div className="relative h-full w-full">
-                <Image 
-                  src={player.image} 
-                  alt={player.name} 
-                  fill
-                  sizes="(max-width: 768px) 100vw, 40vw"
-                  className="object-cover object-top"
-                  priority
-                />
-              </div>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="sm:max-w-2xl">
+        <DialogHeader>
+          <DialogTitle className="text-2xl font-bold">
+            {player.name}
+          </DialogTitle>
+          <button
+            onClick={onClose}
+            className="absolute top-2 right-2 w-8 h-8 rounded-full flex items-center justify-center bg-gray-100 hover:bg-gray-200"
+          >
+            <X size={16} />
+          </button>
+        </DialogHeader>
+        
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Player Image */}
+          <div className="col-span-1">
+            <div className="w-full aspect-square rounded-md overflow-hidden bg-gray-100">
+              <img 
+                src={player.image} 
+                alt={player.name} 
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = '/assets/images/players/headshot_dummy.jpg';
+                }}
+              />
             </div>
-            {player.number && (
-              <div className="absolute right-4 top-4 text-8xl font-bold text-white/20 z-10">
-                {player.number}
+            
+            {/* Basic info */}
+            <div className="mt-4 space-y-2">
+              <p className="text-sm">
+                <span className="font-medium">Position:</span> {player.position}
+              </p>
+              {player.nationality && (
+                <p className="text-sm">
+                  <span className="font-medium">Nationality:</span> {player.nationality}
+                </p>
+              )}
+              {player.joinedDate && (
+                <p className="text-sm">
+                  <span className="font-medium">Joined:</span> {player.joinedDate}
+                </p>
+              )}
+            </div>
+          </div>
+          
+          {/* Bio & Details */}
+          <div className="col-span-1 md:col-span-2">
+            {player.bio && (
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold mb-2">Biography</h3>
+                <p className="text-sm text-gray-700 leading-relaxed">{player.bio}</p>
+              </div>
+            )}
+            
+            {player.didYouKnow && (
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold mb-2">Favorite Moment at Banks o' Dee</h3>
+                <p className="text-sm text-gray-700 leading-relaxed">{player.didYouKnow}</p>
               </div>
             )}
           </div>
-
-          {/* Right side - Player details */}
-          <div className="md:w-3/5 p-6 md:p-8">
-            <h2 className="text-3xl font-bold mb-1">{player.name}</h2>
-            <p className="text-lg text-gray-600 mb-6">{player.position}</p>
-
-            <div className="space-y-6">
-              {/* Basic Info */}
-              <div>
-                <h3 className="text-xl font-bold mb-3 text-[#00105A]">Player Information</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2">
-                  {player.nationality && (
-                    <div className="flex justify-between border-b border-gray-100 py-2">
-                      <span className="text-gray-600">Nationality</span>
-                      <span className="font-medium">{player.nationality}</span>
-                    </div>
-                  )}
-                  {player.joinedDate && (
-                    <div className="flex justify-between border-b border-gray-100 py-2">
-                      <span className="text-gray-600">Joined</span>
-                      <span className="font-medium">{player.joinedDate}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Biography */}
-              {player.bio && (
-                <div>
-                  <h3 className="text-xl font-bold mb-2 text-[#00105A]">Biography</h3>
-                  <p className="text-gray-700">{player.bio}</p>
-                </div>
-              )}
-
-              {/* Fun Fact */}
-              {player.didYouKnow && (
-                <div className="bg-gray-50 p-4 rounded-lg border border-gray-100">
-                  <h3 className="text-lg font-bold mb-1 text-[#00105A]">Did You Know?</h3>
-                  <p className="text-gray-700 italic">{player.didYouKnow}</p>
-                </div>
-              )}
-            </div>
-          </div>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 

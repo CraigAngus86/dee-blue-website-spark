@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { useSanityTeamData } from './useSanityTeamData';
 
 // Define types for team members and team data
 export type TeamMember = {
@@ -27,8 +28,11 @@ export type TeamData = {
   forwards: TeamMember[];
 };
 
-// Mock team data - this would ideally come from an API in a real implementation
 export function useTeamData() {
+  // Get data from Sanity
+  const { data: sanityData, isLoading: isSanityLoading, error: sanityError } = useSanityTeamData();
+  
+  // State for team data
   const [state, setState] = useState<{
     data: TeamData | null;
     isLoading: boolean;
@@ -39,160 +43,85 @@ export function useTeamData() {
     error: null
   });
 
+  // Process Sanity data when it changes
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // In a real implementation, this would be an API call
-        // For now, we'll use the mock data from the banks-o-dee-old project
-        
-        // Simulating API delay
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        // This is mock data structure, similar to what was in the banks-o-dee-old project
-        const teamData: TeamData = {
-          management: [
-            {
-              id: 101,
-              name: 'Paul Lawson',
-              firstName: 'Paul',
-              lastName: 'LAWSON',
-              position: 'Manager',
-              nationality: 'Scotland',
-              image: '/assets/images/players/Laws_Headshot.jpg',
-              number: null,
-            },
-            {
-              id: 103,
-              name: 'Aggie Gray',
-              firstName: 'Aggie',
-              lastName: 'GRAY',
-              position: 'Assistant Manager',
-              nationality: 'Scotland',
-              image: '/assets/images/players/Aggie_Headshot.jpg',
-              number: null,
-            },
-            {
-              id: 105,
-              name: 'Gordon Milne',
-              firstName: 'Gordon',
-              lastName: 'MILNE',
-              position: 'Goalkeeping Coach',
-              nationality: 'Scotland',
-              image: '/assets/images/players/Gordo_Headshot.jpg',
-              number: null,
-            }
-          ],
-          goalkeepers: [
-            {
-              id: 1,
-              name: 'Kyle Irvine',
-              firstName: 'Kyle',
-              lastName: 'IRVINE',
-              position: 'Goalkeeper',
-              nationality: 'Scotland',
-              image: '/assets/images/players/Kyle_Headshot.jpg',
-              number: 1
-            },
-            {
-              id: 2,
-              name: 'Andy Shearer',
-              firstName: 'Andy',
-              lastName: 'SHEARER',
-              position: 'Goalkeeper',
-              nationality: 'Scotland',
-              image: '/assets/images/players/Andy_Headshot.jpg',
-              number: 13
-            }
-          ],
-          defenders: [
-            {
-              id: 4,
-              name: 'Jevan Anderson',
-              firstName: 'Jevan',
-              lastName: 'ANDERSON',
-              position: 'Defender',
-              nationality: 'Scotland',
-              image: '/assets/images/players/Jevan_Headshot.jpg',
-              number: 2,
-              bio: "Jevan is a talented defender who joined Banks o' Dee in 2021. Known for his strong tackling and aerial ability.",
-              joinedDate: "2021"
-            },
-            {
-              id: 5,
-              name: 'Ramsay Davidson',
-              firstName: 'Ramsay',
-              lastName: 'DAVIDSON',
-              position: 'Defender',
-              nationality: 'Scotland',
-              image: '/assets/images/players/Ramsay_Headshot.jpg',
-              number: 3
-            }
-          ],
-          midfielders: [
-            {
-              id: 14,
-              name: 'Max Alexander',
-              firstName: 'Max',
-              lastName: 'ALEXANDER',
-              position: 'Midfielder',
-              nationality: 'Scotland',
-              image: '/assets/images/players/Maxy.jpg',
-              number: 6
-            },
-            {
-              id: 15,
-              name: 'Chris Antoniazzi',
-              firstName: 'Chris',
-              lastName: 'ANTONIAZZI',
-              position: 'Midfielder',
-              nationality: 'Scotland',
-              image: '/assets/images/players/Canto_Headshot.jpg',
-              number: 7
-            }
-          ],
-          forwards: [
-            {
-              id: 24,
-              name: 'Lachie Macleod',
-              firstName: 'Lachie',
-              lastName: 'MACLEOD',
-              position: 'Forward',
-              nationality: 'Scotland',
-              image: '/assets/images/players/Lachie Test.jpg',
-              number: 9,
-              bio: "Lachie is a talented forward who joined Banks o' Dee in 2020. Known for his pace and finishing ability, he has been a consistent goal-scorer for the club.",
-              joinedDate: "2020",
-              didYouKnow: "Lachie scored on his debut for Banks o' Dee and went on to net 15 goals in his first season with the club."
-            },
-            {
-              id: 25,
-              name: 'Scott Milne',
-              firstName: 'Scott',
-              lastName: 'MILNE',
-              position: 'Forward',
-              nationality: 'Scotland',
-              image: '/assets/images/players/headshot_dummy.jpg',
-              number: 10
-            }
-          ]
-        };
+    if (isSanityLoading) {
+      setState(prev => ({ ...prev, isLoading: true }));
+      return;
+    }
 
-        setState({
-          data: teamData,
-          isLoading: false,
-          error: null
-        });
-      } catch (error) {
-        setState({
-          data: null,
-          isLoading: false,
-          error: error as Error
-        });
-      }
-    };
+    if (sanityError) {
+      setState({
+        data: null,
+        isLoading: false,
+        error: sanityError as Error
+      });
+      return;
+    }
 
-    fetchData();
-  }, []);
+    if (!sanityData) {
+      setState({
+        data: null,
+        isLoading: false,
+        error: new Error('No team data available')
+      });
+      return;
+    }
+
+    try {
+      // Organize team members by category
+      const management = sanityData.filter(member => 
+        member.member_type === 'staff' || 
+        member.position.toLowerCase().includes('manager') || 
+        member.position.toLowerCase().includes('coach')
+      );
+      
+      const players = sanityData.filter(member => 
+        member.member_type !== 'staff' &&
+        !member.position.toLowerCase().includes('manager') &&
+        !member.position.toLowerCase().includes('coach')
+      );
+      
+      const goalkeepers = players.filter(player => 
+        player.position.toLowerCase().includes('goalkeeper') ||
+        player.position.toLowerCase() === 'gk'
+      );
+      
+      const defenders = players.filter(player => 
+        player.position.toLowerCase().includes('defender') ||
+        player.position.toLowerCase() === 'def'
+      );
+      
+      const midfielders = players.filter(player => 
+        player.position.toLowerCase().includes('midfielder') ||
+        player.position.toLowerCase() === 'mid'
+      );
+      
+      const forwards = players.filter(player => 
+        player.position.toLowerCase().includes('forward') ||
+        player.position.toLowerCase().includes('striker') ||
+        player.position.toLowerCase() === 'fwd'
+      );
+
+      setState({
+        data: {
+          management,
+          goalkeepers,
+          defenders,
+          midfielders,
+          forwards
+        },
+        isLoading: false,
+        error: null
+      });
+    } catch (error) {
+      setState({
+        data: null,
+        isLoading: false,
+        error: error as Error
+      });
+    }
+  }, [sanityData, isSanityLoading, sanityError]);
 
   return state;
 }
