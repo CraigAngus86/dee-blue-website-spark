@@ -2,20 +2,23 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  swcMinify: true,
   images: {
     domains: [
-      'dlkpaw2a0.cloudinary.com', // Cloudinary domain
-      'cdn.sanity.io', // Sanity CDN domain
-      'res.cloudinary.com' // Cloudinary general domain
+      'res.cloudinary.com',
+      'placehold.co',
+      'cdn.sanity.io',
+      'bbbxhwaixjjxgboeiktq.supabase.co'
     ],
-    formats: ['image/avif', 'image/webp']
   },
+  env: {
+    // Make sure we export any public env vars if needed
+  },
+  // This is necessary to prevent Next.js from automatically dropping process.env 
+  // variables that it thinks aren't used (false positives with dynamic access)
   experimental: {
-    // Updated from serverActions: true to proper object format
-    serverActions: {
-      allowedOrigins: ['localhost:3000', '*.lovableproject.com', '*.lovable.app'],
-      allowedForwardedHosts: ['localhost:3000', '*.lovableproject.com', '*.lovable.app']
-    },
+    // Preserve all process.env variables
+    outputFileTracingIgnores: ['**/.env*'],
   },
 };
 

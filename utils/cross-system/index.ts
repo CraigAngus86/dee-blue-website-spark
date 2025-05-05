@@ -1,16 +1,20 @@
 
-/**
- * Cross-system reference resolution utilities
- * 
- * This module provides utilities for resolving references between 
- * Sanity CMS documents and Supabase records.
- */
+// Re-export all cross-system utilities
+// This file consolidates exports and fixes conflicting exports
 
-// Re-export all utilities
+// Export base types
 export * from './types';
-export * from './cache';
-export * from './resolveSupabaseReference';
-export * from './resolveSanityReference';
+
+// Export individual resolvers - explicitly named to avoid conflicts
+export { resolveSupabaseReference } from './resolveSupabaseReference';
+export { resolveSanityReference } from './resolveSanityReference';
+
+// Export player utilities
 export * from './player';
+
+// Export match utilities
 export * from './match';
+
+// Export any other utilities
 export * from './sponsor';
+export * from './team';

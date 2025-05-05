@@ -1,519 +1,165 @@
-"use client";
-
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { 
-  ArrowDownUp, 
-  ArrowRightLeft, 
-  CheckCircle2, 
-  AlertTriangle, 
-  XCircle,
-  Loader2,
-  Info,
-  Bug,
-} from 'lucide-react';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
-import { ImportProgress, ImportStats } from '@/components/admin/ImportProgress';
-import { ImportResult } from '@/utils/sync/SupabaseToSanitySync';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { toast } from '@/components/ui/use-toast';
-import { Input } from '@/components/ui/input';
+import { Card } from '@/components/ui/card';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Progress } from '@/components/ui/progress';
 import { importPlayers, importSponsors } from '@/app/actions/sanity-import';
+import { serverEnv } from '@/lib/env';
 
-export function SyncAdmin() {
-  const [loading, setLoading] = useState({
-    players: false,
-    sponsors: false,
-    test: false,
-  });
-  
-  const [results, setResults] = useState<{
-    players?: ImportResult;
-    sponsors?: ImportResult;
-  }>({});
-  
+interface SyncResult {
+  created: number;
+  updated: number;
+  failed: number;
+  errors: Record<string, string>;
+  processingStats: {
+    total: number;
+    processed: number;
+  };
+}
+
+export const SyncAdmin = () => {
+  const [playersResult, setPlayersResult] = useState<SyncResult | null>(null);
+  const [sponsorsResult, setSponsorsResult] = useState<SyncResult | null>(null);
+  const [isImportingPlayers, setIsImportingPlayers] = useState(false);
+  const [isImportingSponsors, setIsImportingSponsors] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
-  const [verboseMode, setVerboseMode] = useState(true); // Default to verbose mode for better error visibility
-  const [dryRun, setDryRun] = useState(false);
-  const [testSinglePlayerId, setTestSinglePlayerId] = useState('');
-  const [debugMode, setDebugMode] = useState(true); // Default to debug mode for better troubleshooting
-  const [connectionStatus, setConnectionStatus] = useState<string | null>(null);
-  const [connectionMessage, setConnectionMessage] = useState<string | null>(null);
-  const [includeStaff, setIncludeStaff] = useState(true); // Option to include staff members
-  const [sanityTokenAvailable, setSanityTokenAvailable] = useState<boolean | null>(null);
   
-  // Test Sanity connection - now uses API route
-  const testConnection = async () => {
-    setLoading({ ...loading, test: true });
-    setConnectionStatus('testing');
-    setConnectionMessage(null);
+  const handleImportPlayers = useCallback(async () => {
+    setIsImportingPlayers(true);
+    setError(null);
+    setProgress(0);
     
     try {
-      // Use API route to test connection
-      const response = await fetch('/api/sanity-test?type=all');
-      const data = await response.json();
-      
-      // Update token availability status
-      setSanityTokenAvailable(data.tokenAvailable);
-      
-      if (data.clientTest?.success) {
-        setConnectionStatus('success');
-        setConnectionMessage(`Connection successful using Sanity client. Token available: ${data.tokenAvailable ? 'Yes' : 'No'}`);
-        toast({
-          title: "Connection Successful",
-          description: data.clientTest.message,
-        });
-      } else if (data.minimalTest?.success) {
-        setConnectionStatus('warning');
-        setConnectionMessage(`Connection succeeded with direct fetch but failed with client. Token available: ${data.tokenAvailable ? 'Yes' : 'No'}`);
-        toast({
-          variant: "warning",
-          title: "Partial Connection Success",
-          description: "Direct API connection works but client connection failed",
-        });
-      } else {
-        setConnectionStatus('failed');
-        setConnectionMessage(`All connection methods failed. Token available: ${data.tokenAvailable ? 'Yes' : 'No'}`);
-        toast({
-          variant: "destructive",
-          title: "Connection Failed",
-          description: data.clientTest?.message || data.minimalTest?.message || "Unknown error",
-        });
-      }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : String(err);
-      setConnectionStatus('failed');
-      setConnectionMessage(`Error during connection test: ${errorMessage}`);
-      toast({
-        variant: "destructive",
-        title: "Connection test error",
-        description: errorMessage,
+      const result = await importPlayers({
+        onProgress: (current, total) => {
+          const percentage = Math.round((current / total) * 100);
+          setProgress(percentage);
+        }
       });
+      setPlayersResult(result);
+    } catch (e: any) {
+      console.error('Error importing players:', e);
+      setError(e.message || 'Import failed');
     } finally {
-      setLoading({ ...loading, test: false });
+      setIsImportingPlayers(false);
+      setProgress(0);
     }
-  };
-  
-  // Check connection status when component mounts
-  useEffect(() => {
-    testConnection();
   }, []);
   
-  const handleImportPlayers = async () => {
-    setLoading({ ...loading, players: true });
+  const handleImportSponsors = useCallback(async () => {
+    setIsImportingSponsors(true);
     setError(null);
+    setProgress(0);
     
     try {
-      // Reset previous results but keep structure
-      setResults(prev => ({
-        ...prev,
-        players: {
-          created: 0,
-          updated: 0,
-          failed: 0,
-          errors: {},
-          processingStats: {
-            total: 0,
-            processed: 0
-          }
-        }
-      }));
-      
-      toast({
-        title: "Import started",
-        description: `Importing ${includeStaff ? 'players and staff' : 'players only'} from Supabase to Sanity...`,
-      });
-      
-      // Call server action without progress callback
-      const result = await importPlayers({
-        dryRun,
-        testSinglePlayer: testSinglePlayerId || undefined,
-        debug: debugMode,
-        includeStaff
-      });
-      
-      setResults(prev => ({ ...prev, players: result }));
-      
-      // Show success or warning message
-      if (result.failed > 0) {
-        setError(`Warning: ${result.failed} personnel imports failed. Check the details in verbose mode.`);
-        toast({
-          variant: "destructive",
-          title: "Import completed with errors",
-          description: `Created: ${result.created}, Updated: ${result.updated}, Failed: ${result.failed}`,
-        });
-      } else {
-        toast({
-          title: "Import successful",
-          description: `Created: ${result.created}, Updated: ${result.updated}, Failed: ${result.failed}`,
-        });
-      }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : String(err);
-      setError(`Error importing personnel: ${errorMessage}`);
-      toast({
-        variant: "destructive",
-        title: "Import failed",
-        description: errorMessage,
-      });
-    } finally {
-      setLoading({ ...loading, players: false });
-    }
-  };
-  
-  const handleImportSponsors = async () => {
-    setLoading({ ...loading, sponsors: true });
-    setError(null);
-    
-    try {
-      // Reset previous results but keep structure
-      setResults(prev => ({
-        ...prev,
-        sponsors: {
-          created: 0,
-          updated: 0,
-          failed: 0,
-          errors: {},
-          processingStats: {
-            total: 0,
-            processed: 0
-          }
-        }
-      }));
-      
-      toast({
-        title: "Import started",
-        description: "Importing sponsor data from Supabase to Sanity...",
-      });
-      
-      // Call server action without progress callback
       const result = await importSponsors({
-        dryRun,
-        debug: debugMode
+        onProgress: (current, total) => {
+          const percentage = Math.round((current / total) * 100);
+          setProgress(percentage);
+        }
       });
-      
-      setResults(prev => ({ ...prev, sponsors: result }));
-      
-      // Show success or warning message
-      if (result.failed > 0) {
-        setError(`Warning: ${result.failed} sponsor imports failed. Check the details in verbose mode.`);
-        toast({
-          variant: "destructive",
-          title: "Import completed with errors",
-          description: `Created: ${result.created}, Updated: ${result.updated}, Failed: ${result.failed}`,
-        });
-      } else {
-        toast({
-          title: "Import successful",
-          description: `Created: ${result.created}, Updated: ${result.updated}, Failed: ${result.failed}`,
-        });
-      }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : String(err);
-      setError(`Error importing sponsors: ${errorMessage}`);
-      toast({
-        variant: "destructive",
-        title: "Import failed",
-        description: errorMessage,
-      });
+      setSponsorsResult(result);
+    } catch (e: any) {
+      console.error('Error importing sponsors:', e);
+      setError(e.message || 'Import failed');
     } finally {
-      setLoading({ ...loading, sponsors: false });
+      setIsImportingSponsors(false);
+      setProgress(0);
     }
-  };
+  }, []);
   
+  // Fix the alert variant to be "destructive" instead of "warning"
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold">Sanity-Supabase Sync</h2>
-      
-      <div className="flex flex-wrap items-center gap-6 mb-4">
-        <div className="flex items-center space-x-2">
-          <Switch 
-            id="verbose-mode" 
-            checked={verboseMode} 
-            onCheckedChange={setVerboseMode} 
-          />
-          <Label htmlFor="verbose-mode">Verbose Mode</Label>
-        </div>
+    <div>
+      <Tabs defaultValue="players" className="w-[400px]">
+        <TabsList>
+          <TabsTrigger value="players">Players</TabsTrigger>
+          <TabsTrigger value="sponsors">Sponsors</TabsTrigger>
+        </TabsList>
         
-        <div className="flex items-center space-x-2">
-          <Switch 
-            id="dry-run" 
-            checked={dryRun} 
-            onCheckedChange={setDryRun} 
-          />
-          <Label htmlFor="dry-run">Dry Run (Preview Only)</Label>
-        </div>
-        
-        <div className="flex items-center space-x-2">
-          <Switch 
-            id="debug-mode" 
-            checked={debugMode} 
-            onCheckedChange={setDebugMode} 
-          />
-          <Label htmlFor="debug-mode">Debug Mode</Label>
-        </div>
-        
-        <div className="flex items-center space-x-2">
-          <Switch 
-            id="include-staff" 
-            checked={includeStaff} 
-            onCheckedChange={setIncludeStaff} 
-          />
-          <Label htmlFor="include-staff">Include Staff</Label>
-        </div>
-      </div>
-      
-      <Card className="bg-amber-50 border-amber-200">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Bug className="h-5 w-5" />
-            Sanity Connection Test
-          </CardTitle>
-          <CardDescription>
-            Test the connection to Sanity API before attempting imports
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-4">
-              <Button 
-                onClick={testConnection} 
-                disabled={loading.test}
-                variant="secondary"
-              >
-                {loading.test ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Testing...
-                  </>
-                ) : (
-                  <>Test Sanity Connection</>
-                )}
+        <TabsContent value="players">
+          <Card>
+            <CardContent className="grid gap-4">
+              <Button onClick={handleImportPlayers} disabled={isImportingPlayers}>
+                {isImportingPlayers ? 'Importing...' : 'Import Players'}
               </Button>
               
-              {connectionStatus && (
-                <span className={`flex items-center ${
-                  connectionStatus === 'success' ? 'text-green-600' : 
-                  connectionStatus === 'warning' ? 'text-amber-600' :
-                  'text-red-600'
-                }`}>
-                  {connectionStatus === 'success' ? (
-                    <>
-                      <CheckCircle2 className="h-5 w-5 mr-1" />
-                      Connection successful
-                    </>
-                  ) : connectionStatus === 'warning' ? (
-                    <>
-                      <AlertTriangle className="h-5 w-5 mr-1" />
-                      Partially successful
-                    </>
-                  ) : (
-                    <>
-                      <XCircle className="h-5 w-5 mr-1" />
-                      Connection failed
-                    </>
-                  )}
-                </span>
+              {isImportingPlayers && (
+                <div>
+                  <p className="text-sm font-medium text-gray-700 mb-2">Import progress:</p>
+                  <Progress value={progress} className="h-2" />
+                  <p className="text-xs text-gray-500 mt-1">{progress}%</p>
+                </div>
               )}
-            </div>
-            
-            {connectionMessage && (
-              <p className="text-sm bg-white p-3 rounded border">
-                {connectionMessage}
-              </p>
-            )}
-            
-            {sanityTokenAvailable !== null && (
-              <div className={`flex items-center gap-2 p-3 rounded ${
-                sanityTokenAvailable ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'
-              }`}>
-                {sanityTokenAvailable ? (
-                  <>
-                    <CheckCircle2 className="h-5 w-5 text-green-600" />
-                    <span>Sanity API Token is available on the server</span>
-                  </>
-                ) : (
-                  <>
-                    <AlertTriangle className="h-5 w-5 text-red-600" />
-                    <span>Sanity API Token is NOT available on the server. Authentication will fail.</span>
-                  </>
-                )}
-              </div>
-            )}
-            
-            <div className="text-sm">
-              <p>For detailed connection testing and diagnostics, visit:</p>
-              <Button variant="link" className="h-auto p-0" asChild>
-                <a href="/admin/test-sanity" target="_blank" rel="noopener noreferrer" className="flex items-center">
-                  Advanced Connection Test Page
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 ml-1">
-                    <path fillRule="evenodd" d="M5.22 14.78a.75.75 0 001.06 0l7.22-7.22v5.69a.75.75 0 001.5 0v-7.5a.75.75 0 00-.75-.75h-7.5a.75.75 0 000 1.5h5.69l-7.22 7.22a.75.75 0 000 1.06z" clipRule="evenodd" />
-                  </svg>
-                </a>
+              
+              {playersResult && (
+                <div>
+                  <p>Created: {playersResult.created}</p>
+                  <p>Updated: {playersResult.updated}</p>
+                  <p>Failed: {playersResult.failed}</p>
+                  {Object.keys(playersResult.errors).length > 0 && (
+                    <div>
+                      <p>Errors:</p>
+                      <ul>
+                        {Object.entries(playersResult.errors).map(([key, value]) => (
+                          <li key={key}>{key}: {value}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="sponsors">
+          <Card>
+            <CardContent className="grid gap-4">
+              <Button onClick={handleImportSponsors} disabled={isImportingSponsors}>
+                {isImportingSponsors ? 'Importing...' : 'Import Sponsors'}
               </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-      
-      {debugMode && (
-        <Card className="bg-amber-50 border-amber-200">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Bug className="h-5 w-5" />
-              Debug Tools
-            </CardTitle>
-            <CardDescription>
-              Tools for diagnosing and fixing import issues
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label htmlFor="test-player-id">Test Single Personnel Import (by ID)</Label>
-              <div className="flex gap-2 mt-1">
-                <Input 
-                  id="test-player-id" 
-                  placeholder="Enter person ID" 
-                  value={testSinglePlayerId}
-                  onChange={(e) => setTestSinglePlayerId(e.target.value)}
-                />
-                <Button 
-                  variant="secondary" 
-                  onClick={handleImportPlayers} 
-                  disabled={loading.players || !testSinglePlayerId}
-                >
-                  Test
-                </Button>
-              </div>
-              <p className="text-xs text-muted-foreground mt-2">
-                Enter a Supabase person ID to test import for a single player or staff member.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+              
+              {isImportingSponsors && (
+                <div>
+                  <p className="text-sm font-medium text-gray-700 mb-2">Import progress:</p>
+                  <Progress value={progress} className="h-2" />
+                  <p className="text-xs text-gray-500 mt-1">{progress}%</p>
+                </div>
+              )}
+              
+              {sponsorsResult && (
+                <div>
+                  <p>Created: {sponsorsResult.created}</p>
+                  <p>Updated: {sponsorsResult.updated}</p>
+                  <p>Failed: {sponsorsResult.failed}</p>
+                  {Object.keys(sponsorsResult.errors).length > 0 && (
+                    <div>
+                      <p>Errors:</p>
+                      <ul>
+                        {Object.entries(sponsorsResult.errors).map(([key, value]) => (
+                          <li key={key}>{key}: {value}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
       
       {error && (
-        <Alert variant="destructive">
-          <AlertDescription className="flex items-start gap-2">
-            <XCircle className="h-5 w-5 mt-0.5 flex-shrink-0" />
-            <div>{error}</div>
-          </AlertDescription>
+        <Alert variant="destructive" className="mb-4">
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
-      
-      <Alert variant="default" className="bg-blue-50 border-blue-200">
-        <AlertDescription className="flex items-start gap-2">
-          <Info className="h-5 w-5 mt-0.5 flex-shrink-0 text-blue-500" />
-          <div>
-            Enable Verbose Mode to see detailed error messages. For large imports, use Dry Run first to preview changes without modifying data.
-          </div>
-        </AlertDescription>
-      </Alert>
-      
-      <div className="grid md:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Import Personnel</CardTitle>
-            <CardDescription>
-              Import player and staff data from Supabase to Sanity
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm mb-4">
-              This will create or update player and staff profiles in Sanity based on the data in Supabase.
-              {dryRun && " (Dry Run Mode: No changes will be made)"}
-              {testSinglePlayerId && " (Testing single person only)"}
-              {!includeStaff && " (Players only, excluding staff)"}
-            </p>
-            
-            {results.players && (
-              <ImportProgress 
-                stats={{
-                  total: results.players.processingStats.total,
-                  processed: results.players.processingStats.processed,
-                  created: results.players.created,
-                  updated: results.players.updated,
-                  failed: results.players.failed,
-                  errors: results.players.errors
-                }}
-                isImporting={loading.players}
-                showDetails={verboseMode}
-              />
-            )}
-          </CardContent>
-          <CardFooter>
-            <Button 
-              variant="default" 
-              onClick={handleImportPlayers} 
-              disabled={loading.players || loading.sponsors}
-            >
-              {loading.players ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Importing...
-                </>
-              ) : (
-                <>
-                  <ArrowDownUp className="mr-2 h-4 w-4" />
-                  {dryRun ? 'Preview Import Personnel' : 'Import Personnel'}
-                </>
-              )}
-            </Button>
-          </CardFooter>
-        </Card>
-        
-        <Card>
-          <CardHeader>
-            <CardTitle>Import Sponsors</CardTitle>
-            <CardDescription>
-              Import sponsor data from Supabase to Sanity
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm mb-4">
-              This will create or update sponsor profiles in Sanity based on the data in Supabase.
-              {dryRun && " (Dry Run Mode: No changes will be made)"}
-            </p>
-            
-            {results.sponsors && (
-              <ImportProgress 
-                stats={{
-                  total: results.sponsors.processingStats.total,
-                  processed: results.sponsors.processingStats.processed,
-                  created: results.sponsors.created,
-                  updated: results.sponsors.updated,
-                  failed: results.sponsors.failed,
-                  errors: results.sponsors.errors
-                }}
-                isImporting={loading.sponsors}
-                showDetails={verboseMode}
-              />
-            )}
-          </CardContent>
-          <CardFooter>
-            <Button 
-              variant="default" 
-              onClick={handleImportSponsors} 
-              disabled={loading.players || loading.sponsors}
-            >
-              {loading.sponsors ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Importing...
-                </>
-              ) : (
-                <>
-                  <ArrowDownUp className="mr-2 h-4 w-4" />
-                  {dryRun ? 'Preview Import Sponsors' : 'Import Sponsors'}
-                </>
-              )}
-            </Button>
-          </CardFooter>
-        </Card>
-      </div>
     </div>
   );
-}
+};
+
+export default SyncAdmin;

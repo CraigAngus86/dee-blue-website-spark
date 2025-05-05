@@ -5,20 +5,21 @@
  */
 import { v2 as cloudinaryServer } from 'cloudinary';
 import { UPLOAD_PRESETS } from './client';
+import { serverEnv, publicEnv } from '@/lib/env';
 
 // Configure Cloudinary with proper environment variables (server-side only)
 cloudinaryServer.config({
-  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'dlkpaw2a0',
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
+  cloud_name: publicEnv.getCloudinaryCloudName(),
+  api_key: serverEnv.getCloudinaryApiKey(),
+  api_secret: serverEnv.getCloudinaryApiSecret(),
   secure: true
 });
 
 // Log environment status for debugging (only on server)
 console.log('[Server] Cloudinary configuration:', { 
-  cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'dlkpaw2a0',
-  apiKeyAvailable: !!process.env.CLOUDINARY_API_KEY,
-  apiSecretAvailable: !!process.env.CLOUDINARY_API_SECRET
+  cloudName: publicEnv.getCloudinaryCloudName(),
+  apiKeyAvailable: !!serverEnv.getCloudinaryApiKey(),
+  apiSecretAvailable: !!serverEnv.getCloudinaryApiSecret()
 });
 
 // Export the server-side Cloudinary instance

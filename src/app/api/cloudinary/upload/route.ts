@@ -1,8 +1,17 @@
 
 import { NextResponse } from 'next/server';
 import { cloudinaryServer, getPersonFolderPath, getUploadPreset } from '@/lib/cloudinary/server';
+import { isServer } from '@/lib/env';
 
 export async function POST(request: Request) {
+  // Check if this is actually running on the server
+  if (!isServer) {
+    return NextResponse.json(
+      { error: 'This API route can only be executed on the server' },
+      { status: 500 }
+    );
+  }
+
   try {
     console.log('[API] Cloudinary upload API route called');
     
@@ -94,17 +103,6 @@ export async function POST(request: Request) {
     const fileUri = `data:${file.type};base64,${base64}`;
     
     console.log('[API] Starting Cloudinary upload...');
-    
-    // Check if we have API credentials
-    if (!process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
-      console.error('[API] Missing Cloudinary API credentials');
-      return NextResponse.json({ 
-        error: { 
-          message: 'Cloudinary API credentials are not configured on the server',
-          code: 'MISSING_CREDENTIALS'
-        }
-      }, { status: 500 });
-    }
     
     // Get the appropriate upload preset
     const uploadPreset = getUploadPreset(contentType);

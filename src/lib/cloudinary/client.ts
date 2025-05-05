@@ -4,11 +4,12 @@
  * This uses public environment variables only for client-side usage
  */
 import { Cloudinary } from '@cloudinary/url-gen';
+import { publicEnv } from '@/lib/env';
 
 // Initialize client-side Cloudinary instance (uses only public env variables)
 export const cloudinary = new Cloudinary({
   cloud: {
-    cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'dlkpaw2a0'
+    cloudName: publicEnv.getCloudinaryCloudName()
   },
   url: {
     secure: true
@@ -32,7 +33,7 @@ export const getPlayerImageUrl = (publicId: string, options: {
   
   // Create a URL with transformations
   return `https://res.cloudinary.com/${
-    process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'dlkpaw2a0'
+    publicEnv.getCloudinaryCloudName()
   }/image/upload/c_${crop},w_${width},h_${height}/${publicId}`;
 };
 

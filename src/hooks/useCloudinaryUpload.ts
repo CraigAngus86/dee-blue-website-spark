@@ -21,6 +21,7 @@ interface UploadError {
 
 /**
  * Custom hook for uploading images to Cloudinary via API route
+ * This is safe to use in client components as it uses the server API
  */
 export function useCloudinaryUpload() {
   const [isUploading, setIsUploading] = useState(false);
@@ -29,7 +30,7 @@ export function useCloudinaryUpload() {
   const [result, setResult] = useState<UploadResult | null>(null);
 
   /**
-   * Upload a file to Cloudinary
+   * Upload a file to Cloudinary via API route
    */
   const uploadFile = async (file: File, metadata: CloudinaryMetadata): Promise<UploadResult | null> => {
     setIsUploading(true);
@@ -83,7 +84,13 @@ export function useCloudinaryUpload() {
       clearInterval(progressInterval);
       
       if (!response.ok) {
-        const errorData = await response.json();
+        let errorData;
+        try {
+          errorData = await response.json();
+        } catch (e) {
+          errorData = { error: { message: `Upload failed with status: ${response.status}` } };
+        }
+        
         console.error('Upload failed with status:', response.status, errorData);
         throw new Error(errorData.error?.message || `Upload failed with status: ${response.status}`);
       }

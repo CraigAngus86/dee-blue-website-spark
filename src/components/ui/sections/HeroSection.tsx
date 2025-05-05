@@ -1,11 +1,13 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
 
 export interface HeroSectionProps {
   title: string;
-  imageSrc: string;
-  imageAlt: string;
+  backgroundImage?: string; // For backward compatibility
+  imageSrc?: string;        // New property name
+  imageAlt?: string;
   overlay?: 'light' | 'dark' | 'none';
   children?: React.ReactNode;
   className?: string;
@@ -13,12 +15,16 @@ export interface HeroSectionProps {
 
 const HeroSection: React.FC<HeroSectionProps> = ({
   title,
+  backgroundImage, // For backward compatibility
   imageSrc,
-  imageAlt,
+  imageAlt = 'Hero image',
   overlay = 'none',
   children,
   className,
 }) => {
+  // Use either the new imageSrc prop or fall back to the old backgroundImage prop
+  const imageSource = imageSrc || backgroundImage || '';
+  
   return (
     <div 
       className={cn(
@@ -27,11 +33,17 @@ const HeroSection: React.FC<HeroSectionProps> = ({
       )}
     >
       {/* Background Image */}
-      <img 
-        src={imageSrc}
-        alt={imageAlt}
-        className="absolute inset-0 w-full h-full object-cover"
-      />
+      {imageSource && (
+        <div className="absolute inset-0 w-full h-full">
+          <Image 
+            src={imageSource}
+            alt={imageAlt}
+            fill
+            className="object-cover"
+            priority
+          />
+        </div>
+      )}
       
       {/* Overlay */}
       {overlay !== 'none' && (

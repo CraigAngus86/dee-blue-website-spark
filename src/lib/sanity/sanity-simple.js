@@ -1,19 +1,20 @@
 
 // src/lib/sanity/sanity-simple.js
 import { createClient } from '@sanity/client';
+import { publicEnv, serverEnv, isServer } from '@/lib/env';
 
-// Get the token from environment variables with improved logging
-const token = process.env.SANITY_API_TOKEN;
-const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'gxtptap2';
-const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production';
-const apiVersion = 'v2021-10-21';
+// Get environment variables from our utilities
+const token = isServer ? serverEnv.getSanityToken() : null;
+const projectId = publicEnv.getSanityProjectId();
+const dataset = publicEnv.getSanityDataset();
+const apiVersion = '2021-10-21';
 
 // Enhanced logging for token detection
 console.log('Initializing Sanity client with token available:', !!token);
 console.log('Environment variables available:', {
-  NEXT_PUBLIC_SANITY_PROJECT_ID: !!process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-  NEXT_PUBLIC_SANITY_DATASET: !!process.env.NEXT_PUBLIC_SANITY_DATASET,
-  SANITY_API_TOKEN: !!process.env.SANITY_API_TOKEN,
+  NEXT_PUBLIC_SANITY_PROJECT_ID: !!projectId,
+  NEXT_PUBLIC_SANITY_DATASET: !!dataset,
+  SANITY_API_TOKEN: !!token,
 });
 
 // Create a simple Sanity client with minimal configuration
