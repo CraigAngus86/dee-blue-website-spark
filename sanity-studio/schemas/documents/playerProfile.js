@@ -145,14 +145,17 @@ export default {
     {
       name: 'profileImage',
       title: 'Profile Image',
-      type: 'cloudinaryImage',
+      type: 'array',
       description: 'Upload player/staff headshot (automatically processed with Cloudinary)',
       group: 'media',
-      inputComponent: CloudinaryImageInput,
-      options: {
-        preset: 'player-upload',
-        folderPath: 'banksofdeefc/people'
-      }
+      of: [
+        {
+          type: 'image',
+          options: {
+            hotspot: true
+          }
+        }
+      ]
     },
     {
       name: 'extendedBio',

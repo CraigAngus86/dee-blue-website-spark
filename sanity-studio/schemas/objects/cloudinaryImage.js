@@ -1,4 +1,3 @@
-
 export default {
   name: 'cloudinaryImage',
   title: 'Cloudinary Image',
