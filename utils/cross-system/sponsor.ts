@@ -1,3 +1,4 @@
+
 /**
  * Sponsor cross-system utilities
  * Allows working with sponsor data across Supabase and Sanity
@@ -6,7 +7,13 @@
 // Import necessary utilities
 import { resolveSanityReference } from './resolveSanityReference';
 import { resolveSupabaseReference } from './resolveSupabaseReference';
-import type { CrossSystemReference } from './types';
+
+// Define the cross-system reference interface
+interface CrossSystemReference {
+  id: string;
+  system: 'supabase' | 'sanity';
+  type: string;
+}
 
 /**
  * Get a sponsor by its ID from the appropriate system

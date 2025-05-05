@@ -41,33 +41,6 @@ export default {
       title: 'Credit',
       type: 'string',
       description: 'Attribution for the image creator or source'
-    },
-    {
-      name: 'crop',
-      title: 'Crop',
-      type: 'string',
-      options: {
-        list: [
-          { title: 'No crop', value: 'none' },
-          { title: 'Square (1:1)', value: 'square' },
-          { title: 'Featured (3:4)', value: 'featured' },
-          { title: 'Wide (16:9)', value: 'wide' },
-          { title: 'Panoramic (21:9)', value: 'panoramic' }
-        ]
-      },
-      initialValue: 'none',
-      description: 'Select a crop preset for this image'
-    },
-    {
-      name: 'hotspot',
-      title: 'Hotspot',
-      type: 'object',
-      fields: [
-        { name: 'x', type: 'number' },
-        { name: 'y', type: 'number' },
-        { name: 'height', type: 'number' },
-        { name: 'width', type: 'number' }
-      ]
     }
   ],
   preview: {

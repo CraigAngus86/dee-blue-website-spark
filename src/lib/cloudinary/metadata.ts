@@ -56,5 +56,8 @@ export function formatTags(tags: string[], contentType?: ContentType | string): 
     formattedTags.unshift(contentType.toString().toLowerCase());
   }
   
-  return [...new Set(formattedTags)]; // Remove duplicates
+  // Remove duplicates using array filter instead of Set
+  return formattedTags.filter((tag, index, self) => 
+    self.indexOf(tag) === index
+  );
 }

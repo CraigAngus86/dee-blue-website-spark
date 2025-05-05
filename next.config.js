@@ -17,8 +17,10 @@ const nextConfig = {
   // This is necessary to prevent Next.js from automatically dropping process.env 
   // variables that it thinks aren't used (false positives with dynamic access)
   experimental: {
-    // Preserve all process.env variables using the proper Next.js 14 syntax
-    outputFileTracingExcludes: ['**/.env*'],
+    // Properly formatted experimental config
+    outputFileTracingExcludes: {
+      '*': ['.env*']
+    }
   },
 };
 
