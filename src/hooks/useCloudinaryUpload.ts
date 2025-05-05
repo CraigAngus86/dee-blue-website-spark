@@ -1,7 +1,9 @@
 
 "use client";
+
 import { useState } from 'react';
 import { CloudinaryMetadata } from '@/lib/cloudinary/metadata';
+import { publicEnv } from '@/lib/env';
 
 interface UploadResult {
   publicId: string;

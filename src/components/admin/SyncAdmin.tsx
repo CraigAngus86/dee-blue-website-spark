@@ -1,11 +1,25 @@
+
+"use client";
+
 import React, { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { importPlayers, importSponsors } from '@/app/actions/sanity-import';
 import { serverEnv } from '@/lib/env';
+
+interface ImportResult {
+  created: number;
+  updated: number;
+  failed: number;
+  errors: Record<string, string>;
+  processingStats: {
+    total: number;
+    processed: number;
+  };
+}
 
 interface SyncResult {
   created: number;
@@ -33,8 +47,8 @@ export const SyncAdmin = () => {
     
     try {
       const result = await importPlayers({
-        onProgress: (current, total) => {
-          const percentage = Math.round((current / total) * 100);
+        onProgress: (stats: ImportResult) => {
+          const percentage = Math.round((stats.processingStats.processed / stats.processingStats.total) * 100);
           setProgress(percentage);
         }
       });
@@ -55,8 +69,8 @@ export const SyncAdmin = () => {
     
     try {
       const result = await importSponsors({
-        onProgress: (current, total) => {
-          const percentage = Math.round((current / total) * 100);
+        onProgress: (stats: ImportResult) => {
+          const percentage = Math.round((stats.processingStats.processed / stats.processingStats.total) * 100);
           setProgress(percentage);
         }
       });
@@ -70,7 +84,6 @@ export const SyncAdmin = () => {
     }
   }, []);
   
-  // Fix the alert variant to be "destructive" instead of "warning"
   return (
     <div>
       <Tabs defaultValue="players" className="w-[400px]">

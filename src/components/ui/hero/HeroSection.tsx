@@ -1,58 +1,74 @@
 
-import React from "react";
-import Image from "next/image";
+import React from 'react';
 
-interface HeroSectionProps {
+export interface HeroSectionProps {
   title: string;
-  category: string;
-  timestamp: string;
-  backgroundImage: string;
+  subtitle?: string;
+  image: string; // Image path or URL
+  imageAlt?: string;
+  overlay?: boolean;
+  overlayOpacity?: number;
+  overlayColor?: string;
+  height?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  children?: React.ReactNode;
 }
 
-const HeroSection: React.FC<HeroSectionProps> = ({
+const HeroSection = ({
   title,
-  category,
-  timestamp,
-  backgroundImage,
-}) => {
+  subtitle,
+  image,
+  imageAlt = 'Hero image',
+  overlay = true,
+  overlayOpacity = 0.6,
+  overlayColor = 'dark',
+  height = 'md',
+  children
+}: HeroSectionProps) => {
+  // Map height values to tailwind classes
+  const heightClasses = {
+    sm: 'h-[200px] md:h-[300px]',
+    md: 'h-[300px] md:h-[400px]',
+    lg: 'h-[400px] md:h-[500px]',
+    xl: 'h-[500px] md:h-[600px]',
+    full: 'h-screen'
+  };
+
+  // Choose overlay color
+  const overlayColorClass = overlayColor === 'dark' ? 'bg-black' : 'bg-primary';
+
   return (
-    <div className="relative h-[80vh] min-h-[500px] max-h-[800px] w-full overflow-hidden">
-      {/* Background Image */}
-      <div className="absolute inset-0 w-full h-full">
-        <Image
-          src={backgroundImage}
-          alt={title}
-          fill
-          className="object-cover"
-          priority
+    <div className={`relative w-full ${heightClasses[height]}`}>
+      {/* Background image */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: `url(${image})` }}
+        aria-hidden="true"
+      />
+      
+      {/* Overlay */}
+      {overlay && (
+        <div 
+          className={`absolute inset-0 ${overlayColorClass}`}
+          style={{ opacity: overlayOpacity }}
+          aria-hidden="true"
         />
-      </div>
-
-      {/* Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-primary to-transparent opacity-70"></div>
-
+      )}
+      
       {/* Content */}
-      <div className="absolute bottom-0 left-0 w-full p-8 md:p-12 lg:p-16 z-10 text-white">
-        <div className="container mx-auto">
-          <div className="max-w-3xl">
-            <div className="flex items-center space-x-4 mb-3">
-              <span className="font-semibold text-sm md:text-base uppercase tracking-wider">
-                {category}
-              </span>
-              <span className="h-1 w-1 rounded-full bg-white"></span>
-              <span className="text-sm md:text-base opacity-80">{timestamp}</span>
-            </div>
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold font-montserrat mb-6 leading-tight">
+      <div className="relative h-full flex items-center">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
               {title}
             </h1>
-            <div className="flex items-center space-x-4 mt-4">
-              <button className="bg-white text-primary px-6 py-3 rounded-md font-semibold hover:bg-opacity-90 transition-all">
-                Read More
-              </button>
-              <button className="bg-transparent border-2 border-white text-white px-6 py-2.5 rounded-md font-semibold hover:bg-white hover:bg-opacity-20 transition-all">
-                All News
-              </button>
-            </div>
+            
+            {subtitle && (
+              <p className="text-lg md:text-xl text-white/90 mb-6">
+                {subtitle}
+              </p>
+            )}
+            
+            {children}
           </div>
         </div>
       </div>
