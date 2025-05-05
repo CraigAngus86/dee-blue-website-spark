@@ -44,16 +44,20 @@ export async function POST(request: Request) {
     const type = formData.get('type') as string;
     const tags = formData.get('tags') as string;
     const metadataJson = formData.get('metadata') as string;
+    const uploadPreset = formData.get('uploadPreset') as string;
+    const customFolder = formData.get('folder') as string;
     
     console.log('[API] Metadata received:', { 
       contentType, entityId, type, tags,
+      uploadPreset: uploadPreset || 'default',
+      customFolder: customFolder || 'not provided',
       metadataJson: metadataJson ? 'provided' : 'not provided' 
     });
     
     // Determine folder
-    let folder = 'banksofdeefc/other';
+    let folder = customFolder || 'banksofdeefc/other';
     
-    if (contentType && entityId) {
+    if (!customFolder && contentType && entityId) {
       switch (contentType) {
         case 'news':
         case 'newsArticle':
@@ -92,6 +96,8 @@ export async function POST(request: Request) {
     
     // Parse tags
     const tagsList = tags ? tags.split(',') : [];
+    if (contentType) tagsList.push(contentType);
+    if (type) tagsList.push(type);
     console.log('[API] Tags for upload:', tagsList);
     
     // Convert file to buffer
@@ -105,16 +111,17 @@ export async function POST(request: Request) {
     console.log('[API] Starting Cloudinary upload...');
     
     // Get the appropriate upload preset
-    const uploadPreset = getUploadPreset(contentType);
-    console.log('[API] Using upload preset:', uploadPreset);
+    const finalUploadPreset = uploadPreset || getUploadPreset(contentType);
+    console.log('[API] Using upload preset:', finalUploadPreset);
     
     // Upload to Cloudinary
     const result = await cloudinaryServer.uploader.upload(fileUri, {
       folder: folder,
-      upload_preset: uploadPreset,
+      upload_preset: finalUploadPreset,
       resource_type: 'auto',
       tags: tagsList,
       context: context,
+      public_id: type === 'profile' ? 'profile' : undefined
     });
     
     console.log('[API] Cloudinary upload successful:', { 

@@ -1,4 +1,3 @@
-
 import CloudinaryImageInput from '../../components/CloudinaryImageInput';
 
 export default {
@@ -147,7 +146,11 @@ export default {
       type: 'cloudinaryImage',
       description: 'Upload player/staff headshot (automatically processed with Cloudinary)',
       group: 'media',
-      inputComponent: CloudinaryImageInput
+      inputComponent: CloudinaryImageInput,
+      options: {
+        preset: 'player-upload',
+        folderPath: 'banksofdeefc/people'
+      }
     },
     {
       name: 'extendedBio',

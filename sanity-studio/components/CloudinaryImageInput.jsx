@@ -31,6 +31,12 @@ export const CloudinaryImageInput = React.forwardRef((props, ref) => {
   const inputId = useId(); // React's built-in useId hook
   const fileInputRef = React.useRef(null);
   
+  // Get options from schema type if available
+  const preset = type?.options?.preset || 'player-upload';
+  const folderPath = type?.options?.folderPath || 'banksofdeefc/uploads';
+  const entityId = props.document?._id?.replace('drafts.', '') || 'unknown';
+  const contentType = props.document?._type || 'playerProfile';
+  
   const reset = () => {
     setIsUploading(false);
     setUploadProgress(0);
@@ -58,9 +64,18 @@ export const CloudinaryImageInput = React.forwardRef((props, ref) => {
       // Create the payload for upload
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('contentType', 'player');
-      formData.append('entityId', 'sanity-upload');
+      formData.append('contentType', contentType);
+      formData.append('entityId', entityId);
       formData.append('type', 'profile');
+      
+      // Add upload preset if specified
+      if (preset) {
+        formData.append('uploadPreset', preset);
+      }
+      
+      // Add folder path with entity ID for better organization
+      const targetFolder = `${folderPath}/person-${entityId}`;
+      formData.append('folder', targetFolder);
       
       // Progress simulation (real progress isn't available from fetch API)
       const progressInterval = setInterval(() => {
@@ -70,6 +85,7 @@ export const CloudinaryImageInput = React.forwardRef((props, ref) => {
       // Use the appropriate endpoint
       const uploadEndpoint = getUploadEndpoint();
       console.log('Using upload endpoint:', uploadEndpoint);
+      console.log('Upload configuration:', { contentType, entityId, preset, folder: targetFolder });
       
       const response = await fetch(uploadEndpoint, {
         method: 'POST',
@@ -106,7 +122,7 @@ export const CloudinaryImageInput = React.forwardRef((props, ref) => {
       setError(err.message || 'Failed to upload image');
       setIsUploading(false);
     }
-  }, [file, onChange, type.name]);
+  }, [file, onChange, type.name, contentType, entityId, preset, folderPath]);
   
   const handleClear = () => {
     onChange(undefined);
