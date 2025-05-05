@@ -2,8 +2,8 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { Stack, Card, Text, Button, Box, Flex, Badge } from '@sanity/ui';
 import { FormField } from 'sanity';
-import { useId } from 'react'; // Use React's built-in useId hook instead of @reach/auto-id
-import { CheckmarkCircleIcon, UploadIcon, ImageIcon, AlertIcon } from '@sanity/icons';
+import { useId } from 'react'; // Use React's built-in useId hook
+import { CheckCircle, Upload, Image as ImageIcon, AlertCircle } from 'lucide-react';
 
 // Function to determine API endpoint based on environment
 const getUploadEndpoint = () => {
@@ -157,7 +157,7 @@ export const CloudinaryImageInput = React.forwardRef((props, ref) => {
                   tone="primary" 
                   onClick={() => onChange(undefined)} 
                   style={{ flex: 1 }}
-                  icon={UploadIcon}
+                  icon={Upload}
                 />
                 <Button 
                   text="Remove" 
@@ -183,7 +183,7 @@ export const CloudinaryImageInput = React.forwardRef((props, ref) => {
               <Card padding={3} radius={2} border>
                 <Stack space={3}>
                   <Flex align="center" gap={2}>
-                    <ImageIcon />
+                    <ImageIcon size={18} />
                     <Text weight="semibold">{file.name}</Text>
                     <Badge tone="primary" size={1}>
                       {Math.round(file.size / 1024)} KB
@@ -219,7 +219,7 @@ export const CloudinaryImageInput = React.forwardRef((props, ref) => {
                   {error && (
                     <Card tone="critical" padding={3} radius={2}>
                       <Flex align="center" gap={2}>
-                        <AlertIcon />
+                        <AlertCircle size={18} />
                         <Text size={1}>{error}</Text>
                       </Flex>
                     </Card>
@@ -231,7 +231,7 @@ export const CloudinaryImageInput = React.forwardRef((props, ref) => {
                         <Button 
                           text="Upload to Cloudinary" 
                           tone="primary" 
-                          icon={UploadIcon}
+                          icon={Upload}
                           onClick={handleUpload} 
                           disabled={isUploading}
                           style={{ flex: 1 }}
@@ -247,7 +247,7 @@ export const CloudinaryImageInput = React.forwardRef((props, ref) => {
                     
                     {isUploading && uploadProgress === 100 && (
                       <Flex align="center" gap={2} style={{ color: '#4CAF50' }}>
-                        <CheckmarkCircleIcon />
+                        <CheckCircle size={18} />
                         <Text>Upload complete!</Text>
                       </Flex>
                     )}
@@ -259,7 +259,7 @@ export const CloudinaryImageInput = React.forwardRef((props, ref) => {
                 <Button 
                   text="Select image file" 
                   tone="primary" 
-                  icon={UploadIcon}
+                  icon={Upload}
                   onClick={() => fileInputRef.current?.click()} 
                   style={{ width: '100%' }}
                 />
