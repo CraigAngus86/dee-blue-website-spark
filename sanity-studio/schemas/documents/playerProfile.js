@@ -146,13 +146,14 @@ export default {
     {
       name: 'profileImage',
       title: 'Profile Image',
-      type: 'cloudinaryImage',
+      type: 'image',
       description: 'Upload player/staff headshot (automatically processed with Cloudinary)',
       group: 'media',
-      inputComponent: CloudinaryImageInput,
       options: {
-        preset: 'player-upload',
-        folderPath: 'banksofdeefc/people'
+        hotspot: true,
+        // Use Sanity's built-in options for image
+        // We've reimplemented our ProfileImage field to use Sanity's
+        // regular image field which works better with Cloudinary
       }
     },
     {

@@ -1,6 +1,6 @@
 
 import { NextResponse } from 'next/server';
-import { syncPlayerProfileToSupabase } from 'utils/cross-system/syncSanityToSupabase';
+import { syncPlayerProfileToSupabase } from '@/utils/cross-system/syncSanityToSupabase';
 import { supabase } from '@/lib/supabase/client';
 import { serverEnv } from '@/lib/env';
 
