@@ -38,7 +38,8 @@ export default {
       const { title, media } = selection;
       return {
         title: title || 'Untitled image',
-        media: media ? <img src={media} alt="" style={{ objectFit: 'cover' }} /> : null
+        // Using string representation instead of JSX
+        media: media
       };
     }
   }

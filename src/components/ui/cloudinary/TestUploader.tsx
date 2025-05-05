@@ -73,7 +73,7 @@ export default function TestUploader() {
       console.log('Upload successful, received result:', result);
       
       setProgress(100);
-      setUploadedImage(result.secureUrl);
+      setUploadedImage(result.secureUrl || result.url);
       
       toast({
         title: "Upload successful",

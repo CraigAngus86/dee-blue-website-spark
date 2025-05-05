@@ -74,8 +74,9 @@ export async function POST(request: Request) {
       folder = `banksofdeefc/matches/${entityId ? `match-${entityId}` : 'unassigned'}`;
     }
     
-    // Upload to Cloudinary
-    const result = await cloudinaryServer.uploader.upload(buffer, {
+    // Upload to Cloudinary - using data URI format for buffer
+    const dataUri = `data:${file.type};base64,${buffer.toString('base64')}`;
+    const result = await cloudinaryServer.uploader.upload(dataUri, {
       folder,
       resource_type: 'auto',
       public_id: type, // Use type as the public ID (profile, action, etc.)

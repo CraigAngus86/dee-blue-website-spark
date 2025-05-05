@@ -32,8 +32,8 @@ export async function syncPlayerProfileToSupabase(profileData: any): Promise<str
       // Handle regular Sanity image asset
       else if (profileImage.asset && profileImage.asset._ref) {
         // This is a Sanity asset reference
-        // For now, we'll just leave it as null - we can implement asset URL resolution if needed
-        console.log('Found Sanity image reference, no direct URL available');
+        // For now, we'll just log it - we can implement asset URL resolution if needed
+        console.log('Found Sanity image reference:', profileImage.asset._ref);
       }
     }
     

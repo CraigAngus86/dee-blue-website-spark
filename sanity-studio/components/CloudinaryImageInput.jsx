@@ -1,9 +1,8 @@
 
 import React, { useCallback, useState } from 'react';
 import { Button, Card, Text, Stack, Spinner, Box } from '@sanity/ui';
-import { FormField } from '@sanity/base/components';
-import PatchEvent, { set, unset } from '@sanity/form-builder/PatchEvent';
-import { useId } from '@sanity/react-hooks';
+import { FormField, set, unset } from 'sanity';
+import { useId } from 'react';
 
 /**
  * CloudinaryImageInput component for Sanity Studio
@@ -92,8 +91,8 @@ const CloudinaryImageInput = React.forwardRef((props, ref) => {
           alt: file.name || 'Image',
         };
         
-        // Trigger change in the Sanity form
-        onChange(PatchEvent.from(set(cloudinaryValue)));
+        // Trigger change in the Sanity form - updated for Sanity v3
+        onChange(set(cloudinaryValue));
         
       } catch (error) {
         console.error('Error uploading to Cloudinary:', error);
@@ -107,7 +106,8 @@ const CloudinaryImageInput = React.forwardRef((props, ref) => {
   
   // Handle remove button click
   const handleRemove = useCallback(() => {
-    onChange(PatchEvent.from(unset()));
+    // Updated for Sanity v3
+    onChange(unset());
     setPreviewUrl(null);
   }, [onChange]);
   
@@ -116,12 +116,12 @@ const CloudinaryImageInput = React.forwardRef((props, ref) => {
   
   return (
     <FormField
-      label={type.title}
+      title={type.title}
       description={type.description}
-      markers={markers}
-      presence={presence}
+      __unstable_markers={markers}
+      __unstable_presence={presence}
       compareValue={compareValue}
-      inputId={inputId}
+      id={inputId}
     >
       <Stack space={3}>
         {/* Preview current image if available */}
