@@ -1,4 +1,5 @@
-import CloudinaryImageInput from '../../components/CloudinaryImageInput';
+// Remove this import as we'll use the built-in Cloudinary field type instead
+// import CloudinaryImageInput from '../../components/CloudinaryImageInput';
 
 export default {
   name: 'playerProfile',
@@ -142,20 +143,17 @@ export default {
       initialValue: 'Scotland',
       group: 'basic'
     },
+    // Replace the existing image field with cloudinary.asset
     {
       name: 'profileImage',
       title: 'Profile Image',
-      type: 'array',
-      description: 'Upload player/staff headshot (automatically processed with Cloudinary)',
+      type: 'cloudinary.asset',
+      description: 'Upload player/staff headshot to Cloudinary',
       group: 'media',
-      of: [
-        {
-          type: 'image',
-          options: {
-            hotspot: true
-          }
-        }
-      ]
+      options: {
+        folder: 'banksodeefc/people',
+        uploadPreset: 'player-upload'
+      }
     },
     {
       name: 'extendedBio',
@@ -288,12 +286,18 @@ export default {
       description: 'Social media profiles',
       group: 'basic'
     },
+    // Update gallery to use Cloudinary assets
     {
       name: 'gallery',
       title: 'Action Gallery',
-      type: 'gallery',
+      type: 'array',
+      of: [{type: 'cloudinary.asset'}],
       description: 'Gallery of action shots',
-      group: 'media'
+      group: 'media',
+      options: {
+        folder: 'banksodeefc/people/action',
+        uploadPreset: 'player-upload'
+      }
     },
     {
       name: 'videoUrl',
@@ -352,7 +356,7 @@ export default {
           id: doc._id,
           name: doc.playerName || `${doc.firstName} ${doc.lastName}`,
           position: doc.playerPosition,
-          hasImage: !!doc.profileImage?.asset?.url
+          hasImage: !!doc.profileImage
         });
       } catch (err) {
         console.error('Error syncing with Supabase:', err);
