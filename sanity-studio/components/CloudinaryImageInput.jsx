@@ -2,7 +2,7 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { Stack, Card, Text, Button, Box, Spinner, Flex, Badge } from '@sanity/ui';
 import { FormField } from 'sanity';
-import { useId } from '@reach/auto-id';
+import { useId } from 'react'; // Use React's built-in useId hook instead of @reach/auto-id
 import { CheckCircleIcon, UploadIcon, ImageIcon, WarningOutlineIcon } from '@sanity/icons';
 
 // Function to determine API endpoint based on environment
@@ -28,7 +28,7 @@ export const CloudinaryImageInput = React.forwardRef((props, ref) => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [error, setError] = useState(null);
   const [file, setFile] = useState(null);
-  const inputId = useId();
+  const inputId = useId(); // React's built-in useId hook
   const fileInputRef = React.useRef(null);
   
   const reset = () => {
