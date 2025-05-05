@@ -1,7 +1,7 @@
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { Stack, Card, Text, Button, Box, Spinner, Flex, Badge } from '@sanity/ui';
-import { FormField } from '@sanity/base';
+import { FormField } from 'sanity';
 import { useId } from '@reach/auto-id';
 import { CheckCircleIcon, UploadIcon, ImageIcon, WarningOutlineIcon } from '@sanity/icons';
 

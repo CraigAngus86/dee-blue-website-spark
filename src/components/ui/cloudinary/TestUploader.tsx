@@ -1,131 +1,170 @@
 
 "use client";
 
-import { useState } from 'react';
-import { useCloudinaryUpload } from '@/hooks/useCloudinaryUpload';
-import { CloudinaryMetadata, ContentType } from '@/lib/cloudinary/metadata';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { publicEnv } from '@/lib/env';
+import { Upload, Check, AlertCircle, Image as ImageIcon } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
 
-const TestUploader = () => {
+export default function TestUploader() {
   const [file, setFile] = useState<File | null>(null);
-  const { uploadFile, isUploading, progress, error, result, reset } = useCloudinaryUpload();
-  
+  const [isUploading, setIsUploading] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const { toast } = useToast();
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0] || null;
-    setFile(selectedFile);
+    if (e.target.files && e.target.files.length > 0) {
+      setFile(e.target.files[0]);
+    }
   };
-  
+
   const handleUpload = async () => {
     if (!file) return;
-    
-    // Example metadata for test upload
-    const metadata: CloudinaryMetadata = {
-      contentType: ContentType.PLAYER,
-      entityId: 'test-' + Date.now(),  // Demo ID
-      tags: ['test', 'demo'],
-      metadata: {
-        testUpload: true,
-        timestamp: Date.now()
+
+    setIsUploading(true);
+    setProgress(0);
+
+    try {
+      // Create form data
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('contentType', 'test');
+      formData.append('entityId', 'test-upload');
+      formData.append('type', 'test');
+
+      // Simulate progress updates
+      const progressInterval = setInterval(() => {
+        setProgress(prev => Math.min(prev + 5, 90));
+      }, 200);
+
+      // Upload file
+      const response = await fetch('/api/cloudinary/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      clearInterval(progressInterval);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || 'Upload failed');
       }
-    };
-    
-    await uploadFile(file, metadata);
+
+      const result = await response.json();
+      
+      setProgress(100);
+      setUploadedImage(result.secureUrl);
+      
+      toast({
+        title: "Upload successful",
+        description: "Image has been uploaded to Cloudinary",
+      });
+    } catch (err) {
+      console.error('Upload error:', err);
+      toast({
+        title: "Upload failed",
+        description: err instanceof Error ? err.message : "Something went wrong",
+        variant: "destructive"
+      });
+    } finally {
+      setTimeout(() => {
+        setIsUploading(false);
+      }, 500);
+    }
   };
-  
-  const handleReset = () => {
+
+  const reset = () => {
     setFile(null);
-    reset();
+    setProgress(0);
+    setUploadedImage(null);
   };
 
   return (
-    <div className="w-full max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-xl font-semibold mb-4">Cloudinary Test Upload</h2>
-      
-      <div className="mb-4">
-        <p className="text-sm text-gray-500 mb-2">Configuration:</p>
-        <div className="text-xs bg-gray-50 p-2 rounded border">
-          <p>Cloud name: {publicEnv.getCloudinaryCloudName()}</p>
-          <p>Environment: {process.env.NODE_ENV}</p>
-        </div>
-      </div>
-      
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Choose an image to upload
-        </label>
-        <input
-          type="file"
-          onChange={handleFileChange}
-          accept="image/*"
-          disabled={isUploading}
-          className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4
-            file:rounded-md file:border-0 file:text-sm file:font-semibold
-            file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-        />
-      </div>
-      
-      {file && (
-        <div className="mb-4">
-          <p className="text-sm font-medium text-gray-700 mb-2">Selected file:</p>
-          <p className="text-sm text-gray-500">{file.name} ({Math.round(file.size / 1024)} KB)</p>
-        </div>
-      )}
-      
-      {isUploading && (
-        <div className="mb-4">
-          <p className="text-sm font-medium text-gray-700 mb-2">Upload progress:</p>
-          <Progress value={progress} className="h-2" />
-          <p className="text-xs text-gray-500 mt-1">{Math.round(progress)}%</p>
-        </div>
-      )}
-      
-      {error && (
-        <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-md border border-red-200">
-          <p className="font-medium">Upload failed</p>
-          <p className="text-sm">{error.message}</p>
-        </div>
-      )}
-      
-      {result && (
-        <div className="mb-4">
-          <p className="text-sm font-medium text-gray-700 mb-2">Upload successful:</p>
-          <div className="p-3 bg-green-50 rounded-md border border-green-200">
-            <div className="mb-2">
-              <img
-                src={result.secureUrl}
-                alt="Uploaded image"
-                className="w-full h-auto rounded-md"
-              />
+    <div className="max-w-md mx-auto">
+      <Card>
+        <CardHeader>
+          <CardTitle>Cloudinary Upload Test</CardTitle>
+          <CardDescription>
+            Test direct uploads to Cloudinary via our API
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* File selection */}
+          {!uploadedImage && (
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  disabled={isUploading}
+                />
+                {file && (
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <ImageIcon className="h-4 w-4" />
+                    <span>{file.name}</span>
+                    <Badge variant="outline">{Math.round(file.size / 1024)} KB</Badge>
+                  </div>
+                )}
+              </div>
+              
+              <Button
+                onClick={handleUpload}
+                disabled={!file || isUploading}
+                className="w-full"
+              >
+                {isUploading ? (
+                  <span className="flex items-center gap-2">
+                    <Upload className="h-4 w-4 animate-pulse" />
+                    Uploading...
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-2">
+                    <Upload className="h-4 w-4" />
+                    Upload to Cloudinary
+                  </span>
+                )}
+              </Button>
+              
+              {isUploading && (
+                <div className="space-y-1">
+                  <Progress value={progress} />
+                  <p className="text-xs text-right text-muted-foreground">
+                    {Math.round(progress)}%
+                  </p>
+                </div>
+              )}
             </div>
-            <p className="text-xs font-medium">Public ID:</p>
-            <p className="text-xs text-gray-600 mb-1 break-all">{result.publicId}</p>
-            <p className="text-xs font-medium">URL:</p>
-            <p className="text-xs text-gray-600 break-all">{result.secureUrl}</p>
-          </div>
-        </div>
-      )}
-      
-      <div className="flex gap-3">
-        <Button
-          onClick={handleUpload}
-          disabled={!file || isUploading}
-          className="w-full"
-        >
-          {isUploading ? 'Uploading...' : 'Upload to Cloudinary'}
-        </Button>
-        
-        <Button
-          onClick={handleReset}
-          variant="outline"
-          className="flex-shrink-0"
-        >
-          Reset
-        </Button>
-      </div>
+          )}
+          
+          {/* Upload result */}
+          {uploadedImage && (
+            <div className="space-y-4">
+              <div className="rounded-md border overflow-hidden">
+                <img 
+                  src={uploadedImage} 
+                  alt="Uploaded image" 
+                  className="w-full h-auto"
+                />
+              </div>
+              
+              <div className="flex items-center justify-center p-2 rounded-md bg-green-50 text-green-700">
+                <Check className="h-4 w-4 mr-2" />
+                <span className="text-sm font-medium">Upload successful</span>
+              </div>
+              
+              <Button variant="outline" onClick={reset} className="w-full">
+                Upload Another Image
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
-};
-
-export default TestUploader;
+}
