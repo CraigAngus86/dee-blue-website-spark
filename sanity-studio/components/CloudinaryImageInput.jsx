@@ -89,7 +89,10 @@ export const CloudinaryImageInput = React.forwardRef((props, ref) => {
       
       const response = await fetch(uploadEndpoint, {
         method: 'POST',
-        body: formData
+        body: formData,
+        headers: {
+          'x-sanity-studio': 'true'
+        }
       });
       
       clearInterval(progressInterval);

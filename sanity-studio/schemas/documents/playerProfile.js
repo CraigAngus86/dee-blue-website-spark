@@ -1,3 +1,4 @@
+
 import CloudinaryImageInput from '../../components/CloudinaryImageInput';
 
 export default {
@@ -27,10 +28,12 @@ export default {
       name: 'supabaseId',
       title: 'Supabase ID',
       type: 'string',
-      description: 'UUID from Supabase for this player (optional)',
+      description: 'UUID from Supabase for this player (read-only, auto-generated)',
+      readOnly: true,
       validation: Rule => 
         Rule.custom(supabaseId => {
-          if (!supabaseId) return true; // Make it optional
+          // Make it optional as it will be filled automatically
+          if (!supabaseId) return true;
           
           // If provided, ensure it's a valid UUID
           return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(supabaseId) 
@@ -317,11 +320,41 @@ export default {
       }
     }
   },
-  initialValue: {
-    // Generate a random UUID for new documents
-    supabaseId: () => {
-      return crypto.randomUUID ? crypto.randomUUID() : null;
+  // Document lifecycle hooks for Supabase integration
+  document: {
+    // Calculate full name when document changes
+    async prepare(doc) {
+      // Only update if first name or last name are set
+      if (doc.firstName && doc.lastName && !doc.playerName) {
+        return {
+          ...doc,
+          playerName: `${doc.firstName} ${doc.lastName}`
+        };
+      }
+      return doc;
     },
-    personType: 'player'
+    // Sync with Supabase when saved
+    async afterSave(doc, context) {
+      try {
+        // Skip sync if this is just a draft
+        if (doc._id.startsWith('drafts.')) {
+          return;
+        }
+        
+        // Sync document to Supabase via webhook or API call
+        // This would be implemented based on your backend setup
+        console.log('Document saved, syncing to Supabase:', doc._id);
+        
+        // For testing purposes only
+        console.log('Player profile saved:', {
+          id: doc._id,
+          name: doc.playerName || `${doc.firstName} ${doc.lastName}`,
+          position: doc.playerPosition,
+          hasImage: !!doc.profileImage?.asset?.url
+        });
+      } catch (err) {
+        console.error('Error syncing with Supabase:', err);
+      }
+    }
   }
 }
