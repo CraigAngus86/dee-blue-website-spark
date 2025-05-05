@@ -15,8 +15,6 @@ export default {
         { name: 'public_id', type: 'string' }
       ]
     },
-    { name: 'alt', type: 'string' },
-    { name: 'caption', type: 'string' },
-    { name: 'credit', type: 'string' }
+    { name: 'alt', type: 'string' }
   ]
 };

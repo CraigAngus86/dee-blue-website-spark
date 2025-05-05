@@ -1,30 +1,116 @@
 
-import React, { useState, useEffect } from 'react';
-import { Stack, Card, Text, Button, Dialog, Box } from '@sanity/ui';
+import React, { useState, useCallback } from 'react';
+import { Stack, Card, Text, Button, Box, Spinner, Flex, Badge } from '@sanity/ui';
 import { FormField } from '@sanity/base';
 import { useId } from '@reach/auto-id';
+import { CheckCircleIcon, UploadIcon, ImageIcon, WarningOutlineIcon } from '@sanity/icons';
+
+// Function to determine API endpoint based on environment
+const getUploadEndpoint = () => {
+  // If we're in a development environment, use localhost
+  if (process.env.NODE_ENV === 'development') {
+    return 'http://localhost:3000/api/cloudinary/upload';
+  }
+  
+  // If we have a SANITY_STUDIO_API_URL, use that
+  if (process.env.SANITY_STUDIO_API_URL) {
+    return `${process.env.SANITY_STUDIO_API_URL}/api/cloudinary/upload`;
+  }
+  
+  // Default fallback - assumes same domain
+  return '/api/cloudinary/upload';
+};
 
 // This component creates a nice interface for the Cloudinary image upload
 export const CloudinaryImageInput = React.forwardRef((props, ref) => {
   const { type, value, onChange, onFocus, onBlur } = props;
-  const [showDialog, setShowDialog] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [error, setError] = useState(null);
+  const [file, setFile] = useState(null);
   const inputId = useId();
+  const fileInputRef = React.useRef(null);
   
-  const handleImageSelect = (imageData) => {
-    onChange({
-      _type: type.name,
-      asset: {
-        url: imageData.url,
-        public_id: imageData.public_id
-      },
-      alt: imageData.alt || '',
-      caption: imageData.caption || ''
-    });
-    setShowDialog(false);
+  const reset = () => {
+    setIsUploading(false);
+    setUploadProgress(0);
+    setError(null);
+    setFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
+  
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setFile(e.target.files[0]);
+      setError(null);
+    }
+  };
+  
+  const handleUpload = useCallback(async () => {
+    if (!file) return;
+    
+    try {
+      setIsUploading(true);
+      setUploadProgress(10);
+      
+      // Create the payload for upload
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('contentType', 'player');
+      formData.append('entityId', 'sanity-upload');
+      formData.append('type', 'profile');
+      
+      // Progress simulation (real progress isn't available from fetch API)
+      const progressInterval = setInterval(() => {
+        setUploadProgress(prev => Math.min(prev + 5, 90));
+      }, 200);
+      
+      // Use the appropriate endpoint
+      const uploadEndpoint = getUploadEndpoint();
+      console.log('Using upload endpoint:', uploadEndpoint);
+      
+      const response = await fetch(uploadEndpoint, {
+        method: 'POST',
+        body: formData
+      });
+      
+      clearInterval(progressInterval);
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || 'Upload failed');
+      }
+      
+      const result = await response.json();
+      setUploadProgress(100);
+      
+      // Update the Sanity field with the result
+      onChange({
+        _type: type.name,
+        asset: {
+          url: result.secureUrl,
+          public_id: result.publicId
+        },
+        alt: file.name.split('.')[0] || 'Player image'
+      });
+      
+      // Reset the file input after successful upload
+      setTimeout(() => {
+        reset();
+      }, 1500);
+      
+    } catch (err) {
+      console.error('Error uploading to Cloudinary:', err);
+      setError(err.message || 'Failed to upload image');
+      setIsUploading(false);
+    }
+  }, [file, onChange, type.name]);
   
   const handleClear = () => {
     onChange(undefined);
+    reset();
   };
   
   return (
@@ -36,7 +122,7 @@ export const CloudinaryImageInput = React.forwardRef((props, ref) => {
       __unstable_changeIndicator={props.__unstable_changeIndicator}
       inputId={inputId}
     >
-      <Stack space={3}>
+      <Stack space={4}>
         {value?.asset?.url ? (
           <Card padding={3} radius={2} shadow={1}>
             <Stack space={3}>
@@ -46,7 +132,7 @@ export const CloudinaryImageInput = React.forwardRef((props, ref) => {
                   alt={value.alt || ''} 
                   style={{ 
                     maxWidth: '100%', 
-                    maxHeight: '200px', 
+                    maxHeight: '300px', 
                     objectFit: 'contain',
                     borderRadius: '4px'
                   }} 
@@ -56,13 +142,7 @@ export const CloudinaryImageInput = React.forwardRef((props, ref) => {
               <Stack space={2}>
                 {value.alt && (
                   <Text size={1} weight="semibold">
-                    Alt: {value.alt}
-                  </Text>
-                )}
-                
-                {value.caption && (
-                  <Text size={1}>
-                    Caption: {value.caption}
+                    Alt text: {value.alt}
                   </Text>
                 )}
                 
@@ -75,8 +155,9 @@ export const CloudinaryImageInput = React.forwardRef((props, ref) => {
                 <Button 
                   text="Replace" 
                   tone="primary" 
-                  onClick={() => setShowDialog(true)} 
+                  onClick={() => onChange(undefined)} 
                   style={{ flex: 1 }}
+                  icon={UploadIcon}
                 />
                 <Button 
                   text="Remove" 
@@ -87,66 +168,111 @@ export const CloudinaryImageInput = React.forwardRef((props, ref) => {
             </Stack>
           </Card>
         ) : (
-          <Button 
-            text="Upload image" 
-            tone="primary" 
-            onClick={() => setShowDialog(true)} 
-            icon={UploadIcon} 
-          />
-        )}
-        
-        {showDialog && (
-          <Dialog 
-            id="cloudinary-uploader-dialog"
-            header="Upload Image"
-            width={1} // makes it full width
-            onClose={() => setShowDialog(false)}
-          >
-            <Box padding={4}>
-              <Text>
-                Use the Cloudinary uploader to select or upload an image.
-                The Cloudinary uploader will appear in a separate window.
-              </Text>
-              <Button 
-                text="Open Media Library" 
-                tone="primary" 
-                onClick={() => {
-                  // This would typically trigger the Cloudinary widget
-                  // For demo purposes, we'll just simulate a selection
-                  setTimeout(() => {
-                    handleImageSelect({
-                      url: 'https://res.cloudinary.com/demo/image/upload/sample',
-                      public_id: 'sample',
-                      alt: 'Sample Image',
-                      caption: 'This is a sample image'
-                    });
-                  }, 1000);
-                }} 
-              />
-            </Box>
-          </Dialog>
+          <Stack space={3}>
+            <input
+              ref={fileInputRef}
+              type="file"
+              id={inputId}
+              onChange={handleFileChange}
+              accept="image/jpeg,image/png,image/webp"
+              style={{ display: 'none' }}
+              disabled={isUploading}
+            />
+            
+            {file ? (
+              <Card padding={3} radius={2} border>
+                <Stack space={3}>
+                  <Flex align="center" gap={2}>
+                    <ImageIcon />
+                    <Text weight="semibold">{file.name}</Text>
+                    <Badge tone="primary" size={1}>
+                      {Math.round(file.size / 1024)} KB
+                    </Badge>
+                  </Flex>
+                  
+                  {isUploading && (
+                    <Box>
+                      <div 
+                        style={{ 
+                          height: '8px', 
+                          width: '100%', 
+                          backgroundColor: '#eee',
+                          borderRadius: '4px',
+                          overflow: 'hidden'
+                        }}
+                      >
+                        <div 
+                          style={{
+                            height: '100%',
+                            width: `${uploadProgress}%`,
+                            backgroundColor: uploadProgress === 100 ? '#4CAF50' : '#2276FC',
+                            transition: 'width 0.2s ease'
+                          }}
+                        />
+                      </div>
+                      <Flex justify="flex-end" marginTop={2}>
+                        <Text size={0} muted>{Math.round(uploadProgress)}%</Text>
+                      </Flex>
+                    </Box>
+                  )}
+                  
+                  {error && (
+                    <Card tone="critical" padding={3} radius={2}>
+                      <Flex align="center" gap={2}>
+                        <WarningOutlineIcon />
+                        <Text size={1}>{error}</Text>
+                      </Flex>
+                    </Card>
+                  )}
+                  
+                  <Flex gap={2}>
+                    {!isUploading && (
+                      <>
+                        <Button 
+                          text="Upload to Cloudinary" 
+                          tone="primary" 
+                          icon={UploadIcon}
+                          onClick={handleUpload} 
+                          disabled={isUploading}
+                          style={{ flex: 1 }}
+                        />
+                        <Button
+                          text="Cancel"
+                          tone="default"
+                          onClick={reset}
+                          disabled={isUploading}
+                        />
+                      </>
+                    )}
+                    
+                    {isUploading && uploadProgress === 100 && (
+                      <Flex align="center" gap={2} style={{ color: '#4CAF50' }}>
+                        <CheckCircleIcon />
+                        <Text>Upload complete!</Text>
+                      </Flex>
+                    )}
+                  </Flex>
+                </Stack>
+              </Card>
+            ) : (
+              <Flex direction="column" gap={3}>
+                <Button 
+                  text="Select image file" 
+                  tone="primary" 
+                  icon={UploadIcon}
+                  onClick={() => fileInputRef.current?.click()} 
+                  style={{ width: '100%' }}
+                />
+                <Text size={1} muted align="center">
+                  Upload images directly to Cloudinary
+                </Text>
+              </Flex>
+            )}
+          </Stack>
         )}
       </Stack>
     </FormField>
   );
 });
-
-// Simple upload icon component
-const UploadIcon = () => (
-  <svg 
-    width="16" 
-    height="16" 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor" 
-    strokeWidth="2"
-    strokeLinecap="round" 
-    strokeLinejoin="round"
-  >
-    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-    <polyline points="17 8 12 3 7 8" />
-    <line x1="12" y1="3" x2="12" y2="15" />
-  </svg>
-);
 
 export default CloudinaryImageInput;

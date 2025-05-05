@@ -1,4 +1,6 @@
 
+import CloudinaryImageInput from '../../components/CloudinaryImageInput';
+
 export default {
   name: 'playerProfile',
   title: 'Player Profile',
@@ -14,7 +16,7 @@ export default {
     },
     {
       name: 'media',
-      title: 'Media and Gallery',
+      title: 'Media',
     },
     {
       name: 'reference',
@@ -144,14 +146,8 @@ export default {
       title: 'Profile Image',
       type: 'cloudinaryImage',
       description: 'Upload player/staff headshot (automatically processed with Cloudinary)',
-      group: 'media'
-    },
-    {
-      name: 'profileImages',
-      title: 'Additional Profile Images',
-      type: 'array',
-      of: [{ type: 'cloudinaryImage' }],
-      group: 'media'
+      group: 'media',
+      inputComponent: CloudinaryImageInput
     },
     {
       name: 'extendedBio',
