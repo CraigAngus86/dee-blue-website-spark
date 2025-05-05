@@ -1,26 +1,16 @@
 
 /**
- * Types and utilities for Cloudinary metadata
+ * Metadata types for Cloudinary uploads
  */
 
-/**
- * Content type enumeration for organizing uploads
- */
-export enum ContentType {
-  PLAYER = 'player',
-  TEAM = 'team',
-  MATCH = 'match',
-  NEWS = 'news',
-  SPONSOR = 'sponsor',
-  STADIUM = 'stadium',
-  OTHER = 'other'
-}
+// Re-export for convenience
+export { ContentType } from './client';
 
 /**
- * Metadata structure for Cloudinary uploads
+ * Interface for metadata to be attached to Cloudinary uploads
  */
 export interface CloudinaryMetadata {
-  contentType: ContentType | string;
+  contentType: string;
   entityId?: string;
   type?: string;
   tags?: string[];
@@ -28,36 +18,45 @@ export interface CloudinaryMetadata {
 }
 
 /**
- * Create standardized metadata for Cloudinary uploads
+ * Format tags for Cloudinary uploads
+ * @param tags Custom tags to include
+ * @param contentType Content type tag
+ * @returns Formatted array of tags
  */
-export function createMetadata(
-  contentType: ContentType,
-  entityId: string,
-  description?: string,
-  additionalData?: Record<string, any>
-): CloudinaryMetadata {
-  return {
-    contentType,
-    entityId,
-    metadata: {
-      description,
-      ...additionalData
-    }
-  };
+export function formatTags(tags: string[], contentType: ContentType | string): string[] {
+  const allTags = ['banksofdeefc'];
+  
+  // Add content type tag
+  allTags.push(contentType.toString().toLowerCase());
+  
+  // Add custom tags
+  if (tags && tags.length > 0) {
+    allTags.push(...tags.map(tag => tag.toLowerCase()));
+  }
+  
+  // Remove duplicates and return
+  return [...new Set(allTags)];
 }
 
 /**
- * Format tags consistently
+ * Create metadata for Cloudinary uploads
+ * @param contentType Type of content
+ * @param entityId Entity identifier
+ * @param altText Alternative text for accessibility
+ * @param customData Additional custom metadata
+ * @returns Formatted metadata
  */
-export function formatTags(tags: string[], contentType?: ContentType | string): string[] {
-  const formattedTags = tags.map(tag => tag.toLowerCase().replace(/\s+/g, '-'));
-  
-  if (contentType) {
-    formattedTags.unshift(contentType.toString().toLowerCase());
-  }
-  
-  // Remove duplicates using array filter instead of Set
-  return formattedTags.filter((tag, index, self) => 
-    self.indexOf(tag) === index
-  );
+export function createMetadata(
+  contentType: ContentType | string,
+  entityId: string,
+  altText: string,
+  customData: Record<string, any> = {}
+): Record<string, any> {
+  return {
+    alt: altText,
+    contentType: contentType.toString(),
+    entityId,
+    banksofdeefc: true,
+    ...customData
+  };
 }

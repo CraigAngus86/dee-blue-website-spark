@@ -1,294 +1,204 @@
 
-import React, { useState, useCallback, useRef } from 'react';
-import { Stack, Card, Text, Button, Box, Flex, Badge } from '@sanity/ui';
-import { FormField } from 'sanity';
-import { useId } from 'react'; // Use React's built-in useId hook
-import { CheckCircle, Upload, Image as ImageIcon, AlertCircle } from 'lucide-react';
+import React, { useCallback, useState } from 'react';
+import { Button, Card, Text, Stack, Spinner, Box } from '@sanity/ui';
+import { FormField } from '@sanity/base/components';
+import PatchEvent, { set, unset } from '@sanity/form-builder/PatchEvent';
+import { useId } from '@sanity/react-hooks';
 
-// Function to determine API endpoint based on environment
-const getUploadEndpoint = () => {
-  // If we're in a development environment, use localhost
-  if (process.env.NODE_ENV === 'development') {
-    return 'http://localhost:3000/api/cloudinary/upload';
-  }
+/**
+ * CloudinaryImageInput component for Sanity Studio
+ * Provides direct image upload to Cloudinary with preview
+ */
+const CloudinaryImageInput = React.forwardRef((props, ref) => {
+  const { 
+    type,         // Schema type
+    value,        // Current field value
+    readOnly,     // If field is not editable
+    placeholder,  // Placeholder text
+    markers,      // Field markers (errors, validation)
+    presence,     // Presence information (users looking at this field)
+    compareValue, // Value to check for dirty state
+    onFocus,      // Called when field receives focus
+    onBlur,       // Called when field loses focus
+    onChange,     // Method to call when field should be updated
+  } = props;
   
-  // If we have a SANITY_STUDIO_API_URL, use that
-  if (process.env.SANITY_STUDIO_API_URL) {
-    return `${process.env.SANITY_STUDIO_API_URL}/api/cloudinary/upload`;
-  }
-  
-  // Default fallback - assumes same domain
-  return '/api/cloudinary/upload';
-};
-
-// This component creates a nice interface for the Cloudinary image upload
-export const CloudinaryImageInput = React.forwardRef((props, ref) => {
-  const { type, value, onChange, onFocus, onBlur } = props;
+  const inputId = useId();
   const [isUploading, setIsUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [error, setError] = useState(null);
-  const [file, setFile] = useState(null);
-  const inputId = useId(); // React's built-in useId hook
-  const fileInputRef = React.useRef(null);
+  const [uploadError, setUploadError] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
   
-  // Get options from schema type if available
-  const preset = type?.options?.preset || 'player-upload';
-  const folderPath = type?.options?.folderPath || 'banksofdeefc/uploads';
-  const entityId = props.document?._id?.replace('drafts.', '') || 'unknown';
-  const contentType = props.document?._type || 'playerProfile';
+  // Get options from schema - handle defaults if not provided
+  const uploadPreset = type.options?.preset || 'player-upload';
+  const folderPath = type.options?.folderPath || 'banksofdeefc/people';
   
-  const reset = () => {
-    setIsUploading(false);
-    setUploadProgress(0);
-    setError(null);
-    setFile(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
+  // Get document information for context
+  const documentId = props.document?._id?.replace('drafts.', '') || 'unknown';
+  const documentType = props.document?._type || 'unknown';
+  const fieldName = type.name;
   
-  const handleFileChange = (e) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setFile(e.target.files[0]);
-      setError(null);
-    }
-  };
-  
-  const handleUpload = useCallback(async () => {
-    if (!file) return;
-    
-    try {
+  // Handle file selection and upload
+  const handleFileChange = useCallback(
+    async (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+      
       setIsUploading(true);
-      setUploadProgress(10);
+      setUploadError(null);
+      setPreviewUrl(null);
       
-      // Create the payload for upload
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('contentType', contentType);
-      formData.append('entityId', entityId);
-      formData.append('type', 'profile');
-      
-      // Add upload preset if specified
-      if (preset) {
-        formData.append('uploadPreset', preset);
-      }
-      
-      // Add folder path with entity ID for better organization
-      const targetFolder = `${folderPath}/person-${entityId}`;
-      formData.append('folder', targetFolder);
-      
-      // Progress simulation (real progress isn't available from fetch API)
-      const progressInterval = setInterval(() => {
-        setUploadProgress(prev => Math.min(prev + 5, 90));
-      }, 200);
-      
-      // Use the appropriate endpoint
-      const uploadEndpoint = getUploadEndpoint();
-      console.log('Using upload endpoint:', uploadEndpoint);
-      console.log('Upload configuration:', { contentType, entityId, preset, folder: targetFolder });
-      
-      const response = await fetch(uploadEndpoint, {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'x-sanity-studio': 'true'
+      try {
+        // Create form data for upload
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('contentType', documentType);
+        formData.append('entityId', documentId);
+        formData.append('type', fieldName);
+        formData.append('uploadPreset', uploadPreset);
+        formData.append('tags', [documentType, fieldName].join(','));
+        
+        // Add metadata
+        const metadata = {
+          sanityDocId: documentId,
+          sanityDocType: documentType,
+          sanityFieldName: fieldName,
+        };
+        formData.append('metadata', JSON.stringify(metadata));
+        
+        // Use the same API route that the test page uses
+        const response = await fetch('/api/cloudinary/upload', {
+          method: 'POST',
+          body: formData,
+        });
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error?.message || `Upload failed with status: ${response.status}`);
         }
-      });
-      
-      clearInterval(progressInterval);
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error?.message || 'Upload failed');
+        
+        // Parse the result
+        const result = await response.json();
+        console.log('Cloudinary upload successful:', result);
+        
+        // Create temporary preview
+        setPreviewUrl(result.secureUrl);
+        
+        // Update the Sanity value
+        const cloudinaryValue = {
+          asset: {
+            url: result.secureUrl,
+            public_id: result.publicId,
+          },
+          alt: file.name || 'Image',
+        };
+        
+        // Trigger change in the Sanity form
+        onChange(PatchEvent.from(set(cloudinaryValue)));
+        
+      } catch (error) {
+        console.error('Error uploading to Cloudinary:', error);
+        setUploadError(error.message || 'Upload failed');
+      } finally {
+        setIsUploading(false);
       }
-      
-      const result = await response.json();
-      setUploadProgress(100);
-      
-      // Update the Sanity field with the result
-      onChange({
-        _type: type.name,
-        asset: {
-          url: result.secureUrl,
-          public_id: result.publicId
-        },
-        alt: file.name.split('.')[0] || 'Player image'
-      });
-      
-      // Reset the file input after successful upload
-      setTimeout(() => {
-        reset();
-      }, 1500);
-      
-    } catch (err) {
-      console.error('Error uploading to Cloudinary:', err);
-      setError(err.message || 'Failed to upload image');
-      setIsUploading(false);
-    }
-  }, [file, onChange, type.name, contentType, entityId, preset, folderPath]);
+    },
+    [onChange, documentId, documentType, fieldName, uploadPreset]
+  );
   
-  const handleClear = () => {
-    onChange(undefined);
-    reset();
-  };
+  // Handle remove button click
+  const handleRemove = useCallback(() => {
+    onChange(PatchEvent.from(unset()));
+    setPreviewUrl(null);
+  }, [onChange]);
+  
+  // Get the preview URL (from stored value or temporary preview)
+  const imageUrl = (value?.asset?.url || previewUrl);
   
   return (
     <FormField
-      title={type.title}
+      label={type.title}
       description={type.description}
-      __unstable_markers={props.__unstable_markers}
-      __unstable_presence={props.__unstable_presence}
-      __unstable_changeIndicator={props.__unstable_changeIndicator}
+      markers={markers}
+      presence={presence}
+      compareValue={compareValue}
       inputId={inputId}
     >
-      <Stack space={4}>
-        {value?.asset?.url ? (
-          <Card padding={3} radius={2} shadow={1}>
-            <Stack space={3}>
-              <div style={{ maxWidth: '100%', position: 'relative' }}>
-                <img 
-                  src={value.asset.url} 
-                  alt={value.alt || ''} 
-                  style={{ 
-                    maxWidth: '100%', 
-                    maxHeight: '300px', 
-                    objectFit: 'contain',
-                    borderRadius: '4px'
-                  }} 
-                />
-              </div>
-              
-              <Stack space={2}>
-                {value.alt && (
-                  <Text size={1} weight="semibold">
-                    Alt text: {value.alt}
-                  </Text>
-                )}
-                
-                <Text size={0} muted>
-                  Cloudinary ID: {value.asset.public_id}
-                </Text>
-              </Stack>
-              
-              <Stack direction="row" space={2}>
+      <Stack space={3}>
+        {/* Preview current image if available */}
+        {imageUrl && (
+          <Card padding={3} border radius={2}>
+            <Box style={{ position: 'relative' }}>
+              <img 
+                src={imageUrl} 
+                alt={value?.alt || 'Preview'} 
+                style={{ 
+                  maxWidth: '100%', 
+                  maxHeight: '300px', 
+                  display: 'block',
+                  margin: '0 auto'
+                }}
+              />
+              {!readOnly && (
                 <Button 
-                  text="Replace" 
-                  tone="primary" 
-                  onClick={() => onChange(undefined)} 
-                  style={{ flex: 1 }}
-                  icon={Upload}
-                />
-                <Button 
-                  text="Remove" 
+                  mode="ghost" 
                   tone="critical" 
-                  onClick={handleClear} 
-                />
-              </Stack>
-            </Stack>
+                  onClick={handleRemove}
+                  style={{ 
+                    position: 'absolute', 
+                    top: 8, 
+                    right: 8
+                  }}
+                >
+                  Remove
+                </Button>
+              )}
+            </Box>
+            {value?.alt && (
+              <Text size={1} style={{ marginTop: '8px' }}>
+                Alt: {value.alt}
+              </Text>
+            )}
           </Card>
-        ) : (
-          <Stack space={3}>
+        )}
+        
+        {/* Upload UI */}
+        {!readOnly && (
+          <Stack space={2}>
             <input
-              ref={fileInputRef}
-              type="file"
               id={inputId}
+              type="file"
+              accept="image/*"
               onChange={handleFileChange}
-              accept="image/jpeg,image/png,image/webp"
-              style={{ display: 'none' }}
               disabled={isUploading}
+              style={{
+                backgroundColor: '#f5f5f5',
+                padding: '12px',
+                borderRadius: '4px',
+                width: '100%'
+              }}
             />
             
-            {file ? (
-              <Card padding={3} radius={2} border>
-                <Stack space={3}>
-                  <Flex align="center" gap={2}>
-                    <ImageIcon size={18} />
-                    <Text weight="semibold">{file.name}</Text>
-                    <Badge tone="primary" size={1}>
-                      {Math.round(file.size / 1024)} KB
-                    </Badge>
-                  </Flex>
-                  
-                  {isUploading && (
-                    <Box>
-                      <div 
-                        style={{ 
-                          height: '8px', 
-                          width: '100%', 
-                          backgroundColor: '#eee',
-                          borderRadius: '4px',
-                          overflow: 'hidden'
-                        }}
-                      >
-                        <div 
-                          style={{
-                            height: '100%',
-                            width: `${uploadProgress}%`,
-                            backgroundColor: uploadProgress === 100 ? '#4CAF50' : '#2276FC',
-                            transition: 'width 0.2s ease'
-                          }}
-                        />
-                      </div>
-                      <Flex justify="flex-end" marginTop={2}>
-                        <Text size={0} muted>{Math.round(uploadProgress)}%</Text>
-                      </Flex>
-                    </Box>
-                  )}
-                  
-                  {error && (
-                    <Card tone="critical" padding={3} radius={2}>
-                      <Flex align="center" gap={2}>
-                        <AlertCircle size={18} />
-                        <Text size={1}>{error}</Text>
-                      </Flex>
-                    </Card>
-                  )}
-                  
-                  <Flex gap={2}>
-                    {!isUploading && (
-                      <>
-                        <Button 
-                          text="Upload to Cloudinary" 
-                          tone="primary" 
-                          icon={Upload}
-                          onClick={handleUpload} 
-                          disabled={isUploading}
-                          style={{ flex: 1 }}
-                        />
-                        <Button
-                          text="Cancel"
-                          tone="default"
-                          onClick={reset}
-                          disabled={isUploading}
-                        />
-                      </>
-                    )}
-                    
-                    {isUploading && uploadProgress === 100 && (
-                      <Flex align="center" gap={2} style={{ color: '#4CAF50' }}>
-                        <CheckCircle size={18} />
-                        <Text>Upload complete!</Text>
-                      </Flex>
-                    )}
-                  </Flex>
+            {isUploading && (
+              <Card padding={3} radius={2} tone="primary">
+                <Stack space={3} style={{ alignItems: 'center' }}>
+                  <Spinner />
+                  <Text>Uploading to Cloudinary...</Text>
                 </Stack>
               </Card>
-            ) : (
-              <Flex direction="column" gap={3}>
-                <Button 
-                  text="Select image file" 
-                  tone="primary" 
-                  icon={Upload}
-                  onClick={() => fileInputRef.current?.click()} 
-                  style={{ width: '100%' }}
-                />
-                <Text size={1} muted align="center">
-                  Upload images directly to Cloudinary
-                </Text>
-              </Flex>
+            )}
+            
+            {uploadError && (
+              <Card padding={3} radius={2} tone="critical">
+                <Text size={1}>{uploadError}</Text>
+              </Card>
             )}
           </Stack>
         )}
+        
+        {/* Help text */}
+        <Text size={1} style={{ color: '#666' }}>
+          Images are processed via Cloudinary for optimization and delivery
+        </Text>
       </Stack>
     </FormField>
   );

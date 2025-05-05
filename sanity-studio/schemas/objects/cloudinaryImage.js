@@ -1,6 +1,4 @@
 
-import React from 'react';
-
 export default {
   name: 'cloudinaryImage',
   title: 'Cloudinary Image',
@@ -40,7 +38,7 @@ export default {
       const { title, media } = selection;
       return {
         title: title || 'Untitled image',
-        media: media ? React.createElement('img', { src: media, alt: '' }) : null
+        media: media ? <img src={media} alt="" style={{ objectFit: 'cover' }} /> : null
       };
     }
   }

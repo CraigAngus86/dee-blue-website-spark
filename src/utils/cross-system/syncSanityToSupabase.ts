@@ -1,3 +1,4 @@
+
 import { supabase } from '@/lib/supabase/client';
 
 /**
@@ -6,6 +7,8 @@ import { supabase } from '@/lib/supabase/client';
  */
 export async function syncPlayerProfileToSupabase(profileData: any): Promise<string | null> {
   try {
+    console.log('Syncing player profile to Supabase:', profileData._id);
+    
     // Extract relevant fields from Sanity document
     const {
       _id: sanityId,
@@ -19,6 +22,23 @@ export async function syncPlayerProfileToSupabase(profileData: any): Promise<str
       supabaseId // This may be null if new document
     } = profileData;
     
+    // Extract image URL - handle both normal Sanity image asset and cloudinaryImage type
+    let imageUrl = null;
+    if (profileImage) {
+      // Handle cloudinaryImage type
+      if (profileImage.asset && profileImage.asset.url) {
+        imageUrl = profileImage.asset.url;
+      } 
+      // Handle regular Sanity image asset
+      else if (profileImage.asset && profileImage.asset._ref) {
+        // This is a Sanity asset reference
+        // For now, we'll just leave it as null - we can implement asset URL resolution if needed
+        console.log('Found Sanity image reference, no direct URL available');
+      }
+    }
+    
+    console.log('Profile image information:', { profileImage, imageUrl });
+    
     // Prepare data for Supabase
     const peopleData = {
       first_name: firstName,
@@ -28,13 +48,15 @@ export async function syncPlayerProfileToSupabase(profileData: any): Promise<str
       player_position: playerPosition,
       staff_role: staffRole,
       position: playerPosition ? 'player' : (staffRole ? 'staff' : undefined),
-      image_url: profileImage?.asset?.url || null,
+      image_url: imageUrl,
       // Include the reference back to Sanity
       sanity_id: sanityId.replace('drafts.', '')
     };
     
     // If we already have a Supabase ID, update the record
     if (supabaseId) {
+      console.log('Updating existing record in Supabase with ID:', supabaseId);
+      
       const { data, error } = await supabase
         .from('people')
         .update(peopleData)
@@ -51,6 +73,8 @@ export async function syncPlayerProfileToSupabase(profileData: any): Promise<str
     } 
     // Otherwise, create a new record
     else {
+      console.log('Creating new record in Supabase');
+      
       const { data, error } = await supabase
         .from('people')
         .insert([{

@@ -36,26 +36,41 @@ export default function TestUploader() {
       formData.append('contentType', 'test');
       formData.append('entityId', 'test-upload');
       formData.append('type', 'test');
+      
+      // Always use the default preset for test uploads
+      formData.append('uploadPreset', 'banks-o-dee');
 
       // Simulate progress updates
       const progressInterval = setInterval(() => {
         setProgress(prev => Math.min(prev + 5, 90));
       }, 200);
 
-      // Upload file
+      // Upload file with detailed logging
+      console.log('Sending test upload to Cloudinary API route');
+      
       const response = await fetch('/api/cloudinary/upload', {
         method: 'POST',
         body: formData
       });
+      
+      console.log('Received response from Cloudinary API route:', response.status);
 
       clearInterval(progressInterval);
 
       if (!response.ok) {
-        const errorData = await response.json();
+        let errorData;
+        try {
+          errorData = await response.json();
+          console.error('Upload error response:', errorData);
+        } catch (e) {
+          console.error('Failed to parse error response:', e);
+          errorData = { error: { message: `Upload failed with status: ${response.status}` } };
+        }
         throw new Error(errorData.error?.message || 'Upload failed');
       }
 
       const result = await response.json();
+      console.log('Upload successful, received result:', result);
       
       setProgress(100);
       setUploadedImage(result.secureUrl);
