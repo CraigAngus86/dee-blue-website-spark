@@ -1,9 +1,9 @@
 
 import React, { useState, useCallback, useRef } from 'react';
-import { Stack, Card, Text, Button, Box, Spinner, Flex, Badge } from '@sanity/ui';
+import { Stack, Card, Text, Button, Box, Flex, Badge } from '@sanity/ui';
 import { FormField } from 'sanity';
 import { useId } from 'react'; // Use React's built-in useId hook instead of @reach/auto-id
-import { CheckCircleIcon, UploadIcon, ImageIcon, WarningOutlineIcon } from '@sanity/icons';
+import { CheckmarkCircleIcon, UploadIcon, ImageIcon, WarningIcon } from '@sanity/icons';
 
 // Function to determine API endpoint based on environment
 const getUploadEndpoint = () => {
@@ -219,7 +219,7 @@ export const CloudinaryImageInput = React.forwardRef((props, ref) => {
                   {error && (
                     <Card tone="critical" padding={3} radius={2}>
                       <Flex align="center" gap={2}>
-                        <WarningOutlineIcon />
+                        <WarningIcon />
                         <Text size={1}>{error}</Text>
                       </Flex>
                     </Card>
@@ -247,7 +247,7 @@ export const CloudinaryImageInput = React.forwardRef((props, ref) => {
                     
                     {isUploading && uploadProgress === 100 && (
                       <Flex align="center" gap={2} style={{ color: '#4CAF50' }}>
-                        <CheckCircleIcon />
+                        <CheckmarkCircleIcon />
                         <Text>Upload complete!</Text>
                       </Flex>
                     )}
