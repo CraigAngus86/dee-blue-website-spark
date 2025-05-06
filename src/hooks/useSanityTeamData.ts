@@ -38,7 +38,7 @@ export function useSanityTeamData() {
         const teamMembers = await fetchSanityData(getTeamMembersQuery);
         
         // Process the data to match our TeamMember interface
-        const processedMembers = (teamMembers || []).map((member: any) => {
+        const processedMembers = (teamMembers || []).map((member: any): TeamMember => {
           // Determine position or role
           let position = '';
           let personType = member.personType || 'player';
