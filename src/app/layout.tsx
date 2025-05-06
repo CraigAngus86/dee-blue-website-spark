@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Inter, Montserrat } from "next/font/google";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import { Providers } from "./providers";
 import "@/styles/globals.css";
 
 // Font configuration
@@ -35,11 +36,13 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${montserrat.variable}`}>
       <body className="antialiased flex flex-col min-h-screen">
-        <Header />
-        <main className="flex-grow pt-16"> {/* Padding top to account for fixed header */}
-          {children}
-        </main>
-        <Footer />
+        <Providers>
+          <Header />
+          <main className="flex-grow pt-16"> {/* Padding top to account for fixed header */}
+            {children}
+          </main>
+          <Footer />
+        </Providers>
       </body>
     </html>
   );

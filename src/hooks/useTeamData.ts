@@ -70,34 +70,34 @@ export function useTeamData() {
 
     try {
       // Organize team members by category
-      const management = sanityData.filter(member => 
+      const management = sanityData.filter((member: TeamMember) => 
         member.member_type === 'staff' || 
         member.position.toLowerCase().includes('manager') || 
         member.position.toLowerCase().includes('coach')
       );
       
-      const players = sanityData.filter(member => 
+      const players = sanityData.filter((member: TeamMember) => 
         member.member_type !== 'staff' &&
         !member.position.toLowerCase().includes('manager') &&
         !member.position.toLowerCase().includes('coach')
       );
       
-      const goalkeepers = players.filter(player => 
+      const goalkeepers = players.filter((player: TeamMember) => 
         player.position.toLowerCase().includes('goalkeeper') ||
         player.position.toLowerCase() === 'gk'
       );
       
-      const defenders = players.filter(player => 
+      const defenders = players.filter((player: TeamMember) => 
         player.position.toLowerCase().includes('defender') ||
         player.position.toLowerCase() === 'def'
       );
       
-      const midfielders = players.filter(player => 
+      const midfielders = players.filter((player: TeamMember) => 
         player.position.toLowerCase().includes('midfielder') ||
         player.position.toLowerCase() === 'mid'
       );
       
-      const forwards = players.filter(player => 
+      const forwards = players.filter((player: TeamMember) => 
         player.position.toLowerCase().includes('forward') ||
         player.position.toLowerCase().includes('striker') ||
         player.position.toLowerCase() === 'fwd'

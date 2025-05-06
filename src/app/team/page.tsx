@@ -3,7 +3,6 @@
 
 import React, { useState } from 'react';
 import { ChevronRight, Search } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
 import PlayerProfileModal from '@/components/ui/players/PlayerProfileModal';
 import TeamMemberCard from '@/components/ui/team/TeamMemberCard';
 import { useTeamData } from '@/hooks/useTeamData';
