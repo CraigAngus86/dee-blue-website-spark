@@ -5,19 +5,31 @@ import type { Database } from './types';
 import { publicEnv } from '@/lib/env';
 
 // Use environment variables from our utilities
-const SUPABASE_URL = publicEnv.getSupabaseUrl();
-const SUPABASE_PUBLISHABLE_KEY = publicEnv.getSupabaseAnonKey();
+const getSupabaseUrl = () => {
+  const url = publicEnv.getSupabaseUrl();
+  if (!url) {
+    console.error('Critical Error: NEXT_PUBLIC_SUPABASE_URL is not set in environment variables');
+    return 'https://bbbxhwaixjjxgboeiktq.supabase.co'; // Fallback for development only
+  }
+  return url;
+};
 
-// Log warnings if environment variables are missing
-if (!SUPABASE_URL || SUPABASE_URL === '') {
-  console.warn('Warning: NEXT_PUBLIC_SUPABASE_URL is not set in environment variables. Using fallback value.');
-}
-
-if (!SUPABASE_PUBLISHABLE_KEY || SUPABASE_PUBLISHABLE_KEY === '') {
-  console.warn('Warning: NEXT_PUBLIC_SUPABASE_ANON_KEY is not set in environment variables. Using fallback value.');
-}
+const getSupabaseKey = () => {
+  const key = publicEnv.getSupabaseAnonKey();
+  if (!key) {
+    console.error('Critical Error: NEXT_PUBLIC_SUPABASE_ANON_KEY is not set in environment variables');
+    // Providing a fallback for development environments only
+    return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJiYnhod2FpeGpqeGdib2Vpa3RxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI4MzA1NzMsImV4cCI6MjA1ODQwNjU3M30.ZZEenwbdq-bGlya3R2yvuspOlKMqkBp6tzC3TAdKGcQ';
+  }
+  return key;
+};
 
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
-export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+export const supabase = createClient<Database>(getSupabaseUrl(), getSupabaseKey(), {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+  }
+});

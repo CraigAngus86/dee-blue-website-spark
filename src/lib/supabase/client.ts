@@ -2,26 +2,43 @@
 import { createClient } from '@supabase/supabase-js';
 import { publicEnv, serverEnv, isServer } from '@/lib/env';
 
-// Get environment variables from our utilities
-const supabaseUrl = publicEnv.getSupabaseUrl();
-const supabaseAnonKey = publicEnv.getSupabaseAnonKey();
+/**
+ * Get the Supabase URL - throws meaningful errors if not set
+ */
+const getSupabaseUrl = (): string => {
+  const supabaseUrl = publicEnv.getSupabaseUrl();
+  
+  if (!supabaseUrl) {
+    throw new Error('Supabase URL is missing. Please check your environment variables.');
+  }
+  
+  return supabaseUrl;
+};
 
-// Log warnings if environment variables are missing
-if (!supabaseUrl || supabaseUrl === '') {
-  console.error('Supabase configuration error: NEXT_PUBLIC_SUPABASE_URL is missing.');
-}
-
-if (!supabaseAnonKey || supabaseAnonKey === '') {
-  console.error('Supabase configuration error: NEXT_PUBLIC_SUPABASE_ANON_KEY is missing.');
-}
+/**
+ * Get the Supabase anon key - throws meaningful errors if not set
+ */
+const getSupabaseAnonKey = (): string => {
+  const supabaseAnonKey = publicEnv.getSupabaseAnonKey();
+  
+  if (!supabaseAnonKey) {
+    throw new Error('Supabase anon key is missing. Please check your environment variables.');
+  }
+  
+  return supabaseAnonKey;
+};
 
 // Client for browser usage (client-side)
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-  },
-});
+export const supabase = createClient(
+  getSupabaseUrl(),
+  getSupabaseAnonKey(),
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+    },
+  }
+);
 
 // Types for database
 export type Database = any; // Replace with generated types once available
@@ -33,7 +50,7 @@ export const createServerClient = (cookieStore?: any) => {
     const serviceKey = serverEnv.getSupabaseServiceKey();
     if (serviceKey) {
       // Use service role if available (admin privileges)
-      return createClient(supabaseUrl, serviceKey, {
+      return createClient(getSupabaseUrl(), serviceKey, {
         auth: {
           persistSession: false,
         },
@@ -43,8 +60,8 @@ export const createServerClient = (cookieStore?: any) => {
   
   // Regular client with cookie integration for Server Components
   return createClient(
-    supabaseUrl,
-    supabaseAnonKey,
+    getSupabaseUrl(),
+    getSupabaseAnonKey(),
     {
       auth: {
         persistSession: false,
@@ -72,7 +89,7 @@ export const createServiceClient = () => {
     return null;
   }
   
-  return createClient(supabaseUrl, serviceKey, {
+  return createClient(getSupabaseUrl(), serviceKey, {
     auth: {
       persistSession: false,
     }
