@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { TeamMember } from '@/hooks/useTeamData';
 
@@ -14,30 +14,46 @@ const TeamMemberCard: React.FC<TeamMemberCardProps> = ({
   isManagement = false,
   onViewProfile
 }) => {
+  const [imageError, setImageError] = useState(false);
+
+  // Debug image URL
+  console.log(`Image for ${member.name}:`, member.image);
+
+  // Set background color based on position
+  const getBackgroundColor = () => {
+    if (isManagement) return 'bg-navy-800';
+    if (member.position.toLowerCase().includes('goalkeeper')) return 'bg-[#218F50]';
+    return 'bg-[#00105A]';
+  };
+
   return (
     <div 
       className="group relative overflow-hidden transition-all duration-300 hover:shadow-xl"
     >
-      <div className={`relative aspect-square overflow-hidden ${
-        isManagement 
-          ? 'bg-navy-800' 
-          : member.position.toLowerCase().includes('goalkeeper') 
-            ? 'bg-[#218F50]' 
-            : 'bg-[#00105A]'
-      }`}>
+      <div className={`relative aspect-square overflow-hidden ${getBackgroundColor()}`}>
         {/* Background gradient */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/80 z-10"></div>
         
         {/* Player image */}
-        <img 
-          src={member.image} 
-          alt={member.name}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-          onError={(e) => {
-            const target = e.target as HTMLImageElement;
-            target.src = '/assets/images/players/headshot_dummy.jpg';
-          }}
-        />
+        {!imageError ? (
+          <img 
+            src={member.image} 
+            alt={member.name}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            onError={(e) => {
+              console.error(`Failed to load image for ${member.name}:`, member.image);
+              setImageError(true);
+              const target = e.target as HTMLImageElement;
+              target.src = '/assets/images/players/headshot_dummy.jpg';
+            }}
+          />
+        ) : (
+          <img 
+            src="/assets/images/players/headshot_dummy.jpg"
+            alt={member.name}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+        )}
         
         {/* Player number */}
         {!isManagement && member.number && (

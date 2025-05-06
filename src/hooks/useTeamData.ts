@@ -59,6 +59,7 @@ export function useTeamData() {
     }
 
     if (sanityError) {
+      console.error('Error from useSanityTeamData:', sanityError);
       setState({
         data: null,
         isLoading: false,
@@ -68,6 +69,7 @@ export function useTeamData() {
     }
 
     if (!sanityData) {
+      console.warn('No team data available from Sanity');
       setState({
         data: null,
         isLoading: false,
@@ -76,12 +78,18 @@ export function useTeamData() {
       return;
     }
 
+    console.log('Sanity team data received:', sanityData?.length || 0, 'members');
+
     // Set up async function to integrate Supabase data
     const integrateData = async () => {
       try {
+        console.log('Starting Supabase data integration for', sanityData.length, 'players');
+        
         // Enrich Sanity data with Supabase data using cross-system utilities
         const enrichedMembers = await Promise.all(
           sanityData.map(async (member: TeamMember) => {
+            console.log(`Processing player: ${member.name} (ID: ${member.id})`);
+            
             // Only try to resolve Supabase data if we have a supabaseId
             if (member.id) {
               try {
@@ -93,6 +101,12 @@ export function useTeamData() {
                 
                 // If we found Supabase data, merge it with the Sanity data
                 if (supabasePlayer) {
+                  console.log(`Found Supabase data for ${member.name}:`, {
+                    appearances: supabasePlayer.appearances,
+                    goals: supabasePlayer.goals,
+                    assists: supabasePlayer.assists
+                  });
+                  
                   return {
                     ...member,
                     appearances: supabasePlayer.appearances || 0,
@@ -107,6 +121,8 @@ export function useTeamData() {
                       redCards: supabasePlayer.red_cards || 0,
                     }
                   };
+                } else {
+                  console.log(`No Supabase data found for ${member.name}`);
                 }
               } catch (error) {
                 console.error(`Failed to get Supabase data for player ${member.name}:`, error);
@@ -118,6 +134,8 @@ export function useTeamData() {
             return member;
           })
         );
+
+        console.log('Enriched team members count:', enrichedMembers.length);
 
         // Organize team members by category
         const management = enrichedMembers.filter((member: TeamMember) => 
@@ -131,6 +149,9 @@ export function useTeamData() {
           !member.position.toLowerCase().includes('manager') &&
           !member.position.toLowerCase().includes('coach')
         );
+        
+        console.log('Management count:', management.length);
+        console.log('Players count:', players.length);
         
         // Categorize players by position - use more flexible matching
         const goalkeepers = players.filter((player: TeamMember) => 
@@ -169,6 +190,13 @@ export function useTeamData() {
           player.position.toLowerCase() === 'rw'
         );
 
+        console.log('Position counts:', {
+          goalkeepers: goalkeepers.length,
+          defenders: defenders.length,
+          midfielders: midfielders.length,
+          forwards: forwards.length
+        });
+
         // Update state with categorized data
         setState({
           data: {
@@ -182,6 +210,7 @@ export function useTeamData() {
           error: null
         });
       } catch (error) {
+        console.error('Error integrating team data:', error);
         setState({
           data: null,
           isLoading: false,

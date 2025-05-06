@@ -1,21 +1,37 @@
 
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronRight, Search } from 'lucide-react';
 import PlayerProfileModal from '@/components/ui/players/PlayerProfileModal';
 import TeamMemberCard from '@/components/ui/team/TeamMemberCard';
-import { useTeamData } from '@/hooks/useTeamData';
+import { useTeamData, TeamMember } from '@/hooks/useTeamData';
 
 export default function TeamPage() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedPlayer, setSelectedPlayer] = useState(null);
+  const [selectedPlayer, setSelectedPlayer] = useState<TeamMember | null>(null);
 
   // Use the team data hook which handles fetching data
   const { data: teamData, isLoading, error } = useTeamData();
 
+  // Debug team data loading
+  useEffect(() => {
+    if (teamData) {
+      console.log('Team data loaded:', {
+        management: teamData.management.length,
+        goalkeepers: teamData.goalkeepers.length,
+        defenders: teamData.defenders.length,
+        midfielders: teamData.midfielders.length,
+        forwards: teamData.forwards.length,
+        total: teamData.management.length + teamData.goalkeepers.length + 
+               teamData.defenders.length + teamData.midfielders.length + 
+               teamData.forwards.length
+      });
+    }
+  }, [teamData]);
+
   // Filter members based on search query
-  const filterMembers = (members: any[]) => {
+  const filterMembers = (members: TeamMember[] = []) => {
     if (!members || !searchQuery) return members || [];
     return members.filter(member => 
       member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -31,35 +47,59 @@ export default function TeamPage() {
     );
   }
 
-  if (error || !teamData) {
+  if (error) {
+    console.error('Error loading team data:', error);
     return (
       <div className="text-center py-16">
         <h2 className="text-2xl font-bold text-gray-800">Unable to load team data</h2>
         <p className="text-gray-600 mt-2">Please try again later</p>
+        <p className="text-gray-500 mt-1">Error: {error.message}</p>
+      </div>
+    );
+  }
+
+  if (!teamData) {
+    return (
+      <div className="text-center py-16">
+        <h2 className="text-2xl font-bold text-gray-800">No team data available</h2>
+        <p className="text-gray-600 mt-2">Please check back later</p>
       </div>
     );
   }
 
   // Render section for a group of team members
-  const renderSection = (title: string, people: any[] = [], isManagement = false) => (
-    <section className="mb-16">
-      <div className="bg-[#F4F7FB] py-16">
-        <h2 className="text-4xl font-bold text-center uppercase text-[#00105A] mb-10">{title}</h2>
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {filterMembers(people || []).map((person) => (
-              <TeamMemberCard 
-                key={person.id}
-                member={person}
-                isManagement={isManagement}
-                onViewProfile={() => setSelectedPlayer(person)}
-              />
-            ))}
-          </div>
+  const renderSection = (title: string, people: TeamMember[] = [], isManagement = false) => {
+    const filteredMembers = filterMembers(people);
+    
+    if (filteredMembers.length === 0 && !searchQuery) {
+      return null;
+    }
+    
+    return (
+      <section className="mb-16">
+        <div className="bg-[#F4F7FB] py-16">
+          <h2 className="text-4xl font-bold text-center uppercase text-[#00105A] mb-10">{title}</h2>
+          
+          {filteredMembers.length === 0 ? (
+            <p className="text-center text-gray-500">No members found matching "{searchQuery}"</p>
+          ) : (
+            <div className="max-w-7xl mx-auto px-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {filteredMembers.map((person) => (
+                  <TeamMemberCard 
+                    key={person.id}
+                    member={person}
+                    isManagement={isManagement}
+                    onViewProfile={() => setSelectedPlayer(person)}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
-      </div>
-    </section>
-  );
+      </section>
+    );
+  };
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -101,6 +141,29 @@ export default function TeamPage() {
               <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
             </div>
           </div>
+          
+          {/* Debug Information - only visible in development */}
+          {process.env.NODE_ENV === 'development' && (
+            <div className="max-w-7xl mx-auto px-4 mb-8 bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+              <h3 className="font-bold mb-2">Debug Information</h3>
+              <div className="grid grid-cols-5 gap-4 text-sm">
+                <div><strong>Management:</strong> {teamData.management.length}</div>
+                <div><strong>Goalkeepers:</strong> {teamData.goalkeepers.length}</div>
+                <div><strong>Defenders:</strong> {teamData.defenders.length}</div>
+                <div><strong>Midfielders:</strong> {teamData.midfielders.length}</div>
+                <div><strong>Forwards:</strong> {teamData.forwards.length}</div>
+              </div>
+              <p className="mt-2 text-sm">
+                <strong>Total players:</strong> {
+                  teamData.management.length + 
+                  teamData.goalkeepers.length + 
+                  teamData.defenders.length + 
+                  teamData.midfielders.length + 
+                  teamData.forwards.length
+                }
+              </p>
+            </div>
+          )}
           
           {/* Team Sections */}
           <div className="space-y-4">

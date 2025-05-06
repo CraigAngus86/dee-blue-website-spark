@@ -38,8 +38,14 @@ export function useSanityTeamData() {
       try {
         const teamMembers = await fetchSanityData(getTeamMembersQuery);
         
+        // Debug: Log the raw data from Sanity
+        console.log('Raw Sanity team data:', teamMembers);
+        
         // Process the data to match our TeamMember interface
         const processedMembers = (teamMembers || []).map((member: any): TeamMember => {
+          // Debug: Log each member being processed
+          console.log('Processing Sanity member:', member._id, member.playerName || `${member.firstName} ${member.lastName}`);
+          
           // Determine position or role
           let position = '';
           // Default to 'player' if personType isn't specified
@@ -59,7 +65,7 @@ export function useSanityTeamData() {
           
           // Format the data to match our TeamMember type
           return {
-            id: member._id,
+            id: member.supabaseId || member._id,
             name: fullName,
             firstName: member.firstName || '',
             lastName: member.lastName || '',
@@ -80,7 +86,7 @@ export function useSanityTeamData() {
           };
         });
         
-        console.log('Processed team members:', processedMembers.length);
+        console.log('Processed team members from Sanity:', processedMembers.length);
         return processedMembers;
       } catch (error) {
         console.error('Error fetching Sanity team data:', error);
