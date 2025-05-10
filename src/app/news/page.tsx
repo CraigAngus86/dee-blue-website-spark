@@ -1,39 +1,8 @@
-
 import React from 'react';
 import { Metadata } from 'next';
-import NewsHero from '@/components/news/NewsHero';
-import NewsGrid from '@/components/news/NewsGrid';
-
-// Mock news data for development
-const mockNews = [
-  {
-    id: "1",
-    title: "Banks o' Dee Secure Important Victory",
-    date: "2024-04-20T15:30:00",
-    imageUrl: "/assets/images/news/News1.jpg",
-    category: "Match Report",
-    excerpt: "A comprehensive win keeps title hopes alive as the team puts in a stellar performance.",
-    slug: "banks-o-dee-secure-important-victory"
-  },
-  {
-    id: "2",
-    title: "New Signing Announcement",
-    date: "2024-04-18T10:15:00",
-    imageUrl: "/assets/images/news/News2.jpg",
-    category: "Club News",
-    excerpt: "The club is delighted to announce the signing of a promising young talent to strengthen the squad.",
-    slug: "new-signing-announcement"
-  },
-  {
-    id: "3",
-    title: "Youth Academy Roundup",
-    date: "2024-04-15T14:00:00",
-    imageUrl: "/assets/images/news/News3.jpg",
-    category: "Academy",
-    excerpt: "Our youth teams continue to impress with strong performances across all age groups.",
-    slug: "youth-academy-roundup"
-  }
-];
+import { NewsHero } from '@/features/news/components';
+import { getNewsData } from '@/features/news/hooks/getNewsData.server';
+import ClientWrapper from './client-wrapper';
 
 export const metadata: Metadata = {
   title: 'News | Banks o\' Dee FC',
@@ -41,15 +10,25 @@ export const metadata: Metadata = {
 };
 
 export default async function NewsPage() {
-  // In a real implementation, you'd fetch news from Sanity or another source
-  // But for now, we'll use the mock data
+  // Fetch news data from Sanity using our server component hook
+  const { data: news, error } = await getNewsData({ limit: 20 });
   
+  if (error) {
+    console.error('Error loading news data:', error);
+    return (
+      <div className="text-center py-16">
+        <h2 className="text-2xl font-bold text-gray-800">Unable to load news</h2>
+        <p className="text-gray-600 mt-2">Please try again later</p>
+        <p className="text-gray-500 mt-1">Error: {error.message}</p>
+      </div>
+    );
+  }
+  
+  // Pass the data to a client wrapper for interactive features
   return (
     <main className="min-h-screen">
       <NewsHero />
-      <div className="container mx-auto px-4 py-12">
-        <NewsGrid news={mockNews} />
-      </div>
+      <ClientWrapper initialNews={news} />
     </main>
   );
 }

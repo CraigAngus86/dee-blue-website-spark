@@ -12,7 +12,7 @@ import MatchCenter from "@/components/ui/sections/MatchCenter";
 import PlayersSection from "@/components/ui/sections/PlayersSection";
 import { fetchSanityData } from "@/lib/sanity/sanityClient";
 import { supabase } from "@/lib/supabase/client";
-import { getUpcomingMatches, getRecentMatches } from "@/lib/data-fetchers/match";
+import { getUpcomingMatches, getRecentMatches } from "@/utils/cross-system/match";
 import { Match, Competition, Team } from "@/types/match";
 
 export const metadata: Metadata = {

@@ -85,18 +85,18 @@ export default {
         group: 'metadata'
       },
       {
-        name: 'matchId',
-        title: 'Related Match',
+        name: 'relatedMatchId',
+        title: 'Related Match ID',
         type: 'string',
         description: 'UUID of related match in Supabase (if this is a match report)',
         group: 'relations'
       },
       {
-        name: 'relatedPlayers',
-        title: 'Related Players',
+        name: 'relatedPeopleIds',
+        title: 'Related People IDs',
         type: 'array',
-        of: [{type: 'reference', to: [{type: 'playerProfile'}]}],
-        description: 'Players referenced in this article',
+        of: [{type: 'string'}],
+        description: 'UUIDs of related people in Supabase',
         group: 'relations'
       },
       {
