@@ -2,9 +2,9 @@ import { createClient } from '@sanity/client'
 
 // Create a client
 const client = createClient({
-  projectId: process.env.SANITY_STUDIO_API_PROJECT_ID,
-  dataset: process.env.SANITY_STUDIO_API_DATASET,
-  token: process.env.SANITY_STUDIO_API_TOKEN, // Need a token with write permissions
+  projectId: 'gxtptap2',
+  dataset: 'production',
+  token: 'sk4okIOCzdhNUk2eyKVkbZ6g11Fk4vaPKiyJr8nPsMWqGvhumaPjNxVvN5bRsMuzVNLV8iJSMgeDe3tTHGpYYnzyQZE2T4n66Psc20XqqD63y2zAhWfQFBWYaJW9oyzkV0TbWpbvBrbcZ7jRXkPIO8BuApT5QTnsfZo9Y2f8QqtEgZ1h7asc',
   useCdn: false,
   apiVersion: '2021-10-21'
 })

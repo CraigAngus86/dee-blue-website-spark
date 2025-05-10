@@ -1,15 +1,8 @@
 "use client";
 import { useState, useEffect } from 'react';
 import { NewsArticle } from '../types';
-import { createClient } from 'next-sanity';
-
-// Initialize the Sanity client
-const client = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || '',
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
-  apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION || '2021-10-21',
-  useCdn: process.env.NODE_ENV === 'production',
-});
+import { fetchSanityData } from '@/lib/sanity/client';
+import { env } from '@/lib/env';
 
 interface UseNewsDataOptions {
   limit?: number;
@@ -29,6 +22,14 @@ export function useNewsData(options: UseNewsDataOptions = {}) {
       try {
         setIsLoading(true);
         
+        // Debug environment variables
+        console.log('Environment check:', {
+          projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+          dataset: process.env.NEXT_PUBLIC_SANITY_DATASET,
+          altProjectId: env.sanity.projectId,
+          altDataset: env.sanity.dataset
+        });
+        
         // Build the query based on options
         let query = '*[_type == "newsArticle"';
         
@@ -37,12 +38,12 @@ export function useNewsData(options: UseNewsDataOptions = {}) {
           query += ` && category == "${category}"`;
         }
         
-        // Add featured filter if requested
+        // Add featured filter if requested - check both field names
         if (featured) {
-          query += ' && isFeature == true';
+          query += ' && (featured == true || isFeature == true)';  // Check both field names
         }
         
-        // Complete the query with ordering and limit
+        // Complete the query
         query += `] | order(publishedAt desc)[0...${limit}] {
           _id,
           title,
@@ -50,41 +51,59 @@ export function useNewsData(options: UseNewsDataOptions = {}) {
           publishedAt,
           category,
           excerpt,
-          "mainImage": mainImage.asset->url,
+          "mainImage": mainImage{
+            "url": asset->url,
+            "alt": coalesce(alt, "News image")
+          },
           author,
           body,
-          "matchId": relatedMatchId,
+          "matchId": matchId,
+          "relatedMatchId": relatedMatchId,  // Check both field names
+          featured,
           isFeature,
           "gallery": gallery.images[]{
             "url": asset->url,
-            alt,
+            "alt": coalesce(alt, "Image"),
             caption
           }
         }`;
         
-        const results = await client.fetch(query);
+        console.log('Fetching with query:', query);
+        const results = await fetchSanityData(query);
+        console.log('Raw results from Sanity:', results);
         
-        // Transform results to match our NewsArticle interface
-        const newsArticles: NewsArticle[] = results.map((item: any) => ({
-          id: item._id,
-          title: item.title,
-          slug: item.slug,
-          publishedAt: item.publishedAt,
-          category: item.category,
-          mainImage: item.mainImage ? {
-            url: item.mainImage,
-            alt: item.title
-          } : undefined,
-          excerpt: item.excerpt,
-          body: item.body,
-          author: item.author,
-          isFeature: item.isFeature,
-          matchId: item.matchId,
-          gallery: item.gallery ? {
-            images: item.gallery
-          } : undefined
-        }));
+        if (!results || results.length === 0) {
+          console.warn('No results returned from Sanity query');
+        }
         
+        // Transform results to match our NewsArticle interface with defensive coding
+        const newsArticles: NewsArticle[] = (results || []).map((item: any) => {
+          console.log('Processing item:', item);
+          return {
+            id: item._id || '',
+            title: item.title || 'Untitled Article',
+            slug: item.slug || '',
+            publishedAt: item.publishedAt || new Date().toISOString(),
+            category: item.category || 'clubNews',
+            mainImage: item.mainImage ? {
+              url: item.mainImage.url || '',
+              alt: item.mainImage.alt || item.title || 'News image'
+            } : {
+              url: '',
+              alt: item.title || 'News image'
+            },
+            excerpt: item.excerpt || '',
+            body: item.body || '',
+            author: item.author || 'Club Reporter',
+            isFeature: item.featured || item.isFeature || false,  // Try both field names
+            matchId: item.matchId || item.relatedMatchId || '',   // Try both field names
+            gallery: item.gallery ? {
+              images: item.gallery
+            } : undefined
+          };
+        });
+        
+        console.log('Processed news articles:', newsArticles);
         setNews(newsArticles);
         setIsLoading(false);
       } catch (err) {

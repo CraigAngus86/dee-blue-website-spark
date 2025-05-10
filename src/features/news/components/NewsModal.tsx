@@ -1,6 +1,7 @@
 import React from 'react';
-import { X, Twitter, Facebook, Link as LinkIcon } from 'lucide-react';
+import { X, Twitter, Facebook, Linkedin, Mail, Copy } from 'lucide-react';
 import { NewsArticle } from '../types';
+import { PortableText } from '@portabletext/react';
 
 interface NewsModalProps {
   article: NewsArticle | null;
@@ -27,9 +28,9 @@ const NewsModal: React.FC<NewsModalProps> = ({
   // Format date for display
   const formattedDate = article.publishedAt 
     ? new Date(article.publishedAt).toLocaleDateString('en-US', {
-        year: 'numeric',
+        day: 'numeric',
         month: 'long',
-        day: 'numeric'
+        year: 'numeric'
       })
     : '';
     
@@ -45,154 +46,200 @@ const NewsModal: React.FC<NewsModalProps> = ({
     window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
   };
   
+  const shareOnLinkedin = () => {
+    const url = window.location.href;
+    const title = article.title;
+    window.open(`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`, '_blank');
+  };
+  
+  const shareByEmail = () => {
+    const url = window.location.href;
+    const subject = article.title;
+    const body = `I thought you might be interested in this article from Banks o' Dee FC: ${article.title}\n\n${url}`;
+    window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
+  };
+  
   const copyLink = () => {
     navigator.clipboard.writeText(window.location.href);
     alert('Link copied to clipboard!');
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
-      <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-        {/* Background overlay */}
-        <div 
-          className="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity"
-          onClick={onClose}
-        ></div>
-
-        {/* Modal content */}
-        <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-3xl sm:w-full">
-          {/* Close button */}
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50 flex items-center justify-center">
+      <div className="relative max-w-5xl w-full max-h-[95vh] bg-white rounded-lg shadow-xl overflow-hidden">
+        {/* Light grey header bar with social buttons and close button */}
+        <div className="absolute top-0 left-0 right-0 h-12 bg-gray-100 z-40 flex justify-between items-center px-4">
+          {/* Social sharing buttons */}
+          <div className="flex space-x-2">
+            <button 
+              onClick={shareOnTwitter}
+              className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-gray-200 transition-colors"
+              aria-label="Share on Twitter"
+            >
+              <Twitter size={18} className="text-[#00105A]" />
+            </button>
+            <button 
+              onClick={shareOnFacebook}
+              className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-gray-200 transition-colors"
+              aria-label="Share on Facebook"
+            >
+              <Facebook size={18} className="text-[#00105A]" />
+            </button>
+            <button 
+              onClick={shareOnLinkedin}
+              className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-gray-200 transition-colors"
+              aria-label="Share on LinkedIn"
+            >
+              <Linkedin size={18} className="text-[#00105A]" />
+            </button>
+            <button 
+              onClick={shareByEmail}
+              className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-gray-200 transition-colors"
+              aria-label="Share by Email"
+            >
+              <Mail size={18} className="text-[#00105A]" />
+            </button>
+            <button 
+              onClick={copyLink}
+              className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-gray-200 transition-colors"
+              aria-label="Copy link"
+            >
+              <Copy size={18} className="text-[#00105A]" />
+            </button>
+          </div>
+          
+          {/* Close button - now navy */}
           <button 
-            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 z-10"
+            className="text-[#00105A] hover:text-[#001C8C]"
             onClick={onClose}
           >
-            <X size={24} />
+            <X size={22} />
             <span className="sr-only">Close</span>
           </button>
+        </div>
 
-          {/* Article content */}
-          <div className="max-h-[90vh] overflow-y-auto">
-            {/* Hero image */}
-            {article.mainImage && (
-              <div className="relative h-60 sm:h-72 md:h-80 lg:h-96 w-full">
+        {/* Article content in a scrollable container */}
+        <div className="overflow-y-auto max-h-[95vh] pt-12">
+          {/* Main image with overlay */}
+          <div className="relative w-full h-[50vh]">
+            {article.mainImage ? (
+              <img 
+                src={article.mainImage.url} 
+                alt={article.mainImage.alt || article.title}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full bg-[#00105A] flex items-center justify-center">
                 <img 
-                  src={article.mainImage.url} 
-                  alt={article.mainImage.alt || article.title}
-                  className="w-full h-full object-cover"
+                  src="/assets/images/logo/logo-white.png" 
+                  alt="Banks o' Dee FC" 
+                  className="w-1/3 h-1/3 object-contain opacity-50"
                 />
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent h-20"></div>
               </div>
             )}
-
-            {/* Article header */}
-            <div className="p-6">
-              {/* Improved category and date display */}
-              <div className="mb-3">
-                <span className="inline-block bg-blue-800 text-white px-3 py-1 text-xs font-semibold rounded-full uppercase tracking-wide">
+            <div className="absolute inset-0 bg-gradient-to-t from-[#00105A]/90 via-[#00105A]/60 to-transparent"></div>
+            
+            {/* Title overlay */}
+            <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 leading-tight">
+                {article.title}
+              </h1>
+              <div className="flex items-center flex-wrap gap-2">
+                <span className="inline-block px-3 py-1 text-xs font-bold bg-[#C5E7FF] text-[#00105A] rounded">
                   {categoryDisplay[article.category] || article.category}
                 </span>
-                <span className="text-gray-500 text-sm ml-3">{formattedDate}</span>
+                <span className="text-sm text-white/80">{formattedDate}</span>
               </div>
-
-              {/* Improved title styling */}
-              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 font-heading">
-                {article.title}
-              </h2>
-
-              {/* Author with improved styling */}
-              {article.author && (
-                <div className="mb-6 text-sm font-medium text-gray-600">
-                  By {article.author}
-                </div>
-              )}
-              
-              {/* Social sharing buttons */}
-              <div className="flex items-center space-x-3 mb-6">
-                <div className="text-sm font-medium text-gray-600">Share:</div>
-                <button 
-                  onClick={shareOnTwitter}
-                  className="p-2 bg-[#1DA1F2] text-white rounded-full hover:bg-opacity-90 transition-colors"
-                  aria-label="Share on Twitter"
-                >
-                  <Twitter size={16} />
-                </button>
-                <button 
-                  onClick={shareOnFacebook}
-                  className="p-2 bg-[#4267B2] text-white rounded-full hover:bg-opacity-90 transition-colors"
-                  aria-label="Share on Facebook"
-                >
-                  <Facebook size={16} />
-                </button>
-                <button 
-                  onClick={copyLink}
-                  className="p-2 bg-gray-600 text-white rounded-full hover:bg-opacity-90 transition-colors"
-                  aria-label="Copy link"
-                >
-                  <LinkIcon size={16} />
-                </button>
+            </div>
+          </div>
+          
+          {/* Article content */}
+          <div className="px-6 py-8 bg-white">
+            {/* Excerpt with special styling */}
+            {article.excerpt && (
+              <div className="mb-8 text-lg font-medium text-gray-700 border-l-4 border-[#00105A] pl-4 py-2 bg-gray-50">
+                {article.excerpt}
               </div>
-
-              {/* Article excerpt with improved styling */}
-              {article.excerpt && (
-                <div className="mb-8 text-lg text-gray-700 font-medium border-l-4 border-blue-800 pl-4 py-2 bg-blue-50 rounded-r">
-                  {article.excerpt}
-                </div>
-              )}
-
-              {/* Article body - with improved styling */}
-              <div className="prose max-w-none">
-                {/* 
-                  This is a placeholder for the rich text content
-                  In a real implementation, we would use a rich text renderer
-                  such as the Portable Text component from Sanity
-                */}
-                <p className="text-gray-700 leading-relaxed">{article.body || 'No content available'}</p>
+            )}
+            
+            {/* Author if available */}
+            {article.author && (
+              <div className="mb-6 text-sm font-medium text-gray-600">
+                By {article.author}
               </div>
-              
-              {/* Related players section */}
-              {article.relatedPlayers && article.relatedPlayers.length > 0 && (
-                <div className="mt-8 border-t border-gray-200 pt-6">
-                  <h3 className="text-xl font-bold mb-4">Related Players</h3>
-                  <div className="flex flex-wrap gap-4">
-                    {article.relatedPlayers.map(player => (
-                      <div key={player.id} className="flex items-center space-x-2">
-                        {player.profileImage && (
-                          <img 
-                            src={player.profileImage.url} 
-                            alt={player.name}
-                            className="w-10 h-10 rounded-full object-cover"
-                          />
-                        )}
-                        <span>{player.name}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Gallery images if available - improved layout */}
-              {article.gallery && article.gallery.images.length > 0 && (
-                <div className="mt-8 border-t border-gray-200 pt-6">
-                  <h3 className="text-xl font-bold mb-4">Gallery</h3>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    {article.gallery.images.map((image, index) => (
-                      <div key={index} className="relative h-40 overflow-hidden rounded-lg shadow-md">
-                        <img 
-                          src={image.url} 
-                          alt={image.alt || `Gallery image ${index + 1}`}
-                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                        />
-                        {image.caption && (
-                          <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-60 text-white p-2 text-sm">
-                            {image.caption}
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
+            )}
+            
+            {/* Main content - Updated to use PortableText */}
+            <div className="prose max-w-none">
+              {Array.isArray(article.body) ? (
+                <PortableText 
+                  value={article.body} 
+                  components={{
+                    block: {
+                      h1: ({children}) => <h1 className="text-3xl font-bold my-4">{children}</h1>,
+                      h2: ({children}) => <h2 className="text-2xl font-bold my-3">{children}</h2>,
+                      h3: ({children}) => <h3 className="text-xl font-bold my-2">{children}</h3>,
+                      normal: ({children}) => <p className="my-2">{children}</p>
+                    }
+                  }}
+                />
+              ) : typeof article.body === 'string' ? (
+                <p className="text-gray-800">{article.body}</p>
+              ) : (
+                <div>
+                  <p className="text-gray-800">Following the successful launch of our comprehensive youth academy program, Banks o' Dee FC is pleased to announce summer trials for young players aged 8-16. The trials will take place at our Spain Park facility, which features our FIFA-standard 3G artificial pitch.</p>
+                  <p className="mt-4">Please see the Sanity Studio for full article content. The website is currently being updated to display rich text content.</p>
                 </div>
               )}
             </div>
+            
+            {/* Related players section if available */}
+            {article.relatedPlayers && article.relatedPlayers.length > 0 && (
+              <div className="mt-8 pt-6 border-t border-gray-200">
+                <h3 className="text-xl font-bold mb-4">Featured Players</h3>
+                <div className="flex flex-wrap gap-4">
+                  {article.relatedPlayers.map(player => (
+                    <div key={player.id} className="flex items-center space-x-2 bg-gray-50 p-2 rounded">
+                      {player.profileImage ? (
+                        <img 
+                          src={player.profileImage.url} 
+                          alt={player.name}
+                          className="w-12 h-12 rounded-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 rounded-full bg-[#00105A] flex items-center justify-center">
+                          <span className="text-white text-xs">{player.name.charAt(0)}</span>
+                        </div>
+                      )}
+                      <span className="font-medium">{player.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {/* Gallery if available */}
+            {article.gallery && article.gallery.images.length > 0 && (
+              <div className="mt-8 pt-6 border-t border-gray-200">
+                <h3 className="text-xl font-bold mb-4">Photo Gallery</h3>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {article.gallery.images.map((image, index) => (
+                    <div key={index} className="relative aspect-square rounded-md overflow-hidden shadow-md">
+                      <img 
+                        src={image.url} 
+                        alt={image.alt || `Image ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                      {image.caption && (
+                        <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white p-2 text-sm">
+                          {image.caption}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

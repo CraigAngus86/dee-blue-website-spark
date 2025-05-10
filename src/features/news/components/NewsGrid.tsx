@@ -5,14 +5,20 @@ import NewsCard from './cards/NewsCard';
 interface NewsGridProps {
   articles: NewsArticle[];
   onArticleClick?: (article: NewsArticle) => void;
-  showFeatured?: boolean;
 }
 
-const NewsGrid: React.FC<NewsGridProps> = ({ 
-  articles, 
-  onArticleClick,
-  showFeatured = true
+const NewsGrid: React.FC<NewsGridProps> = ({
+  articles,
+  onArticleClick
 }) => {
+  // Add debugging logs
+  console.log('---------------------');
+  console.log('NewsGrid RENDER', new Date().toISOString());
+  console.log('Articles count:', articles.length);
+  console.log('Article IDs:', articles.map(a => a.id).join(', '));
+  console.log('---------------------');
+  console.log('LAYOUT ALGORITHM DEBUGGING:');
+
   if (!articles || articles.length === 0) {
     return (
       <div className="text-center py-12">
@@ -20,38 +26,83 @@ const NewsGrid: React.FC<NewsGridProps> = ({
       </div>
     );
   }
-
-  // If showing featured, separate featured articles
-  const featuredArticles = showFeatured ? articles.filter(article => article.isFeature) : [];
-  const regularArticles = showFeatured ? articles.filter(article => !article.isFeature) : articles;
-
+  
+  // Create a Set to track IDs we've rendered to prevent duplicates
+  const renderedIds = new Set<string>();
+  
+  // Sort articles by date (newest first)
+  const sortedArticles = [...articles].sort((a, b) => {
+    return new Date(b.publishedAt || '').getTime() - new Date(a.publishedAt || '').getTime();
+  });
+  
+  console.log('Sorted articles:', sortedArticles.map(a => ({ id: a.id, title: a.title })));
+  
+  // Smart layout algorithm - arrange articles in balanced rows
+  const rows: NewsArticle[][] = [];
+  let currentRow: NewsArticle[] = [];
+  let currentRowWidth = 0;
+  
+  // Process each article
+  sortedArticles.forEach(article => {
+    // Skip if we've already rendered this ID
+    if (renderedIds.has(article.id)) {
+      console.log(`Skipping duplicate article: ${article.title} (${article.id})`);
+      return;
+    }
+    
+    // Calculate width (columns) for this article
+    const articleWidth = article.isFeature ? 2 : 1;
+    
+    // Check if adding this article would exceed row width (4 columns max)
+    if (currentRowWidth + articleWidth > 4) {
+      // Current row is full, start a new row
+      rows.push([...currentRow]);
+      currentRow = [article];
+      currentRowWidth = articleWidth;
+    } else {
+      // Add to current row
+      currentRow.push(article);
+      currentRowWidth += articleWidth;
+    }
+    
+    // Mark this ID as rendered
+    renderedIds.add(article.id);
+  });
+  
+  // Add the last row if not empty
+  if (currentRow.length > 0) {
+    rows.push(currentRow);
+  }
+  
+  // Add detailed logging for row structure
+  console.log('Final row structure:', rows.map((row, i) => ({
+    rowIndex: i,
+    articles: row.map(a => ({
+      id: a.id,
+      title: a.title.substring(0, 20) + '...',
+      cols: a.isFeature ? 2 : 1
+    }))
+  })));
+  console.log('---------------------');
+  
   return (
-    <div className="space-y-8">
-      {/* Featured articles */}
-      {featuredArticles.length > 0 && (
-        <div className="mb-8">
-          {featuredArticles.map(article => (
-            <div key={article.id} className="mb-6">
-              <NewsCard 
-                article={article} 
-                onClick={onArticleClick} 
-                featured={true}
+    <div className="space-y-6">
+      {rows.map((row, rowIndex) => (
+        <div key={`row-${rowIndex}`} className="grid grid-cols-4 gap-6">
+          {row.map(article => (
+            <div 
+              key={article.id} 
+              className={article.isFeature ? "col-span-2" : "col-span-1"}
+            >
+              <NewsCard
+                article={article}
+                onClick={onArticleClick}
+                featured={article.isFeature}
               />
             </div>
           ))}
         </div>
-      )}
-
-      {/* Regular articles in grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {regularArticles.map(article => (
-          <NewsCard 
-            key={article.id} 
-            article={article} 
-            onClick={onArticleClick} 
-          />
-        ))}
-      </div>
+      ))}
     </div>
   );
 };

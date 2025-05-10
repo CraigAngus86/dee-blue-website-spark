@@ -1,7 +1,5 @@
-
 import { Metadata } from "next";
 import HeroSection from "@/components/ui/hero/HeroSection";
-import OverlappingNewsCards from "@/components/ui/sections/OverlappingNewsCards";
 import Section from "@/components/ui/layout/Section";
 import FanZoneSection from "@/components/ui/sections/FanZoneSection";
 import SponsorsSection from "@/components/ui/sections/SponsorsSection";
@@ -14,6 +12,7 @@ import { fetchSanityData } from "@/lib/sanity/sanityClient";
 import { supabase } from "@/lib/supabase/client";
 import { getUpcomingMatches, getRecentMatches } from "@/lib/data-fetchers/match";
 import { Match, Competition, Team } from "@/types/match";
+import HomeNewsSection from "@/features/news/components/HomeNewsSection";
 
 export const metadata: Metadata = {
   title: "Home | Banks o' Dee FC",
@@ -23,14 +22,14 @@ export const metadata: Metadata = {
 
 // Fetch featured news article for hero section
 async function getFeaturedNewsArticle() {
-  const query = `*[_type == "newsArticle" && featured == true] | order(publishedAt desc)[0] {
+  const query = `*[_type == "newsArticle" && !(_id in path("drafts.**")) && featured == true] | order(publishedAt desc)[0] {
     _id,
     title,
     "slug": slug.current,
     publishedAt,
     "mainImage": mainImage.asset->url,
     excerpt,
-    "category": categories[0]->title
+    "category": category
   }`;
 
   try {
@@ -44,14 +43,14 @@ async function getFeaturedNewsArticle() {
 
 // Fetch recent news articles
 async function getRecentNews(limit = 6) {
-  const query = `*[_type == "newsArticle"] | order(publishedAt desc)[0...${limit}] {
+  const query = `*[_type == "newsArticle" && !(_id in path("drafts.**"))] | order(publishedAt desc)[0...${limit}] {
     _id,
     title,
     "slug": slug.current,
     publishedAt,
     "mainImage": mainImage.asset->url,
     excerpt,
-    "category": categories[0]->title
+    "category": category
   }`;
 
   try {
@@ -243,7 +242,7 @@ export default async function HomePage() {
       {/* News Cards Section */}
       <div className="py-12">
         <FadeIn>
-          <OverlappingNewsCards articles={recentNews} count={6} />
+          <HomeNewsSection articles={recentNews} />
         </FadeIn>
       </div>
       

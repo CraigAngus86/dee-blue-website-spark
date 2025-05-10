@@ -13,7 +13,7 @@ export async function getHeroSlides(): Promise<HeroSlide[]> {
     "imageUrl": mainImage.asset->url,
     publishedAt,
     slug,
-    "category": categories[0]->title
+    "category": category
   }`;
 
   try {

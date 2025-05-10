@@ -11,7 +11,27 @@ export const metadata: Metadata = {
 
 export default async function NewsPage() {
   // Fetch news data from Sanity using our server component hook
-  const { data: news, error } = await getNewsData({ limit: 20 });
+  const { data: news, error } = await getNewsData({ limit: 100 });
+  
+  // Add debugging logs for server component
+  console.log('SERVER page - News article IDs:', news.map(n => n.id).join(', '));
+  console.log('SERVER page - Number of articles:', news.length);
+  
+  // Check for duplicate IDs in the server data
+  const idCounts = {};
+  news.forEach(article => {
+    idCounts[article.id] = (idCounts[article.id] || 0) + 1;
+  });
+
+  const duplicateIds = Object.entries(idCounts)
+    .filter(([id, count]) => count > 1)
+    .map(([id]) => id);
+
+  console.log('SERVER page - Duplicate IDs:', duplicateIds);
+  console.log('SERVER page - Duplicate articles:', 
+    news.filter(article => duplicateIds.includes(article.id))
+      .map(a => ({ id: a.id, title: a.title }))
+  );
   
   if (error) {
     console.error('Error loading news data:', error);

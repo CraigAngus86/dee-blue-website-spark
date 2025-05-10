@@ -8,29 +8,29 @@ export interface NewsArticle {
   title: string;
   slug: string;
   publishedAt: string;
-  category: 'matchReport' | 'clubNews' | 'teamNews' | 'communityNews' | 'commercialNews';
+  category: string;
   mainImage?: {
     url: string;
-    alt?: string;
+    alt: string;
   };
   excerpt?: string;
-  body?: any; // Rich text content
+  body: any; // Change from string to any to support Portable Text blocks
   author?: string;
   isFeature?: boolean;
-  matchId?: string; // For match reports
-  relatedPlayers?: Array<{
+  matchId?: string;
+  relatedPlayers?: {
     id: string;
     name: string;
     slug: string;
     profileImage?: {
       url: string;
     };
-  }>;
+  }[];
   gallery?: {
-    images: Array<{
+    images: {
       url: string;
       alt?: string;
       caption?: string;
-    }>;
+    }[];
   };
 }

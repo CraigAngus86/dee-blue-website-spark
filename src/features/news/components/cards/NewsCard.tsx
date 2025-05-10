@@ -1,5 +1,4 @@
 import React from 'react';
-import Link from 'next/link';
 import { formatDistanceToNow } from 'date-fns';
 import { NewsArticle } from '../../types';
 
@@ -28,7 +27,7 @@ const NewsCard: React.FC<NewsCardProps> = ({
     commercialNews: 'Commercial News'
   };
 
-  // Handle click events, either navigation or modal opening
+  // Handle click events
   const handleClick = () => {
     if (onClick) {
       onClick(article);
@@ -37,46 +36,50 @@ const NewsCard: React.FC<NewsCardProps> = ({
 
   return (
     <div 
-      className={`bg-white rounded-lg shadow-md overflow-hidden transition-all hover:shadow-lg cursor-pointer ${
-        featured ? 'md:flex md:h-80' : ''
-      }`}
+      className={`group relative overflow-hidden rounded-lg cursor-pointer 
+                  transition-all duration-300 hover:-translate-y-1 hover:shadow-lg
+                  ${featured ? 'aspect-[2/1]' : 'aspect-square'} h-full w-full`}
       onClick={handleClick}
     >
-      {/* Image container */}
-      <div className={`relative ${featured ? 'md:w-1/2' : 'h-48'}`}>
-        {article.mainImage ? (
-          <img
-            src={article.mainImage.url}
-            alt={article.mainImage.alt || article.title}
-            className="w-full h-full object-cover"
+      {/* Background image or placeholder */}
+      {article.mainImage ? (
+        <img
+          src={article.mainImage.url}
+          alt={article.mainImage.alt || article.title}
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        />
+      ) : (
+        <div className="w-full h-full bg-[#00105A] flex items-center justify-center">
+          <img 
+            src="/assets/images/logo/logo-white.png" 
+            alt="Banks o' Dee FC" 
+            className="w-1/3 h-1/3 object-contain opacity-30"
           />
-        ) : (
-          <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-            <span className="text-gray-400">No image</span>
-          </div>
-        )}
-        
-        {/* Category label */}
-        <div className="absolute top-4 left-4 bg-blue-800 text-white px-3 py-1 text-sm font-semibold rounded">
-          {categoryDisplay[article.category] || article.category}
         </div>
+      )}
+      
+      {/* Blue hover overlay */}
+      <div className="absolute inset-0 bg-[#00105A] opacity-0 group-hover:opacity-25 transition-opacity duration-300 z-10"></div>
+      
+      {/* Gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-[#00105A]/90 via-[#00105A]/50 to-transparent z-20"></div>
+      
+      {/* Category label */}
+      <div className="absolute top-4 left-4 bg-[#00105A] text-white px-3 py-1 text-xs font-bold rounded z-30">
+        {categoryDisplay[article.category] || article.category}
       </div>
       
-      {/* Content container */}
-      <div className={`p-4 ${featured ? 'md:w-1/2 md:p-6' : ''}`}>
-        <h3 className={`font-bold text-gray-900 mb-2 ${featured ? 'text-2xl' : 'text-xl'}`}>
+      {/* Content overlay */}
+      <div className="absolute bottom-0 left-0 right-0 p-4 z-30">
+        <h3 className={`font-bold leading-tight mb-2 text-white 
+                       ${featured ? 'text-2xl md:text-3xl' : 'text-xl'} line-clamp-2`}>
           {article.title}
         </h3>
         
-        {article.excerpt && (
-          <p className="text-gray-600 mb-4 line-clamp-3">
-            {article.excerpt}
-          </p>
-        )}
-        
-        <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-500">{formattedDate}</span>
-          <span className="text-blue-800 font-semibold">Read More</span>
+        <div className="flex items-center">
+          <span className="text-xs text-white/70">
+            {formattedDate}
+          </span>
         </div>
       </div>
     </div>
