@@ -2,7 +2,7 @@
 import { NextResponse } from 'next/server';
 import { syncPlayerProfileToSupabase } from '@/utils/cross-system/syncSanityToSupabase';
 import { supabase } from '@/lib/supabase/client';
-import { serverEnv } from '@/lib/env';
+import { env } from '@/lib/env';
 
 /**
  * Webhook handler for Sanity player profile events
@@ -15,7 +15,7 @@ export async function POST(request: Request) {
     const secret = headers.get('x-sanity-webhook-secret');
     
     // TODO: Add proper webhook secret validation when in production
-    // if (secret !== serverEnv.getSanityWebhookSecret()) {
+    // if (secret !== env.sanity.webhookSecret) {
     //   return NextResponse.json({ error: 'Invalid webhook secret' }, { status: 401 });
     // }
     

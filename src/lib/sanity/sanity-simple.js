@@ -1,12 +1,11 @@
-
 // src/lib/sanity/sanity-simple.js
 import { createClient } from '@sanity/client';
-import { publicEnv, serverEnv, isServer } from '@/lib/env';
+import { env } from '@/lib/env';
 
 // Get environment variables from our utilities
-const token = isServer ? serverEnv.getSanityToken() : null;
-const projectId = publicEnv.getSanityProjectId();
-const dataset = publicEnv.getSanityDataset();
+const token = env.isServer ? env.sanity.token : null;
+const projectId = env.sanity.projectId;
+const dataset = env.sanity.dataset;
 const apiVersion = '2021-10-21';
 
 // Enhanced logging for token detection

@@ -1,13 +1,12 @@
-
 import { createClient } from 'next-sanity';
 import createImageUrlBuilder from '@sanity/image-url';
 import type { Image } from 'sanity';
-import { serverEnv, publicEnv } from '@/lib/env';
+import { env } from '@/lib/env';
 
 // Environment variables with fallbacks
-const projectId = publicEnv.getSanityProjectId();
-const dataset = publicEnv.getSanityDataset();
-const apiVersion = publicEnv.getSanityApiVersion();
+const projectId = env.sanity.projectId;
+const dataset = env.sanity.dataset;
+const apiVersion = env.sanity.apiVersion || '2024-04-30';
 
 // Client configuration
 const config = {
@@ -24,7 +23,7 @@ export const sanityClient = createClient(config);
 export const previewClient = createClient({
   ...config,
   useCdn: false,
-  token: serverEnv.getSanityToken(),
+  token: env.sanity.token,
 });
 
 // Helper to determine which client to use

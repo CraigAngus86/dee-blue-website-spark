@@ -1,25 +1,24 @@
-
 /**
  * Server-side Cloudinary configuration for authenticated operations
  * This can access server-only environment variables
  */
 import { v2 as cloudinaryServer } from 'cloudinary';
 import { UPLOAD_PRESETS } from './client';
-import { serverEnv, publicEnv } from '@/lib/env';
+import { env } from '@/lib/env';
 
 // Configure Cloudinary with proper environment variables (server-side only)
 cloudinaryServer.config({
-  cloud_name: publicEnv.getCloudinaryCloudName(),
-  api_key: serverEnv.getCloudinaryApiKey(),
-  api_secret: serverEnv.getCloudinaryApiSecret(),
+  cloud_name: env.cloudinary.cloudName,
+  api_key: env.cloudinary.apiKey,
+  api_secret: env.cloudinary.apiSecret,
   secure: true
 });
 
 // Log environment status for debugging (only on server)
 console.log('[Server] Cloudinary configuration:', { 
-  cloudName: publicEnv.getCloudinaryCloudName(),
-  apiKeyAvailable: !!serverEnv.getCloudinaryApiKey(),
-  apiSecretAvailable: !!serverEnv.getCloudinaryApiSecret()
+  cloudName: env.cloudinary.cloudName,
+  apiKeyAvailable: !!env.cloudinary.apiKey,
+  apiSecretAvailable: !!env.cloudinary.apiSecret
 });
 
 // Export the server-side Cloudinary instance

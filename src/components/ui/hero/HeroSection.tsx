@@ -1,27 +1,28 @@
-
 import React from 'react';
+import Image from 'next/image';
+import { cn } from '@/lib/utils';
 
 export interface HeroSectionProps {
   title: string;
   subtitle?: string;
-  image: string; // Image path or URL
+  imageSrc: string;
   imageAlt?: string;
-  overlay?: boolean;
+  overlay?: 'light' | 'dark' | 'none';
   overlayOpacity?: number;
-  overlayColor?: string;
   height?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  className?: string;
   children?: React.ReactNode;
 }
 
 const HeroSection = ({
   title,
   subtitle,
-  image,
+  imageSrc,
   imageAlt = 'Hero image',
-  overlay = true,
-  overlayOpacity = 0.6,
-  overlayColor = 'dark',
+  overlay = 'dark',
+  overlayOpacity = 0.5,
   height = 'md',
+  className,
   children
 }: HeroSectionProps) => {
   // Map height values to tailwind classes
@@ -33,37 +34,57 @@ const HeroSection = ({
     full: 'h-screen'
   };
 
-  // Choose overlay color
-  const overlayColorClass = overlayColor === 'dark' ? 'bg-black' : 'bg-primary';
+  // Choose overlay styles
+  const overlayStyles: React.CSSProperties = 
+    overlay !== 'none' 
+      ? { 
+          opacity: overlayOpacity,
+          backgroundColor: overlay === 'dark' ? 'black' : 'white' 
+        } 
+      : {};
 
   return (
-    <div className={`relative w-full ${heightClasses[height]}`}>
-      {/* Background image */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url(${image})` }}
-        aria-hidden="true"
-      />
+    <div className={cn(
+      `relative w-full overflow-hidden bg-slate-800`,
+      heightClasses[height],
+      className
+    )}>
+      {/* Background Image */}
+      <div className="absolute inset-0 w-full h-full">
+        <Image 
+          src={imageSrc}
+          alt={imageAlt}
+          fill
+          className="object-cover"
+          priority
+        />
+      </div>
       
       {/* Overlay */}
-      {overlay && (
+      {overlay !== 'none' && (
         <div 
-          className={`absolute inset-0 ${overlayColorClass}`}
-          style={{ opacity: overlayOpacity }}
+          className="absolute inset-0"
+          style={overlayStyles}
           aria-hidden="true"
         />
       )}
       
       {/* Content */}
-      <div className="relative h-full flex items-center">
+      <div className="relative h-full flex items-center z-10">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl">
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
+            <h1 className={cn(
+              "text-3xl md:text-4xl lg:text-5xl font-bold mb-4",
+              overlay === 'dark' ? "text-white" : "text-primary"
+            )}>
               {title}
             </h1>
             
             {subtitle && (
-              <p className="text-lg md:text-xl text-white/90 mb-6">
+              <p className={cn(
+                "text-lg md:text-xl mb-6",
+                overlay === 'dark' ? "text-white/90" : "text-slate-800"
+              )}>
                 {subtitle}
               </p>
             )}

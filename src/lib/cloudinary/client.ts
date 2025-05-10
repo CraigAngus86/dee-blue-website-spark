@@ -1,15 +1,14 @@
-
 /**
  * Client-side Cloudinary configuration
  * Safe to use in browser components as it only uses public information
  */
 import { Cloudinary } from '@cloudinary/url-gen';
-import { publicEnv } from '@/lib/env';
+import { env } from '@/lib/env';
 
 // Cloudinary client instance
 export const cloudinary = new Cloudinary({
   cloud: {
-    cloudName: publicEnv.getCloudinaryCloudName(),
+    cloudName: env.cloudinary.cloudName,
   },
   url: {
     secure: true

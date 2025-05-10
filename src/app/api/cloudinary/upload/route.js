@@ -1,6 +1,5 @@
-
 import { NextResponse } from 'next/server';
-import { serverEnv, publicEnv } from '@/lib/env';
+import { env } from '@/lib/env';
 
 export async function POST(req) {
   try {
@@ -11,9 +10,9 @@ export async function POST(req) {
     // 4. Return the result
     
     // Get credentials from our env utility
-    const apiKey = serverEnv.getCloudinaryApiKey();
-    const apiSecret = serverEnv.getCloudinaryApiSecret();
-    const cloudName = publicEnv.getCloudinaryCloudName();
+    const apiKey = env.cloudinary.apiKey;
+    const apiSecret = env.cloudinary.apiSecret;
+    const cloudName = env.cloudinary.cloudName;
     
     const formData = await req.formData();
     const file = formData.get('file');

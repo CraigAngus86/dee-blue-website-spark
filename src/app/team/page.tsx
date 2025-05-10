@@ -1,23 +1,23 @@
-
 "use client";
-
 import React, { useState, useEffect } from 'react';
 import { ChevronRight, Search } from 'lucide-react';
-import PlayerProfileModal from '@/components/ui/players/PlayerProfileModal';
-import TeamMemberCard from '@/components/ui/team/TeamMemberCard';
-import { useTeamData, TeamMember } from '@/hooks/useTeamData';
+import PlayerProfileModal from '@/features/team/components/PlayerProfileModal';
+import TeamMemberCard from '@/features/team/components/TeamMemberCard';
+import { useTeamData } from '@/features/team/hooks/useTeamData';
+import { TeamMember } from '@/features/team/types';
 
 export default function TeamPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPlayer, setSelectedPlayer] = useState<TeamMember | null>(null);
-
+  
   // Use the team data hook which handles fetching data
   const { data: teamData, isLoading, error } = useTeamData();
-
+  
   // Debug team data loading
   useEffect(() => {
     if (teamData) {
       console.log('Team data loaded:', {
+        count: teamData.length,
         management: teamData.management.length,
         goalkeepers: teamData.goalkeepers.length,
         defenders: teamData.defenders.length,

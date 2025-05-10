@@ -1,13 +1,12 @@
-
 import { createClient } from '@sanity/client';
-import { publicEnv, serverEnv, isServer } from '@/lib/env';
+import { env } from '@/lib/env';
 import imageUrlBuilder from '@sanity/image-url';
 
 // Get environment variables from our utilities
-const projectId = publicEnv.getSanityProjectId();
-const dataset = publicEnv.getSanityDataset();
-const apiVersion = publicEnv.getSanityApiVersion();
-const token = isServer ? serverEnv.getSanityToken() : undefined;
+const projectId = env.sanity.projectId;
+const dataset = env.sanity.dataset;
+const apiVersion = env.sanity.apiVersion || '2021-10-21';
+const token = env.isServer ? env.sanity.token : undefined;
 
 // Create a configuration object
 const config = {
@@ -23,6 +22,7 @@ const sanityClient = createClient(config);
 
 // Create an image URL builder
 const builder = imageUrlBuilder(sanityClient);
+
 export const urlFor = (source) => {
   return builder.image(source);
 };
