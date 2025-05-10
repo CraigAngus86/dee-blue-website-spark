@@ -2,6 +2,7 @@ import React from 'react';
 import { X, Twitter, Facebook, Linkedin, Mail, Copy } from 'lucide-react';
 import { NewsArticle } from '../types';
 import { PortableText } from '@portabletext/react';
+import portableTextComponents from './portable-text/PortableTextComponents';
 
 interface NewsModalProps {
   article: NewsArticle | null;
@@ -117,7 +118,6 @@ const NewsModal: React.FC<NewsModalProps> = ({
             <span className="sr-only">Close</span>
           </button>
         </div>
-
         {/* Article content in a scrollable container */}
         <div className="overflow-y-auto max-h-[95vh] pt-12">
           {/* Main image with overlay */}
@@ -169,19 +169,12 @@ const NewsModal: React.FC<NewsModalProps> = ({
               </div>
             )}
             
-            {/* Main content - Updated to use PortableText */}
+            {/* Main content - Updated to use PortableText with custom components */}
             <div className="prose max-w-none">
               {Array.isArray(article.body) ? (
                 <PortableText 
                   value={article.body} 
-                  components={{
-                    block: {
-                      h1: ({children}) => <h1 className="text-3xl font-bold my-4">{children}</h1>,
-                      h2: ({children}) => <h2 className="text-2xl font-bold my-3">{children}</h2>,
-                      h3: ({children}) => <h3 className="text-xl font-bold my-2">{children}</h3>,
-                      normal: ({children}) => <p className="my-2">{children}</p>
-                    }
-                  }}
+                  components={portableTextComponents}
                 />
               ) : typeof article.body === 'string' ? (
                 <p className="text-gray-800">{article.body}</p>
