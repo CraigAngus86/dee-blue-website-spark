@@ -1,5 +1,4 @@
 import React from 'react';
-import { getImageUrl } from '@/features/news/types';
 
 interface HeroImageProps {
   image: any; // This can be either a Sanity image or Cloudinary object
@@ -21,41 +20,67 @@ export const HeroImage: React.FC<HeroImageProps> = ({
 
   // If no image data
   if (!image) {
+    console.log('HeroImage: No image data');
     return renderFallback();
   }
 
   try {
-    // Use the utility function to get the proper URL
-    const imageUrl = getImageUrl(image, {
-      width: 1920,
-      height: 1080,
-      aspect: '16:9',
-      gravity: 'auto:faces'
-    });
+    // Log image data for debugging
+    console.log('HeroImage received image for:', title);
     
+    let imageUrl = '';
+    
+    // For Cloudinary assets from Sanity
+    if (image._type === 'cloudinary.asset') {
+      // Use either secure_url or construct from public_id
+      if (image.public_id) {
+        const publicId = image.public_id;
+        const format = image.format || 'jpg';
+        const baseUrl = 'https://res.cloudinary.com/dlkpaw2a0/image/upload';
+        // Enhanced transformation: 21:9 aspect ratio, auto subject focus, quality and format optimization
+        const transformation = 'c_fill,g_auto:subject,ar_21:9,w_1920,h_840,q_auto:good,f_auto';
+        imageUrl = `${baseUrl}/${transformation}/${publicId}.${format}`;
+      } else if (image.secure_url) {
+        imageUrl = image.secure_url;
+      }
+    } 
+    // Handle regular URLs
+    else if (image.url) {
+      imageUrl = image.url;
+    }
+    // Handle direct string URLs
+    else if (typeof image === 'string') {
+      imageUrl = image;
+    }
+    
+    // If we couldn't determine a URL, use fallback
     if (!imageUrl) {
-      console.error('Could not generate image URL for hero image:', title);
+      console.error('Could not determine image URL from:', image);
       return renderFallback();
     }
-
+    
     return (
-      <img 
-        src={imageUrl}
-        alt={image.alt || title}
-        className={`object-cover w-full h-full ${className}`}
-        onError={(e) => {
-          console.error(`Failed to load hero image for ${title} from ${imageUrl}`);
-          // Set fallback in case of error
-          const target = e.target as HTMLImageElement;
-          target.onerror = null; // Prevent infinite loop
-          const fallbackElement = document.createElement('div');
-          fallbackElement.className = target.className;
-          fallbackElement.innerHTML = `<div class="flex items-center justify-center h-full bg-[#00105A] ${className}"><div class="text-white/50 text-xl">Image not available</div></div>`;
-          if (target.parentNode) {
-            target.parentNode.replaceChild(fallbackElement, target);
-          }
-        }}
-      />
+      <div className="relative w-full h-full">
+        <img 
+          src={imageUrl}
+          alt={image.alt || title}
+          className={`object-cover w-full h-full ${className}`}
+          onError={(e) => {
+            console.error(`Failed to load hero image for ${title} from ${imageUrl}`);
+            // Set fallback in case of error
+            const target = e.target as HTMLImageElement;
+            target.onerror = null; // Prevent infinite loop
+            const fallbackElement = document.createElement('div');
+            fallbackElement.className = target.className;
+            fallbackElement.innerHTML = `<div class="flex items-center justify-center h-full bg-[#00105A] ${className}"><div class="text-white/50 text-xl">Image not available</div></div>`;
+            if (target.parentNode) {
+              target.parentNode.replaceChild(fallbackElement, target);
+            }
+          }}
+        />
+        {/* Enhanced gradient overlay for better text readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#00105A]/90 via-[#00105A]/50 to-transparent"></div>
+      </div>
     );
   } catch (error) {
     console.error(`Error processing hero image for ${title}:`, error);

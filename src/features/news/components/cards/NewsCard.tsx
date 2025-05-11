@@ -1,93 +1,130 @@
 "use client";
-
 import React from 'react';
-import { ArrowRight } from 'lucide-react';
-import { NewsArticle } from '../../types';
+import { NewsArticle } from '@/features/news/types';
 import { formatDistanceToNow } from 'date-fns';
+import { ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface NewsCardProps {
   article: NewsArticle;
-  className?: string;
   onClick?: (article: NewsArticle) => void;
+  className?: string;
 }
 
-const NewsCard: React.FC<NewsCardProps> = ({
-  article,
-  className,
-  onClick
-}) => {
+const NewsCard: React.FC<NewsCardProps> = ({ article, onClick, className }) => {
+  // Calculate time ago
+  const timeAgo = article.publishedAt 
+    ? formatDistanceToNow(new Date(article.publishedAt), { addSuffix: false })
+    : '';
+  
   // Map category values to display text
   const categoryDisplay: Record<string, string> = {
     matchReport: 'MATCH REPORT',
     clubNews: 'CLUB NEWS',
     teamNews: 'TEAM NEWS',
-    communityNews: 'COMMUNITY NEWS',
     commercialNews: 'COMMERCIAL NEWS'
   };
-
-  // Format date for display
-  const formattedDate = article.publishedAt 
-    ? formatDistanceToNow(new Date(article.publishedAt), { addSuffix: true })
-    : '';
   
-  // Prepare truncated excerpt
-  const truncatedExcerpt = article.excerpt?.substring(0, 120) + (article.excerpt?.length > 120 ? '...' : '');
-
+  // Handle click
+  const handleClick = () => {
+    if (onClick) {
+      onClick(article);
+    }
+  };
+  
+  // Process Cloudinary image with improved transformations
+  const getImageUrl = (image: any): string => {
+    if (!image) return '';
+    
+    // For Cloudinary assets from Sanity
+    if (image._type === 'cloudinary.asset') {
+      // Use either secure_url or construct from public_id
+      if (image.public_id) {
+        const publicId = image.public_id;
+        const format = image.format || 'jpg';
+        const baseUrl = 'https://res.cloudinary.com/dlkpaw2a0/image/upload';
+        // Standard 16:9 aspect ratio for news cards
+        const transformation = 'c_fill,g_auto:subject,ar_16:9,w_800,h_450,q_auto:good,f_auto';
+        return `${baseUrl}/${transformation}/${publicId}.${format}`;
+      } else if (image.secure_url) {
+        return image.secure_url;
+      }
+    } 
+    // Handle regular URLs
+    else if (image.url) {
+      return image.url;
+    }
+    // Handle direct string URLs
+    else if (typeof image === 'string') {
+      return image;
+    }
+    
+    return '';
+  };
+  
   return (
     <div 
       className={cn(
-        "group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full cursor-pointer",
+        "flex flex-col h-full bg-white overflow-hidden rounded-sm transition-all hover:shadow-lg hover:translate-y-[-4px]",
+        "border border-gray-100 shadow",
         className
       )}
-      onClick={() => onClick?.(article)}
     >
-      {/* Image section (top half) */}
+      {/* Image with 16:9 aspect ratio */}
       <div className="relative aspect-[16/9] overflow-hidden">
         {article.mainImage ? (
-          <img 
-            src={article.mainImage.url} 
-            alt={article.mainImage.alt || article.title}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-          />
+          <>
+            <img 
+              src={getImageUrl(article.mainImage)}
+              alt={article.title}
+              className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+              onError={(e) => {
+                console.error(`Failed to load card image for ${article.title}`);
+                console.error('Image data:', article.mainImage);
+                // Set fallback in case of error
+                const target = e.target as HTMLImageElement;
+                target.onerror = null; // Prevent infinite loop
+                target.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiA5Ij48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJzeXN0ZW0tdWksIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiNhM2E3YjAiPkltYWdlIG5vdCBhdmFpbGFibGU8L3RleHQ+PC9zdmc+';
+              }}
+            />
+            {/* Subtle gradient overlay - lighter than the hero */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#00105A]/40 to-transparent opacity-70"></div>
+          </>
         ) : (
-          <div className="w-full h-full bg-[#00105A]/10 flex items-center justify-center">
-            <span className="text-[#00105A]/40">No image available</span>
-          </div>
+          <div className="w-full h-full bg-gray-200"></div>
         )}
         
-        {/* Category badge */}
-        <div className="absolute top-4 left-4">
-          <span className="bg-[#00105A] text-white px-3 py-1 text-xs font-bold uppercase tracking-wider rounded">
-            {categoryDisplay[article.category] || article.category}
-          </span>
+        {/* Category tag - positioned on the image */}
+        <div className="absolute left-0 top-0 bg-[#00105A] text-white text-xs font-bold py-1 px-3">
+          {categoryDisplay[article.category] || article.category}
         </div>
       </div>
       
-      {/* Content section (bottom half) */}
-      <div className="p-4 md:p-5 bg-[#F4F7FB] flex flex-col h-[calc(100%-56.25%)]">
+      {/* Content */}
+      <div className="flex flex-col flex-grow p-5">
         {/* Title */}
-        <h3 className="text-xl font-bold text-[#00105A] mb-2.5 line-clamp-2 font-montserrat leading-tight">
+        <h3 className="text-xl font-bold mb-2 text-[#00105A]">
           {article.title}
         </h3>
         
         {/* Excerpt */}
-        <p className="text-sm text-gray-600 mb-4 line-clamp-3 flex-grow">
-          {truncatedExcerpt || 'Read the full article for details.'}
+        <p className="text-gray-700 text-sm mb-4 line-clamp-3 flex-grow">
+          {article.excerpt}
         </p>
         
         {/* Footer with date and read more */}
-        <div className="flex justify-between items-center pt-3 border-t border-gray-100 mt-auto">
+        <div className="flex justify-between items-center mt-auto pt-3 border-t border-gray-100">
           <span className="text-xs text-gray-500">
-            {formattedDate}
+            {timeAgo ? `${timeAgo} ago` : ''}
           </span>
           
-          <span className="text-sm text-[#00105A] font-medium flex items-center group-hover:text-primary-light transition-colors">
-            Read More 
-            <span className="inline-flex items-center justify-center w-5 h-5 ml-1.5 rounded-full bg-[#00105A]/10 group-hover:bg-[#00105A]/20 transition-colors">
-              <ArrowRight className="w-3 h-3" />
-            </span>
-          </span>
+          <button 
+            onClick={handleClick}
+            className="flex items-center text-sm font-medium text-[#00105A] hover:text-[#FFD700] transition-colors"
+          >
+            Read More
+            <ChevronRight className="h-4 w-4 ml-1" />
+          </button>
         </div>
       </div>
     </div>

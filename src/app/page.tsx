@@ -23,17 +23,23 @@ export const metadata: Metadata = {
 
 // Fetch all news articles for homepage ordered by date
 async function getNewsArticles(limit = 9) {
+  // FIXED: Changed query to preserve the full Cloudinary structure
   const query = `*[_type == "newsArticle" && !(_id in path("drafts.**"))] | order(publishedAt desc)[0...${limit}] {
     _id,
     title,
     "slug": slug.current,
     publishedAt,
-    "mainImage": mainImage.asset->url,
+    mainImage,  // Keep the full structure instead of projecting just the URL
     excerpt,
     "category": category
   }`;
+  
   try {
     const news = await fetchSanityData(query, {}, false);
+    // Add debugging
+    if (news && news.length > 0) {
+      console.log('First news article main image:', JSON.stringify(news[0].mainImage, null, 2));
+    }
     return news || [];
   } catch (error) {
     console.error("Error fetching news:", error);
@@ -192,27 +198,18 @@ export default async function HomePage() {
     getFeaturedPlayers()
   ]);
   
-  // Process news articles for hero (top 3)
+  // FIXED: Preserve the full mainImage structure instead of flattening it
   const heroArticles = newsArticles.slice(0, 3).map(article => ({
     ...article,
-    id: article._id,
-    mainImage: article.mainImage ? {
-      url: article.mainImage,
-      alt: article.title || "News image"
-    } : undefined
+    id: article._id
+    // Keep the mainImage exactly as it comes from Sanity
   }));
   
-  // Process news articles for cards (next 6)
+  // FIXED: Also preserve the full mainImage structure for card articles
   const cardsArticles = newsArticles.slice(3, 9).map(article => ({
     ...article,
-    id: article._id,
-    mainImage: article.mainImage ? {
-      url: article.mainImage,
-      alt: article.title || "News image"
-    } : {
-      url: "", // Provide a default empty string
-      alt: "No image available"
-    }
+    id: article._id
+    // Keep the mainImage exactly as it comes from Sanity
   }));
   
   // Convert to the format expected by components

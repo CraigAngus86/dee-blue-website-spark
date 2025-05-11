@@ -1,3 +1,4 @@
+"use client";
 import React from 'react';
 import { X, Twitter, Facebook, Linkedin, Mail, Copy } from 'lucide-react';
 import { NewsArticle } from '../types';
@@ -16,7 +17,7 @@ const NewsModal: React.FC<NewsModalProps> = ({
   onClose
 }) => {
   if (!isOpen || !article) return null;
-
+  
   // Map category values to display text
   const categoryDisplay = {
     matchReport: 'Match Report',
@@ -25,7 +26,7 @@ const NewsModal: React.FC<NewsModalProps> = ({
     communityNews: 'Community News',
     commercialNews: 'Commercial News'
   };
-
+  
   // Format date for display
   const formattedDate = article.publishedAt 
     ? new Date(article.publishedAt).toLocaleDateString('en-US', {
@@ -34,6 +35,46 @@ const NewsModal: React.FC<NewsModalProps> = ({
         year: 'numeric'
       })
     : '';
+    
+  // Process image URL with improved transformations
+  const getImageUrl = (image: any, size: 'main' | 'gallery' = 'main'): string => {
+    if (!image) return '';
+    
+    // For Cloudinary assets from Sanity
+    if (image._type === 'cloudinary.asset') {
+      if (image.public_id) {
+        const publicId = image.public_id;
+        const format = image.format || 'jpg';
+        const baseUrl = 'https://res.cloudinary.com/dlkpaw2a0/image/upload';
+        
+        // Different transformations based on usage
+        let transformation = '';
+        
+        // Main article image - large 16:9
+        if (size === 'main') {
+          transformation = 'c_fill,g_auto:subject,ar_16:9,w_1200,h_675,q_auto:good,f_auto';
+        } 
+        // Gallery images - square with face detection
+        else {
+          transformation = 'c_fill,g_auto:faces,ar_1:1,w_600,h_600,q_auto:good,f_auto';
+        }
+        
+        return `${baseUrl}/${transformation}/${publicId}.${format}`;
+      } else if (image.secure_url) {
+        return image.secure_url;
+      }
+    } 
+    // Handle regular URLs
+    else if (image.url) {
+      return image.url;
+    }
+    // Handle direct string URLs
+    else if (typeof image === 'string') {
+      return image;
+    }
+    
+    return '';
+  };
     
   // Social sharing functions
   const shareOnTwitter = () => {
@@ -64,7 +105,7 @@ const NewsModal: React.FC<NewsModalProps> = ({
     navigator.clipboard.writeText(window.location.href);
     alert('Link copied to clipboard!');
   };
-
+  
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50 flex items-center justify-center">
       <div className="relative max-w-5xl w-full max-h-[95vh] bg-white rounded-lg shadow-xl overflow-hidden">
@@ -118,26 +159,38 @@ const NewsModal: React.FC<NewsModalProps> = ({
             <span className="sr-only">Close</span>
           </button>
         </div>
+        
         {/* Article content in a scrollable container */}
         <div className="overflow-y-auto max-h-[95vh] pt-12">
           {/* Main image with overlay */}
           <div className="relative w-full h-[50vh]">
             {article.mainImage ? (
               <img 
-                src={article.mainImage.url} 
-                alt={article.mainImage.alt || article.title}
+                src={getImageUrl(article.mainImage, 'main')}
+                alt={article.title}
                 className="w-full h-full object-cover"
+                onError={(e) => {
+                  console.error(`Failed to load modal image for ${article.title}`);
+                  // Set fallback in case of error
+                  const target = e.target as HTMLImageElement;
+                  target.onerror = null; // Prevent infinite loop
+                  const fallbackDiv = document.createElement('div');
+                  fallbackDiv.className = 'w-full h-full bg-[#00105A] flex items-center justify-center';
+                  fallbackDiv.innerHTML = '<div class="w-1/3 h-1/3 opacity-50 text-white flex items-center justify-center">Banks o\' Dee FC</div>';
+                  if (target.parentNode) {
+                    target.parentNode.replaceChild(fallbackDiv, target);
+                  }
+                }}
               />
             ) : (
               <div className="w-full h-full bg-[#00105A] flex items-center justify-center">
-                <img 
-                  src="/assets/images/logo/logo-white.png" 
-                  alt="Banks o' Dee FC" 
-                  className="w-1/3 h-1/3 object-contain opacity-50"
-                />
+                <div className="w-1/3 h-1/3 opacity-50 text-white flex items-center justify-center">
+                  Banks o' Dee FC
+                </div>
               </div>
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#00105A]/90 via-[#00105A]/60 to-transparent"></div>
+            {/* Enhanced gradient overlay for better text readability */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#00105A]/90 via-[#00105A]/70 to-transparent"></div>
             
             {/* Title overlay */}
             <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
@@ -171,17 +224,17 @@ const NewsModal: React.FC<NewsModalProps> = ({
             
             {/* Main content - Updated to use PortableText with custom components */}
             <div className="prose max-w-none">
-              {Array.isArray(article.body) ? (
+              {Array.isArray(article.body) && article.body.length > 0 ? (
                 <PortableText 
                   value={article.body} 
                   components={portableTextComponents}
                 />
-              ) : typeof article.body === 'string' ? (
+              ) : typeof article.body === 'string' && article.body ? (
                 <p className="text-gray-800">{article.body}</p>
               ) : (
                 <div>
-                  <p className="text-gray-800">Following the successful launch of our comprehensive youth academy program, Banks o' Dee FC is pleased to announce summer trials for young players aged 8-16. The trials will take place at our Spain Park facility, which features our FIFA-standard 3G artificial pitch.</p>
-                  <p className="mt-4">Please see the Sanity Studio for full article content. The website is currently being updated to display rich text content.</p>
+                  <p className="text-gray-800">Banks o' Dee FC is excited to announce summer trials for our expanding youth academy program. The trials will take place at our Spain Park facility, which features our FIFA-standard 3G artificial pitch.</p>
+                  <p className="mt-4 text-orange-500">Note: Full article content is being loaded. The website is currently being updated to display rich text content correctly.</p>
                 </div>
               )}
             </div>
@@ -195,9 +248,19 @@ const NewsModal: React.FC<NewsModalProps> = ({
                     <div key={player.id} className="flex items-center space-x-2 bg-gray-50 p-2 rounded">
                       {player.profileImage ? (
                         <img 
-                          src={player.profileImage.url} 
+                          src={getImageUrl(player.profileImage, 'gallery')}
                           alt={player.name}
                           className="w-12 h-12 rounded-full object-cover"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.onerror = null;
+                            const fallbackDiv = document.createElement('div');
+                            fallbackDiv.className = 'w-12 h-12 rounded-full bg-[#00105A] flex items-center justify-center';
+                            fallbackDiv.innerHTML = `<span class="text-white text-xs">${player.name.charAt(0)}</span>`;
+                            if (target.parentNode) {
+                              target.parentNode.replaceChild(fallbackDiv, target);
+                            }
+                          }}
                         />
                       ) : (
                         <div className="w-12 h-12 rounded-full bg-[#00105A] flex items-center justify-center">
@@ -212,16 +275,26 @@ const NewsModal: React.FC<NewsModalProps> = ({
             )}
             
             {/* Gallery if available */}
-            {article.gallery && article.gallery.images.length > 0 && (
+            {article.gallery && article.gallery.images && article.gallery.images.length > 0 && (
               <div className="mt-8 pt-6 border-t border-gray-200">
                 <h3 className="text-xl font-bold mb-4">Photo Gallery</h3>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {article.gallery.images.map((image, index) => (
                     <div key={index} className="relative aspect-square rounded-md overflow-hidden shadow-md">
                       <img 
-                        src={image.url} 
+                        src={getImageUrl(image, 'gallery')}
                         alt={image.alt || `Image ${index + 1}`}
                         className="w-full h-full object-cover"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.onerror = null;
+                          const fallbackDiv = document.createElement('div');
+                          fallbackDiv.className = 'w-full h-full bg-gray-200 flex items-center justify-center';
+                          fallbackDiv.innerHTML = '<span class="text-gray-500">Image not available</span>';
+                          if (target.parentNode) {
+                            target.parentNode.replaceChild(fallbackDiv, target);
+                          }
+                        }}
                       />
                       {image.caption && (
                         <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white p-2 text-sm">

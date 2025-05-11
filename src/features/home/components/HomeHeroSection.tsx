@@ -25,6 +25,15 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
       isTransitioning: false,
       selectedArticle: null
     };
+    
+    // Debug log to check the articles data
+    console.log('HomeHeroSection received articles:', this.props.articles);
+    if (this.props.articles.length > 0) {
+      this.props.articles.forEach((article, index) => {
+        console.log(`Article ${index}: ${article.title}`);
+        console.log(`  - mainImage:`, article.mainImage);
+      });
+    }
   }
   
   componentDidMount() {

@@ -12,21 +12,36 @@ export const metadata: Metadata = {
 
 // Fetch all news articles
 async function getAllNews() {
+  // FIXED: Updated query to preserve full structure including body
   const query = `*[_type == "newsArticle" && !(_id in path("drafts.**"))] | order(publishedAt desc) {
     _id,
     title,
     "slug": slug.current,
     publishedAt,
-    "mainImage": mainImage{
-      "url": asset->url,
-      "alt": coalesce(alt, "News image")
-    },
+    mainImage, // Keep full Cloudinary structure
     excerpt,
-    "category": category
+    category,
+    body, // Include the body content
+    author,
+    "matchId": matchId,
+    "relatedMatchId": relatedMatchId,
+    featured,
+    isFeature,
+    "relatedPlayers": relatedPlayers[]-> {
+      "_id": _id,
+      "name": name,
+      "slug": slug.current,
+      "profileImage": profileImage
+    },
+    gallery
   }`;
   
   try {
     const news = await fetchSanityData(query, {}, false);
+    console.log('First article body type:', news && news.length > 0 ? typeof news[0].body : 'No articles');
+    if (news && news.length > 0 && news[0].body) {
+      console.log('First article body sample:', JSON.stringify(news[0].body).substring(0, 100) + '...');
+    }
     return news || [];
   } catch (error) {
     console.error("Error fetching news:", error);
@@ -41,10 +56,7 @@ async function getMatchGalleries() {
     _id,
     title,
     publishedAt,
-    "mainImage": coverImage{
-      "url": asset->url,
-      "alt": coalesce(alt, title)
-    },
+    coverImage, // Keep full structure
     "match": match->title
   }`;
   
@@ -67,12 +79,11 @@ export default async function NewsPage() {
     getMatchGalleries()
   ]);
   
-  // Process articles
+  // Process articles - preserve the full structure
   const processedArticles = newsArticles.map(article => ({
     ...article,
     id: article._id,
-    // Ensure correct image format
-    mainImage: article.mainImage || undefined
+    // No transformation needed - keep original structure
   }));
   
   return (

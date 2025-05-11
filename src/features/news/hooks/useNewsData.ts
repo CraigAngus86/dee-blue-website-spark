@@ -43,7 +43,7 @@ export function useNewsData(options: UseNewsDataOptions = {}) {
           query += ' && (featured == true || isFeature == true)';  // Check both field names
         }
         
-        // Complete the query
+        // Complete the query - Updated for Cloudinary format
         query += `] | order(publishedAt desc)[0...${limit}] {
           _id,
           title,
@@ -51,9 +51,12 @@ export function useNewsData(options: UseNewsDataOptions = {}) {
           publishedAt,
           category,
           excerpt,
-          "mainImage": mainImage{
-            "url": asset->url,
-            "alt": coalesce(alt, "News image")
+          mainImage {
+            "public_id": mainImage.public_id,
+            "format": mainImage.format,
+            "secure_url": mainImage.secure_url,
+            "url": mainImage.url,
+            alt
           },
           author,
           body,
@@ -61,10 +64,15 @@ export function useNewsData(options: UseNewsDataOptions = {}) {
           "relatedMatchId": relatedMatchId,  // Check both field names
           featured,
           isFeature,
-          "gallery": gallery.images[]{
-            "url": asset->url,
-            "alt": coalesce(alt, "Image"),
-            caption
+          "gallery": {
+            "images": gallery.images[] {
+              "public_id": public_id,
+              "format": format,
+              "secure_url": secure_url,
+              "url": url,
+              alt,
+              caption
+            }
           }
         }`;
         
@@ -85,21 +93,13 @@ export function useNewsData(options: UseNewsDataOptions = {}) {
             slug: item.slug || '',
             publishedAt: item.publishedAt || new Date().toISOString(),
             category: item.category || 'clubNews',
-            mainImage: item.mainImage ? {
-              url: item.mainImage.url || '',
-              alt: item.mainImage.alt || item.title || 'News image'
-            } : {
-              url: '',
-              alt: item.title || 'News image'
-            },
+            mainImage: item.mainImage || null,
             excerpt: item.excerpt || '',
             body: item.body || '',
             author: item.author || 'Club Reporter',
             isFeature: item.featured || item.isFeature || false,  // Try both field names
             matchId: item.matchId || item.relatedMatchId || '',   // Try both field names
-            gallery: item.gallery ? {
-              images: item.gallery
-            } : undefined
+            gallery: item.gallery || undefined
           };
         });
         

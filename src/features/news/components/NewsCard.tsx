@@ -1,5 +1,4 @@
 "use client";
-
 import React from 'react';
 import { NewsArticle } from '@/features/news/types';
 import { formatDistanceToNow } from 'date-fns';
@@ -13,6 +12,10 @@ interface NewsCardProps {
 }
 
 const NewsCard: React.FC<NewsCardProps> = ({ article, onClick, className }) => {
+  // Debug logging
+  console.log('NewsCard received article title:', article.title);
+  console.log('Article mainImage:', article.mainImage);
+  
   // Calculate time ago
   const timeAgo = article.publishedAt 
     ? formatDistanceToNow(new Date(article.publishedAt), { addSuffix: false })
@@ -33,6 +36,32 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, onClick, className }) => {
     }
   };
   
+  // Process image URL - Simple version
+  const getImageUrl = (image: any): string => {
+    if (!image) return '';
+    
+    // Handle Cloudinary format
+    if (image.public_id) {
+      const publicId = image.public_id;
+      const format = image.format || 'jpg';
+      const baseUrl = 'https://res.cloudinary.com/dlkpaw2a0/image/upload';
+      const transformation = 'c_fill,g_auto:faces,ar_16:9,w_800,h_450,q_auto:good,f_auto';
+      return `${baseUrl}/${transformation}/${publicId}.${format}`;
+    }
+    
+    // Handle regular URL format
+    if (image.url) {
+      return image.url;
+    }
+    
+    // If image is just a string URL
+    if (typeof image === 'string') {
+      return image;
+    }
+    
+    return '';
+  };
+  
   return (
     <div 
       className={cn(
@@ -45,9 +74,16 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, onClick, className }) => {
       <div className="relative aspect-[16/9] overflow-hidden">
         {article.mainImage ? (
           <img 
-            src={article.mainImage.url} 
+            src={getImageUrl(article.mainImage)}
             alt={article.title}
             className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+            onError={(e) => {
+              console.error(`Failed to load card image for ${article.title}`);
+              // Set fallback in case of error
+              const target = e.target as HTMLImageElement;
+              target.onerror = null; // Prevent infinite loop
+              target.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiA5Ij48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJzeXN0ZW0tdWksIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiNhM2E3YjAiPkltYWdlIG5vdCBhdmFpbGFibGU8L3RleHQ+PC9zdmc+';
+            }}
           />
         ) : (
           <div className="w-full h-full bg-gray-200"></div>

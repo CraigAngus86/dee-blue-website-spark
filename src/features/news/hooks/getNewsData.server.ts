@@ -1,6 +1,5 @@
 import { NewsArticle } from '../types';
-import { fetchSanityData } from '@/lib/sanity/client';
-import { env } from '@/lib/env';
+import { sanityClient } from '@/lib/sanity/client';
 
 interface GetNewsOptions {
   limit?: number;
@@ -18,14 +17,6 @@ export async function getNewsData(options: GetNewsOptions = {}): Promise<{
   const { limit = 100, category, featured } = options;
   
   try {
-    // Debug environment variables
-    console.log('Server Environment check:', {
-      projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-      dataset: process.env.NEXT_PUBLIC_SANITY_DATASET,
-      altProjectId: env.sanity.projectId,
-      altDataset: env.sanity.dataset
-    });
-    
     // Build the query based on options - now excluding drafts
     let query = '*[_type == "newsArticle" && !(_id in path("drafts.**"))]';
     
@@ -39,7 +30,8 @@ export async function getNewsData(options: GetNewsOptions = {}): Promise<{
       query += ' && (featured == true || isFeature == true)';  // Check both field names
     }
     
-    // Complete the query
+    // Complete the query - Following the pattern that worked for player profiles
+    // Direct access to properties rather than projections
     query += ` | order(publishedAt desc)[0...${limit}] {
       _id,
       title,
@@ -47,89 +39,66 @@ export async function getNewsData(options: GetNewsOptions = {}): Promise<{
       publishedAt,
       category,
       excerpt,
-      "mainImage": mainImage{
-        "url": asset->url,
-        "alt": coalesce(alt, "News image")
-      },
+      mainImage,
       author,
-      body[] {
-        ...,
-        "asset": asset->
-      },
+      body,
       "matchId": matchId,
-      "relatedMatchId": relatedMatchId,  // Check both field names
+      "relatedMatchId": relatedMatchId,
       featured,
       isFeature,
       "relatedPlayers": relatedPlayers[]-> {
         "_id": _id,
         "name": name,
         "slug": slug.current,
-        "profileImage": {
-          "url": profileImage.asset->url
-        }
+        "profileImage": profileImage
       },
-      "gallery": gallery.images[]{
-        "url": asset->url,
-        "alt": coalesce(alt, "Image"),
-        caption
-      }
+      gallery
     }`;
     
-    // Add detailed Sanity config logging
-    console.log('DETAILED SANITY CONFIG:', {
-      projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-      dataset: process.env.NEXT_PUBLIC_SANITY_DATASET,
-      apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION,
-      query: query.substring(0, 100) + '...' // Just show the start of the query
-    });
+    console.log('[getNewsData] Fetching with query:', query);
+    const results = await sanityClient.fetch(query);
     
-    console.log('Server fetching with query:', query);
-    const results = await fetchSanityData(query);
-    console.log('Server raw results count:', results?.length || 0);
-    
-    if (!results || results.length === 0) {
-      console.warn('No results returned from Sanity query on server');
+    // Log the first result for debugging
+    if (results && results.length > 0) {
+      console.log('[getNewsData] First result mainImage:', JSON.stringify(results[0].mainImage, null, 2));
+    } else {
+      console.warn('[getNewsData] No results returned from Sanity query');
     }
     
-    // Transform results to match our NewsArticle interface with defensive coding
+    // Map results to NewsArticle type
     const newsArticles: NewsArticle[] = (results || []).map((item: any) => {
+      // Debug logging for each item
+      console.log(`[getNewsData] Processing article: "${item.title}", mainImage:`, 
+        item.mainImage ? 'present' : 'missing');
+      
       return {
         id: item._id || '',
         title: item.title || 'Untitled Article',
         slug: item.slug || '',
         publishedAt: item.publishedAt || new Date().toISOString(),
         category: item.category || 'clubNews',
-        mainImage: item.mainImage ? {
-          url: item.mainImage.url || '',
-          alt: item.mainImage.alt || item.title || 'News image'
-        } : {
-          url: '',
-          alt: item.title || 'News image'
-        },
+        mainImage: item.mainImage || null,
         excerpt: item.excerpt || '',
         body: item.body || '',
         author: item.author || 'Club Reporter',
-        isFeature: item.featured || item.isFeature || false,  // Try both field names
-        matchId: item.matchId || item.relatedMatchId || '',   // Try both field names
+        isFeature: item.featured || item.isFeature || false,
+        matchId: item.matchId || item.relatedMatchId || '',
         relatedPlayers: item.relatedPlayers ? item.relatedPlayers.map((player: any) => ({
           id: player._id,
           name: player.name,
           slug: player.slug,
           profileImage: player.profileImage
         })) : undefined,
-        gallery: item.gallery ? {
-          images: item.gallery
-        } : undefined
+        gallery: item.gallery || undefined
       };
     });
     
-    console.log('Server processed news articles count:', newsArticles.length);
     return {
       data: newsArticles,
       error: null
     };
   } catch (err) {
-    console.error('Error fetching news:', err);
+    console.error('[getNewsData] Error fetching news:', err);
     return {
       data: [],
       error: err instanceof Error ? err : new Error('Failed to fetch news')
@@ -145,6 +114,8 @@ export async function getNewsArticleBySlug(slug: string): Promise<{
   error: Error | null;
 }> {
   try {
+    console.log(`[getNewsArticleBySlug] Fetching article with slug: ${slug}`);
+    
     const query = `*[_type == "newsArticle" && !(_id in path("drafts.**")) && slug.current == $slug][0] {
       _id,
       title,
@@ -152,15 +123,9 @@ export async function getNewsArticleBySlug(slug: string): Promise<{
       publishedAt,
       category,
       excerpt,
-      "mainImage": mainImage{
-        "url": asset->url,
-        "alt": coalesce(alt, "News image")
-      },
+      mainImage,
       author,
-      body[] {
-        ...,
-        "asset": asset->
-      },
+      body,
       "matchId": matchId,
       "relatedMatchId": relatedMatchId,
       featured,
@@ -169,40 +134,36 @@ export async function getNewsArticleBySlug(slug: string): Promise<{
         "_id": _id,
         "name": name,
         "slug": slug.current,
-        "profileImage": {
-          "url": profileImage.asset->url
-        }
+        "profileImage": profileImage
       },
-      "gallery": gallery.images[]{
-        "url": asset->url,
-        "alt": coalesce(alt, "Image"),
-        caption
-      }
+      gallery
     }`;
     
-    const result = await fetchSanityData(query, { slug });
+    const result = await sanityClient.fetch(query, { slug });
     
     if (!result) {
+      console.warn(`[getNewsArticleBySlug] No article found with slug: ${slug}`);
       return {
         data: null,
         error: null
       };
     }
     
-    // Transform result to match our NewsArticle interface
+    // Debug logging
+    console.log(`[getNewsArticleBySlug] Found article: "${result.title}"`);
+    console.log(`[getNewsArticleBySlug] mainImage present:`, !!result.mainImage);
+    if (result.mainImage) {
+      console.log(`[getNewsArticleBySlug] mainImage data:`, JSON.stringify(result.mainImage, null, 2));
+    }
+    
+    // Create NewsArticle from result
     const newsArticle: NewsArticle = {
       id: result._id || '',
       title: result.title || 'Untitled Article',
       slug: result.slug || '',
       publishedAt: result.publishedAt || new Date().toISOString(),
       category: result.category || 'clubNews',
-      mainImage: result.mainImage ? {
-        url: result.mainImage.url || '',
-        alt: result.mainImage.alt || result.title || 'News image'
-      } : {
-        url: '',
-        alt: result.title || 'News image'
-      },
+      mainImage: result.mainImage || null,
       excerpt: result.excerpt || '',
       body: result.body || '',
       author: result.author || 'Club Reporter',
@@ -214,9 +175,7 @@ export async function getNewsArticleBySlug(slug: string): Promise<{
         slug: player.slug,
         profileImage: player.profileImage
       })) : undefined,
-      gallery: result.gallery ? {
-        images: result.gallery
-      } : undefined
+      gallery: result.gallery || undefined
     };
     
     return {
@@ -224,7 +183,7 @@ export async function getNewsArticleBySlug(slug: string): Promise<{
       error: null
     };
   } catch (err) {
-    console.error(`Error fetching news article with slug ${slug}:`, err);
+    console.error(`[getNewsArticleBySlug] Error fetching article with slug ${slug}:`, err);
     return {
       data: null,
       error: err instanceof Error ? err : new Error(`Failed to fetch news article with slug ${slug}`)
