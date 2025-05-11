@@ -20,19 +20,14 @@ export const HeroImage: React.FC<HeroImageProps> = ({
 
   // If no image data
   if (!image) {
-    console.log('HeroImage: No image data');
     return renderFallback();
   }
 
   try {
-    // Log image data for debugging
-    console.log('HeroImage received image for:', title);
-    
     let imageUrl = '';
     
     // For Cloudinary assets from Sanity
     if (image._type === 'cloudinary.asset') {
-      // Use either secure_url or construct from public_id
       if (image.public_id) {
         const publicId = image.public_id;
         const format = image.format || 'jpg';
@@ -55,7 +50,6 @@ export const HeroImage: React.FC<HeroImageProps> = ({
     
     // If we couldn't determine a URL, use fallback
     if (!imageUrl) {
-      console.error('Could not determine image URL from:', image);
       return renderFallback();
     }
     
@@ -66,7 +60,6 @@ export const HeroImage: React.FC<HeroImageProps> = ({
           alt={image.alt || title}
           className={`object-cover w-full h-full ${className}`}
           onError={(e) => {
-            console.error(`Failed to load hero image for ${title} from ${imageUrl}`);
             // Set fallback in case of error
             const target = e.target as HTMLImageElement;
             target.onerror = null; // Prevent infinite loop

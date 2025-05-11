@@ -14,6 +14,7 @@ interface HomeHeroSectionState {
   previousIndex: number;
   isTransitioning: boolean;
   selectedArticle: NewsArticle | null;
+  isLoading: boolean;
 }
 
 class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSectionState> {
@@ -23,17 +24,9 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
       currentIndex: 0,
       previousIndex: 0,
       isTransitioning: false,
-      selectedArticle: null
+      selectedArticle: null,
+      isLoading: false
     };
-    
-    // Debug log to check the articles data
-    console.log('HomeHeroSection received articles:', this.props.articles);
-    if (this.props.articles.length > 0) {
-      this.props.articles.forEach((article, index) => {
-        console.log(`Article ${index}: ${article.title}`);
-        console.log(`  - mainImage:`, article.mainImage);
-      });
-    }
   }
   
   componentDidMount() {
@@ -68,9 +61,46 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
     }, 500);
   }
   
+  // Function to fetch the full article data when clicked
+  handleArticleClick = async (article: NewsArticle) => {
+    try {
+      this.setState({ isLoading: true });
+      
+      // Only fetch complete article if we need to (if it doesn't have a body)
+      if (Array.isArray(article.body) && article.body.length > 0) {
+        // Article already has complete data
+        this.setState({ selectedArticle: article });
+      } else {
+        // Fetch the complete article data by slug using the existing endpoint
+        const response = await fetch(`/api/sanity-test/news?slug=${encodeURIComponent(article.slug)}`);
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch article');
+        }
+        
+        const data = await response.json();
+        
+        if (data.success && data.data) {
+          // Set the complete article
+          this.setState({ selectedArticle: data.data });
+        } else {
+          // If fetch fails, use the original article data
+          console.warn('Failed to fetch complete article, using limited data');
+          this.setState({ selectedArticle: article });
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching article:', error);
+      // If there's an error, still show the modal with original data
+      this.setState({ selectedArticle: article });
+    } finally {
+      this.setState({ isLoading: false });
+    }
+  }
+  
   render() {
     const { articles } = this.props;
-    const { currentIndex, selectedArticle } = this.state;
+    const { currentIndex, selectedArticle, isLoading } = this.state;
     
     if (!articles || articles.length === 0) {
       return null;
@@ -109,7 +139,7 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
         {/* Clickable area for the entire hero */}
         <div 
           className="absolute inset-0 z-20 cursor-pointer" 
-          onClick={() => this.setState({ selectedArticle: article })}
+          onClick={() => this.handleArticleClick(article)}
           aria-label={`Read more about ${article.title}`}
         >
           {/* Content - centered vertically */}
@@ -156,6 +186,21 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
             </div>
           </div>
         </div>
+        
+        {/* Loading indicator */}
+        {isLoading && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div className="bg-white p-4 rounded-lg shadow-lg text-[#00105A]">
+              <div className="flex items-center space-x-2">
+                <svg className="animate-spin h-5 w-5 text-[#00105A]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Loading article...</span>
+              </div>
+            </div>
+          </div>
+        )}
         
         {/* News Modal */}
         {selectedArticle && (
