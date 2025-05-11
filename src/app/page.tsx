@@ -1,18 +1,19 @@
 import { Metadata } from "next";
-import HeroSection from "@/components/ui/hero/HeroSection";
 import Section from "@/components/ui/layout/Section";
 import FanZoneSection from "@/components/ui/sections/FanZoneSection";
 import SponsorsSection from "@/components/ui/sections/SponsorsSection";
 import GradientSeparator from "@/components/ui/separators/GradientSeparator";
 import FadeIn from "@/components/ui/animations/FadeIn";
-import PatternOverlay from "@/components/ui/backgrounds/PatternOverlay";
 import MatchCenter from "@/components/ui/sections/MatchCenter";
 import PlayersSection from "@/components/ui/sections/PlayersSection";
 import { fetchSanityData } from "@/lib/sanity/sanityClient";
 import { supabase } from "@/lib/supabase/client";
 import { getUpcomingMatches, getRecentMatches } from "@/lib/data-fetchers/match";
-import { Match, Competition, Team } from "@/types/match";
-import HomeNewsSection from "@/features/news/components/HomeNewsSection";
+import { Match } from "@/types/match";
+import { HomeHeroSection, OverlappingNewsCards } from "@/features/home";
+
+// Set the revalidation time to ensure fresh data
+export const revalidate = 10; // Revalidate every 10 seconds
 
 export const metadata: Metadata = {
   title: "Home | Banks o' Dee FC",
@@ -20,29 +21,8 @@ export const metadata: Metadata = {
     "Welcome to the official website of Banks o' Dee Football Club",
 };
 
-// Fetch featured news article for hero section
-async function getFeaturedNewsArticle() {
-  const query = `*[_type == "newsArticle" && !(_id in path("drafts.**")) && featured == true] | order(publishedAt desc)[0] {
-    _id,
-    title,
-    "slug": slug.current,
-    publishedAt,
-    "mainImage": mainImage.asset->url,
-    excerpt,
-    "category": category
-  }`;
-
-  try {
-    const featuredNews = await fetchSanityData(query);
-    return featuredNews;
-  } catch (error) {
-    console.error("Error fetching featured news:", error);
-    return null;
-  }
-}
-
-// Fetch recent news articles
-async function getRecentNews(limit = 6) {
+// Fetch all news articles for homepage ordered by date
+async function getNewsArticles(limit = 9) {
   const query = `*[_type == "newsArticle" && !(_id in path("drafts.**"))] | order(publishedAt desc)[0...${limit}] {
     _id,
     title,
@@ -52,20 +32,18 @@ async function getRecentNews(limit = 6) {
     excerpt,
     "category": category
   }`;
-
   try {
-    const news = await fetchSanityData(query);
-    return news;
+    const news = await fetchSanityData(query, {}, false);
+    return news || [];
   } catch (error) {
-    console.error("Error fetching recent news:", error);
+    console.error("Error fetching news:", error);
     return [];
   }
 }
 
-// Fetch upcoming and recent matches with proper type mapping
+// All the other fetch functions remain the same...
 async function getMatches() {
   try {
-    // Fetch upcoming matches and map to proper type
     const upcomingMatchesRaw = await getUpcomingMatches(5);
     const upcomingMatches = upcomingMatchesRaw.map(match => {
       return {
@@ -93,8 +71,7 @@ async function getMatches() {
         }
       } as Match;
     });
-
-    // Fetch recent matches and map to proper type
+    
     const recentMatchesRaw = await getRecentMatches(5);
     const recentMatches = recentMatchesRaw.map(match => {
       return {
@@ -124,7 +101,7 @@ async function getMatches() {
         }
       } as Match;
     });
-
+    
     return {
       upcoming: upcomingMatches,
       recent: recentMatches
@@ -135,14 +112,12 @@ async function getMatches() {
   }
 }
 
-// Fetch league table
 async function getLeagueTable() {
   try {
     const { data: leagueTable, error } = await supabase
       .from("vw_current_league_table")
       .select("*")
       .order("position", { ascending: true });
-
     if (error) throw error;
     return leagueTable || [];
   } catch (error) {
@@ -151,14 +126,12 @@ async function getLeagueTable() {
   }
 }
 
-// Fetch sponsors
 async function getSponsors() {
   try {
     const { data: sponsors, error } = await supabase
       .from("sponsors")
       .select("*")
       .order("featured", { ascending: false });
-
     if (error) throw error;
     return sponsors || [];
   } catch (error) {
@@ -167,14 +140,12 @@ async function getSponsors() {
   }
 }
 
-// Fetch fan of the month
 async function getFanOfMonth() {
   try {
     const { data: fanOfMonth, error } = await supabase
       .from("vw_current_fan_of_month")
       .select("*")
       .maybeSingle();
-
     if (error && error.code !== 'PGRST116') throw error;
     return fanOfMonth;
   } catch (error) {
@@ -183,7 +154,6 @@ async function getFanOfMonth() {
   }
 }
 
-// Fetch featured players
 async function getFeaturedPlayers() {
   try {
     const { data: players, error } = await supabase
@@ -192,7 +162,6 @@ async function getFeaturedPlayers() {
       .not("player_position", "is", null)
       .order("jersey_number", { ascending: true })
       .limit(8);
-
     if (error) throw error;
     return players || [];
   } catch (error) {
@@ -202,51 +171,65 @@ async function getFeaturedPlayers() {
 }
 
 export default async function HomePage() {
+  // Add a cache-busting timestamp to force fetch
+  const timestamp = Date.now();
+  
+  // Fetch all news articles (up to 9 - 3 for hero, 6 for cards)
+  const newsArticles = await getNewsArticles(9);
+  
   // Fetch all data in parallel
   const [
-    featuredNewsArticle, 
-    recentNews, 
     matches, 
     leagueTable,
     sponsors,
     fanOfMonth,
     featuredPlayers
   ] = await Promise.all([
-    getFeaturedNewsArticle(),
-    getRecentNews(),
     getMatches(),
     getLeagueTable(),
     getSponsors(),
     getFanOfMonth(),
     getFeaturedPlayers()
   ]);
-
+  
+  // Process news articles for hero (top 3)
+  const heroArticles = newsArticles.slice(0, 3).map(article => ({
+    ...article,
+    id: article._id,
+    mainImage: article.mainImage ? {
+      url: article.mainImage,
+      alt: article.title || "News image"
+    } : undefined
+  }));
+  
+  // Process news articles for cards (next 6)
+  const cardsArticles = newsArticles.slice(3, 9).map(article => ({
+    ...article,
+    id: article._id,
+    mainImage: article.mainImage ? {
+      url: article.mainImage,
+      alt: article.title || "News image"
+    } : {
+      url: "", // Provide a default empty string
+      alt: "No image available"
+    }
+  }));
+  
   // Convert to the format expected by components
   const cardShadowStyle = {
     "--card-shadow": "0 10px 25px -5px rgba(0, 16, 90, 0.1), 0 8px 10px -6px rgba(0, 16, 90, 0.05)",
     "--card-hover-shadow": "0 20px 25px -5px rgba(0, 16, 90, 0.15), 0 10px 10px -5px rgba(0, 16, 90, 0.1)"
   } as React.CSSProperties;
-
+  
   return (
     <div className="min-h-screen flex flex-col" style={cardShadowStyle}>
       {/* Hero Section */}
-      {featuredNewsArticle && (
-        <HeroSection
-          title={featuredNewsArticle.title}
-          category={featuredNewsArticle.category || "CLUB NEWS"}
-          timestamp={new Date(featuredNewsArticle.publishedAt).toLocaleString()}
-          backgroundImage={featuredNewsArticle.mainImage}
-        />
-      )}
+      <HomeHeroSection articles={heroArticles} />
       
-      {/* News Cards Section */}
-      <div className="py-12">
-        <FadeIn>
-          <HomeNewsSection articles={recentNews} />
-        </FadeIn>
-      </div>
+      {/* News Cards Section - no divider before this section */}
+      <OverlappingNewsCards articles={cardsArticles} />
       
-      {/* Gradient Separator */}
+      {/* Gradient Separator after news cards section */}
       <GradientSeparator />
       
       {/* Match Center Section */}
@@ -263,24 +246,18 @@ export default async function HomePage() {
         </FadeIn>
       </Section>
       
-      {/* Gradient Separator */}
-      <GradientSeparator />
-      
       {/* Fan Zone Section */}
+      <GradientSeparator />
       <div className="py-12">
         <FanZoneSection fanOfMonth={fanOfMonth} />
       </div>
       
-      {/* Gradient Separator before Players Section */}
-      <GradientSeparator />
-      
       {/* Players Section */}
+      <GradientSeparator />
       <PlayersSection players={featuredPlayers} />
       
-      {/* Gradient Separator before Sponsors Section */}
-      <GradientSeparator />
-      
       {/* Sponsors Section */}
+      <GradientSeparator />
       <SponsorsSection sponsors={sponsors} />
     </div>
   );

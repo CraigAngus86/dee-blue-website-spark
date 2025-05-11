@@ -1,4 +1,3 @@
-
 # Banks o' Dee FC - Project Status Document
 
 ## Overview
@@ -20,11 +19,12 @@ This document provides an overview of the current state of the Banks o' Dee FC w
   - Container components: Complete
 
 - **Hero Components**:
-  - MainHero: Complete
+  - MainHero: Complete with full-bleed design, clickable area, and navigation dots
+  - HomeHeroSection: Complete with minimalist design, gold separator, and responsive layout
   - SectionHero: Complete
 
 - **Card Components**:
-  - NewsCard: Complete with responsive design and hover animations
+  - NewsCard: Complete with 16:9 image, category badge, title, excerpt, and Read More link
   - PlayerCard: Complete with profile information display
   - MatchCard/MatchCardNew: Complete with fixture information
 
@@ -45,11 +45,12 @@ This document provides an overview of the current state of the Banks o' Dee FC w
   - Section: Complete with spacing options
   - Container: Complete with responsive widths
   - Grid: Complete with responsive column configuration
+  - OverlappingNewsCards: Complete with negative margin effect and proper grid layout
 
 - **Separator Components**:
   - WaveSeparator: Complete with customizable colors and positions
   - DiagonalSeparator: Complete
-  - GradientSeparator: Complete
+  - GradientSeparator: Complete with gold/navy gradient and customizable height
 
 - **Background Components**:
   - PatternOverlay: Complete
@@ -100,6 +101,7 @@ The color scheme follows the Banks o' Dee FC brand identity:
 
 - **Neutral Colors**:
   - Various grays and whites for background and text
+  - Light Gray (`#F4F7FB`) - Card backgrounds
 
 - **Semantic Colors**:
   - Success (`#10B981`)
@@ -120,6 +122,24 @@ The color scheme follows the Banks o' Dee FC brand identity:
   - `<Heading>` component with level props (1-6)
   - `<Text>` component with size, weight, and color props
 
+### Interaction Patterns
+- **Card Hover Effects**:
+  - Subtle elevation (`hover:-translate-y-1`)
+  - Shadow enhancement (`shadow-md` to `shadow-lg`)
+  - Image scaling (`group-hover:scale-105`)
+  - 300ms transition duration for animations
+  - Background color shifts for interactive elements
+
+- **Button Interactions**:
+  - Clear hover/focus/active states
+  - Color transitions for feedback
+  - Optional icon animations
+
+- **Link Behaviors**:
+  - Underline on hover for inline links
+  - Color transitions for navigation links
+  - Icon movement for "Read More" links
+
 ### Architecture Decisions
 
 - **Hybrid Data Strategy**: Using Supabase for operational data and Sanity CMS for editorial content
@@ -128,17 +148,42 @@ The color scheme follows the Banks o' Dee FC brand identity:
 - **Asset Management**: Structured Cloudinary implementation with defined patterns
 - **Caching Strategy**: In-memory caching with configurable TTL for performance
 
+## Recent Improvements & Fixes
+
+### Hero Section Enhancements
+- **Simplified Design**: Removed unnecessary UI elements for a cleaner look
+- **Improved Navigation**: Made entire hero clickable with navigation dots properly positioned
+- **Refined Typography**: Better spacing and visual hierarchy
+- **Gold Separator**: Added distinctive branding element between title and metadata
+- **Read More Indicator**: Added subtle "Read More" with circled arrow icon
+- **Height Adjustment**: Reduced height from 80vh to 70vh for better proportions
+
+### News Cards Redesign
+- **Structure Update**: Changed from overlay design to 16:9 image with text content below
+- **Visual Hierarchy**: Clear separation between image and content areas
+- **Category Badge**: Consistent positioning in top-left of image
+- **Typography Refinement**: Proper line heights and clamp settings for titles and excerpts
+- **Interactive Elements**: Enhanced hover effects and "Read More" link styling
+- **Date Display**: Clear relative time display (e.g., "2 days ago")
+
+### Data Fetching Improvements
+- **Sanity Integration**: Fixed data fetching to ensure latest content is displayed
+- **Cache Control**: Implemented proper revalidation settings
+- **Error Handling**: Better error handling for failed data fetches
+- **Content Sorting**: Ensured news articles are properly sorted by date (newest first)
+
 ## Known Issues & Areas for Refinement
 
 ### Component Issues
 1. **NewsCard**:
-   - Spacing between image and headline recently adjusted, may need further refinement
+   - Consider adjusting excerpt length based on viewport size
+   - Test with various content lengths to ensure consistent appearance
 
 2. **MatchCard**:
    - Needs better handling for very long team names
 
 3. **Hero Sections**:
-   - Mobile responsiveness could be improved for some content layouts
+   - Could test with more varied image content to ensure gradient overlay works well
 
 ### Backend Issues
 1. **Cross-System References**:
@@ -165,26 +210,41 @@ The color scheme follows the Banks o' Dee FC brand identity:
 
 ## Next Steps & Development Priorities
 
+### Current Focus
+1. **Match Centre Implementation**:
+   - Create /features/matches directory structure
+   - Define Match/Fixture types and interfaces
+   - Implement optimized data fetchers for match data
+   - Create server component versions of fixtures and results pages
+
+2. **Spain Park Feature**:
+   - Create stadium information page with interactive elements
+   - Implement facility information display
+   - Add history and photo gallery sections
+
+3. **Commercial Features**:
+   - Implement commercial packages display
+   - Create sponsorship inquiry forms
+   - Develop partner showcase components
+
 ### Short-term Priorities
-1. **Next.js Migration**:
-   - Initialize Next.js project with App Router
-   - Migrate components to Next.js structure
-   - Implement API routes for backend functionality
-   - Integrate preview functionality with Next.js
+1. **Component Refinement**:
+   - Continue standardizing component interfaces
+   - Fix any remaining TypeScript errors
+   - Improve responsive behavior on complex layouts
 
 2. **Content Pages**:
-   - Complete the Fixtures & Results page
-   - Complete the Club History page
-   - Complete the News listing page with filters
+   - Complete the Match Centre page
+   - Complete the Spain Park page
+   - Complete the Commercial Opportunities page
 
-3. **Component Refinement**:
-   - Finalize any spacing issues in NewsCard component
-   - Improve mobile responsiveness for complex layouts
-   - Complete the match statistics component
+3. **Ticketing Integration**:
+   - Create ticket purchasing interface
+   - Implement TicketCo API integration
+   - Develop booking confirmation system
 
 ### Medium-term Priorities
 1. **Functionality Implementation**:
-   - Ticket purchasing integration
    - Match live updates feature
    - Newsletter signup with validation
    - User authentication flow
@@ -218,4 +278,8 @@ The color scheme follows the Banks o' Dee FC brand identity:
    - Performance benchmarking
 
 ## Conclusion
-The Banks o' Dee FC website project has made significant progress with the completion of core frontend components and critical backend infrastructure. The focus should now shift to migrating to Next.js and completing content pages while refining existing components and addressing known issues. The project is well-positioned for the next phase of development with a solid foundation of design, components, and backend utilities.
+The Banks o' Dee FC website project has made significant progress with major improvements to the hero section and news cards components. The focus should now shift to completing the Match Centre, Spain Park, and Commercial features while continuing to refine existing components. With the core visual design elements now established, future development can proceed more rapidly with a consistent design language in place.
+
+---
+
+*Document last updated: May 11, 2025*

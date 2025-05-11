@@ -1,0 +1,20 @@
+// Fetch featured news articles for hero section
+async function getFeaturedNewsArticles() {
+  const query = `*[_type == "newsArticle" && !(_id in path("drafts.**")) && (featured == true || isFeature == true)] | order(publishedAt desc)[0...3] {
+    _id,
+    title,
+    "slug": slug.current,
+    publishedAt,
+    "mainImage": mainImage.asset->url,
+    excerpt,
+    "category": category
+  }`;
+
+  try {
+    const featuredNews = await fetchSanityData(query);
+    return featuredNews || [];
+  } catch (error) {
+    console.error("Error fetching featured news:", error);
+    return [];
+  }
+}

@@ -1,16 +1,18 @@
-
 import React from 'react';
+import { cn } from '@/lib/utils';
 
-type GradientSeparatorProps = {
+interface GradientSeparatorProps {
   className?: string;
-};
+}
 
-const GradientSeparator = ({ className = "" }: GradientSeparatorProps) => {
+const GradientSeparator: React.FC<GradientSeparatorProps> = ({
+  className
+}) => {
   return (
-    <div 
-      className={`h-1 w-full bg-gradient-to-r from-primary via-accent to-primary ${className}`}
-      aria-hidden="true"
-    />
+    <div className={cn("py-10 relative flex justify-center items-center", className)}>
+      {/* Gradient bar without logo */}
+      <div className="w-full h-2 md:h-[8px] bg-gradient-to-r from-[#00105A] to-[#FFD700]"></div>
+    </div>
   );
 };
 

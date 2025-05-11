@@ -1,84 +1,92 @@
+"use client";
+
 import React from 'react';
-import { formatDistanceToNow } from 'date-fns';
+import { ArrowRight } from 'lucide-react';
 import { NewsArticle } from '../../types';
+import { formatDistanceToNow } from 'date-fns';
+import { cn } from '@/lib/utils';
 
 interface NewsCardProps {
   article: NewsArticle;
+  className?: string;
   onClick?: (article: NewsArticle) => void;
-  featured?: boolean;
 }
 
-const NewsCard: React.FC<NewsCardProps> = ({ 
-  article, 
-  onClick,
-  featured = false
+const NewsCard: React.FC<NewsCardProps> = ({
+  article,
+  className,
+  onClick
 }) => {
-  // Format the date as "X days ago"
+  // Map category values to display text
+  const categoryDisplay: Record<string, string> = {
+    matchReport: 'MATCH REPORT',
+    clubNews: 'CLUB NEWS',
+    teamNews: 'TEAM NEWS',
+    communityNews: 'COMMUNITY NEWS',
+    commercialNews: 'COMMERCIAL NEWS'
+  };
+
+  // Format date for display
   const formattedDate = article.publishedAt 
     ? formatDistanceToNow(new Date(article.publishedAt), { addSuffix: true })
     : '';
   
-  // Map category values to display text
-  const categoryDisplay = {
-    matchReport: 'Match Report',
-    clubNews: 'Club News',
-    teamNews: 'Team News',
-    communityNews: 'Community News',
-    commercialNews: 'Commercial News'
-  };
-
-  // Handle click events
-  const handleClick = () => {
-    if (onClick) {
-      onClick(article);
-    }
-  };
+  // Prepare truncated excerpt
+  const truncatedExcerpt = article.excerpt?.substring(0, 120) + (article.excerpt?.length > 120 ? '...' : '');
 
   return (
     <div 
-      className={`group relative overflow-hidden rounded-lg cursor-pointer 
-                  transition-all duration-300 hover:-translate-y-1 hover:shadow-lg
-                  ${featured ? 'aspect-[2/1]' : 'aspect-square'} h-full w-full`}
-      onClick={handleClick}
-    >
-      {/* Background image or placeholder */}
-      {article.mainImage ? (
-        <img
-          src={article.mainImage.url}
-          alt={article.mainImage.alt || article.title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-        />
-      ) : (
-        <div className="w-full h-full bg-[#00105A] flex items-center justify-center">
-          <img 
-            src="/assets/images/logo/logo-white.png" 
-            alt="Banks o' Dee FC" 
-            className="w-1/3 h-1/3 object-contain opacity-30"
-          />
-        </div>
+      className={cn(
+        "group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full cursor-pointer",
+        className
       )}
-      
-      {/* Blue hover overlay */}
-      <div className="absolute inset-0 bg-[#00105A] opacity-0 group-hover:opacity-25 transition-opacity duration-300 z-10"></div>
-      
-      {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[#00105A]/90 via-[#00105A]/50 to-transparent z-20"></div>
-      
-      {/* Category label */}
-      <div className="absolute top-4 left-4 bg-[#00105A] text-white px-3 py-1 text-xs font-bold rounded z-30">
-        {categoryDisplay[article.category] || article.category}
+      onClick={() => onClick?.(article)}
+    >
+      {/* Image section (top half) */}
+      <div className="relative aspect-[16/9] overflow-hidden">
+        {article.mainImage ? (
+          <img 
+            src={article.mainImage.url} 
+            alt={article.mainImage.alt || article.title}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+        ) : (
+          <div className="w-full h-full bg-[#00105A]/10 flex items-center justify-center">
+            <span className="text-[#00105A]/40">No image available</span>
+          </div>
+        )}
+        
+        {/* Category badge */}
+        <div className="absolute top-4 left-4">
+          <span className="bg-[#00105A] text-white px-3 py-1 text-xs font-bold uppercase tracking-wider rounded">
+            {categoryDisplay[article.category] || article.category}
+          </span>
+        </div>
       </div>
       
-      {/* Content overlay */}
-      <div className="absolute bottom-0 left-0 right-0 p-4 z-30">
-        <h3 className={`font-bold leading-tight mb-2 text-white 
-                       ${featured ? 'text-2xl md:text-3xl' : 'text-xl'} line-clamp-2`}>
+      {/* Content section (bottom half) */}
+      <div className="p-4 md:p-5 bg-[#F4F7FB] flex flex-col h-[calc(100%-56.25%)]">
+        {/* Title */}
+        <h3 className="text-xl font-bold text-[#00105A] mb-2.5 line-clamp-2 font-montserrat leading-tight">
           {article.title}
         </h3>
         
-        <div className="flex items-center">
-          <span className="text-xs text-white/70">
+        {/* Excerpt */}
+        <p className="text-sm text-gray-600 mb-4 line-clamp-3 flex-grow">
+          {truncatedExcerpt || 'Read the full article for details.'}
+        </p>
+        
+        {/* Footer with date and read more */}
+        <div className="flex justify-between items-center pt-3 border-t border-gray-100 mt-auto">
+          <span className="text-xs text-gray-500">
             {formattedDate}
+          </span>
+          
+          <span className="text-sm text-[#00105A] font-medium flex items-center group-hover:text-primary-light transition-colors">
+            Read More 
+            <span className="inline-flex items-center justify-center w-5 h-5 ml-1.5 rounded-full bg-[#00105A]/10 group-hover:bg-[#00105A]/20 transition-colors">
+              <ArrowRight className="w-3 h-3" />
+            </span>
           </span>
         </div>
       </div>
