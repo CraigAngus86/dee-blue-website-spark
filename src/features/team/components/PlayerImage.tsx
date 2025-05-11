@@ -37,53 +37,30 @@ export const PlayerImage: React.FC<PlayerImageProps> = ({
   }
 
   try {
-    let imageUrl = '';
+    // Extract public_id directly from the image object
+    const publicId = image.public_id;
+    const format = image.format || 'jpg';
     
-    // Based on console logs, image has direct public_id and secure_url properties
-    if (image.secure_url) {
-      // Use secure URL as base and modify with transformations
-      const baseUrl = image.secure_url.split('/upload/')[0] + '/upload/';
-      const fileName = image.secure_url.split('/').pop().split('.')[0];
-      
-      // Transformations for head & shoulders framing
-      const transformations = {
-        card: 'c_fill,g_faces,ar_3:4,w_500,h_500,q_auto:good,f_auto',
-        modal: 'c_fill,g_faces,ar_3:4,w_800,h_800,q_auto:good,f_auto',
-        large: 'c_fill,g_faces,ar_3:4,w_1000,h_1000,q_auto:good,f_auto'
-      };
-      
-      imageUrl = `${baseUrl}${transformations[size]}/${image.public_id}.${image.format || 'jpg'}`;
-    } 
-    // Fallback to URL if secure_url not available
-    else if (image.url) {
-      // Same approach with URL
-      const baseUrl = image.url.split('/upload/')[0] + '/upload/';
-      const fileName = image.url.split('/').pop().split('.')[0];
-      
-      const transformations = {
-        card: 'c_fill,g_faces,ar_3:4,w_500,h_500,q_auto:good,f_auto',
-        modal: 'c_fill,g_faces,ar_3:4,w_800,h_800,q_auto:good,f_auto',
-        large: 'c_fill,g_faces,ar_3:4,w_1000,h_1000,q_auto:good,f_auto'
-      };
-      
-      imageUrl = `${baseUrl}${transformations[size]}/${image.public_id}.${image.format || 'jpg'}`;
-    }
-    // Fallback to just public_id if neither url is available
-    else if (image.public_id) {
-      const baseUrl = 'https://res.cloudinary.com/dlkpaw2a0/image/upload';
-      
-      const transformations = {
-        card: 'c_fill,g_faces,ar_3:4,w_500,h_500,q_auto:good,f_auto',
-        modal: 'c_fill,g_faces,ar_3:4,w_800,h_800,q_auto:good,f_auto',
-        large: 'c_fill,g_faces,ar_3:4,w_1000,h_1000,q_auto:good,f_auto'
-      };
-      
-      imageUrl = `${baseUrl}/${transformations[size]}/${image.public_id}.${image.format || 'jpg'}`;
-    }
-    else {
-      // Can't determine URL
+    // If public_id is missing, use fallback
+    if (!publicId) {
+      console.error('Missing public_id for image:', name);
       return renderFallback();
     }
+
+    // Define transformations for different sizes with adjusted gravity
+    // The key change is using g_auto:face:center,y_-30 to position the face lower in the frame
+    const transformations = {
+      // Card view: Move face down by setting y offset to -30 (negative moves down)
+      card: 'c_fill,g_auto:face,y_30,ar_1:1,w_500,h_500,q_auto:good,f_auto',
+      // Modal view: Same approach for larger images
+      modal: 'c_fill,g_auto:face,y_30,ar_3:4,w_800,h_1067,q_auto:good,f_auto',
+      // Large view: Different aspect ratio for banners
+      large: 'c_fill,g_face:center,ar_16:9,w_1200,h_675,q_auto:good,f_auto'
+    };
+
+    // Construct the Cloudinary URL
+    const baseUrl = 'https://res.cloudinary.com/dlkpaw2a0/image/upload';
+    const imageUrl = `${baseUrl}/${transformations[size]}/${publicId}.${format}`;
 
     return (
       <img 

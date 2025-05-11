@@ -1,54 +1,38 @@
 import { createClient } from 'next-sanity';
-import createImageUrlBuilder from '@sanity/image-url';
-import type { Image } from 'sanity';
-import { env } from '@/lib/env';
+import imageUrlBuilder from '@sanity/image-url';
 
 // Environment variables with fallbacks
-const projectId = env.sanity.projectId;
-const dataset = env.sanity.dataset;
-const apiVersion = env.sanity.apiVersion || '2024-04-30';
+const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || '';
+const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production';
+const apiVersion = process.env.NEXT_PUBLIC_SANITY_API_VERSION || 'v2021-10-21';
 
 // Client configuration
 const config = {
   projectId,
   dataset,
   apiVersion,
-  useCdn: process.env.NODE_ENV === 'production',
+  // Disable CDN for fresher content
+  useCdn: false,
 };
 
-// Standard client for regular content fetching
-export const sanityClient = createClient(config);
+// Initialize client
+const sanityClient = createClient(config);
 
-// Preview client for draft content
-export const previewClient = createClient({
-  ...config,
+// Initialize URL builder
+const builder = imageUrlBuilder(sanityClient);
+
+// Log configuration for debugging
+console.log('Sanity client initialized with config:', {
+  projectId,
+  dataset,
+  apiVersion,
   useCdn: false,
-  token: env.sanity.token,
 });
 
-// Helper to determine which client to use
-export const getClient = (usePreview = false) => (usePreview ? previewClient : sanityClient);
-
-// Helper function for simple queries
-export async function fetchSanityData<T = any>(query: string, params = {}, usePreview = false) {
-  try {
-    const client = getClient(usePreview);
-    return await client.fetch<T>(query, params);
-  } catch (error) {
-    console.error('Error fetching Sanity data:', error);
-    throw error;
-  }
-}
-
-// Image URL builder for Sanity images
-export const urlForImage = (source: Image) => {
-  return createImageUrlBuilder(config).image(source);
+// Export the builder function
+export const urlFor = (source: any) => {
+  return builder.image(source);
 };
 
-export default {
-  sanityClient,
-  previewClient,
-  getClient,
-  fetchSanityData,
-  urlForImage,
-};
+// Export the client
+export { sanityClient };

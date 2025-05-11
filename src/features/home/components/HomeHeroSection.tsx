@@ -3,6 +3,7 @@ import React from 'react';
 import { NewsArticle } from '@/features/news/types';
 import { NewsModal } from '@/features/news/components';
 import { ArrowRight } from 'lucide-react';
+import HeroImage from './HeroImage';
 
 interface HomeHeroSectionProps {
   articles: NewsArticle[];
@@ -87,9 +88,10 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
                }`}
                aria-hidden={i !== currentIndex}>
             {slideArticle.mainImage && (
-              <img src={slideArticle.mainImage.url}
-                   alt={slideArticle.title}
-                   className="w-full h-full object-cover" />
+              <HeroImage 
+                image={slideArticle.mainImage}
+                title={slideArticle.title}
+              />
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-[#00105A]/80 via-[#00105A]/40 to-transparent" />
           </div>

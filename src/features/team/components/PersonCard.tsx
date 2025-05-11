@@ -1,62 +1,67 @@
 'use client';
-
-import Image from 'next/image';
-import { Person } from '../types';
+import React from 'react';
+import { Person } from '@/features/team/types';
+import PlayerImage from './PlayerImage';
 
 interface PersonCardProps {
   person: Person;
-  className?: string;
   onProfileClick: (person: Person) => void;
 }
 
-export function PersonCard({ person, className = '', onProfileClick }: PersonCardProps) {
-  const { firstName, lastName } = person;
+export const PersonCard: React.FC<PersonCardProps> = ({ 
+  person,
+  onProfileClick
+}) => {
+  const firstName = person.firstName;
+  const lastName = person.lastName;
   
-  // Improved Cloudinary transformation: better face positioning
-  const imageUrl = person.profileImage?.url
-    ? `${person.profileImage.url.replace('/upload/', '/upload/c_fill,g_face:auto,h_500,w_500/')}`
-    : '';
-
   return (
-    <div 
-      className={`
-        bg-white rounded-lg shadow-md overflow-hidden 
-        transition-all duration-300 transform hover:shadow-xl hover:-translate-y-1
-        cursor-pointer
-        ${className}
-      `}
-      onClick={() => onProfileClick(person)}
-    >
-      <div className="relative aspect-square overflow-hidden">
-        {/* Player/Staff image */}
-        {imageUrl && (
-          <div className="relative h-full w-full">
-            <Image 
-              src={imageUrl} 
-              alt={`${firstName} ${lastName}`}
-              fill
-              className="object-cover transition-transform duration-300 group-hover:scale-105"
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-            />
-            
-            {/* Gradient overlay for better text readability */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-50"></div>
-          </div>
-        )}
+    <div className="rounded-md overflow-hidden shadow-md transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+      {/* Card with overlay text */}
+      <div 
+        className="relative aspect-square overflow-hidden cursor-pointer group bg-[#00105A]"
+        onClick={() => onProfileClick(person)}
+      >
+        {/* Image */}
+        <div className="w-full h-full">
+          <PlayerImage 
+            image={person.profileImage}
+            name={`${firstName} ${lastName}`}
+            size="card"
+            className="transition-transform duration-500 group-hover:scale-105 w-full h-full object-cover"
+          />
+        </div>
         
-        {/* Name overlay with stronger gradient */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-primary/90 via-primary/60 to-transparent z-20 text-white">
-          <div>
-            <p className="text-base font-medium leading-none mb-0">{firstName}</p>
-            <h3 className="text-2xl font-bold leading-tight mt-0">{lastName}</h3>
+        {/* Name overlay - improved contrast and typography */}
+        <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/80 via-black/40 to-transparent">
+          <div className="p-4 text-white">
+            <p className="text-sm font-medium uppercase tracking-wider opacity-80 mb-1">{firstName}</p>
+            <p className="text-xl font-bold tracking-wide">{lastName}</p>
           </div>
         </div>
       </div>
       
-      <div className="p-3 flex items-center justify-between hover:bg-gray-50">
-        <span className="font-medium text-primary">View Profile</span>
-        <div className="text-primary">→</div>
-      </div>
+      {/* View Profile button */}
+      <button
+        onClick={() => onProfileClick(person)}
+        className="flex items-center justify-between w-full p-3 text-[#00105A] font-medium hover:bg-gray-50 transition-colors bg-white"
+      >
+        <span>View Profile</span>
+        <svg 
+          className="h-5 w-5 text-[#00105A]" 
+          viewBox="0 0 24 24" 
+          fill="none" 
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path 
+            d="M9 18L15 12L9 6" 
+            stroke="currentColor" 
+            strokeWidth="2" 
+            strokeLinecap="round" 
+            strokeLinejoin="round" 
+          />
+        </svg>
+      </button>
     </div>
   );
-}
+};

@@ -1,171 +1,278 @@
 'use client';
-
-import { useEffect, useRef } from 'react';
-import { Person } from '../types';
-import { X } from 'lucide-react';
+import React, { useEffect, useRef } from 'react';
+import { X, Twitter, Facebook, Instagram, Link2, Linkedin } from 'lucide-react';
+import { Person } from '@/features/team/types';
+import PlayerImage from './PlayerImage';
+import { PortableText } from '@portabletext/react';
 
 interface PersonDetailsModalProps {
-  person: Person;
+  person: Person | null;
+  isOpen?: boolean;
   onClose: () => void;
 }
 
-export function PersonDetailsModal({ person, onClose }: PersonDetailsModalProps) {
-  const modalRef = useRef<HTMLDivElement>(null);
-  
+export const PersonDetailsModal: React.FC<PersonDetailsModalProps> = ({
+  person,
+  isOpen = true,
+  onClose
+}) => {
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  // Reset scroll position when modal opens
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    
-    document.addEventListener('keydown', handleKeyDown);
-    document.body.style.overflow = 'hidden';
-    
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'auto';
-    };
-  }, [onClose]);
-  
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
-      onClose();
+    if (isOpen && contentRef.current) {
+      contentRef.current.scrollTop = 0;
     }
+  }, [isOpen, person]);
+
+  if (!isOpen || !person) return null;
+
+  const fullName = person.playerName || `${person.firstName} ${person.lastName}`;
+  const position = person.personType === 'player' 
+    ? person.playerPosition 
+    : person.staffRole?.replace('_', ' ');
+  
+  // Check if social media links exist
+  const hasTwitter = person.socialMedia?.twitter;
+  const hasFacebook = person.socialMedia?.facebook;
+  const hasInstagram = person.socialMedia?.instagram;
+  const hasLinkedin = person.socialMedia?.linkedin;
+  const hasWebsite = person.socialMedia?.website;
+
+  // Social functions
+  const openSocialProfile = (url: string) => {
+    if (url) window.open(url, '_blank');
   };
-  
-  const { firstName, lastName, personType, nationality } = person;
-  
-  // Get position label
-  let positionLabel = '';
-  if (personType === 'player' && person.playerPosition) {
-    positionLabel = person.playerPosition.charAt(0).toUpperCase() + person.playerPosition.slice(1);
-  } else if (personType === 'staff' && person.staffRole) {
-    if (person.staffRole === 'physio') {
-      positionLabel = 'Physio';
-    } else if (person.staffRole === 'gk_coach') {
-      positionLabel = 'Goalkeeper Coach';
-    } else if (person.staffRole === 'assistant_manager') {
-      positionLabel = 'Assistant Manager';
-    } else {
-      positionLabel = person.staffRole
-        .split('_')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' ');
-    }
-  }
-  
-  // Just use the original image URL for now
-  const imageUrl = person.profileImage?.url || '';
-  
-  // For debug purposes - log the image structure
-  console.log('Profile image:', person.profileImage);
-  console.log('Image URL:', imageUrl);
-  
+
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center" onClick={handleBackdropClick}>
-      <div ref={modalRef} className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[95vh] overflow-y-auto">
-        <div className="sticky top-0 bg-gray-100 flex justify-end p-2 z-10">
+    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
+      <div className="relative w-full max-w-4xl bg-white rounded-lg shadow-xl overflow-hidden">
+        {/* Header bar with social buttons and close button */}
+        <div className="absolute top-0 left-0 right-0 h-12 bg-white z-40 flex justify-between items-center px-4 border-b">
+          {/* Social sharing buttons */}
+          <div className="flex space-x-4">
+            {/* Twitter button */}
+            <button 
+              onClick={() => hasTwitter ? openSocialProfile(person.socialMedia.twitter) : null}
+              className={hasTwitter ? "text-[#00105A] hover:text-[#FFD700] transition-colors" : "text-gray-300 cursor-default"}
+              aria-label="Twitter Profile"
+              disabled={!hasTwitter}
+            >
+              <Twitter size={20} />
+            </button>
+            
+            {/* Facebook button */}
+            <button 
+              onClick={() => hasFacebook ? openSocialProfile(person.socialMedia.facebook) : null}
+              className={hasFacebook ? "text-[#00105A] hover:text-[#FFD700] transition-colors" : "text-gray-300 cursor-default"}
+              aria-label="Facebook Profile"
+              disabled={!hasFacebook}
+            >
+              <Facebook size={20} />
+            </button>
+            
+            {/* Instagram button */}
+            <button 
+              onClick={() => hasInstagram ? openSocialProfile(person.socialMedia.instagram) : null}
+              className={hasInstagram ? "text-[#00105A] hover:text-[#FFD700] transition-colors" : "text-gray-300 cursor-default"}
+              aria-label="Instagram Profile"
+              disabled={!hasInstagram}
+            >
+              <Instagram size={20} />
+            </button>
+            
+            {/* LinkedIn button */}
+            <button 
+              onClick={() => hasLinkedin ? openSocialProfile(person.socialMedia.linkedin) : null}
+              className={hasLinkedin ? "text-[#00105A] hover:text-[#FFD700] transition-colors" : "text-gray-300 cursor-default"}
+              aria-label="LinkedIn Profile"
+              disabled={!hasLinkedin}
+            >
+              <Linkedin size={20} />
+            </button>
+            
+            {/* Website button */}
+            <button 
+              onClick={() => hasWebsite ? openSocialProfile(person.socialMedia.website) : null}
+              className={hasWebsite ? "text-[#00105A] hover:text-[#FFD700] transition-colors" : "text-gray-300 cursor-default"}
+              aria-label="Website"
+              disabled={!hasWebsite}
+            >
+              <Link2 size={20} />
+            </button>
+          </div>
+          
+          {/* Close button */}
           <button 
-            onClick={onClose} 
-            className="bg-[#C5E7FF] text-[#00105A] p-1 rounded-full hover:bg-opacity-90"
-            aria-label="Close"
+            className="text-[#00105A] hover:text-[#FFD700] transition-colors"
+            onClick={onClose}
           >
-            <X size={20} />
+            <X size={22} />
+            <span className="sr-only">Close</span>
           </button>
         </div>
-        
-        <div className="relative aspect-[4/3]">
-          {imageUrl && (
-            <img src={imageUrl} alt={`${firstName} ${lastName}`} className="w-full h-full object-cover"/>
-          )}
-          
-          {/* Name overlay with gradient */}
-          <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 via-black/50 to-transparent text-white">
-            <p className="text-xl font-medium leading-none mb-0">{firstName}</p>
-            <h1 className="text-4xl font-bold mb-3 leading-tight mt-0">{lastName}</h1>
-            <div className="flex items-center gap-2">
-              {positionLabel && (
-                <span className="inline-block px-3 py-1 text-xs font-bold bg-[#C5E7FF] text-[#00105A] rounded">
-                  {positionLabel}
-                </span>
+
+        {/* Main content container */}
+        <div ref={contentRef} className="overflow-y-auto max-h-[90vh] pt-12">
+          <div className="flex flex-col">
+            {/* Two-column layout for image and details */}
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Left column - Player image */}
+              <div className="p-6 pb-0">
+                <div className="aspect-[3/4] rounded-md overflow-hidden bg-gray-100">
+                  <PlayerImage 
+                    image={person.profileImage}
+                    name={fullName}
+                    size="modal"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+              
+              {/* Right column - Basic info and scrollable bio */}
+              <div className="p-6 pb-0 flex flex-col">
+                {/* Player name */}
+                <h1 className="text-3xl md:text-4xl font-bold text-[#00105A] mb-4 border-b border-gray-200 pb-3">
+                  {fullName}
+                </h1>
+                
+                {/* Details */}
+                <div>
+                  <div className="flex justify-between py-3 border-b border-gray-200">
+                    <span className="font-medium">Position</span>
+                    <span>{position}</span>
+                  </div>
+                  
+                  <div className="flex justify-between py-3 border-b border-gray-200">
+                    <span className="font-medium">Nationality</span>
+                    <span>{person.nationality}</span>
+                  </div>
+                  
+                  {person.jerseyNumber && (
+                    <div className="flex justify-between py-3 border-b border-gray-200">
+                      <span className="font-medium">Jersey Number</span>
+                      <span>#{person.jerseyNumber}</span>
+                    </div>
+                  )}
+                </div>
+                
+                {/* Bio heading */}
+                <h2 className="text-xl font-bold text-[#00105A] mt-4 mb-2">Bio</h2>
+                
+                {/* Scrollable bio that matches height of image */}
+                <div className="overflow-y-auto pr-2" style={{ maxHeight: "350px" }}>
+                  {person.extendedBio ? (
+                    <div className="prose max-w-none">
+                      <PortableText value={person.extendedBio} />
+                    </div>
+                  ) : (
+                    <p className="text-gray-700">No biography available.</p>
+                  )}
+                </div>
+              </div>
+            </div>
+            
+            {/* Additional sections below */}
+            <div className="p-6">
+              {/* Personal Facts */}
+              {person.personalFacts && person.personalFacts.length > 0 && (
+                <div className="mb-8">
+                  <h2 className="text-2xl font-bold text-[#00105A] mb-4">Personal Facts</h2>
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    {person.personalFacts.map((fact) => (
+                      <div key={fact._key} className="bg-gray-50 p-4 rounded-lg shadow-sm">
+                        <h3 className="font-medium text-[#00105A]">{fact.question}</h3>
+                        <p className="mt-1 text-gray-700">{fact.answer}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               )}
               
-              {/* Scottish flag for Scotland nationality */}
-              {nationality && nationality.toLowerCase() === 'scotland' && (
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-4 bg-blue-600 relative">
-                    <div className="absolute inset-0" style={{
-                      background: "linear-gradient(to top right, transparent calc(50% - 1px), white, transparent calc(50% + 1px)), linear-gradient(to bottom right, transparent calc(50% - 1px), white, transparent calc(50% + 1px))"
-                    }}></div>
+              {/* Career History */}
+              {person.careerHistory && person.careerHistory.length > 0 && (
+                <div className="mb-8">
+                  <h2 className="text-2xl font-bold text-[#00105A] mb-4">Club History</h2>
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    {person.careerHistory.map((item) => (
+                      <div key={item._key} className="bg-gray-50 p-4 rounded-lg shadow-sm border-l-4 border-[#00105A]">
+                        <h3 className="font-bold text-lg">{item.club}</h3>
+                        <p className="text-gray-600">
+                          {item.startYear}{item.endYear ? `-${item.endYear}` : '-Present'}
+                        </p>
+                        {(item.appearances || item.goals) && (
+                          <div className="mt-2 flex gap-4">
+                            {item.appearances && (
+                              <div className="bg-[#C5E7FF] text-[#00105A] px-2 py-1 rounded text-sm font-medium">
+                                {item.appearances} Appearances
+                              </div>
+                            )}
+                            {item.goals && (
+                              <div className="bg-[#FFD700] text-[#00105A] px-2 py-1 rounded text-sm font-medium">
+                                {item.goals} Goals
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {/* Achievements */}
+              {person.accolades && person.accolades.length > 0 && (
+                <div className="mb-8">
+                  <h2 className="text-2xl font-bold text-[#00105A] mb-4">Achievements</h2>
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    {person.accolades.map((accolade) => (
+                      <div key={accolade._key} className="bg-gray-50 p-4 rounded-lg shadow-sm border-l-4 border-[#FFD700]">
+                        <h3 className="font-bold text-lg">
+                          {accolade.title} 
+                          {accolade.year && <span className="ml-2 text-gray-600">({accolade.year})</span>}
+                        </h3>
+                        {accolade.description && (
+                          <p className="mt-2 text-gray-700">{accolade.description}</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {/* Favorite Moment */}
+              {person.favoriteMoment && (
+                <div className="mb-8">
+                  <h2 className="text-2xl font-bold text-[#00105A] mb-4">Favorite Banks o' Dee Moment</h2>
+                  <div className="text-lg font-medium text-gray-700 border-l-4 border-[#00105A] pl-4 py-2 bg-gray-50">
+                    {person.favoriteMoment}
+                  </div>
+                </div>
+              )}
+              
+              {/* Gallery if available */}
+              {person.gallery && person.gallery.length > 0 && (
+                <div className="mb-8">
+                  <h2 className="text-2xl font-bold text-[#00105A] mb-4">Gallery</h2>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {person.gallery.map((image, index) => (
+                      <div key={index} className="relative aspect-square rounded-md overflow-hidden shadow-md">
+                        <img 
+                          src={image.secure_url || image.url}
+                          alt={`${fullName} photo ${index + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
             </div>
           </div>
         </div>
-        
-        <div className="p-6">
-          <h2 className="text-xl font-bold text-[#00105A] mb-3">Bio</h2>
-          <p>{person.favoriteMoment || 'No biography available.'}</p>
-          
-          <h2 className="text-xl font-bold text-[#00105A] mt-6 mb-3">Details</h2>
-          <div className="flex justify-between border-b py-2">
-            <span className="font-medium">Nationality</span>
-            <span>{nationality || 'N/A'}</span>
-          </div>
-          <div className="flex justify-between border-b py-2">
-            <span className="font-medium">Position</span>
-            <span>{positionLabel || 'N/A'}</span>
-          </div>
-          
-          {/* Career History section */}
-          {personType === 'player' && person.careerHistory && person.careerHistory.length > 0 && (
-            <div className="mt-8">
-              <h2 className="text-xl font-bold text-[#00105A] mb-3">Career History</h2>
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Club</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Years</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Apps</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Goals</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {person.careerHistory.map((club, index) => (
-                      <tr key={index}>
-                        <td className="px-4 py-2 whitespace-nowrap">{club.club}</td>
-                        <td className="px-4 py-2 whitespace-nowrap">
-                          {club.startYear}{club.endYear ? `–${club.endYear}` : '–Present'}
-                        </td>
-                        <td className="px-4 py-2 whitespace-nowrap">{club.appearances || '-'}</td>
-                        <td className="px-4 py-2 whitespace-nowrap">{club.goals || '-'}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-          
-          {/* Did You Know section */}
-          {person.personalFacts && person.personalFacts.length > 0 && (
-            <div className="mt-8">
-              <h2 className="text-xl font-bold text-[#00105A] mb-3">Did You Know?</h2>
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <ul className="space-y-3">
-                  {person.personalFacts.map((fact, index) => (
-                    <li key={index}>
-                      <p className="font-medium">{fact.question}</p>
-                      <p className="text-gray-700">{fact.answer}</p>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          )}
-        </div>
       </div>
     </div>
   );
-}
+};
+
+export default PersonDetailsModal;

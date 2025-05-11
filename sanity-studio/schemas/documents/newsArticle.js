@@ -60,7 +60,8 @@ export default {
       {
         name: 'mainImage',
         title: 'Main Image',
-        type: 'mainImage',
+        type: 'cloudinary.asset',
+        description: 'Upload news image to Cloudinary',
         group: 'content'
       },
       {
@@ -135,7 +136,7 @@ export default {
           {
             name: 'shareImage',
             title: 'Social Share Image',
-            type: 'image',
+            type: 'cloudinary.asset',
             description: 'Image used when sharing on social media (defaults to main image if not set)'
           }
         ]

@@ -1,5 +1,4 @@
 'use client';
-
 import { useState } from 'react';
 import { Person } from '../types';
 import { useTeamData } from '../hooks/useTeamData';
@@ -8,6 +7,7 @@ import { TeamFilter } from './TeamFilter';
 import { TeamSearchBar } from './TeamSearchBar';
 import { TeamSection } from './TeamSection';
 import { PersonDetailsModal } from './PersonDetailsModal';
+import TeamHero from './TeamHero';
 
 interface TeamPageProps {
   initialPeople: Person[];
@@ -37,10 +37,10 @@ export function TeamPage({ initialPeople }: TeamPageProps) {
   
   return (
     <div className="bg-gray-50 min-h-screen">
+      {/* Hero Section */}
+      <TeamHero />
+      
       <div className="container mx-auto px-4 py-8">
-        {/* Page Header */}
-        <h1 className="text-4xl font-bold text-center text-primary mb-8">Team & Management</h1>
-        
         {/* Search Bar */}
         <div className="max-w-md mx-auto mb-8">
           <TeamSearchBar onSearch={setSearchQuery} />
@@ -129,3 +129,5 @@ export function TeamPage({ initialPeople }: TeamPageProps) {
     </div>
   );
 }
+
+export default TeamPage;
