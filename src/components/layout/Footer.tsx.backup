@@ -1,11 +1,11 @@
+
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Facebook, Twitter, Instagram, Mail, Phone, MapPin, LayoutDashboard } from 'lucide-react';
+import { Facebook, Twitter, Instagram, Mail, Phone, MapPin } from 'lucide-react';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
-  const isDevelopment = process.env.NODE_ENV === 'development';
   
   return (
     <footer className="bg-primary text-white pt-12 pb-6">
@@ -62,17 +62,6 @@ const Footer = () => {
                   Tickets
                 </Link>
               </li>
-              {isDevelopment && (
-                <li>
-                  <Link 
-                    href="/admin/test-dashboard" 
-                    className="hover:text-accent transition-colors flex items-center"
-                  >
-                    <LayoutDashboard size={16} className="mr-1" />
-                    Test Dashboard
-                  </Link>
-                </li>
-              )}
             </ul>
           </div>
           
@@ -140,19 +129,6 @@ const Footer = () => {
         {/* Copyright */}
         <div className="text-center text-sm">
           <p>&copy; {currentYear} Banks o&apos; Dee Football Club. All rights reserved.</p>
-          
-          {/* Dev tools link (only visible in development) */}
-          {isDevelopment && (
-            <div className="mt-2 flex justify-center">
-              <Link 
-                href="/admin/test-dashboard" 
-                className="flex items-center text-xs text-white/60 hover:text-accent/80 transition-colors"
-              >
-                <LayoutDashboard size={12} className="mr-1" />
-                Developer Test Dashboard
-              </Link>
-            </div>
-          )}
         </div>
       </div>
     </footer>
