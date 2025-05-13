@@ -32,8 +32,8 @@ export const HeroImage: React.FC<HeroImageProps> = ({
         const publicId = image.public_id;
         const format = image.format || 'jpg';
         const baseUrl = 'https://res.cloudinary.com/dlkpaw2a0/image/upload';
-        // Enhanced transformation: 21:9 aspect ratio, auto subject focus, quality and format optimization
-        const transformation = 'c_fill,g_auto:subject,ar_21:9,w_1920,h_840,q_auto:good,f_auto';
+        // Enhanced transformation: responsive sizing, progressive loading
+        const transformation = 'c_fill,g_auto:subject,ar_21:9,w_auto,dpr_auto,q_auto:good,f_auto,fl_progressive';
         imageUrl = `${baseUrl}/${transformation}/${publicId}.${format}`;
       } else if (image.secure_url) {
         imageUrl = image.secure_url;
@@ -71,8 +71,6 @@ export const HeroImage: React.FC<HeroImageProps> = ({
             }
           }}
         />
-        {/* Enhanced gradient overlay for better text readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#00105A]/90 via-[#00105A]/50 to-transparent"></div>
       </div>
     );
   } catch (error) {

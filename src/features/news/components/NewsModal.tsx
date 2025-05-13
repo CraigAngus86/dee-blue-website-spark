@@ -50,13 +50,19 @@ const NewsModal: React.FC<NewsModalProps> = ({
         // Different transformations based on usage
         let transformation = '';
         
-        // Main article image - large 16:9
+        // Main article image - enhanced with progressive loading and auto improvement
         if (size === 'main') {
-          transformation = 'c_fill,g_auto:subject,ar_16:9,w_1200,h_675,q_auto:good,f_auto';
+          if (article.category === 'matchReport') {
+            // Special transformations for match report header images
+            transformation = 'c_fill,g_auto:faces,y_-20,z_1.05,ar_16:9,w_auto,dpr_auto,q_auto:good,f_auto,fl_progressive,e_vibrance:20';
+          } else {
+            // Standard transformations for other article types
+            transformation = 'c_fill,g_auto:subject,ar_16:9,w_auto,dpr_auto,q_auto:good,f_auto,fl_progressive,e_improve';
+          }
         } 
-        // Gallery images - square with face detection
+        // Gallery images - square with enhanced quality and face detection
         else {
-          transformation = 'c_fill,g_auto:faces,ar_1:1,w_600,h_600,q_auto:good,f_auto';
+          transformation = 'c_fill,g_auto:faces,ar_1:1,w_auto,dpr_auto,q_auto:good,f_auto,e_improve';
         }
         
         return `${baseUrl}/${transformation}/${publicId}.${format}`;

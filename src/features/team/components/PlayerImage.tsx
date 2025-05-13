@@ -47,15 +47,16 @@ export const PlayerImage: React.FC<PlayerImageProps> = ({
       return renderFallback();
     }
 
-    // Define transformations for different sizes with adjusted gravity
-    // The key change is using g_auto:face:center,y_-30 to position the face lower in the frame
+    // Define transformations for different sizes with enhanced parameters
     const transformations = {
-      // Card view: Move face down by setting y offset to -30 (negative moves down)
-      card: 'c_fill,g_auto:face,y_30,ar_1:1,w_500,h_500,q_auto:good,f_auto',
-      // Modal view: Same approach for larger images
-      modal: 'c_fill,g_auto:face,y_30,ar_3:4,w_800,h_1067,q_auto:good,f_auto',
-      // Large view: Different aspect ratio for banners
-      large: 'c_fill,g_face:center,ar_16:9,w_1200,h_675,q_auto:good,f_auto'
+      // Card view: Enhanced with auto-responsive sizing, shadow effect and image improvement
+      card: 'c_fill,g_auto:face,y_30,ar_1:1,w_auto,dpr_auto,q_auto:good,f_auto,e_improve,e_shadow',
+      
+      // Modal view: Enhanced with progressive loading and image improvement
+      modal: 'c_fill,g_auto:face,y_30,ar_3:4,w_auto,dpr_auto,q_auto:good,f_auto,fl_progressive,e_improve',
+      
+      // Large view: Enhanced with progressive loading and auto improvement for banners
+      large: 'c_fill,g_face:center,ar_16:9,w_auto,dpr_auto,q_auto:good,f_auto,fl_progressive,e_improve'
     };
 
     // Construct the Cloudinary URL

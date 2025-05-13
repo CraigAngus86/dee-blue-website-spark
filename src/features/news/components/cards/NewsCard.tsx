@@ -43,9 +43,17 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, onClick, className }) => {
         const publicId = image.public_id;
         const format = image.format || 'jpg';
         const baseUrl = 'https://res.cloudinary.com/dlkpaw2a0/image/upload';
-        // Standard 16:9 aspect ratio for news cards
-        const transformation = 'c_fill,g_auto:subject,ar_16:9,w_800,h_450,q_auto:good,f_auto';
-        return `${baseUrl}/${transformation}/${publicId}.${format}`;
+        
+        // Check if it's a match report (likely to have people/action)
+        if (article.category === 'matchReport') {
+          // Enhanced transformation for match reports/action shots:
+          // Responsive sizing, vibrance enhancement, face detection with position adjustment
+          return `${baseUrl}/c_fill,g_auto:faces,y_-20,z_1.05,ar_16:9,w_auto,dpr_auto,q_auto:good,f_auto,e_vibrance:20/${publicId}.${format}`;
+        } else {
+          // Enhanced transformation for other news categories:
+          // Responsive sizing, improved sharpness
+          return `${baseUrl}/c_fill,g_auto:subject,ar_16:9,w_auto,dpr_auto,q_auto:good,f_auto,e_sharpen/${publicId}.${format}`;
+        }
       } else if (image.secure_url) {
         return image.secure_url;
       }

@@ -12,10 +12,6 @@ interface NewsCardProps {
 }
 
 const NewsCard: React.FC<NewsCardProps> = ({ article, onClick, className }) => {
-  // Debug logging
-  console.log('NewsCard received article title:', article.title);
-  console.log('Article mainImage:', article.mainImage);
-  
   // Calculate time ago
   const timeAgo = article.publishedAt 
     ? formatDistanceToNow(new Date(article.publishedAt), { addSuffix: false })
@@ -36,26 +32,39 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, onClick, className }) => {
     }
   };
   
-  // Process image URL - Simple version
+  // Process Cloudinary image with improved transformations
   const getImageUrl = (image: any): string => {
     if (!image) return '';
     
-    // Handle Cloudinary format
-    if (image.public_id) {
-      const publicId = image.public_id;
-      const format = image.format || 'jpg';
-      const baseUrl = 'https://res.cloudinary.com/dlkpaw2a0/image/upload';
-      const transformation = 'c_fill,g_auto:faces,ar_16:9,w_800,h_450,q_auto:good,f_auto';
-      return `${baseUrl}/${transformation}/${publicId}.${format}`;
-    }
-    
-    // Handle regular URL format
-    if (image.url) {
+    // For Cloudinary assets from Sanity
+    if (image._type === 'cloudinary.asset') {
+      // Use either secure_url or construct from public_id
+      if (image.public_id) {
+        const publicId = image.public_id;
+        const format = image.format || 'jpg';
+        const baseUrl = 'https://res.cloudinary.com/dlkpaw2a0/image/upload';
+        
+        // Check if it's a match report (likely to have people/action)
+        if (article.category === 'matchReport') {
+          // Improved transformation for match reports/action shots:
+          // 1. y_-20: shifts the crop area upward to include faces
+          // 2. z_1.05: slight zoom to enlarge the subjects
+          // 3. g_auto:faces: focuses on faces but with the offset
+          return `${baseUrl}/c_fill,g_auto:faces,y_-20,z_1.05,ar_16:9,w_800,h_450,q_auto:good,f_auto/${publicId}.${format}`;
+        } else {
+          // Standard transformation for other news categories
+          return `${baseUrl}/c_fill,g_auto:subject,ar_16:9,w_800,h_450,q_auto:good,f_auto/${publicId}.${format}`;
+        }
+      } else if (image.secure_url) {
+        return image.secure_url;
+      }
+    } 
+    // Handle regular URLs
+    else if (image.url) {
       return image.url;
     }
-    
-    // If image is just a string URL
-    if (typeof image === 'string') {
+    // Handle direct string URLs
+    else if (typeof image === 'string') {
       return image;
     }
     
@@ -73,18 +82,23 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, onClick, className }) => {
       {/* Image with 16:9 aspect ratio */}
       <div className="relative aspect-[16/9] overflow-hidden">
         {article.mainImage ? (
-          <img 
-            src={getImageUrl(article.mainImage)}
-            alt={article.title}
-            className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-            onError={(e) => {
-              console.error(`Failed to load card image for ${article.title}`);
-              // Set fallback in case of error
-              const target = e.target as HTMLImageElement;
-              target.onerror = null; // Prevent infinite loop
-              target.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiA5Ij48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJzeXN0ZW0tdWksIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiNhM2E3YjAiPkltYWdlIG5vdCBhdmFpbGFibGU8L3RleHQ+PC9zdmc+';
-            }}
-          />
+          <>
+            <img 
+              src={getImageUrl(article.mainImage)}
+              alt={article.title}
+              className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+              onError={(e) => {
+                console.error(`Failed to load card image for ${article.title}`);
+                console.error('Image data:', article.mainImage);
+                // Set fallback in case of error
+                const target = e.target as HTMLImageElement;
+                target.onerror = null; // Prevent infinite loop
+                target.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiA5Ij48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJzeXN0ZW0tdWksIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiNhM2E3YjAiPkltYWdlIG5vdCBhdmFpbGFibGU8L3RleHQ+PC9zdmc+';
+              }}
+            />
+            {/* Subtle gradient overlay - lighter than the hero */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#00105A]/40 to-transparent opacity-70"></div>
+          </>
         ) : (
           <div className="w-full h-full bg-gray-200"></div>
         )}

@@ -132,7 +132,8 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
                 title={slideArticle.title}
               />
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#00105A]/80 via-[#00105A]/40 to-transparent" />
+            {/* Slightly stronger gradient */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#00105A]/80 via-[#00105A]/35 via-55% to-transparent" />
           </div>
         ))}
         
@@ -142,47 +143,49 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
           onClick={() => this.handleArticleClick(article)}
           aria-label={`Read more about ${article.title}`}
         >
-          {/* Content - centered vertically */}
+          {/* Using margin-top approach instead of padding-bottom */}
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <div className="text-center px-4 max-w-4xl mx-auto">
-              {/* Title */}
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-white font-montserrat">
-                {article.title}
-              </h1>
-              
-              {/* Gold separator - keeping this as requested */}
-              <div className="w-20 h-[2px] bg-[#FFD700] mx-auto mb-4"></div>
-              
-              {/* Date and Read More on the same line */}
-              <div className="flex items-center justify-center text-sm text-white/80 mb-10">
-                <span>{formattedDate}</span>
-                <span className="mx-2">|</span>
-                <span className="flex items-center hover:text-white transition-colors">
-                  Read More 
-                  <span className="inline-flex items-center justify-center w-5 h-5 ml-1.5 rounded-full bg-white/20 hover:bg-white/30 transition-colors">
-                    <ArrowRight className="w-3 h-3" />
+            <div className="mt-40 w-full text-center px-4">
+              <div className="max-w-6xl mx-auto">
+                {/* Title - wider container to get text on 2 lines instead of 3 */}
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-white font-montserrat">
+                  {article.title}
+                </h1>
+                
+                {/* Gold separator - keeping this as requested */}
+                <div className="w-20 h-[2px] bg-[#FFD700] mx-auto mb-4"></div>
+                
+                {/* Date and Read More on the same line */}
+                <div className="flex items-center justify-center text-sm text-white/80 mb-4">
+                  <span>{formattedDate}</span>
+                  <span className="mx-2">|</span>
+                  <span className="flex items-center hover:text-white transition-colors">
+                    Read More 
+                    <span className="inline-flex items-center justify-center w-5 h-5 ml-1.5 rounded-full bg-white/20 hover:bg-white/30 transition-colors">
+                      <ArrowRight className="w-3 h-3" />
+                    </span>
                   </span>
-                </span>
-              </div>
-              
-              {/* Navigation dots - moved up to just below date/read more */}
-              {articles.length > 1 && (
-                <div className="flex justify-center space-x-2">
-                  {articles.map((_, i) => (
-                    <button 
-                      key={i}
-                      className={`w-2.5 h-2.5 rounded-full transition-all mx-1 ${
-                        i === currentIndex ? 'bg-white scale-125' : 'bg-white/40 hover:bg-white/60'
-                      }`}
-                      onClick={(e) => {
-                        e.stopPropagation(); // Prevent the hero click from triggering
-                        this.goToSlide(i);
-                      }}
-                      aria-label={`Go to slide ${i + 1}`}>
-                    </button>
-                  ))}
                 </div>
-              )}
+                
+                {/* Navigation dots - positioned much closer to the cards below */}
+                {articles.length > 1 && (
+                  <div className="flex justify-center space-x-2">
+                    {articles.map((_, i) => (
+                      <button 
+                        key={i}
+                        className={`w-2.5 h-2.5 rounded-full transition-all mx-1 ${
+                          i === currentIndex ? 'bg-white scale-125' : 'bg-white/40 hover:bg-white/60'
+                        }`}
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent the hero click from triggering
+                          this.goToSlide(i);
+                        }}
+                        aria-label={`Go to slide ${i + 1}`}>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
