@@ -43,7 +43,7 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link href="/fixtures" className="hover:text-accent transition-colors">
+                <Link href="/matches" className="hover:text-accent transition-colors">
                   Fixtures & Results
                 </Link>
               </li>
