@@ -1,259 +1,188 @@
-import React, { useState, useEffect } from 'react';
-import { getLeagueTable, getCurrentSeason, getSeasons } from '@/features/matches/hooks/useLeagueTable';
-import { LeagueStanding } from '@/features/matches/types';
-import { Card } from '@/components/ui/card';
+"use client";
 
-// Banks o' Dee ID for highlighting in the table
-const BANKS_O_DEE_ID = '402fccd1-5b8d-4fe3-b21a-96e34e207370';
+import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { supabase } from '@/lib/supabase/client';
+import { DEFAULT_SEASON } from '../../constants';
+import { TeamLogo } from "../TeamLogo";
 
 export function TablePanel() {
-  const [tableData, setTableData] = useState<LeagueStanding[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const searchParams = useSearchParams();
+  const season = searchParams.get('season') || DEFAULT_SEASON;
+  
+  const [tableData, setTableData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [seasons, setSeasons] = useState<any[]>([]);
-  const [selectedSeason, setSelectedSeason] = useState<string | null>(null);
-
+  
   useEffect(() => {
-    async function loadData() {
-      setIsLoading(true);
+    async function fetchTableData() {
+      setLoading(true);
       setError(null);
+      
       try {
-        // Get current season if no season is selected
-        if (!selectedSeason) {
-          const currentSeason = await getCurrentSeason();
-          if (currentSeason) {
-            setSelectedSeason(currentSeason.id);
-          }
+        console.log(`Fetching league table for season: ${season}`);
+        
+        // First get the season ID from name
+        const { data: seasonData, error: seasonError } = await supabase
+          .from('seasons')
+          .select('id')
+          .ilike('name', `%${season}%`) // Use partial match for season names
+          .limit(1);
+          
+        if (seasonError) {
+          console.error('Error fetching season ID:', seasonError);
+          throw new Error(`Couldn't find season "${season}"`);
         }
         
-        // Get all seasons for dropdown
-        const allSeasons = await getSeasons();
-        setSeasons(allSeasons);
+        if (!seasonData || seasonData.length === 0) {
+          throw new Error(`No season found matching "${season}"`);
+        }
         
-        // Get league table data
-        const table = await getLeagueTable(selectedSeason || undefined);
-        console.log('League table data:', table);
-        setTableData(table);
+        const seasonId = seasonData[0]?.id;
+        
+        if (!seasonId) {
+          throw new Error('Invalid season ID');
+        }
+        
+        console.log(`Found season ID: ${seasonId} for season ${season}`);
+        
+        // Use our new view directly - this is the key change
+        const { data, error } = await supabase
+          .from('vw_league_table_by_season')
+          .select('*')
+          .eq('season_id', seasonId)
+          .order('position');
+          
+        if (error) {
+          console.error('Error fetching league table:', error);
+          throw new Error('Failed to fetch league table data');
+        }
+        
+        console.log(`Fetched ${data?.length || 0} league table entries`);
+        setTableData(data || []);
       } catch (err) {
-        console.error('Error loading league table:', err);
-        setError('Failed to load league table. Please try again later.');
+        console.error('Error:', err);
+        setError(err instanceof Error ? err.message : String(err));
+        setTableData([]);
       } finally {
-        setIsLoading(false);
+        setLoading(false);
       }
     }
     
-    loadData();
-  }, [selectedSeason]);
-
-  const handleSeasonChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedSeason(e.target.value === 'all' ? null : e.target.value);
-  };
-
+    fetchTableData();
+  }, [season]);
+  
+  // Form indicator component for W/L/D
   const FormIndicator = ({ result }: { result: 'W' | 'L' | 'D' }) => {
     const bgColor = 
-      result === 'W' ? 'bg-green-500' : 
-      result === 'D' ? 'bg-amber-500' : 
-      'bg-red-500';
+      result === 'W' ? 'bg-green-500 text-white' : 
+      result === 'D' ? 'bg-amber-500 text-white' : 
+      'bg-red-500 text-white';
     
     return (
-      <div className={`w-6 h-6 ${bgColor} rounded-full flex items-center justify-center text-xs text-white font-medium`}>
+      <div className={`w-6 h-6 rounded-full ${bgColor} flex items-center justify-center text-xs font-medium`}>
         {result}
       </div>
     );
   };
-
-  if (isLoading) {
-    return <div className="flex justify-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>;
+  
+  if (loading) {
+    return <div className="py-8 text-center">Loading league table...</div>;
   }
-
+  
   if (error) {
     return (
-      <div className="bg-red-50 p-4 rounded-md">
-        <p className="text-red-700">{error}</p>
+      <div className="py-8 text-center">
+        <p className="text-red-500 mb-2">{error}</p>
       </div>
     );
   }
-
-  return (
-    <div className="space-y-6">
-      {/* Season selector */}
-      <div className="bg-white p-4 rounded-lg shadow-sm">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold">League Table</h2>
-          <div className="w-64">
-            <select
-              className="w-full rounded-md border border-gray-300 p-2"
-              value={selectedSeason || ''}
-              onChange={handleSeasonChange}
-            >
-              {seasons.map((season) => (
-                <option key={season.id} value={season.id}>
-                  {season.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
+  
+  if (tableData.length === 0) {
+    return (
+      <div className="py-8 text-center">
+        <p className="text-gray-500">No league table data available for {season}</p>
       </div>
+    );
+  }
+  
+  return (
+    <div>
+      <h3 className="text-xl font-bold mb-4">{season} League Table</h3>
       
-      {/* Empty state */}
-      {tableData.length === 0 && (
-        <div className="text-center p-12 border border-gray-200 rounded-lg bg-gray-50">
-          <p className="text-gray-500">No league table data available</p>
-        </div>
-      )}
-      
-      {/* League Table - Desktop */}
-      {tableData.length > 0 && (
-        <div className="hidden md:block overflow-x-auto">
-          <div className="inline-block min-w-full">
-            <table className="min-w-full bg-white rounded-lg overflow-hidden">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Pos</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Team</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">P</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">W</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">D</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">L</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">GF</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">GA</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">GD</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Pts</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Form</th>
+      <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
+        <table className="min-w-full bg-white">
+          <thead className="bg-[#00105A] text-white border-b">
+            <tr>
+              <th className="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wider">Pos</th>
+              <th className="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wider">Team</th>
+              <th className="px-3 py-3 text-center text-xs font-semibold uppercase tracking-wider">P</th>
+              <th className="px-3 py-3 text-center text-xs font-semibold uppercase tracking-wider">W</th>
+              <th className="px-3 py-3 text-center text-xs font-semibold uppercase tracking-wider">D</th>
+              <th className="px-3 py-3 text-center text-xs font-semibold uppercase tracking-wider">L</th>
+              <th className="px-3 py-3 text-center text-xs font-semibold uppercase tracking-wider">GF</th>
+              <th className="px-3 py-3 text-center text-xs font-semibold uppercase tracking-wider">GA</th>
+              <th className="px-3 py-3 text-center text-xs font-semibold uppercase tracking-wider">GD</th>
+              <th className="px-3 py-3 text-center text-xs font-semibold uppercase tracking-wider">Pts</th>
+              <th className="px-3 py-3 text-center text-xs font-semibold uppercase tracking-wider">Form</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-100">
+            {tableData.map((row, index) => {
+              const isBanksODee = row.team_name?.toLowerCase().includes("banks o' dee");
+              const isFirstPosition = row.position === 1;
+              const isLastPosition = row.position === tableData.length;
+              
+              // Apply different backgrounds
+              let rowBg = '';
+              if (isBanksODee) {
+                rowBg = 'bg-[#F3F4F6]'; // Explicit grey for Banks o' Dee
+              } else if (isFirstPosition) {
+                rowBg = 'bg-green-50'; // Promotion position
+              } else if (isLastPosition) {
+                rowBg = 'bg-red-50'; // Relegation position
+              } else {
+                rowBg = index % 2 === 0 ? 'bg-white' : 'bg-gray-50'; // Alternating
+              }
+              
+              return (
+                <tr 
+                  key={row.id}
+                  className={`${rowBg} hover:bg-gray-200 transition-colors duration-150`}
+                >
+                  <td className="px-3 py-3 whitespace-nowrap text-sm text-center font-medium">{row.position}</td>
+                  <td className="px-3 py-3 whitespace-nowrap text-sm">
+                    <div className="flex items-center">
+                      <TeamLogo 
+                        logoId={row.team_logo} 
+                        teamName={row.team_name} 
+                        size="sm" 
+                        className="mr-2" 
+                      />
+                      <span className={isBanksODee ? "font-bold" : ""}>{row.team_name}</span>
+                    </div>
+                  </td>
+                  <td className="px-3 py-3 whitespace-nowrap text-sm text-center">{row.matches_played}</td>
+                  <td className="px-3 py-3 whitespace-nowrap text-sm text-center">{row.wins}</td>
+                  <td className="px-3 py-3 whitespace-nowrap text-sm text-center">{row.draws}</td>
+                  <td className="px-3 py-3 whitespace-nowrap text-sm text-center">{row.losses}</td>
+                  <td className="px-3 py-3 whitespace-nowrap text-sm text-center">{row.goals_for}</td>
+                  <td className="px-3 py-3 whitespace-nowrap text-sm text-center">{row.goals_against}</td>
+                  <td className="px-3 py-3 whitespace-nowrap text-sm text-center">{row.goal_difference}</td>
+                  <td className="px-3 py-3 whitespace-nowrap text-sm font-bold text-center">{row.points}</td>
+                  <td className="px-3 py-3 whitespace-nowrap">
+                    <div className="flex justify-center space-x-1">
+                      {(row.form || []).slice(0, 5).map((result: string, i: number) => (
+                        <FormIndicator key={i} result={result as 'W' | 'L' | 'D'} />
+                      ))}
+                    </div>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {tableData.map((row, index) => {
-                  // Handle different property names
-                  const position = row.position;
-                  const teamName = row.teamName || row.team_name;
-                  const teamLogo = row.teamLogo || row.team_logo;
-                  const played = row.played || row.matches_played;
-                  const won = row.won || row.wins;
-                  const drawn = row.drawn || row.draws;
-                  const lost = row.lost || row.losses;
-                  const goalsFor = row.goalsFor || row.goals_for;
-                  const goalsAgainst = row.goalsAgainst || row.goals_against;
-                  const goalDifference = row.goalDifference || row.goal_difference;
-                  const points = row.points;
-                  const form = row.form || [];
-                  
-                  const isBoD = teamName.includes("Banks o' Dee") || row.team_id === BANKS_O_DEE_ID;
-                
-                  return (
-                    <tr 
-                      key={row.id || index} 
-                      className={`${
-                        index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
-                      } ${
-                        isBoD ? 'bg-primary/5 font-medium' : ''
-                      }`}
-                    >
-                      <td className="px-4 py-3 whitespace-nowrap text-sm">{position}</td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm font-medium">
-                        <div className="flex items-center gap-2">
-                          {teamLogo ? (
-                            <img 
-                              src={teamLogo} 
-                              alt={teamName} 
-                              className="w-6 h-6 object-contain"
-                            />
-                          ) : (
-                            <div className="w-6 h-6 bg-gray-200 rounded-full"></div>
-                          )}
-                          {teamName}
-                        </div>
-                      </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-center">{played}</td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-center">{won}</td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-center">{drawn}</td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-center">{lost}</td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-center">{goalsFor}</td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-center">{goalsAgainst}</td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-center">{goalDifference}</td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm font-bold text-center">{points}</td>
-                      <td className="px-4 py-3 whitespace-nowrap">
-                        <div className="flex justify-center gap-1">
-                          {Array.isArray(form) && form.slice(0, 5).map((result, i) => (
-                            <FormIndicator key={i} result={result as 'W' | 'L' | 'D'} />
-                          ))}
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-      
-      {/* League Table - Mobile */}
-      {tableData.length > 0 && (
-        <div className="md:hidden space-y-4">
-          {tableData.map((row, index) => {
-            // Handle different property names
-            const position = row.position;
-            const teamName = row.teamName || row.team_name;
-            const teamLogo = row.teamLogo || row.team_logo;
-            const played = row.played || row.matches_played;
-            const won = row.won || row.wins;
-            const drawn = row.drawn || row.draws;
-            const lost = row.lost || row.losses;
-            const points = row.points;
-            const form = row.form || [];
-            
-            const isBoD = teamName.includes("Banks o' Dee") || row.team_id === BANKS_O_DEE_ID;
-            
-            return (
-              <Card key={row.id || index} className={isBoD ? 'bg-primary/5' : ''}>
-                <div className="p-4 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 bg-primary text-white rounded-full flex items-center justify-center text-sm font-bold">
-                        {position}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {teamLogo ? (
-                          <img 
-                            src={teamLogo} 
-                            alt={teamName} 
-                            className="w-6 h-6 object-contain"
-                          />
-                        ) : (
-                          <div className="w-6 h-6 bg-gray-200 rounded-full"></div>
-                        )}
-                        <span className="font-medium">{teamName}</span>
-                      </div>
-                    </div>
-                    <div className="text-lg font-bold">{points}</div>
-                  </div>
-                  
-                  <div className="grid grid-cols-3 text-center text-sm text-gray-600">
-                    <div>
-                      <div className="font-semibold">P</div>
-                      <div>{played}</div>
-                    </div>
-                    <div>
-                      <div className="font-semibold">W-D-L</div>
-                      <div>{won}-{drawn}-{lost}</div>
-                    </div>
-                    <div>
-                      <div className="font-semibold">Form</div>
-                      <div className="flex justify-center gap-1 mt-1">
-                        {Array.isArray(form) && form.slice(0, 3).map((result, i) => (
-                          <FormIndicator key={i} result={result as 'W' | 'L' | 'D'} />
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            );
-          })}
-        </div>
-      )}
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

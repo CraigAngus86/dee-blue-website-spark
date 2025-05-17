@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { fetchSanityData } from "@/lib/sanity/sanityClient";
 import { NewsGrid } from "@/features/news/components";
+import { NewsHero } from "@/features/news/components/NewsHero";
 
 // Set the revalidation time to ensure fresh data
 export const revalidate = 10; // Revalidate every 10 seconds
@@ -87,17 +88,17 @@ export default async function NewsPage() {
   }));
   
   return (
-    <main>
-      <div className="bg-[#00105A] py-16">
-        <div className="container mx-auto px-4">
-          <h1 className="text-4xl md:text-5xl font-bold text-white text-center font-montserrat">Club News</h1>
-        </div>
-      </div>
+    <main className="min-h-screen">
+      {/* Hero Section */}
+      <NewsHero />
       
-      <NewsGrid 
-        articles={processedArticles} 
-        galleries={matchGalleries}
-      />
+      {/* News Grid */}
+      <div className="container mx-auto px-4 py-8">
+        <NewsGrid
+          articles={processedArticles}
+          galleries={matchGalleries}
+        />
+      </div>
     </main>
   );
 }

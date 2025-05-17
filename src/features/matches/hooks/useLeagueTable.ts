@@ -3,7 +3,7 @@ import { LeagueStanding } from '../types';
 
 export async function getLeagueTable(seasonId?: string) {
   const query = supabase
-    .from('vw_current_league_table')
+    .from('vw_league_table_by_season')
     .select('*')
     .order('position');
     
