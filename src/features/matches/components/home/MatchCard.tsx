@@ -1,109 +1,117 @@
 "use client";
 
 import React from 'react';
-import { Match } from '@/features/matches/types';
-import { format, parseISO } from 'date-fns';
 import { Calendar, MapPin } from 'lucide-react';
-import Link from 'next/link';
 
 interface MatchCardProps {
-  match: Match;
+  match: any;
   isCurrentMatch?: boolean;
 }
 
 export function MatchCard({ match, isCurrentMatch = false }: MatchCardProps) {
+  console.log("MatchCard - Rendering match:", match.id);
+  
+  // Check for test or dummy match (added in our getMatches fallback)
+  const isTestMatch = match.id?.startsWith('test-');
+  
   // Determine if match is upcoming or a result
-  const isUpcoming = match.status === 'scheduled';
+  const isUpcoming = match.status === 'scheduled' || !match.home_score;
   
-  // Format date
-  const matchDate = match.matchDate || match.match_date;
-  const formattedDate = matchDate ? format(parseISO(matchDate), 'EEE d MMM') : 'TBA';
+  // Safe access with fallbacks
+  const homeTeam = match.home_team || { name: 'Home Team', logo_url: '' };
+  const awayTeam = match.away_team || { name: 'Away Team', logo_url: '' };
+  const competition = match.competition || { name: 'Match' };
   
-  // Format time if available
-  const formattedTime = match.matchTime ? match.matchTime.substring(0, 5) : null;
+  // Format date simply to avoid errors
+  const matchDate = match.match_date || '';
+  let formattedDate = 'TBA';
+  try {
+    formattedDate = matchDate 
+      ? new Date(matchDate).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })
+      : 'TBA';
+  } catch (e) {
+    console.error('Error formatting date:', e);
+  }
   
   return (
-    <div className={`bg-white rounded-md shadow-md hover:shadow-lg transition-all duration-300 border border-gray-200 overflow-hidden flex flex-col ${isCurrentMatch ? 'border-[#FFD700] border-2' : ''}`}>
-      {/* Header with competition and status */}
+    <div className={`bg-white rounded-md shadow-md border border-gray-200 overflow-hidden h-full 
+      ${isCurrentMatch ? 'border-[#FFD700] border-2' : ''}
+      ${isTestMatch ? 'border-blue-300' : ''}`}>
+      {/* Header */}
       <div className="bg-[#00105A] px-3 py-2 flex justify-between items-center">
         <div className="text-xs font-medium text-white truncate">
-          {match.competition?.name || match.competition}
+          {competition.name}
         </div>
-        <div className={`text-[10px] px-2 py-0.5 rounded font-medium ${isUpcoming ? 'bg-[#FFD700] text-[#00105A]' : 'bg-[#C5E7FF] text-[#00105A]'}`}>
+        <div className={`text-[10px] px-2 py-0.5 rounded font-medium 
+          ${isUpcoming ? 'bg-[#FFD700] text-[#00105A]' : 'bg-[#C5E7FF] text-[#00105A]'}`}>
           {isUpcoming ? 'UPCOMING MATCH' : 'FINAL RESULT'}
         </div>
       </div>
       
-      {/* Teams and score/vs */}
+      {/* Teams */}
       <div className="p-3 flex-grow">
-        <div className="flex justify-between items-center mb-3">
+        <div className="flex justify-between items-center">
           {/* Home team */}
           <div className="text-center w-5/12">
-            <div className="w-12 h-12 bg-white rounded-full mx-auto mb-1 p-1 border border-gray-200 flex items-center justify-center">
-              {match.home_team?.logo_url ? (
+            <div className="w-12 h-12 bg-gray-100 rounded-full mx-auto mb-1 flex items-center justify-center">
+              {homeTeam.logo_url ? (
                 <img 
-                  src={match.home_team.logo_url} 
-                  alt={match.home_team.name} 
-                  className="max-w-full max-h-full rounded-full"
+                  src={homeTeam.logo_url} 
+                  alt={homeTeam.name} 
+                  className="w-full h-full object-cover rounded-full"
                 />
               ) : (
-                <div className="w-full h-full bg-gray-100 rounded-full flex items-center justify-center font-semibold text-gray-500">
-                  {getInitials(match.home_team?.name || 'Home')}
-                </div>
+                <span className="text-gray-500 font-semibold">
+                  {getInitials(homeTeam.name)}
+                </span>
               )}
             </div>
-            <div className="font-medium text-xs line-clamp-2 h-9">
-              {match.home_team?.name || 'Home'}
-            </div>
+            <div className="font-medium text-xs">{homeTeam.name}</div>
           </div>
           
-          {/* Score or VS */}
+          {/* Score/VS */}
           <div className="text-center w-2/12">
             {isUpcoming ? (
               <div className="text-lg font-bold text-gray-600">VS</div>
             ) : (
               <div className="text-lg font-bold">
-                {match.home_score} - {match.away_score}
+                {match.home_score ?? 0} - {match.away_score ?? 0}
               </div>
             )}
           </div>
           
           {/* Away team */}
           <div className="text-center w-5/12">
-            <div className="w-12 h-12 bg-white rounded-full mx-auto mb-1 p-1 border border-gray-200 flex items-center justify-center">
-              {match.away_team?.logo_url ? (
+            <div className="w-12 h-12 bg-gray-100 rounded-full mx-auto mb-1 flex items-center justify-center">
+              {awayTeam.logo_url ? (
                 <img 
-                  src={match.away_team.logo_url} 
-                  alt={match.away_team.name} 
-                  className="max-w-full max-h-full rounded-full"
+                  src={awayTeam.logo_url} 
+                  alt={awayTeam.name} 
+                  className="w-full h-full object-cover rounded-full"
                 />
               ) : (
-                <div className="w-full h-full bg-gray-100 rounded-full flex items-center justify-center font-semibold text-gray-500">
-                  {getInitials(match.away_team?.name || 'Away')}
-                </div>
+                <span className="text-gray-500 font-semibold">
+                  {getInitials(awayTeam.name)}
+                </span>
               )}
             </div>
-            <div className="font-medium text-xs line-clamp-2 h-9">
-              {match.away_team?.name || 'Away'}
-            </div>
+            <div className="font-medium text-xs">{awayTeam.name}</div>
           </div>
         </div>
       </div>
       
-      {/* Match details - date, time, venue */}
-      <div className="px-3 py-2 bg-gray-50 border-t border-gray-200 flex items-center justify-between">
+      {/* Footer */}
+      <div className="px-3 py-2 bg-gray-50 border-t border-gray-200 flex justify-between">
         <div className="flex items-center text-gray-600 text-xs">
-          <Calendar className="h-3 w-3 mr-1 flex-shrink-0" />
-          <span>
-            {formattedDate}
-            {formattedTime && ` • ${formattedTime}`}
-          </span>
+          <Calendar className="h-3 w-3 mr-1" />
+          <span>{formattedDate}</span>
+          {match.match_time && <span> • {match.match_time}</span>}
         </div>
         
         {match.venue && (
           <div className="flex items-center text-gray-600 text-xs">
-            <MapPin className="h-3 w-3 mr-1 flex-shrink-0" />
-            <span className="truncate max-w-[100px]">{match.venue}</span>
+            <MapPin className="h-3 w-3 mr-1" />
+            <span className="truncate max-w-[80px]">{match.venue}</span>
           </div>
         )}
       </div>

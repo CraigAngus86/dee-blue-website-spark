@@ -8,8 +8,7 @@ import MatchCenter from "@/components/ui/sections/MatchCenter";
 import PlayersSection from "@/components/ui/sections/PlayersSection";
 import { fetchSanityData } from "@/lib/sanity/sanityClient";
 import { supabase } from "@/lib/supabase/client";
-import { getUpcomingMatches, getRecentMatches } from "@/lib/data-fetchers/match";
-import { Match } from "@/types/match";
+import { getHomepageUpcomingMatches, getHomepageRecentMatches, getHomepageLeagueTable } from "@/features/matches/hooks/useHomeMatchData";
 import { HomeHeroSection, OverlappingNewsCards } from "@/features/home";
 
 // Set the revalidation time to ensure fresh data
@@ -23,7 +22,6 @@ export const metadata: Metadata = {
 
 // Fetch all news articles for homepage ordered by date
 async function getNewsArticles(limit = 9) {
-  // FIXED: Query preserves the complete data structure
   const query = `*[_type == "newsArticle" && !(_id in path("drafts.**"))] | order(publishedAt desc)[0...${limit}] {
     _id,
     title,
@@ -41,91 +39,6 @@ async function getNewsArticles(limit = 9) {
     return news || [];
   } catch (error) {
     console.error("Error fetching news:", error);
-    return [];
-  }
-}
-
-// All the other fetch functions remain the same...
-async function getMatches() {
-  try {
-    const upcomingMatchesRaw = await getUpcomingMatches(5);
-    const upcomingMatches = upcomingMatchesRaw.map(match => {
-      return {
-        id: match.id,
-        match_date: match.match_date,
-        match_time: match.match_time,
-        venue: match.venue || '',
-        status: match.status,
-        ticket_link: match.ticket_link,
-        home_team: {
-          id: match.home_team.id,
-          name: match.home_team.name,
-          logo_url: match.home_team.logo_url
-        },
-        away_team: {
-          id: match.away_team.id,
-          name: match.away_team.name,
-          logo_url: match.away_team.logo_url
-        },
-        competition: {
-          id: match.competition.id,
-          name: match.competition.name,
-          short_name: match.competition.short_name,
-          logo_url: match.competition.logo_url
-        }
-      } as Match;
-    });
-    
-    const recentMatchesRaw = await getRecentMatches(5);
-    const recentMatches = recentMatchesRaw.map(match => {
-      return {
-        id: match.id,
-        match_date: match.match_date,
-        match_time: match.match_time,
-        venue: match.venue || '',
-        status: match.status,
-        home_score: match.home_score,
-        away_score: match.away_score,
-        match_report_link: match.match_report_link,
-        home_team: {
-          id: match.home_team.id,
-          name: match.home_team.name,
-          logo_url: match.home_team.logo_url
-        },
-        away_team: {
-          id: match.away_team.id,
-          name: match.away_team.name,
-          logo_url: match.away_team.logo_url
-        },
-        competition: {
-          id: match.competition.id,
-          name: match.competition.name,
-          short_name: match.competition.short_name,
-          logo_url: match.competition.logo_url
-        }
-      } as Match;
-    });
-    
-    return {
-      upcoming: upcomingMatches,
-      recent: recentMatches
-    };
-  } catch (error) {
-    console.error("Error fetching matches:", error);
-    return { upcoming: [], recent: [] };
-  }
-}
-
-async function getLeagueTable() {
-  try {
-    const { data: leagueTable, error } = await supabase
-      .from("vw_current_league_table")
-      .select("*")
-      .order("position", { ascending: true });
-    if (error) throw error;
-    return leagueTable || [];
-  } catch (error) {
-    console.error("Error fetching league table:", error);
     return [];
   }
 }
@@ -175,39 +88,38 @@ async function getFeaturedPlayers() {
 }
 
 export default async function HomePage() {
-  // Add a cache-busting timestamp to force fetch
-  const timestamp = Date.now();
-  
   // Fetch all news articles (up to 9 - 3 for hero, 6 for cards)
   const newsArticles = await getNewsArticles(9);
   
   // Fetch all data in parallel
   const [
-    matches, 
+    upcomingMatches, 
+    recentMatches,
     leagueTable,
     sponsors,
     fanOfMonth,
     featuredPlayers
   ] = await Promise.all([
-    getMatches(),
-    getLeagueTable(),
+    getHomepageUpcomingMatches(5),
+    getHomepageRecentMatches(5),
+    getHomepageLeagueTable(),
     getSponsors(),
     getFanOfMonth(),
     getFeaturedPlayers()
   ]);
   
+  console.log(`HomePage - Retrieved matches: ${upcomingMatches.length} upcoming, ${recentMatches.length} recent`);
+  
   // Process news articles for hero (top 3)
   const heroArticles = newsArticles.slice(0, 3).map(article => ({
     ...article,
     id: article._id
-    // No transformation, preserve full structure
   }));
   
   // Process news articles for cards (next 6)
   const cardsArticles = newsArticles.slice(3, 9).map(article => ({
     ...article,
     id: article._id
-    // No transformation, preserve full structure
   }));
   
   // Convert to the format expected by components
@@ -234,8 +146,8 @@ export default async function HomePage() {
       >
         <FadeIn>
           <MatchCenter 
-            upcomingMatches={matches.upcoming} 
-            recentResults={matches.recent} 
+            upcomingMatches={upcomingMatches} 
+            recentResults={recentMatches} 
             leagueTable={leagueTable} 
           />
         </FadeIn>
