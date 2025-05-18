@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
@@ -22,7 +21,7 @@ export function FixturesPanel() {
       setLoading(true);
       try {
         let query = supabase
-          .from('vw_upcoming_matches') 
+          .from('vw_upcoming_matches')
           .select('*');
         
         // Add season filter
@@ -46,8 +45,8 @@ export function FixturesPanel() {
         let filteredData = data || [];
         
         if (month !== 'all') {
-          const monthNames = ['january', 'february', 'march', 'april', 'may', 'june', 
-                             'july', 'august', 'september', 'october', 'november', 'december'];
+          const monthNames = ['january', 'february', 'march', 'april', 'may', 'june',
+            'july', 'august', 'september', 'october', 'november', 'december'];
           const monthIndex = monthNames.indexOf(month.toLowerCase());
           
           if (monthIndex !== -1) {
@@ -99,8 +98,8 @@ export function FixturesPanel() {
       <div className="py-8 text-center">
         <p className="text-gray-500">No upcoming fixtures found</p>
         <p className="text-xs text-gray-400 mt-2">
-          Using filters: Season: {season}, 
-          Competition: {competition}, 
+          Using filters: Season: {season},
+          Competition: {competition},
           Month: {month}
         </p>
       </div>

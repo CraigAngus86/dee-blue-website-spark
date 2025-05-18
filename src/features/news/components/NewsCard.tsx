@@ -4,13 +4,11 @@ import { NewsArticle } from '@/features/news/types';
 import { formatDistanceToNow } from 'date-fns';
 import { ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
 interface NewsCardProps {
   article: NewsArticle;
   onClick?: (article: NewsArticle) => void;
   className?: string;
 }
-
 const NewsCard: React.FC<NewsCardProps> = ({ article, onClick, className }) => {
   // Calculate time ago
   const timeAgo = article.publishedAt 
@@ -74,8 +72,8 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, onClick, className }) => {
   return (
     <div 
       className={cn(
-        "flex flex-col h-full bg-white overflow-hidden rounded-sm transition-all hover:shadow-lg hover:translate-y-[-4px]",
-        "border border-gray-100 shadow",
+        "flex flex-col h-full bg-white overflow-hidden rounded-lg transition-all hover:shadow-lg hover:translate-y-[-4px]",
+        "border border-[#f5f7fb] shadow",
         className
       )}
     >
@@ -103,8 +101,8 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, onClick, className }) => {
           <div className="w-full h-full bg-gray-200"></div>
         )}
         
-        {/* Category tag - positioned on the image */}
-        <div className="absolute left-0 top-0 bg-[#00105A] text-white text-xs font-bold py-1 px-3">
+        {/* Category tag - repositioned to have some margin from the edge */}
+        <div className="absolute left-4 top-4 bg-[#00105A] text-white text-xs font-bold py-1 px-3 rounded">
           {categoryDisplay[article.category] || article.category}
         </div>
       </div>
@@ -122,7 +120,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, onClick, className }) => {
         </p>
         
         {/* Footer with date and read more */}
-        <div className="flex justify-between items-center mt-auto pt-3 border-t border-gray-100">
+        <div className="flex justify-between items-center mt-auto pt-3 border-t border-[#f5f7fb]">
           <span className="text-xs text-gray-500">
             {timeAgo ? `${timeAgo} ago` : ''}
           </span>

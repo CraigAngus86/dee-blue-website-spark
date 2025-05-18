@@ -71,7 +71,7 @@ export function LeaguePositionSummary({
           {form && form.length > 0 && (
             <div>
               <div className="text-xs text-gray-500 uppercase mb-2">Form</div>
-              <div className="flex space-x-2">
+              <div className="flex space-x-4">
                 {form.slice(0, 5).map((result, index) => (
                   <div 
                     key={index} 

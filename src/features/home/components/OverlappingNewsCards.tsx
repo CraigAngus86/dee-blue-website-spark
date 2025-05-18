@@ -58,7 +58,7 @@ const OverlappingNewsCards: React.FC<OverlappingNewsCardsProps> = ({
   };
   
   return (
-    <div className="bg-gray-100 py-16 relative">
+    <div className="bg-white py-16 relative">
       {/* Dotted pattern background */}
       <div className="absolute inset-0 opacity-5" aria-hidden="true">
         <div className="absolute inset-0" 
@@ -81,6 +81,7 @@ const OverlappingNewsCards: React.FC<OverlappingNewsCardsProps> = ({
               <NewsCard
                 article={article}
                 onClick={handleArticleClick}
+                className="rounded-lg overflow-hidden"
               />
             </div>
           ))}

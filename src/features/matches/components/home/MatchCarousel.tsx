@@ -1,8 +1,9 @@
 "use client";
-
 import React, { useRef, useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { MatchCard } from '../common/MatchCard';
+import { LeaguePositionSummary } from '../common/LeaguePositionSummary';
 
 interface MatchInfo {
   id: string;
@@ -12,8 +13,8 @@ interface MatchInfo {
   status: string;
   home_team_name: string;
   away_team_name: string;
-  home_team_logo: string;
-  away_team_logo: string;
+  home_team_logo?: string;
+  away_team_logo?: string;
   home_score?: number;
   away_score?: number;
   competition: {
@@ -37,9 +38,15 @@ interface MatchCarouselProps {
     lost: number;
     form: ('W' | 'L' | 'D')[];
   };
+  showHeader?: boolean;
 }
 
-export function MatchCarousel({ recentMatches = [], upcomingMatches = [], leagueData }: MatchCarouselProps) {
+export function MatchCarousel({ 
+  recentMatches = [], 
+  upcomingMatches = [], 
+  leagueData,
+  showHeader = false
+}: MatchCarouselProps) {
   const carouselRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
@@ -211,27 +218,29 @@ export function MatchCarousel({ recentMatches = [], upcomingMatches = [], league
     );
   }
   
-  // Function to build the full Cloudinary URL from the logo ID
-  const getFullLogoUrl = (logoId: string) => {
-    // Use the correct cloud name
-    const cloudName = 'dlkpaw2a0';
-    
-    // Build the URL using just the ID (no v1747324466 version number needed)
-    return `https://res.cloudinary.com/${cloudName}/image/upload/${logoId}`;
-  };
-  
-  // Fallback to team initials if logo fails to load
-  const getTeamInitials = (teamName: string): string => {
-    return teamName.substring(0, 1).toUpperCase();
-  };
-  
   return (
-    <div className="bg-gray-100 p-6 rounded-lg">
+    <div>
+      {showHeader && (
+        <div className="flex justify-between items-center mb-6">
+          <div className="flex items-center">
+            <div className="w-1.5 h-10 bg-[#00105A] mr-3"></div>
+            <h2 className="text-2xl font-bold text-[#00105A]">Match Centre</h2>
+          </div>
+          <Link 
+            href="/matches" 
+            className="text-[#00105A] hover:text-[#FFD700] transition-colors flex items-center gap-2"
+          >
+            <span className="text-sm font-medium">View All Matches</span>
+            <ChevronRight className="h-4 w-4" />
+          </Link>
+        </div>
+      )}
+      
       <div className="relative w-full overflow-hidden">
         {/* Left navigation arrow */}
         <button
           onClick={handleScrollLeft}
-          className={`absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full shadow-md p-2 focus:outline-none
+          className={`absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full shadow-md p-2 focus:outline-none
             ${canScrollLeft ? 'opacity-100' : 'opacity-50 cursor-not-allowed'}`}
           disabled={!canScrollLeft}
           aria-label="Previous matches"
@@ -242,7 +251,7 @@ export function MatchCarousel({ recentMatches = [], upcomingMatches = [], league
         {/* Match carousel with draggable functionality */}
         <div 
           ref={carouselRef} 
-          className={`flex space-x-6 overflow-x-auto hide-scrollbar pb-6 pt-2 px-2 ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+          className={`flex space-x-6 overflow-x-auto hide-scrollbar pb-6 pt-2 px-4 ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
@@ -254,155 +263,17 @@ export function MatchCarousel({ recentMatches = [], upcomingMatches = [], league
         >
           {organizedMatches.map((match, index) => {
             const matchType = getMatchType(match, index);
-            const isNextMatch = matchType === 'NEXT MATCH';
-            const isResult = matchType === 'FINAL RESULT';
-            
-            // Get team names directly from the match data
-            const homeTeamName = match.home_team_name || '';
-            const awayTeamName = match.away_team_name || '';
-            
-            // Get logo URLs using the Cloudinary IDs
-            const homeTeamLogo = match.home_team_logo ? getFullLogoUrl(match.home_team_logo) : '';
-            const awayTeamLogo = match.away_team_logo ? getFullLogoUrl(match.away_team_logo) : '';
             
             return (
               <div
-                key={match.id || index}
-                className={`flex-shrink-0 w-[360px] rounded-lg overflow-hidden shadow
-                  ${isNextMatch ? 'border-[#FFD700] border-2' : 'border border-gray-200'}
-                  transition-all duration-300 hover:shadow-lg hover:-translate-y-1`}
+                key={match.id || index} 
+                className="min-w-[360px] w-[360px] flex-shrink-0"
               >
-                {/* Match card */}
-                <div className="h-full bg-white">
-                  {/* Header with proper styling */}
-                  <div className={`px-4 py-4 text-center 
-                    ${isNextMatch ? 'bg-[#00105A]' : ''}`}
-                  >
-                    <div className={`text-sm font-bold tracking-wide uppercase
-                      ${isNextMatch ? 'text-white' : 'text-[#00105A]'}`}
-                    >
-                      {matchType}
-                    </div>
-                  </div>
-                  
-                  {/* Competition name */}
-                  <div className="px-4 py-3 text-center border-b border-gray-200">
-                    <div className="text-xs text-gray-600 font-medium truncate">
-                      {match.competition?.name || "SCOTTISH HIGHLAND FOOTBALL LEAGUE"}
-                    </div>
-                  </div>
-                  
-                  {/* Teams and score/vs */}
-                  <div className="p-6 pt-8 pb-8">
-                    <div className="flex justify-between items-center">
-                      {/* Home team */}
-                      <div className="text-center w-5/12">
-                        <div className="w-16 h-16 mx-auto mb-3 flex items-center justify-center bg-transparent">
-                          {homeTeamLogo ? (
-                            <img 
-                              src={homeTeamLogo}
-                              alt={`${homeTeamName} logo`} 
-                              className="w-16 h-16 object-contain" 
-                              onError={(e) => {
-                                // On error, replace with team initial
-                                const target = e.target as HTMLImageElement;
-                                target.onerror = null; // Prevent infinite loop
-                                target.style.display = 'none';
-                                // Create a span with the initial
-                                const parent = target.parentElement;
-                                if (parent) {
-                                  const span = document.createElement('span');
-                                  span.className = 'text-gray-700 font-semibold text-xl';
-                                  span.textContent = getTeamInitials(homeTeamName);
-                                  parent.appendChild(span);
-                                }
-                              }}
-                            />
-                          ) : (
-                            <span className="text-gray-700 font-semibold text-xl">
-                              {getTeamInitials(homeTeamName)}
-                            </span>
-                          )}
-                        </div>
-                        <div className="text-sm font-medium">
-                          {homeTeamName}
-                        </div>
-                      </div>
-                      
-                      {/* Score or VS */}
-                      <div className="text-center text-2xl font-bold w-2/12">
-                        {isResult ? (
-                          <div>
-                            {match.home_score || 0} - {match.away_score || 0}
-                          </div>
-                        ) : (
-                          <div className="text-gray-700">
-                            VS
-                          </div>
-                        )}
-                      </div>
-                      
-                      {/* Away team */}
-                      <div className="text-center w-5/12">
-                        <div className="w-16 h-16 mx-auto mb-3 flex items-center justify-center bg-transparent">
-                          {awayTeamLogo ? (
-                            <img 
-                              src={awayTeamLogo}
-                              alt={`${awayTeamName} logo`} 
-                              className="w-16 h-16 object-contain" 
-                              onError={(e) => {
-                                // On error, replace with team initial
-                                const target = e.target as HTMLImageElement;
-                                target.onerror = null; // Prevent infinite loop
-                                target.style.display = 'none';
-                                // Create a span with the initial
-                                const parent = target.parentElement;
-                                if (parent) {
-                                  const span = document.createElement('span');
-                                  span.className = 'text-gray-700 font-semibold text-xl';
-                                  span.textContent = getTeamInitials(awayTeamName);
-                                  parent.appendChild(span);
-                                }
-                              }}
-                            />
-                          ) : (
-                            <span className="text-gray-700 font-semibold text-xl">
-                              {getTeamInitials(awayTeamName)}
-                            </span>
-                          )}
-                        </div>
-                        <div className="text-sm font-medium">
-                          {awayTeamName}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Match details - date and venue now in vertical layout */}
-                  <div className="px-5 py-4 border-t border-gray-200">
-                    {/* Date and time row */}
-                    <div className="flex items-center justify-center text-gray-600 text-xs mb-2">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 mr-1 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                      <span>
-                        {formatDate(match.match_date)}
-                        {match.match_time && ` • ${formatTime(match.match_time)}`}
-                      </span>
-                    </div>
-                    
-                    {/* Venue row */}
-                    {match.venue && (
-                      <div className="flex items-center justify-center text-gray-600 text-xs">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 mr-1 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                        <span>{match.venue}</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
+                <MatchCard 
+                  match={match}
+                  matchType={matchType as 'FINAL RESULT' | 'NEXT MATCH' | 'UPCOMING MATCH'}
+                  isCurrentMatch={index === nextMatchIndex}
+                />
               </div>
             );
           })}
@@ -411,7 +282,7 @@ export function MatchCarousel({ recentMatches = [], upcomingMatches = [], league
         {/* Right navigation arrow */}
         <button
           onClick={handleScrollRight}
-          className={`absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full shadow-md p-2 focus:outline-none
+          className={`absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full shadow-md p-2 focus:outline-none
             ${canScrollRight ? 'opacity-100' : 'opacity-50 cursor-not-allowed'}`}
           disabled={!canScrollRight}
           aria-label="Next matches"
@@ -423,92 +294,17 @@ export function MatchCarousel({ recentMatches = [], upcomingMatches = [], league
       {/* League table summary section */}
       {leagueData && (
         <div className="mt-8">
-          <div className="mb-4 flex justify-between items-center">
-            <h2 className="text-2xl font-bold text-[#00105A]">Highland League Table</h2>
-            <Link href="/table" className="text-[#00105A] hover:text-[#FFD700] font-medium text-sm flex items-center">
-              View Full Table <span className="ml-1">›</span>
-            </Link>
-          </div>
-          
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0 mr-4">
-                <div className="bg-[#00105A] text-white font-bold h-12 w-12 rounded-full flex items-center justify-center text-xl">
-                  {leagueData.position}
-                </div>
-              </div>
-              
-              <div className="flex-grow">
-                <h3 className="font-bold text-lg text-[#00105A]">Banks o' Dee</h3>
-                <div className="grid grid-cols-5 gap-4 mt-2">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-[#00105A]">{leagueData.points}</div>
-                    <div className="text-xs text-gray-500">POINTS</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-[#00105A]">{leagueData.won}</div>
-                    <div className="text-xs text-gray-500">WON</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-[#00105A]">{leagueData.drawn}</div>
-                    <div className="text-xs text-gray-500">DRAWN</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-[#00105A]">{leagueData.lost}</div>
-                    <div className="text-xs text-gray-500">LOST</div>
-                  </div>
-                  <div>
-                    <div className="text-xs text-gray-500 mb-1">FORM</div>
-                    <div className="flex space-x-1">
-                      {leagueData.form.map((result, i) => (
-                        <div 
-                          key={i} 
-                          className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium text-white 
-                            ${result === 'W' ? 'bg-green-500' : result === 'D' ? 'bg-amber-500' : 'bg-red-500'}`}
-                        >
-                          {result}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <LeaguePositionSummary
+            position={leagueData.position}
+            played={leagueData.played}
+            won={leagueData.won}
+            drawn={leagueData.drawn}
+            lost={leagueData.lost}
+            points={leagueData.points}
+            form={leagueData.form}
+          />
         </div>
       )}
     </div>
   );
-}
-
-// Helper function to format the date (e.g., "Sat 12 Apr")
-function formatDate(dateString: string): string {
-  try {
-    if (!dateString) return 'TBA';
-    const date = new Date(dateString);
-    
-    // Get day of the month
-    const day = date.getDate();
-    
-    // Get short month name
-    const month = date.toLocaleString('en-GB', { month: 'short' });
-    
-    // Get short day name
-    const weekday = date.toLocaleString('en-GB', { weekday: 'short' });
-    
-    return `${weekday} ${day} ${month}`;
-  } catch (e) {
-    console.error('Error formatting date:', e);
-    return 'TBA';
-  }
-}
-
-// Helper function to format the time (e.g., "15:00")
-function formatTime(timeString: string): string {
-  if (!timeString) return '';
-  // If it's already in HH:MM format, return it directly
-  if (timeString.includes(':')) {
-    return timeString.substring(0, 5); // Get first 5 chars (HH:MM)
-  }
-  return timeString;
 }

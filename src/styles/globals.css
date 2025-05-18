@@ -228,3 +228,12 @@ p { @apply mb-4 leading-relaxed; }
 .scrollbar-hide::-webkit-scrollbar {
   display: none;  /* Chrome, Safari and Opera */
 }
+
+/* Override Tailwind gray colors with our custom gray */
+.bg-gray-50, .bg-gray-100, .bg-gray-200, .hover\:bg-gray-100:hover, .hover\:bg-gray-200:hover {
+  background-color: #f5f7fb !important;
+}
+
+.border-gray-100, .border-gray-200, .border-gray-300 {
+  border-color: #f5f7fb !important;
+}

@@ -27,7 +27,7 @@ const HomeNewsSection: React.FC<HomeNewsSectionProps> = ({
   console.log(`HomeNewsSection: Showing ${displayArticles.length} articles`);
   
   return (
-    <div className="bg-light-gray py-16 relative">
+    <div className="bg-[#f5f7fb] py-16 relative">
       <PatternOverlay pattern="dots" opacity={0.05} color="dark" />
       <div className={cn(
         "container mx-auto px-4 relative z-10",

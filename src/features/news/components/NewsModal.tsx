@@ -116,40 +116,40 @@ const NewsModal: React.FC<NewsModalProps> = ({
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50 flex items-center justify-center">
       <div className="relative max-w-5xl w-full max-h-[95vh] bg-white rounded-lg shadow-xl overflow-hidden">
         {/* Light grey header bar with social buttons and close button */}
-        <div className="absolute top-0 left-0 right-0 h-12 bg-gray-100 z-40 flex justify-between items-center px-4">
+        <div className="absolute top-0 left-0 right-0 h-12 bg-[#f5f7fb] z-40 flex justify-between items-center px-4">
           {/* Social sharing buttons */}
           <div className="flex space-x-2">
             <button 
               onClick={shareOnTwitter}
-              className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-gray-200 transition-colors"
+              className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-[#e5e7eb] transition-colors"
               aria-label="Share on Twitter"
             >
               <Twitter size={18} className="text-[#00105A]" />
             </button>
             <button 
               onClick={shareOnFacebook}
-              className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-gray-200 transition-colors"
+              className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-[#e5e7eb] transition-colors"
               aria-label="Share on Facebook"
             >
               <Facebook size={18} className="text-[#00105A]" />
             </button>
             <button 
               onClick={shareOnLinkedin}
-              className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-gray-200 transition-colors"
+              className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-[#e5e7eb] transition-colors"
               aria-label="Share on LinkedIn"
             >
               <Linkedin size={18} className="text-[#00105A]" />
             </button>
             <button 
               onClick={shareByEmail}
-              className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-gray-200 transition-colors"
+              className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-[#e5e7eb] transition-colors"
               aria-label="Share by Email"
             >
               <Mail size={18} className="text-[#00105A]" />
             </button>
             <button 
               onClick={copyLink}
-              className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-gray-200 transition-colors"
+              className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-[#e5e7eb] transition-colors"
               aria-label="Copy link"
             >
               <Copy size={18} className="text-[#00105A]" />
@@ -216,7 +216,7 @@ const NewsModal: React.FC<NewsModalProps> = ({
           <div className="px-6 py-8 bg-white">
             {/* Excerpt with special styling */}
             {article.excerpt && (
-              <div className="mb-8 text-lg font-medium text-gray-700 border-l-4 border-[#00105A] pl-4 py-2 bg-gray-50">
+              <div className="mb-8 text-lg font-medium text-gray-700 border-l-4 border-[#00105A] pl-4 py-2 bg-[#f5f7fb]">
                 {article.excerpt}
               </div>
             )}
@@ -247,11 +247,11 @@ const NewsModal: React.FC<NewsModalProps> = ({
             
             {/* Related players section if available */}
             {article.relatedPlayers && article.relatedPlayers.length > 0 && (
-              <div className="mt-8 pt-6 border-t border-gray-200">
+              <div className="mt-8 pt-6 border-t border-[#f5f7fb]">
                 <h3 className="text-xl font-bold mb-4">Featured Players</h3>
                 <div className="flex flex-wrap gap-4">
                   {article.relatedPlayers.map(player => (
-                    <div key={player.id} className="flex items-center space-x-2 bg-gray-50 p-2 rounded">
+                    <div key={player.id} className="flex items-center space-x-2 bg-[#f5f7fb] p-2 rounded">
                       {player.profileImage ? (
                         <img 
                           src={getImageUrl(player.profileImage, 'gallery')}
@@ -282,7 +282,7 @@ const NewsModal: React.FC<NewsModalProps> = ({
             
             {/* Gallery if available */}
             {article.gallery && article.gallery.images && article.gallery.images.length > 0 && (
-              <div className="mt-8 pt-6 border-t border-gray-200">
+              <div className="mt-8 pt-6 border-t border-[#f5f7fb]">
                 <h3 className="text-xl font-bold mb-4">Photo Gallery</h3>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {article.gallery.images.map((image, index) => (
@@ -295,7 +295,7 @@ const NewsModal: React.FC<NewsModalProps> = ({
                           const target = e.target as HTMLImageElement;
                           target.onerror = null;
                           const fallbackDiv = document.createElement('div');
-                          fallbackDiv.className = 'w-full h-full bg-gray-200 flex items-center justify-center';
+                          fallbackDiv.className = 'w-full h-full bg-[#f5f7fb] flex items-center justify-center';
                           fallbackDiv.innerHTML = '<span class="text-gray-500">Image not available</span>';
                           if (target.parentNode) {
                             target.parentNode.replaceChild(fallbackDiv, target);

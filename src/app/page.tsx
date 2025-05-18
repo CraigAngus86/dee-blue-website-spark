@@ -10,16 +10,13 @@ import { fetchSanityData } from "@/lib/sanity/sanityClient";
 import { supabase } from "@/lib/supabase/client";
 import { getHomepageUpcomingMatches, getHomepageRecentMatches, getHomepageLeagueTable } from "@/features/matches/hooks/useHomeMatchData";
 import { HomeHeroSection, OverlappingNewsCards } from "@/features/home";
-
 // Set the revalidation time to ensure fresh data
 export const revalidate = 10; // Revalidate every 10 seconds
-
 export const metadata: Metadata = {
   title: "Home | Banks o' Dee FC",
   description:
     "Welcome to the official website of Banks o' Dee Football Club",
 };
-
 // Fetch all news articles for homepage ordered by date
 async function getNewsArticles(limit = 9) {
   const query = `*[_type == "newsArticle" && !(_id in path("drafts.**"))] | order(publishedAt desc)[0...${limit}] {
@@ -42,7 +39,6 @@ async function getNewsArticles(limit = 9) {
     return [];
   }
 }
-
 async function getSponsors() {
   try {
     const { data: sponsors, error } = await supabase
@@ -56,7 +52,6 @@ async function getSponsors() {
     return [];
   }
 }
-
 async function getFanOfMonth() {
   try {
     const { data: fanOfMonth, error } = await supabase
@@ -70,7 +65,6 @@ async function getFanOfMonth() {
     return null;
   }
 }
-
 async function getFeaturedPlayers() {
   try {
     const { data: players, error } = await supabase
@@ -86,7 +80,6 @@ async function getFeaturedPlayers() {
     return [];
   }
 }
-
 export default async function HomePage() {
   // Fetch all news articles (up to 9 - 3 for hero, 6 for cards)
   const newsArticles = await getNewsArticles(9);
@@ -141,9 +134,10 @@ export default async function HomePage() {
       
       {/* Match Center Section */}
       <Section 
-        background="light"
+        background="transparent"
         spacing="lg"
-      >
+        className="bg-[#f5f7fb]"
+      > 
         <FadeIn>
           <MatchCenter 
             upcomingMatches={upcomingMatches} 
@@ -161,7 +155,12 @@ export default async function HomePage() {
       
       {/* Players Section */}
       <GradientSeparator />
-      <PlayersSection players={featuredPlayers} />
+      <Section
+        background="transparent"
+        className="bg-[#f5f7fb]"
+      >
+        <PlayersSection players={featuredPlayers} />
+      </Section>
       
       {/* Sponsors Section */}
       <GradientSeparator />
