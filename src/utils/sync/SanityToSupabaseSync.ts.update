@@ -1,0 +1,30 @@
+// Import the new function
+import { syncMatchGallery } from './MatchGallerySync';
+
+/**
+ * Process webhook from Sanity and sync to Supabase
+ */
+export async function processSanityWebhook(payload: SanityWebhookPayload): Promise<boolean> {
+  // Log the received payload for debugging
+  console.log('Processing Sanity webhook payload:', JSON.stringify(payload, null, 2).substring(0, 500) + '...');
+  
+  // Switch based on document type
+  switch (payload._type) {
+    case 'playerProfile':
+      return await syncPlayerProfile(payload);
+      
+    case 'sponsor':
+      return await syncSponsor(payload);
+      
+    case 'match':
+      return await syncMatch(payload);
+      
+    // Add the new case for matchGallery
+    case 'matchGallery':
+      return await syncMatchGallery(payload);
+      
+    default:
+      console.warn(`Unhandled document type in webhook: ${payload._type}`);
+      return false;
+  }
+}

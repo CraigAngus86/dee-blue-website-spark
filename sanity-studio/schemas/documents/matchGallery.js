@@ -1,171 +1,158 @@
-
 export default {
-    name: 'matchGallery',
-    title: 'Match Gallery',
-    type: 'document',
-    groups: [
-      {
-        name: 'basic',
-        title: 'Basic Information',
+  name: 'matchGallery',
+  title: 'Match Gallery',
+  type: 'document',
+  groups: [
+    { name: 'basic', title: 'Basic Information' },
+    { name: 'photos', title: 'Photos' },
+    { name: 'reference', title: 'Database Reference' },
+  ],
+  fields: [
+    {
+      name: 'homeTeam',
+      title: 'Home Team',
+      type: 'string',
+      options: {
+        list: [
+          'Banks O\' Dee',
+          'Brechin City',
+          'Brora Rangers',
+          'Buckie Thistle',
+          'Clachnacuddin',
+          'Deveronvale',
+          'Formartine United',
+          'Forres Mechanics',
+          'Fraserburgh',
+          'Huntly',
+          'Inverurie Loco Works',
+          'Keith',
+          'Lossiemouth',
+          'Nairn County',
+          'Rothes',
+          'Strathspey Thistle',
+          'Turriff United',
+          'Wick Academy'
+        ].sort()
       },
-      {
-        name: 'photos',
-        title: 'Photos',
-      },
-      {
-        name: 'reference',
-        title: 'Database Reference',
-      },
-    ],
-    fields: [
-      {
-        name: 'supabaseId',
-        title: 'Supabase ID',
-        type: 'string',
-        description: 'UUID from Supabase for the match',
-        validation: Rule => Rule.required().regex(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/, {
-          name: 'UUID',
-          invert: false,
-          message: 'Must be a valid UUID format (example: 123e4567-e89b-12d3-a456-426614174000)'
-        }),
-        group: 'reference'
-      },
-      {
-        name: 'matchId',
-        title: 'Match ID (Legacy)',
-        type: 'string',
-        description: 'Legacy ID field - use supabaseId instead',
-        hidden: true,
-        group: 'reference'
-      },
-      {
-        name: 'title',
-        title: 'Gallery Title',
-        type: 'string',
-        validation: Rule => Rule.required(),
-        group: 'basic'
-      },
-      {
-        name: 'description',
-        title: 'Gallery Description',
-        type: 'text',
-        rows: 3,
-        group: 'basic'
-      },
-      {
-        name: 'matchDate',
-        title: 'Match Date',
-        type: 'date',
-        description: 'Date of the match (for reference only)',
-        group: 'basic'
-      },
-      {
-        name: 'coverImage',
-        title: 'Cover Image',
-        type: 'image',
-        options: {
-          hotspot: true
-        },
-        description: 'Main image for the gallery',
-        group: 'photos'
-      },
-      {
-        name: 'photos',
-        title: 'Match Photos',
-        type: 'array',
-        of: [
-          {
-            type: 'object',
-            fields: [
-              {
-                name: 'image',
-                title: 'Image',
-                type: 'image',
-                options: {
-                  hotspot: true
-                }
-              },
-              {
-                name: 'caption',
-                title: 'Caption',
-                type: 'string'
-              },
-              {
-                name: 'category',
-                title: 'Category',
-                type: 'string',
-                options: {
-                  list: [
-                    {title: 'Pre-Match', value: 'pre-match'},
-                    {title: 'Action', value: 'action'},
-                    {title: 'Goal', value: 'goal'},
-                    {title: 'Celebration', value: 'celebration'},
-                    {title: 'Fans', value: 'fans'},
-                    {title: 'Post-Match', value: 'post-match'}
-                  ]
-                }
-              },
-              {
-                name: 'playerIds',
-                title: 'Featured Players',
-                type: 'array',
-                of: [{type: 'string'}],
-                description: 'Supabase IDs of players featured in this photo'
-              }
-            ],
-            preview: {
-              select: {
-                media: 'image',
-                caption: 'caption',
-                category: 'category'
-              },
-              prepare({media, caption, category}) {
-                return {
-                  title: caption || 'No caption',
-                  media,
-                  subtitle: category
-                }
-              }
-            }
-          }
-        ],
-        group: 'photos'
-      },
-      {
-        name: 'photographer',
-        title: 'Photographer',
-        type: 'string',
-        description: 'Name of photographer for attribution',
-        group: 'basic'
-      },
-      {
-        name: 'publishedAt',
-        title: 'Published At',
-        type: 'datetime',
-        group: 'basic'
-      }
-    ],
-    preview: {
-      select: {
-        title: 'title',
-        media: 'coverImage',
-        date: 'matchDate'
-      },
-      prepare({title, media, date}) {
-        return {
-          title,
-          media,
-          subtitle: date ? new Date(date).toLocaleDateString() : 'No date'
-        }
-      }
+      description: 'Select the home team',
+      validation: Rule => Rule.required(),
+      group: 'basic'
     },
-    orderings: [
-      {
-        title: 'Match Date, Recent',
-        name: 'matchDateDesc',
-        by: [
-          {field: 'matchDate', direction: 'desc'}
-        ]
+    {
+      name: 'awayTeam',
+      title: 'Away Team',
+      type: 'string',
+      options: {
+        list: [
+          'Banks O\' Dee',
+          'Brechin City',
+          'Brora Rangers',
+          'Buckie Thistle',
+          'Clachnacuddin',
+          'Deveronvale',
+          'Formartine United',
+          'Forres Mechanics',
+          'Fraserburgh',
+          'Huntly',
+          'Inverurie Loco Works',
+          'Keith',
+          'Lossiemouth',
+          'Nairn County',
+          'Rothes',
+          'Strathspey Thistle',
+          'Turriff United',
+          'Wick Academy'
+        ].sort()
+      },
+      description: 'Select the away team',
+      validation: Rule => Rule.required(),
+      group: 'basic'
+    },
+    {
+      name: 'matchDate',
+      title: 'Match Date',
+      type: 'date',
+      description: 'Select the date of the match',
+      validation: Rule => Rule.required(),
+      group: 'basic'
+    },
+    {
+      name: 'title',
+      title: 'Gallery Title',
+      type: 'string',
+      description: 'Title will be auto-generated when you click the "Generate Names" button',
+      group: 'basic'
+    },
+    {
+      name: 'supabaseId',
+      title: 'Supabase UUID',
+      type: 'string',
+      description: 'Match ID in Supabase database (for future use)',
+      group: 'reference'
+    },
+    {
+      name: 'sanityId',
+      title: 'Sanity ID',
+      type: 'string',
+      description: 'Sanity document ID (auto-filled when you click the "Generate Names" button)',
+      readOnly: true,
+      group: 'reference'
+    },
+    {
+      name: 'folderName',
+      title: 'Cloudinary Folder Name',
+      type: 'string',
+      description: 'Folder name will be auto-generated when you click the "Generate Names" button',
+      group: 'photos',
+    },
+    {
+      name: 'galleryImages',
+      title: 'Match Photos',
+      type: 'array',
+      of: [{ type: 'cloudinary.asset' }],
+      options: {
+        layout: 'grid'
+      },
+      description: 'Upload match photos to this gallery',
+      group: 'photos'
+    },
+    {
+      name: 'coverImage',
+      title: 'Cover Image',
+      type: 'cloudinary.asset',
+      options: {
+        folder: 'banksofdeefc/matches/gallery'
+      },
+      description: 'Select an image to be used as the cover image',
+      validation: Rule => Rule.required(),
+      group: 'photos'
+    },
+    {
+      name: 'photographer',
+      title: 'Photographer',
+      type: 'string',
+      description: 'Name of photographer for attribution',
+      group: 'basic'
+    }
+  ],
+  preview: {
+    select: {
+      title: 'title',
+      media: 'coverImage',
+      date: 'matchDate',
+      homeTeam: 'homeTeam',
+      awayTeam: 'awayTeam'
+    },
+    prepare({title, media, date, homeTeam, awayTeam}) {
+      const matchInfo = homeTeam && awayTeam ? `${homeTeam} vs ${awayTeam}` : '';
+      return {
+        title: title || 'Untitled Gallery',
+        media,
+        subtitle: [
+          matchInfo,
+          date ? new Date(date).toLocaleDateString() : 'No date'
+        ].filter(Boolean).join(' • ')
       }
-    ]
+    }
   }
+}
