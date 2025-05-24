@@ -5,8 +5,22 @@ import { supabase } from '@/lib/supabase/client';
 import { format } from 'date-fns';
 import { DEFAULT_SEASON, DEFAULT_COMPETITION, DEFAULT_MONTH } from '../../constants';
 import { ResultCard } from '../ResultCard';
+import { MatchGalleryModal } from "@/features/galleries";
 
 export function ResultsPanel() {
+  const [galleryModalOpen, setGalleryModalOpen] = useState(false);
+  const [selectedGalleryId, setSelectedGalleryId] = useState<string | null>(null);
+  
+  const handleGalleryClick = (galleryId: string) => {
+    setSelectedGalleryId(galleryId);
+    setGalleryModalOpen(true);
+  };
+
+  const handleGalleryModalClose = () => {
+    setGalleryModalOpen(false);
+    setSelectedGalleryId(null);
+  };
+
   const searchParams = useSearchParams();
   const season = searchParams.get('season') || DEFAULT_SEASON;
   const competition = searchParams.get('competition') || DEFAULT_COMPETITION;
@@ -107,20 +121,28 @@ export function ResultsPanel() {
   }
   
   return (
-    <div className="space-y-8">
-      {Object.entries(groupedResults).map(([month, monthResults]) => (
-        <div key={month}>
-          <div className="bg-gray-200 py-3 px-4 rounded mb-6 border-b border-gray-300">
-            <h3 className="text-xl font-bold text-gray-800">{month}</h3>
+    <>
+      <div className="space-y-8">
+        {Object.entries(groupedResults).map(([month, monthResults]) => (
+          <div key={month}>
+            <div className="bg-gray-200 py-3 px-4 rounded mb-6 border-b border-gray-300">
+              <h3 className="text-xl font-bold text-gray-800">{month}</h3>
+            </div>
+            
+            <div className="grid gap-6">
+              {monthResults.map(result => (
+                <ResultCard key={result.id} result={result} onGalleryClick={handleGalleryClick} />
+              ))}
+            </div>
           </div>
-          
-          <div className="grid gap-6">
-            {monthResults.map(result => (
-              <ResultCard key={result.id} result={result} />
-            ))}
-          </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+      
+      <MatchGalleryModal
+        isOpen={galleryModalOpen}
+        onClose={handleGalleryModalClose}
+        galleryId={selectedGalleryId || undefined}
+      />
+    </>
   );
 }

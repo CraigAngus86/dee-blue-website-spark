@@ -1,9 +1,9 @@
 "use client";
-import React, { useState, useEffect, useCallback } from 'react';
-import { X, Twitter, Facebook, Linkedin, Mail, Copy, Camera } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, Twitter, Facebook, Linkedin, Mail, Link, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useGallery } from '../hooks/useGallery';
-import GalleryViewer from './GalleryViewer';
-import GalleryThumbnailGrid from './GalleryThumbnailGrid';
+import { GalleryViewer } from './GalleryViewer';
+import { GalleryThumbnailGrid } from './GalleryThumbnailGrid';
 
 interface MatchGalleryModalProps {
   isOpen: boolean;
@@ -12,106 +12,72 @@ interface MatchGalleryModalProps {
   matchId?: string;
 }
 
-const MatchGalleryModal: React.FC<MatchGalleryModalProps> = ({
-  isOpen,
-  onClose,
-  galleryId,
-  matchId
-}) => {
+export function MatchGalleryModal({ isOpen, onClose, galleryId, matchId }: MatchGalleryModalProps) {
+  const { gallery, loading, error } = useGallery(galleryId, matchId);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
-  
-  const { gallery, loading, error, getOptimizedImageUrl } = useGallery(galleryId, matchId);
-  
-  // Reset to first photo when gallery changes
+
+  // Reset photo index when gallery changes
   useEffect(() => {
-    setCurrentPhotoIndex(0);
-  }, [galleryId, matchId]);
-  
-  // Reset when modal is closed
-  useEffect(() => {
-    if (!isOpen) {
+    if (gallery) {
       setCurrentPhotoIndex(0);
     }
-  }, [isOpen]);
-  
+  }, [gallery]);
+
   // Handle keyboard navigation
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
+    const handleKeyPress = (e: KeyboardEvent) => {
       if (!isOpen || !gallery) return;
       
       switch (e.key) {
-        case 'ArrowLeft':
-          if (currentPhotoIndex > 0) {
-            setCurrentPhotoIndex(currentPhotoIndex - 1);
-          }
-          break;
-        case 'ArrowRight':
-          if (currentPhotoIndex < gallery?.photos?.length - 1) {
-            setCurrentPhotoIndex(currentPhotoIndex + 1);
-          }
-          break;
         case 'Escape':
           onClose();
           break;
+        case 'ArrowLeft':
+          setCurrentPhotoIndex(prev => 
+            prev > 0 ? prev - 1 : gallery.photos.length - 1
+          );
+          break;
+        case 'ArrowRight':
+          setCurrentPhotoIndex(prev => 
+            prev < gallery.photos.length - 1 ? prev + 1 : 0
+          );
+          break;
       }
     };
-    
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, gallery, currentPhotoIndex, onClose]);
-  
-  // Navigate to previous photo
-  const handlePrevious = useCallback(() => {
-    if (!gallery || currentPhotoIndex <= 0) return;
-    setCurrentPhotoIndex(currentPhotoIndex - 1);
-  }, [gallery, currentPhotoIndex]);
-  
-  // Navigate to next photo
-  const handleNext = useCallback(() => {
-    if (!gallery || currentPhotoIndex >= gallery?.photos?.length - 1) return;
-    setCurrentPhotoIndex(currentPhotoIndex + 1);
-  }, [gallery, currentPhotoIndex]);
-  
-  // Handle thumbnail click
-  const handleThumbnailClick = (index: number) => {
-    setCurrentPhotoIndex(index);
-  };
-  
-  // Social sharing functions
-  const shareGallery = (platform: 'twitter' | 'facebook' | 'linkedin' | 'email' | 'copy') => {
-    if (!gallery) return;
-    
+
+    document.addEventListener('keydown', handleKeyPress);
+    return () => document.removeEventListener('keydown', handleKeyPress);
+  }, [isOpen, gallery, onClose]);
+
+  const shareGallery = (platform: string) => {
     const url = window.location.href;
-    const title = gallery.title;
+    const text = `Check out this match gallery from Banks o' Dee FC`;
     
     switch (platform) {
       case 'twitter':
-        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`, '_blank');
+        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`);
         break;
       case 'facebook':
-        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`);
         break;
       case 'linkedin':
-        window.open(`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`, '_blank');
+        window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`);
         break;
       case 'email':
-        const body = `Check out this gallery from Banks o' Dee FC: ${title}\n\n${url}`;
-        window.open(`mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`, '_blank');
+        window.location.href = `mailto:?subject=${encodeURIComponent(text)}&body=${encodeURIComponent(url)}`;
         break;
       case 'copy':
         navigator.clipboard.writeText(url);
-        alert('Gallery link copied to clipboard!');
         break;
     }
   };
-  
-  // If modal is not open, don't render anything
+
   if (!isOpen) return null;
   
   // Handle loading state
   if (loading) {
     return (
-      <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50 flex items-center justify-center">
+      <div className="fixed inset-0 z-[9999] overflow-y-auto bg-black/50 flex items-center justify-center">
         <div className="relative max-w-5xl w-full max-h-[95vh] bg-white rounded-lg shadow-xl overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-12 bg-[#f5f7fb] z-40 flex justify-between items-center px-4">
             <div></div>
@@ -125,7 +91,7 @@ const MatchGalleryModal: React.FC<MatchGalleryModalProps> = ({
           </div>
           <div className="h-[80vh] flex items-center justify-center">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#00105A] mx-auto mb-4"></div>
+              <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#00105A] mx-auto mb-4"></div>
               <p className="text-gray-600">Loading gallery...</p>
             </div>
           </div>
@@ -137,7 +103,7 @@ const MatchGalleryModal: React.FC<MatchGalleryModalProps> = ({
   // Handle error state
   if (error || !gallery) {
     return (
-      <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50 flex items-center justify-center">
+      <div className="fixed inset-0 z-[9999] overflow-y-auto bg-black/50 flex items-center justify-center">
         <div className="relative max-w-5xl w-full max-h-[95vh] bg-white rounded-lg shadow-xl overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-12 bg-[#f5f7fb] z-40 flex justify-between items-center px-4">
             <div></div>
@@ -150,22 +116,12 @@ const MatchGalleryModal: React.FC<MatchGalleryModalProps> = ({
             </button>
           </div>
           <div className="h-[80vh] flex items-center justify-center">
-            <div className="text-center p-6">
-              <div className="text-red-500 mb-2">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Gallery not found</h3>
-              <p className="text-gray-600 mb-4">
-                {error?.message || "Gallery not found"}
+            <div className="text-center">
+              <div className="text-6xl mb-4">📷</div>
+              <h2 className="text-xl font-semibold text-gray-800 mb-2">Gallery Not Available</h2>
+              <p className="text-gray-600">
+                {error ? 'Unable to load gallery' : 'No gallery found for this match'}
               </p>
-              <button 
-                className="px-4 py-2 bg-[#00105A] text-white rounded hover:bg-[#001C8C] transition-colors"
-                onClick={onClose}
-              >
-                Close
-              </button>
             </div>
           </div>
         </div>
@@ -177,9 +133,9 @@ const MatchGalleryModal: React.FC<MatchGalleryModalProps> = ({
   const currentPhoto = gallery.photos[currentPhotoIndex];
   
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden bg-black/50 flex items-center justify-center">
+    <div className="fixed inset-0 z-[9999] overflow-hidden bg-black/50 flex items-center justify-center">
       <div className="relative w-full max-w-6xl h-[85vh] mx-auto bg-white rounded-lg shadow-xl overflow-hidden flex flex-col">
-        {/* Social sharing bar - keeping exactly the same as requested */}
+        {/* Social sharing bar */}
         <div className="h-12 bg-[#f5f7fb] flex justify-between items-center px-4">
           <div className="flex space-x-2">
             <button 
@@ -206,77 +162,80 @@ const MatchGalleryModal: React.FC<MatchGalleryModalProps> = ({
             <button 
               onClick={() => shareGallery('email')}
               className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-[#e5e7eb] transition-colors"
-              aria-label="Share by Email"
+              aria-label="Share via Email"
             >
               <Mail size={18} className="text-[#00105A] hover:text-[#FFD700]" />
             </button>
             <button 
               onClick={() => shareGallery('copy')}
               className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-[#e5e7eb] transition-colors"
-              aria-label="Copy link"
+              aria-label="Copy Link"
             >
-              <Copy size={18} className="text-[#00105A] hover:text-[#FFD700]" />
+              <Link size={18} className="text-[#00105A] hover:text-[#FFD700]" />
             </button>
           </div>
           
           <button 
-            className="text-[#00105A] hover:text-[#FFD700] transition-colors"
+            className="text-[#00105A] hover:text-[#001C8C]"
             onClick={onClose}
           >
             <X size={22} />
             <span className="sr-only">Close</span>
           </button>
         </div>
-        
-        {/* Gallery title bar with reduced height and shadow */}
-        <div className="bg-[#00105A] py-2 px-6 text-white flex justify-between items-center shadow-md">
-          {/* Left-aligned title with proper font weight */}
-          <h2 className="text-2xl font-bold">{gallery.title}</h2>
-          
-          {/* Date and photographer on right, stacked vertically */}
-          <div className="flex flex-col items-end text-sm">
-            {gallery.matchDate && (
-              <div>
-                {new Date(gallery.matchDate).toLocaleDateString('en-US', {
-                  day: 'numeric',
-                  month: 'long', 
-                  year: 'numeric'
-                })}
-              </div>
+
+        {/* Main content area */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/* Main photo viewer */}
+          <div className="flex-1 bg-black relative overflow-hidden">
+            <GalleryViewer 
+              photos={gallery.photos}
+              currentIndex={currentPhotoIndex}
+              onIndexChange={setCurrentPhotoIndex}
+            />
+            
+            {/* Navigation arrows */}
+            {gallery.photos.length > 1 && (
+              <>
+                <button
+                  onClick={() => setCurrentPhotoIndex(prev => 
+                    prev > 0 ? prev - 1 : gallery.photos.length - 1
+                  )}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
+                  aria-label="Previous photo"
+                >
+                  <ChevronLeft size={24} />
+                </button>
+                <button
+                  onClick={() => setCurrentPhotoIndex(prev => 
+                    prev < gallery.photos.length - 1 ? prev + 1 : 0
+                  )}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
+                  aria-label="Next photo"
+                >
+                  <ChevronRight size={24} />
+                </button>
+              </>
             )}
-            {gallery.photographer && (
-              <div className="text-white/90 mt-1 flex items-center">
-                <Camera size={14} className="mr-1 text-[#FFD700]" />
-                <span>Photos by: {gallery.photographer}</span>
-              </div>
-            )}
+            
+            {/* Photo counter */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
+              {currentPhotoIndex + 1} of {gallery.photos.length}
+            </div>
           </div>
-        </div>
-        
-        {/* Main photo viewer with fade transitions */}
-        <div className="flex-grow bg-black overflow-hidden flex items-center justify-center">
-          <GalleryViewer 
-            photo={currentPhoto}
-            onNext={handleNext}
-            onPrevious={handlePrevious}
-            hasNext={currentPhotoIndex < gallery.photos.length - 1}
-            hasPrevious={currentPhotoIndex > 0}
-            currentIndex={currentPhotoIndex}
-            totalPhotos={gallery.photos.length}
-          />
-        </div>
-        
-        {/* Thumbnail grid showing all thumbnails */}
-        <div className="h-32 bg-[#f5f7fb] p-2">
-          <GalleryThumbnailGrid
-            photos={gallery.photos}
-            currentIndex={currentPhotoIndex}
-            onThumbnailClick={handleThumbnailClick}
-          />
+
+          {/* Thumbnail grid */}
+          <div className="h-24 bg-[#f5f7fb] border-t border-gray-200">
+            <GalleryThumbnailGrid 
+              photos={gallery.photos}
+              currentIndex={currentPhotoIndex}
+              onIndexChange={setCurrentPhotoIndex}
+            />
+          </div>
         </div>
       </div>
     </div>
   );
-};
+}
 
 export default MatchGalleryModal;

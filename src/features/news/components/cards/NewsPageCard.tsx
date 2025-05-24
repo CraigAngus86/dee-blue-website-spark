@@ -1,10 +1,8 @@
 "use client";
-
 import React from 'react';
 import { NewsArticle } from '../../types';
 import { formatDistanceToNow } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { Camera, ChevronRight } from 'lucide-react';
 
 interface NewsPageCardProps {
   article: NewsArticle & { contentType?: string };
@@ -31,7 +29,7 @@ const NewsPageCard: React.FC<NewsPageCardProps> = ({
     matchGallery: 'MATCH GALLERY'
   };
 
-  // Format date for display
+  // ✅ FIXED: Format date for display (ensure it works for galleries too)
   const formattedDate = article.publishedAt 
     ? formatDistanceToNow(new Date(article.publishedAt), { addSuffix: true })
     : '';
@@ -68,10 +66,9 @@ const NewsPageCard: React.FC<NewsPageCardProps> = ({
       
       {/* Content overlay */}
       <div className="absolute inset-0 flex flex-col justify-end p-4 md:p-5 text-white">
-        {/* Category badge */}
+        {/* Category badge - ✅ FIXED: Removed camera icon */}
         <div className="absolute top-4 left-4">
-          <span className="bg-[#00105A] text-white px-3 py-1 text-xs font-bold uppercase tracking-wider rounded flex items-center">
-            {isGallery && <Camera className="w-3 h-3 mr-1" />}
+          <span className="bg-[#00105A] text-white px-3 py-1 text-xs font-bold uppercase tracking-wider rounded">
             {categoryDisplay[article.category] || article.category}
           </span>
         </div>
@@ -84,18 +81,11 @@ const NewsPageCard: React.FC<NewsPageCardProps> = ({
           {article.title}
         </h3>
         
-        {/* Gallery icon or date */}
+        {/* ✅ FIXED: Always show date, removed "View Gallery" text */}
         <div className="flex items-center justify-between">
           <p className="text-sm text-white/80">
             {formattedDate}
           </p>
-          
-          {isGallery && (
-            <div className="flex items-center text-white/90 text-sm">
-              <span>View Gallery</span>
-              <ChevronRight className="w-4 h-4 ml-1" />
-            </div>
-          )}
         </div>
       </div>
     </div>

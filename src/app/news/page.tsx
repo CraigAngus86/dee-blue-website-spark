@@ -18,7 +18,7 @@ async function getAllNews() {
     _id,
     title,
     "slug": slug.current,
-    publishedAt,
+    publishedAt, matchDate,
     mainImage, // Keep full Cloudinary structure
     excerpt,
     category,
@@ -56,7 +56,7 @@ async function getMatchGalleries() {
   const query = `*[_type == "matchGallery" && !(_id in path("drafts.**"))] | order(publishedAt desc) {
     _id,
     title,
-    publishedAt,
+    publishedAt, matchDate,
     coverImage, // Keep full structure
     "match": match->title
   }`;

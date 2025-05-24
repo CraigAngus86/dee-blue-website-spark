@@ -24,6 +24,7 @@ interface MatchInfo {
   };
   ticket_link?: string;
   match_report_link?: string;
+  gallery_link?: string;
 }
 
 interface MatchCarouselProps {
@@ -39,23 +40,30 @@ interface MatchCarouselProps {
     form: ('W' | 'L' | 'D')[];
   };
   showHeader?: boolean;
+  // NEW: Click handlers
+  onGalleryClick?: (galleryId: string) => void;
+  onReportClick?: (reportId: string) => void;
+  onTicketClick?: (ticketUrl: string) => void;
 }
 
 export function MatchCarousel({ 
   recentMatches = [], 
   upcomingMatches = [], 
   leagueData,
-  showHeader = false
+  showHeader = false,
+  onGalleryClick,
+  onReportClick,
+  onTicketClick
 }: MatchCarouselProps) {
   const carouselRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
-  
+
   // Track drag state
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
-  
+
   // Organize matches with proper ordering (oldest to newest results, then next match, then upcoming)
   const getOrganizedMatches = () => {
     try {
@@ -64,11 +72,12 @@ export function MatchCarousel({
         .filter(match => !!match && (match.status === 'completed' || match.home_score !== undefined))
         .sort((a, b) => {
           if (!a.match_date || !b.match_date) return 0;
-          // Sort by match date ASCENDING (oldest first)
-          return new Date(a.match_date).getTime() - new Date(b.match_date).getTime();
+          // Sort by match date DESCENDING (newest first)
+          return new Date(b.match_date).getTime() - new Date(a.match_date).getTime();
         })
-        .slice(0, 3);
-        
+        .slice(0, 3).reverse();
+      console.log("Sorted recent matches for display:", sortedRecent.map(m => ({ date: m.match_date, home: m.home_team_name || m.home_team, away: m.away_team_name || m.away_team })));
+
       // Get upcoming matches (not completed matches)
       const sortedUpcoming = [...upcomingMatches]
         .filter(match => !!match && match.status !== 'completed' && match.home_score === undefined)
@@ -77,13 +86,13 @@ export function MatchCarousel({
           // Sort by match date ascending (nearest future match first)
           return new Date(a.match_date).getTime() - new Date(b.match_date).getTime();
         });
-      
+
       // The next match is the first upcoming match
       const nextMatch = sortedUpcoming.length > 0 ? [sortedUpcoming[0]] : [];
-      
+
       // Additional upcoming matches (up to 3)
       const additionalUpcoming = sortedUpcoming.slice(1, 4);
-      
+
       // Combine in order: older results, most recent result, next match, upcoming matches
       return {
         matches: [...sortedRecent, ...nextMatch, ...additionalUpcoming],
@@ -94,36 +103,38 @@ export function MatchCarousel({
       return { matches: [], nextMatchIndex: -1 };
     }
   };
-  
+
+    console.log("=== MATCH CAROUSEL DEBUG ===");
+    console.log("Recent matches from database:", recentMatches.map(m => ({ date: m.match_date, home: m.home_team_name || m.home_team, away: m.away_team_name || m.away_team })));
   const { matches: organizedMatches, nextMatchIndex } = getOrganizedMatches();
-  
+
   // Get the match type for displaying badges
   const getMatchType = (match: MatchInfo, index: number) => {
     if (match.status === 'completed' || match.home_score !== undefined) {
       return 'FINAL RESULT';
     }
-    
+
     // If this is the next match (right after the recent matches)
     if (index === nextMatchIndex) {
       return 'NEXT MATCH';
     }
-    
+
     return 'UPCOMING MATCH';
   };
-  
+
   // Handle carousel navigation
   const handleScrollLeft = () => {
     if (carouselRef.current) {
       carouselRef.current.scrollBy({ left: -380, behavior: 'smooth' });
     }
   };
-  
+
   const handleScrollRight = () => {
     if (carouselRef.current) {
       carouselRef.current.scrollBy({ left: 380, behavior: 'smooth' });
     }
   };
-  
+
   // Check if we can scroll in either direction
   const checkScrollState = () => {
     if (carouselRef.current) {
@@ -134,18 +145,18 @@ export function MatchCarousel({
       );
     }
   };
-  
+
   // Center the next match card on initial load
   useEffect(() => {
     if (carouselRef.current && nextMatchIndex >= 0) {
       const cardWidth = 360; // Width of each card
       const spacing = 24;    // space-x-6 = 1.5rem = 24px
       const scrollTo = nextMatchIndex * (cardWidth + spacing);
-      
+
       // Get the container width to center the card
       const containerWidth = carouselRef.current.offsetWidth;
       const centerOffset = (containerWidth - cardWidth) / 2;
-      
+
       // Scroll to center the next match card
       setTimeout(() => {
         if (carouselRef.current) {
@@ -155,21 +166,21 @@ export function MatchCarousel({
       }, 100);
     }
   }, [nextMatchIndex, organizedMatches]);
-  
+
   // Add event listeners for scroll and resize
   useEffect(() => {
     const carouselElement = carouselRef.current;
     if (carouselElement) {
       carouselElement.addEventListener('scroll', checkScrollState);
       window.addEventListener('resize', checkScrollState);
-      
+
       return () => {
         carouselElement.removeEventListener('scroll', checkScrollState);
         window.removeEventListener('resize', checkScrollState);
       };
     }
   }, []);
-  
+
   // Handle drag start
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!carouselRef.current) return;
@@ -177,14 +188,14 @@ export function MatchCarousel({
     setStartX(e.pageX - carouselRef.current.offsetLeft);
     setScrollLeft(carouselRef.current.scrollLeft);
   };
-  
+
   const handleTouchStart = (e: React.TouchEvent) => {
     if (!carouselRef.current || e.touches.length === 0) return;
     setIsDragging(true);
     setStartX(e.touches[0].pageX - carouselRef.current.offsetLeft);
     setScrollLeft(carouselRef.current.scrollLeft);
   };
-  
+
   // Handle drag move
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging || !carouselRef.current) return;
@@ -193,14 +204,14 @@ export function MatchCarousel({
     const walk = (x - startX) * 2; // Adjust scrolling speed
     carouselRef.current.scrollLeft = scrollLeft - walk;
   };
-  
+
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!isDragging || !carouselRef.current || e.touches.length === 0) return;
     const x = e.touches[0].pageX - carouselRef.current.offsetLeft;
     const walk = (x - startX) * 2;
     carouselRef.current.scrollLeft = scrollLeft - walk;
   };
-  
+
   // Handle drag end
   const handleDragEnd = () => {
     setIsDragging(false);
@@ -208,7 +219,7 @@ export function MatchCarousel({
       checkScrollState();
     }
   };
-  
+
   // If we have no matches, show placeholder
   if (organizedMatches.length === 0) {
     return (
@@ -217,7 +228,7 @@ export function MatchCarousel({
       </div>
     );
   }
-  
+
   return (
     <div>
       {showHeader && (
@@ -235,7 +246,7 @@ export function MatchCarousel({
           </Link>
         </div>
       )}
-      
+
       <div className="relative w-full overflow-hidden">
         {/* Left navigation arrow */}
         <button
@@ -247,7 +258,7 @@ export function MatchCarousel({
         >
           <ChevronLeft className="h-5 w-5 text-[#00105A]" />
         </button>
-        
+
         {/* Match carousel with draggable functionality */}
         <div 
           ref={carouselRef} 
@@ -263,7 +274,7 @@ export function MatchCarousel({
         >
           {organizedMatches.map((match, index) => {
             const matchType = getMatchType(match, index);
-            
+
             return (
               <div
                 key={match.id || index} 
@@ -273,12 +284,15 @@ export function MatchCarousel({
                   match={match}
                   matchType={matchType as 'FINAL RESULT' | 'NEXT MATCH' | 'UPCOMING MATCH'}
                   isCurrentMatch={index === nextMatchIndex}
+                  onGalleryClick={onGalleryClick}
+                  onReportClick={onReportClick}
+                  onTicketClick={onTicketClick}
                 />
               </div>
             );
           })}
         </div>
-        
+
         {/* Right navigation arrow */}
         <button
           onClick={handleScrollRight}
@@ -290,7 +304,7 @@ export function MatchCarousel({
           <ChevronRight className="h-5 w-5 text-[#00105A]" />
         </button>
       </div>
-      
+
       {/* League table summary section */}
       {leagueData && (
         <div className="mt-8">

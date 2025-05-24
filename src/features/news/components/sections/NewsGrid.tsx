@@ -4,6 +4,7 @@ import { NewsPageCard } from "../../components";
 import { NewsArticle } from "../../types";
 import { cn } from "@/lib/utils";
 import { NewsModal } from "../../components";
+import { MatchGalleryModal } from "@/features/galleries";
 
 interface NewsGridProps {
   articles: NewsArticle[];
@@ -17,6 +18,7 @@ const NewsGrid: React.FC<NewsGridProps> = ({
   className
 }) => {
   const [selectedArticle, setSelectedArticle] = useState<NewsArticle | null>(null);
+  const [selectedGalleryId, setSelectedGalleryId] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState<string>("all");
 
   // Combine articles and galleries into a single content array
@@ -28,8 +30,8 @@ const NewsGrid: React.FC<NewsGridProps> = ({
     ...galleries.map(gallery => ({
       id: gallery._id,
       title: gallery.title,
-      publishedAt: gallery.publishedAt,
-      mainImage: gallery.mainImage,
+      publishedAt: gallery.matchDate || gallery.publishedAt || gallery._createdAt, // ✅ FIXED: Use matchDate first
+      mainImage: gallery.coverImage,
       category: "matchGallery",
       contentType: "gallery"
     }))
@@ -47,25 +49,32 @@ const NewsGrid: React.FC<NewsGridProps> = ({
     ? sortedContent 
     : sortedContent.filter(item => item.category === activeFilter);
   
-  // Available categories for filtering - dynamically build from available content
+  // Available categories for filtering
   const categoryMap: Record<string, string> = {
     "all": "All News",
-    "matchReport": "Match Reports",
     "clubNews": "Club News",
-    "teamNews": "Team News",
-    "communityNews": "Community",
     "commercialNews": "Commercial",
-    "matchGallery": "Match Galleries"
+    "communityNews": "Community",
+    "matchGallery": "Match Gallery",
+    "matchReport": "Match Reports",
+    "teamNews": "Team News"
   };
   
-  // Get unique categories from content
+  // Get unique categories from content and sort alphabetically
   const uniqueCategories = ["all", ...new Set(allContent.map(item => item.category))];
   
   // Create category objects for the filter buttons
-  const categories = uniqueCategories.map(catId => ({
-    id: catId,
-    name: categoryMap[catId] || catId
-  }));
+  const categories = uniqueCategories
+    .map(catId => ({
+      id: catId,
+      name: categoryMap[catId] || catId
+    }))
+    .sort((a, b) => {
+      // Keep "All News" first, then alphabetical
+      if (a.id === "all") return -1;
+      if (b.id === "all") return 1;
+      return a.name.localeCompare(b.name);
+    });
   
   // Smart layout algorithm to avoid gaps with limited content
   const getCardSize = (index: number, totalItems: number) => {
@@ -97,10 +106,7 @@ const NewsGrid: React.FC<NewsGridProps> = ({
     if (item.contentType === "article") {
       setSelectedArticle(item);
     } else if (item.contentType === "gallery") {
-      // For now, we'll just handle with a placeholder
-      // Later we'll implement the gallery modal
-      console.log("Gallery clicked:", item);
-      alert("Gallery view will be implemented soon!");
+      setSelectedGalleryId(item.id);
     }
   };
   
@@ -174,6 +180,13 @@ const NewsGrid: React.FC<NewsGridProps> = ({
           onClose={() => setSelectedArticle(null)}
         />
       )}
+
+      {/* Match Gallery Modal - ✅ TEMPORARY: Comment out to test */}
+      {/* <MatchGalleryModal
+        isOpen={!!selectedGalleryId}
+        onClose={() => setSelectedGalleryId(null)}
+        galleryId={selectedGalleryId || undefined}
+      /> */}
     </div>
   );
 };

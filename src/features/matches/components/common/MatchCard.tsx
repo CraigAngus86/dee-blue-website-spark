@@ -7,15 +7,22 @@ interface MatchCardProps {
   match: any;
   matchType?: 'FINAL RESULT' | 'NEXT MATCH' | 'UPCOMING MATCH';
   isCurrentMatch?: boolean;
+  onGalleryClick?: (galleryId: string) => void;
+  onReportClick?: (reportId: string) => void;
+  onTicketClick?: (ticketUrl: string) => void;
 }
 
 export function MatchCard({ 
   match, 
   matchType = 'UPCOMING MATCH',
-  isCurrentMatch = false 
+  isCurrentMatch = false,
+  onGalleryClick,
+  onReportClick,
+  onTicketClick
 }: MatchCardProps) {
   const isNextMatch = matchType === 'NEXT MATCH' || isCurrentMatch;
   const isResult = matchType === 'FINAL RESULT';
+  const isUpcoming = matchType === 'UPCOMING MATCH' || matchType === 'NEXT MATCH';
   
   // Competition handling with fallbacks
   const competitionName = 
@@ -53,6 +60,32 @@ export function MatchCard({
     }
     return timeString;
   };
+
+  // Icon click handlers
+  const handleGalleryClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (match.gallery_link && onGalleryClick) {
+      onGalleryClick(match.gallery_link);
+    }
+  };
+
+  const handleReportClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (match.match_report_link && onReportClick) {
+      onReportClick(match.match_report_link);
+    }
+  };
+
+  const handleTicketClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (match.ticket_link) {
+      if (onTicketClick) {
+        onTicketClick(match.ticket_link);
+      } else {
+        window.open(match.ticket_link, '_blank');
+      }
+    }
+  };
   
   return (
     <div
@@ -80,8 +113,8 @@ export function MatchCard({
           </div>
         </div>
         
-        {/* Teams and score/vs - with increased padding for better vertical centering */}
-        <div className="px-4 py-8">
+        {/* Teams and score/vs */}
+        <div className="px-4 py-6">
           <div className="flex justify-between items-center">
             {/* Home team */}
             <div className="text-center w-5/12">
@@ -114,10 +147,18 @@ export function MatchCard({
               />
             </div>
           </div>
+
+          {/* NEW: Venue moved here under teams/score */}
+          {match.venue && (
+            <div className="flex items-center justify-center text-[#4b5563] text-xs mt-3">
+              <MapPin className="h-3 w-3 mr-1" />
+              <span>{match.venue}</span>
+            </div>
+          )}
         </div>
         
-        {/* Match details - date and venue */}
-        <div className="px-5 py-4 border-t border-[#e5e7eb] bg-[#f9fafb] flex justify-between items-center">
+        {/* NEW: Match details footer with date + icons */}
+        <div className="px-4 py-3 border-t border-[#e5e7eb] bg-[#f9fafb] flex justify-between items-center">
           {/* Date and time */}
           <div className="flex items-center text-[#4b5563] text-xs">
             <Calendar className="h-3 w-3 mr-1" />
@@ -127,13 +168,47 @@ export function MatchCard({
             </span>
           </div>
           
-          {/* Venue */}
-          {match.venue && (
-            <div className="flex items-center text-[#4b5563] text-xs">
-              <MapPin className="h-3 w-3 mr-1" />
-              <span className="truncate max-w-[100px]">{match.venue}</span>
-            </div>
-          )}
+          {/* Action icons */}
+          <div className="flex space-x-2">
+            {isUpcoming ? (
+              /* Ticket icon for upcoming matches */
+              <button 
+                onClick={handleTicketClick}
+                className={`${match.ticket_link ? 'text-[#00105A] hover:text-[#FFD700]' : 'text-[#9CA3AF] cursor-default'} transition-colors`}
+                title="Buy Tickets"
+                disabled={!match.ticket_link}
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+                </svg>
+              </button>
+            ) : (
+              /* Gallery and report icons for completed matches */
+              <>
+                <button 
+                  onClick={handleReportClick}
+                  className={`${match.match_report_link ? 'text-[#00105A] hover:text-[#FFD700]' : 'text-[#9CA3AF] cursor-default'} transition-colors`}
+                  title="Match Report"
+                  disabled={!match.match_report_link}
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </button>
+                
+                <button 
+                  onClick={handleGalleryClick}
+                  className={`${match.gallery_link ? 'text-[#00105A] hover:text-[#FFD700]' : 'text-[#9CA3AF] cursor-default'} transition-colors`}
+                  title="Photo Gallery"
+                  disabled={!match.gallery_link}
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </button>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </div>
