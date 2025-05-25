@@ -93,6 +93,14 @@ export default {
         group: 'relations'
       },
       {
+        name: 'sanityId',
+        title: 'Sanity Document ID',
+        type: 'string',
+        description: 'Copy this ID to paste into Supabase match.match_report_link field',
+        readOnly: true,
+        group: 'relations'
+      },
+      {
         name: 'relatedPlayers',
         title: 'Related Players',
         type: 'array',

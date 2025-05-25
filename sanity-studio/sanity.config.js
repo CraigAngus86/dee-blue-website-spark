@@ -7,6 +7,7 @@ import resolveProductionUrl from './resolveProductionUrl'
 import {cloudinarySchemaPlugin} from 'sanity-plugin-cloudinary'
 import refreshMatchDataAction from './documentActions/refreshMatchData'
 import generateFolderNameAction from './documentActions/generateFolderName'
+import getSanityIdAction from './documentActions/getSanityId'
 
 export default defineConfig({
   name: 'default',
@@ -47,6 +48,9 @@ export default defineConfig({
     actions: (prev, context) => {
       if (context.schemaType === 'matchGallery') {
         return [...prev, generateFolderNameAction]
+      }
+      if (context.schemaType === 'newsArticle') {
+        return [...prev, getSanityIdAction]
       }
       return prev
     }

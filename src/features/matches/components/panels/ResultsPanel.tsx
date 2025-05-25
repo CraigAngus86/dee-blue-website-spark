@@ -6,10 +6,17 @@ import { format } from 'date-fns';
 import { DEFAULT_SEASON, DEFAULT_COMPETITION, DEFAULT_MONTH } from '../../constants';
 import { ResultCard } from '../ResultCard';
 import { MatchGalleryModal } from "@/features/galleries";
+import { NewsModal } from "@/features/news/components";
+import { sanityClient } from '@/lib/sanity/client';
 
 export function ResultsPanel() {
   const [galleryModalOpen, setGalleryModalOpen] = useState(false);
   const [selectedGalleryId, setSelectedGalleryId] = useState<string | null>(null);
+  
+  // News modal state
+  const [newsModalOpen, setNewsModalOpen] = useState(false);
+  const [selectedArticle, setSelectedArticle] = useState<any | null>(null);
+  const [articleLoading, setArticleLoading] = useState(false);
   
   const handleGalleryClick = (galleryId: string) => {
     setSelectedGalleryId(galleryId);
@@ -19,6 +26,61 @@ export function ResultsPanel() {
   const handleGalleryModalClose = () => {
     setGalleryModalOpen(false);
     setSelectedGalleryId(null);
+  };
+
+  // Handle report click
+  const handleReportClick = async (reportId: string) => {
+    console.log('Report clicked with ID:', reportId);
+    
+    if (reportId.startsWith('http')) {
+      // External link - open in new tab
+      window.open(reportId, '_blank');
+    } else {
+      // Sanity document ID - fetch article and open modal
+      setArticleLoading(true);
+      try {
+        const query = `*[_type == "newsArticle" && _id == $articleId][0] {
+          _id,
+          title,
+          "slug": slug.current,
+          publishedAt,
+          mainImage,
+          excerpt,
+          category,
+          body,
+          author,
+          "matchId": matchId,
+          "relatedPlayers": relatedPlayers[]-> {
+            "_id": _id,
+            "name": name,
+            "slug": slug.current,
+            "profileImage": profileImage
+          },
+          gallery
+        }`;
+        
+        const article = await sanityClient.fetch(query, { articleId: reportId });
+        
+        if (article) {
+          setSelectedArticle({
+            ...article,
+            id: article._id
+          });
+          setNewsModalOpen(true);
+        } else {
+          console.error('Article not found:', reportId);
+        }
+      } catch (error) {
+        console.error('Error fetching article:', error);
+      } finally {
+        setArticleLoading(false);
+      }
+    }
+  };
+
+  const handleNewsModalClose = () => {
+    setNewsModalOpen(false);
+    setSelectedArticle(null);
   };
 
   const searchParams = useSearchParams();
@@ -45,7 +107,6 @@ export function ResultsPanel() {
         
         // Add competition filter if not "all"
         if (competition !== 'all') {
-          // Filter by the full competition name
           query = query.eq('competition', competition);
         }
         
@@ -131,7 +192,12 @@ export function ResultsPanel() {
             
             <div className="grid gap-6">
               {monthResults.map(result => (
-                <ResultCard key={result.id} result={result} onGalleryClick={handleGalleryClick} />
+                <ResultCard 
+                  key={result.id} 
+                  result={result} 
+                  onGalleryClick={handleGalleryClick}
+                  onReportClick={handleReportClick}
+                />
               ))}
             </div>
           </div>
@@ -142,6 +208,12 @@ export function ResultsPanel() {
         isOpen={galleryModalOpen}
         onClose={handleGalleryModalClose}
         galleryId={selectedGalleryId || undefined}
+      />
+
+      <NewsModal
+        article={selectedArticle}
+        isOpen={newsModalOpen}
+        onClose={handleNewsModalClose}
       />
     </>
   );
