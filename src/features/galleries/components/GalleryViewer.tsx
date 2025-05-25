@@ -72,7 +72,7 @@ const GalleryViewer: React.FC<GalleryViewerProps> = ({
       {/* Main image with fade transition */}
       <div className={`relative w-full h-full max-h-[calc(90vh-150px)] flex items-center justify-center transition-opacity duration-300 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
         <img
-          src={getOptimizedImageUrl(photo.image, 'viewer')}
+          src={getOptimizedImageUrl(photo?.image, 'viewer')}
           alt={photo.caption || `Photo ${currentIndex + 1}`}
           className="max-h-full max-w-full object-contain"
           onLoad={handleImageLoad}

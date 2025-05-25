@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { X, Twitter, Facebook, Linkedin, Mail, Link, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useGallery } from '../hooks/useGallery';
-import { GalleryViewer } from './GalleryViewer';
-import { GalleryThumbnailGrid } from './GalleryThumbnailGrid';
+import GalleryViewer from './GalleryViewer';
+import GalleryThumbnailGrid from './GalleryThumbnailGrid';
 
 interface MatchGalleryModalProps {
   isOpen: boolean;
@@ -18,44 +18,17 @@ export function MatchGalleryModal({ isOpen, onClose, galleryId, matchId }: Match
 
   // Reset photo index when gallery changes
   useEffect(() => {
-    if (gallery) {
-      setCurrentPhotoIndex(0);
-    }
+    setCurrentPhotoIndex(0);
   }, [gallery]);
 
-  // Handle keyboard navigation
-  useEffect(() => {
-    const handleKeyPress = (e: KeyboardEvent) => {
-      if (!isOpen || !gallery) return;
-      
-      switch (e.key) {
-        case 'Escape':
-          onClose();
-          break;
-        case 'ArrowLeft':
-          setCurrentPhotoIndex(prev => 
-            prev > 0 ? prev - 1 : gallery.photos.length - 1
-          );
-          break;
-        case 'ArrowRight':
-          setCurrentPhotoIndex(prev => 
-            prev < gallery.photos.length - 1 ? prev + 1 : 0
-          );
-          break;
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyPress);
-    return () => document.removeEventListener('keydown', handleKeyPress);
-  }, [isOpen, gallery, onClose]);
-
+  // Handle sharing functionality
   const shareGallery = (platform: string) => {
     const url = window.location.href;
-    const text = `Check out this match gallery from Banks o' Dee FC`;
+    const title = gallery?.title || 'Photo Gallery';
     
     switch (platform) {
       case 'twitter':
-        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`);
+        window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`);
         break;
       case 'facebook':
         window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`);
@@ -64,7 +37,7 @@ export function MatchGalleryModal({ isOpen, onClose, galleryId, matchId }: Match
         window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`);
         break;
       case 'email':
-        window.location.href = `mailto:?subject=${encodeURIComponent(text)}&body=${encodeURIComponent(url)}`;
+        window.open(`mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(url)}`);
         break;
       case 'copy':
         navigator.clipboard.writeText(url);
@@ -72,8 +45,18 @@ export function MatchGalleryModal({ isOpen, onClose, galleryId, matchId }: Match
     }
   };
 
+  // Navigation handlers
+  const handleNext = () => {
+    setCurrentPhotoIndex(prev => Math.min(prev + 1, gallery!.photos.length - 1));
+  };
+
+  const handlePrevious = () => {
+    setCurrentPhotoIndex(prev => Math.max(prev - 1, 0));
+  };
+
+  // Don't render if not open
   if (!isOpen) return null;
-  
+
   // Handle loading state
   if (loading) {
     return (
@@ -99,7 +82,7 @@ export function MatchGalleryModal({ isOpen, onClose, galleryId, matchId }: Match
       </div>
     );
   }
-  
+
   // Handle error state
   if (error || !gallery) {
     return (
@@ -128,10 +111,10 @@ export function MatchGalleryModal({ isOpen, onClose, galleryId, matchId }: Match
       </div>
     );
   }
-  
+
   // Gallery found and loaded successfully
   const currentPhoto = gallery.photos[currentPhotoIndex];
-  
+
   return (
     <div className="fixed inset-0 z-[9999] overflow-hidden bg-black/50 flex items-center justify-center">
       <div className="relative w-full max-w-6xl h-[85vh] mx-auto bg-white rounded-lg shadow-xl overflow-hidden flex flex-col">
@@ -189,9 +172,13 @@ export function MatchGalleryModal({ isOpen, onClose, galleryId, matchId }: Match
           {/* Main photo viewer */}
           <div className="flex-1 bg-black relative overflow-hidden">
             <GalleryViewer 
-              photos={gallery.photos}
+              photo={currentPhoto}
+              onNext={handleNext}
+              onPrevious={handlePrevious}
+              hasNext={currentPhotoIndex < gallery.photos.length - 1}
+              hasPrevious={currentPhotoIndex > 0}
               currentIndex={currentPhotoIndex}
-              onIndexChange={setCurrentPhotoIndex}
+              totalPhotos={gallery.photos.length}
             />
             
             {/* Navigation arrows */}

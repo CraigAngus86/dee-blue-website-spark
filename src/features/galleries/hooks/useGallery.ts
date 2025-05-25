@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect } from 'react';
 import { sanityClient } from '@/lib/sanity/client';
 import { MatchGallery } from '../types';
@@ -25,6 +24,8 @@ export function useGallery(galleryId?: string, matchId?: string) {
         
         let query = '';
         let params = {};
+        
+        console.log('🔍 useGallery called with:', { galleryId, matchId });
         
         if (galleryId) {
           // Fetch by gallery ID if provided
@@ -56,16 +57,28 @@ export function useGallery(galleryId?: string, matchId?: string) {
           params = { matchId };
         }
         
+        console.log('📝 Sanity query:', query);
+        console.log('📝 Query params:', params);
+        
         const data = await sanityClient.fetch(query, params);
+        
+        console.log('📊 Raw gallery data:', data);
+        console.log('📊 Gallery images:', data?.galleryImages);
+        console.log('📊 Gallery images length:', data?.galleryImages?.length);
         
         if (data) {
           // Transform galleryImages to photos to match the expected interface
-          // For each galleryImage, create a photo object with the image property
-          const photos = (data.galleryImages || []).map((image: any) => ({
-            image: image,
-            caption: '',
-            category: undefined
-          }));
+          const photos = (data.galleryImages || []).map((image: any, index: number) => {
+            console.log(`📸 Processing image ${index}:`, image);
+            return {
+              image: image,
+              caption: '',
+              category: undefined
+            };
+          });
+          
+          console.log('✅ Transformed photos:', photos);
+          console.log('✅ Photos length:', photos.length);
           
           const transformedData = {
             ...data,
@@ -73,11 +86,12 @@ export function useGallery(galleryId?: string, matchId?: string) {
           };
           setGallery(transformedData);
         } else {
+          console.error('❌ No gallery data found');
           setError(new Error('Gallery not found'));
         }
       } catch (err) {
+        console.error('💥 Error fetching gallery:', err);
         setError(err instanceof Error ? err : new Error('An error occurred fetching the gallery'));
-        console.error('Error fetching gallery:', err);
       } finally {
         setLoading(false);
       }

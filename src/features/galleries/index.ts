@@ -1,15 +1,12 @@
 /**
  * Gallery feature exports
  */
-
 // Components
-export { default as MatchGalleryModal } from './components/MatchGalleryModal';
+export { MatchGalleryModal } from './components/MatchGalleryModal';
 export { default as GalleryViewer } from './components/GalleryViewer';
 export { default as GalleryThumbnailGrid } from './components/GalleryThumbnailGrid';
-
 // Hooks
 export { useGallery } from './hooks/useGallery';
-
 // Types
 export type { 
   MatchGallery,
