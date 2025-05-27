@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { MatchCarousel } from '@/features/matches/components/home/MatchCarousel';
 import { LeaguePositionSummary } from '@/features/matches/components/common/LeaguePositionSummary';
 import { MatchGalleryModal } from '@/features/galleries';
+import { NewsModal } from '@/features/news/components';
+import { sanityClient } from '@/lib/sanity/client';
 
 interface MatchCenterProps {
   upcomingMatches?: any[];
@@ -16,9 +18,14 @@ export default function MatchCenter({
   recentResults = [], 
   leagueTable = [] 
 }: MatchCenterProps) {
-  // Modal states
+  // Gallery modal states
   const [galleryModalOpen, setGalleryModalOpen] = useState(false);
   const [selectedGalleryId, setSelectedGalleryId] = useState<string | null>(null);
+  
+  // News modal states
+  const [newsModalOpen, setNewsModalOpen] = useState(false);
+  const [selectedArticle, setSelectedArticle] = useState<any | null>(null);
+  const [articleLoading, setArticleLoading] = useState(false);
 
   // Find Banks o' Dee in the league table
   const banksODee = leagueTable.find(team => 
@@ -42,18 +49,60 @@ export default function MatchCenter({
     setGalleryModalOpen(true);
   };
 
-  const handleReportClick = (reportId: string) => {
-    // For now, open external links or handle match reports via news system
+  const handleReportClick = async (reportId: string) => {
     if (reportId.startsWith('http')) {
+      // External link - open in new tab
       window.open(reportId, '_blank');
     } else {
-      // TODO: Implement news modal for match reports
-      console.log('Match report clicked:', reportId);
+      // Sanity document ID - fetch article and open modal
+      setArticleLoading(true);
+      try {
+        const query = `*[_type == "newsArticle" && _id == $articleId][0] {
+          _id,
+          title,
+          "slug": slug.current,
+          publishedAt,
+          mainImage,
+          excerpt,
+          category,
+          body,
+          author,
+          "matchId": matchId,
+          "relatedPlayers": relatedPlayers[]-> {
+            "_id": _id,
+            "name": name,
+            "slug": slug.current,
+            "profileImage": profileImage
+          },
+          gallery
+        }`;
+        
+        const article = await sanityClient.fetch(query, { articleId: reportId });
+        
+        if (article) {
+          setSelectedArticle({
+            ...article,
+            id: article._id
+          });
+          setNewsModalOpen(true);
+        } else {
+          console.error('Article not found:', reportId);
+        }
+      } catch (error) {
+        console.error('Error fetching article:', error);
+      } finally {
+        setArticleLoading(false);
+      }
     }
   };
 
   const handleTicketClick = (ticketUrl: string) => {
     window.open(ticketUrl, '_blank');
+  };
+
+  const handleNewsModalClose = () => {
+    setNewsModalOpen(false);
+    setSelectedArticle(null);
   };
 
   return (
@@ -94,6 +143,13 @@ export default function MatchCenter({
         isOpen={galleryModalOpen}
         onClose={() => setGalleryModalOpen(false)}
         galleryId={selectedGalleryId || undefined}
+      />
+
+      {/* News Modal */}
+      <NewsModal
+        article={selectedArticle}
+        isOpen={newsModalOpen}
+        onClose={handleNewsModalClose}
       />
     </>
   );

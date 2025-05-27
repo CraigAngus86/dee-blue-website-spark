@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import Section from "@/components/ui/layout/Section";
-import FanZoneSection from "@/components/ui/sections/FanZoneSection";
+import { FanZoneSection } from "@/features/fanzone";
 import SponsorsSection from "@/components/ui/sections/SponsorsSection";
 import GradientSeparator from "@/components/ui/separators/GradientSeparator";
 import FadeIn from "@/components/ui/animations/FadeIn";
