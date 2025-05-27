@@ -1,10 +1,33 @@
-import React from 'react';
+"use client";
+import React, { useState } from 'react';
+import FanSubmissionModal from './FanSubmissionModal';
 
 interface FanZoneSectionProps {
   fanOfMonth?: any; // Keep existing prop for now
 }
 
 export function FanZoneSection({ fanOfMonth }: FanZoneSectionProps) {
+  // Modal state management (following your established patterns)
+  const [fanSubmissionModalOpen, setFanSubmissionModalOpen] = useState(false);
+  const [photoUploadModalOpen, setPhotoUploadModalOpen] = useState(false);
+
+  // Modal handlers
+  const handleSubmitStoryClick = () => {
+    setFanSubmissionModalOpen(true);
+  };
+
+  const handleUploadPhotoClick = () => {
+    setPhotoUploadModalOpen(true);
+  };
+
+  const handleCloseFanSubmissionModal = () => {
+    setFanSubmissionModalOpen(false);
+  };
+
+  const handleClosePhotoUploadModal = () => {
+    setPhotoUploadModalOpen(false);
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Section Header */}
@@ -27,7 +50,10 @@ export function FanZoneSection({ fanOfMonth }: FanZoneSectionProps) {
             </div>
             <h3 className="text-[#00105A] text-lg font-semibold mb-2">Become our first featured fan</h3>
             <p className="text-[#6b7280] text-sm mb-4">Share your Banks o' Dee story and be featured on our website</p>
-            <button className="bg-[#FFD700] text-[#00105A] px-6 py-3 rounded-lg font-semibold hover:bg-[#f3d54a] transition-colors">
+            <button 
+              onClick={handleSubmitStoryClick}
+              className="bg-[#FFD700] text-[#00105A] px-6 py-3 rounded-lg font-semibold hover:bg-[#f3d54a] transition-colors"
+            >
               Submit Your Story
             </button>
           </div>
@@ -77,7 +103,10 @@ export function FanZoneSection({ fanOfMonth }: FanZoneSectionProps) {
         
         <div className="text-center">
           <p className="text-[#6b7280] mb-4">Share your match day photos and be featured on our website</p>
-          <button className="bg-[#FFD700] text-[#00105A] px-6 py-3 rounded-lg font-semibold hover:bg-[#f3d54a] transition-colors">
+          <button 
+            onClick={handleUploadPhotoClick}
+            className="bg-[#FFD700] text-[#00105A] px-6 py-3 rounded-lg font-semibold hover:bg-[#f3d54a] transition-colors"
+          >
             📷 Upload Photo
           </button>
         </div>
@@ -88,6 +117,28 @@ export function FanZoneSection({ fanOfMonth }: FanZoneSectionProps) {
         <div className="text-[1.5rem] font-bold text-[#00105A] mb-2">#BanksODeeFC</div>
         <p className="text-[#6b7280]">Join the conversation on social media</p>
       </div>
+
+      {/* Fan Submission Modal */}
+      <FanSubmissionModal 
+        isOpen={fanSubmissionModalOpen}
+        onClose={handleCloseFanSubmissionModal}
+      />
+
+      {/* Photo Upload Modal - Still placeholder */}
+      {photoUploadModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
+          <div className="relative w-full max-w-4xl bg-white rounded-lg shadow-xl overflow-hidden p-8">
+            <h2 className="text-2xl font-bold text-[#00105A] mb-4">Photo Upload - Coming Soon!</h2>
+            <p className="text-[#6b7280] mb-6">Modal will be implemented next...</p>
+            <button 
+              onClick={handleClosePhotoUploadModal}
+              className="bg-[#00105A] text-white px-4 py-2 rounded hover:bg-[#001C8C] transition-colors"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
