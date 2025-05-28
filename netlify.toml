@@ -1,0 +1,7 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+  ignore = "reference-designs/"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
