@@ -1,4 +1,3 @@
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -10,6 +9,8 @@ const nextConfig = {
       'cdn.sanity.io',
       'bbbxhwaixjjxgboeiktq.supabase.co'
     ],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
   env: {
     // Make sure we export any public env vars if needed
@@ -23,5 +24,4 @@ const nextConfig = {
     }
   },
 };
-
 module.exports = nextConfig;
