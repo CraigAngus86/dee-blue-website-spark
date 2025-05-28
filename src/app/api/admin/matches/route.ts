@@ -31,9 +31,9 @@ export async function GET() {
     const matches = data.map(match => ({
       id: match.id,
       date: new Date(match.match_date).toLocaleDateString(),
-      homeTeam: match.home_team?.name || 'Unknown',
-      awayTeam: match.away_team?.name || 'Unknown',
-      display: `${new Date(match.match_date).toLocaleDateString()} - ${match.home_team?.name || 'Unknown'} vs ${match.away_team?.name || 'Unknown'}`
+      homeTeam: (match.home_team as any)?.name || 'Unknown',
+      awayTeam: (match.away_team as any)?.name || 'Unknown',
+      display: `${new Date(match.match_date).toLocaleDateString()} - ${(match.home_team as any)?.name || 'Unknown'} vs ${(match.away_team as any)?.name || 'Unknown'}`
     }));
     
     return NextResponse.json(matches);
