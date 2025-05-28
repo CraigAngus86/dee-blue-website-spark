@@ -1,7 +1,0 @@
--- Teams
-
-
--- Competitions
-
-
--- Matches
