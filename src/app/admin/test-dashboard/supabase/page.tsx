@@ -306,7 +306,7 @@ export default function SupabaseTestPage() {
           table: listenTable
         },
         (payload) => {
-          const message = `${new Date().toLocaleTimeString()}: ${payload.eventType} on ${listenTable} - ID: ${payload.new?.id || payload.old?.id}`;
+          const message = `${new Date().toLocaleTimeString()}: ${payload.eventType} on ${listenTable} - ID: ${(payload.new as any)?.id || (payload.old as any)?.id}`;
           setRealtimeMessages(prev => [message, ...prev].slice(0, 10));
         }
       )
