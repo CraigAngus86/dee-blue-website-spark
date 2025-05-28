@@ -1,5 +1,5 @@
 import { 
-  FileUpload, 
+  Upload, 
   Image, 
   Sparkles, 
   BookOpen, 
