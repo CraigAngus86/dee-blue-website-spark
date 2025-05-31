@@ -54,7 +54,8 @@ export default {
         list: [
           {title: 'Pending Review', value: 'pending'},
           {title: 'Approved', value: 'approved'},
-          {title: 'Rejected', value: 'rejected'}
+          {title: 'Featured', value: 'featured'},
+          {title: 'Declined', value: 'declined'}
         ]
       },
       initialValue: 'pending',
@@ -123,7 +124,8 @@ export default {
       const statusIcon = {
         pending: '⏳',
         approved: '✅',
-        rejected: '❌'
+        featured: '⭐',
+        declined: '❌'
       }[status] || '';
         
       return {

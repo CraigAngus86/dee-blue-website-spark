@@ -1,5 +1,4 @@
 import { deskTool } from 'sanity/desk'
-
 export const structure = (S) =>
   S.list()
     .title('Content')
@@ -26,7 +25,7 @@ export const structure = (S) =>
             ])
         ),
         
-      // Fan Engagement - Expanded section
+      // Fan Engagement - Clean section
       S.listItem()
         .title('Fan Engagement')
         .child(
@@ -34,7 +33,6 @@ export const structure = (S) =>
             .title('Fan Engagement')
             .items([
               S.listItem().title('Fan of the Month').child(S.documentTypeList('fanOfMonth')),
-              S.listItem().title('Fan Submissions').child(S.documentTypeList('fanSubmission')),
               S.listItem().title('Fan Photos').child(S.documentTypeList('fanPhoto')),
               S.listItem().title('Fan Polls').child(S.documentTypeList('fanPoll')),
             ])

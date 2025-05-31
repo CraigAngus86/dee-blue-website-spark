@@ -4,16 +4,16 @@ export default {
   type: 'document',
   groups: [
     {
-      name: 'basic',
-      title: 'Basic Information',
+      name: 'submission',
+      title: 'Submission Details',
     },
     {
       name: 'content',
       title: 'Content',
     },
     {
-      name: 'media',
-      title: 'Media',
+      name: 'moderation',
+      title: 'Moderation',
     }
   ],
   fields: [
@@ -22,11 +22,24 @@ export default {
       title: 'Fan Name',
       type: 'string',
       validation: Rule => Rule.required(),
-      group: 'basic'
+      group: 'submission'
+    },
+    {
+      name: 'email',
+      title: 'Email',
+      type: 'string',
+      validation: Rule => Rule.required().email(),
+      group: 'submission'
+    },
+    {
+      name: 'phone',
+      title: 'Phone',
+      type: 'string',
+      group: 'submission'
     },
     {
       name: 'category',
-      title: 'Category',
+      title: 'Selected Category',
       type: 'string',
       options: {
         list: [
@@ -38,108 +51,105 @@ export default {
         ]
       },
       validation: Rule => Rule.required(),
-      group: 'basic'
+      group: 'submission'
     },
     {
       name: 'supporterSince',
       title: 'Supporter Since',
       type: 'number',
-      description: 'Year they started supporting (e.g., 1998)',
-      group: 'basic'
+      group: 'content'
     },
     {
       name: 'story',
-      title: 'Fan Story',
+      title: 'Submitted Story',
       type: 'text',
-      validation: Rule => Rule.required(),
+      validation: Rule => Rule.required().min(100),
       group: 'content'
     },
     {
-      name: 'excerpt',
-      title: 'Story Excerpt',
-      type: 'text',
-      description: 'Short version for homepage display (max 150 chars)',
-      validation: Rule => Rule.max(150),
+      name: 'photos',
+      title: 'Submitted Photos',
+      type: 'array',
+      of: [{type: 'cloudinary.asset'}],
+      options: {
+        layout: 'grid'
+      },
       group: 'content'
-    },
-    {
-      name: 'photo',
-      title: 'Featured Photo',
-      type: 'cloudinary.asset',
-      validation: Rule => Rule.required(),
-      group: 'media'
-    },
-    {
-      name: 'month',
-      title: 'Featured Month',
-      type: 'date',
-      validation: Rule => Rule.required(),
-      group: 'basic'
-    },
-    {
-      name: 'isActive',
-      title: 'Currently Featured',
-      type: 'boolean',
-      initialValue: false,
-      group: 'basic'
     },
     {
       name: 'socialPermissions',
       title: 'Social Media Permissions Granted',
       type: 'boolean',
-      initialValue: true,
-      group: 'media'
+      group: 'submission'
     },
     {
-      name: 'vipExperience',
-      title: 'VIP Experience',
-      type: 'object',
-      fields: [
-        {
-          name: 'completed',
-          title: 'VIP Experience Completed',
-          type: 'boolean'
-        },
-        {
-          name: 'date',
-          title: 'Experience Date',
-          type: 'date'
-        },
-        {
-          name: 'notes',
-          title: 'Experience Notes',
-          type: 'text'
-        }
-      ],
-      group: 'content'
+      name: 'status',
+      title: 'Submission Status',
+      type: 'string',
+      options: {
+        list: [
+          {title: 'Pending Review', value: 'pending'},
+          {title: 'Approved', value: 'approved'},
+          {title: 'Featured', value: 'featured'},
+          {title: 'Declined', value: 'declined'}
+        ]
+      },
+      initialValue: 'pending',
+      group: 'moderation'
+    },
+    {
+      name: 'submittedAt',
+      title: 'Submission Date',
+      type: 'datetime',
+      initialValue: () => new Date().toISOString(),
+      group: 'submission'
+    },
+    {
+      name: 'reviewNotes',
+      title: 'Review Notes',
+      type: 'text',
+      description: 'Internal notes for moderation team',
+      group: 'moderation'
     }
   ],
   preview: {
     select: {
       title: 'fanName',
-      media: 'photo',
       category: 'category',
-      month: 'month'
+      status: 'status',
+      date: 'submittedAt'
     },
-    prepare({title, media, category, month}) {
-      const displayMonth = month 
-        ? new Date(month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
-        : 'No date';
+    prepare({title, category, status, date}) {
+      const displayDate = date 
+        ? new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+        : '';
       const categoryTitle = category ? category.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()) : '';
+      const statusIcon = {
+        pending: '⏳',
+        approved: '✅',
+        featured: '⭐',
+        declined: '❌'
+      }[status] || '';
         
       return {
-        title,
-        media,
-        subtitle: `${categoryTitle} - ${displayMonth}`
+        title: `${statusIcon} ${title}`,
+        subtitle: `${categoryTitle} - ${displayDate}`
       }
     }
   },
   orderings: [
     {
-      title: 'Month, Recent',
-      name: 'monthDesc',
+      title: 'Submission Date, Recent',
+      name: 'submissionDesc',
       by: [
-        {field: 'month', direction: 'desc'}
+        {field: 'submittedAt', direction: 'desc'}
+      ]
+    },
+    {
+      title: 'Status',
+      name: 'status',
+      by: [
+        {field: 'status', direction: 'desc'}
       ]
     }
   ]

@@ -126,7 +126,7 @@ export async function POST(req: NextRequest) {
     
     // Prepare Sanity document with proper _key for photos
     const fanSubmissionDoc = {
-      _type: 'fanSubmission',
+      _type: 'fanOfMonth',
       fanName: fanName.trim(),
       email: email.trim(),
       phone: phone?.trim() || null,

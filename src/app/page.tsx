@@ -10,13 +10,16 @@ import { fetchSanityData } from "@/lib/sanity/sanityClient";
 import { supabase } from "@/lib/supabase/client";
 import { getHomepageUpcomingMatches, getHomepageRecentMatches, getHomepageLeagueTable } from "@/features/matches/hooks/useHomeMatchData";
 import { HomeHeroSection, OverlappingNewsCards } from "@/features/home";
+
 // Set the revalidation time to ensure fresh data
 export const revalidate = 10; // Revalidate every 10 seconds
+
 export const metadata: Metadata = {
   title: "Home | Banks o' Dee FC",
   description:
     "Welcome to the official website of Banks o' Dee Football Club",
 };
+
 // Fetch all news articles for homepage ordered by date
 async function getNewsArticles(limit = 9) {
   const query = `*[_type == "newsArticle" && !(_id in path("drafts.**"))] | order(publishedAt desc)[0...${limit}] {
@@ -39,6 +42,7 @@ async function getNewsArticles(limit = 9) {
     return [];
   }
 }
+
 async function getSponsors() {
   try {
     const { data: sponsors, error } = await supabase
@@ -52,19 +56,43 @@ async function getSponsors() {
     return [];
   }
 }
+
 async function getFanOfMonth() {
+  const query = `*[_type == "fanOfMonth" && status == "featured"][0] {
+    fanName,
+    category,
+    story,
+    photos,
+    supporterSince,
+    submittedAt
+  }`;
+  
   try {
-    const { data: fanOfMonth, error } = await supabase
-      .from("vw_current_fan_of_month")
-      .select("*")
-      .maybeSingle();
-    if (error && error.code !== 'PGRST116') throw error;
-    return fanOfMonth;
+    const fanOfMonth = await fetchSanityData(query, {}, false);
+    return fanOfMonth || null;
   } catch (error) {
     console.error("Error fetching fan of the month:", error);
     return null;
   }
 }
+
+async function getGalleryPhotos() {
+  const query = `*[_type == "fanPhoto" && approvalStatus == "approved"] | order(displayOrder asc, submittedAt desc)[0...6] {
+    fanName,
+    photo,
+    context,
+    submittedAt
+  }`;
+  
+  try {
+    const galleryPhotos = await fetchSanityData(query, {}, false);
+    return galleryPhotos || [];
+  } catch (error) {
+    console.error("Error fetching gallery photos:", error);
+    return [];
+  }
+}
+
 async function getFeaturedPlayers() {
   try {
     const { data: players, error } = await supabase
@@ -80,6 +108,7 @@ async function getFeaturedPlayers() {
     return [];
   }
 }
+
 export default async function HomePage() {
   // Fetch all news articles (up to 9 - 3 for hero, 6 for cards)
   const newsArticles = await getNewsArticles(9);
@@ -91,6 +120,7 @@ export default async function HomePage() {
     leagueTable,
     sponsors,
     fanOfMonth,
+    galleryPhotos,
     featuredPlayers
   ] = await Promise.all([
     getHomepageUpcomingMatches(5),
@@ -98,6 +128,7 @@ export default async function HomePage() {
     getHomepageLeagueTable(),
     getSponsors(),
     getFanOfMonth(),
+    getGalleryPhotos(),
     getFeaturedPlayers()
   ]);
   
@@ -150,7 +181,7 @@ export default async function HomePage() {
       {/* Fan Zone Section */}
       <GradientSeparator />
       <div className="py-12">
-        <FanZoneSection fanOfMonth={fanOfMonth} />
+        <FanZoneSection fanOfMonth={fanOfMonth} galleryPhotos={galleryPhotos} />
       </div>
       
       {/* Players Section */}
