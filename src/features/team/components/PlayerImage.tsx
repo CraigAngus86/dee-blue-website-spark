@@ -3,7 +3,7 @@ import React from 'react';
 interface PlayerImageProps {
   image: any;
   name: string;
-  size?: 'card' | 'modal' | 'large';
+  size?: 'card' | 'modal' | 'large' | 'homepage';
   className?: string;
 }
 
@@ -49,14 +49,17 @@ export const PlayerImage: React.FC<PlayerImageProps> = ({
 
     // Define transformations for different sizes with enhanced parameters
     const transformations = {
-      // Card view: Enhanced with auto-responsive sizing, shadow effect and image improvement
-      card: 'c_fill,g_auto:face,y_30,ar_1:1,w_auto,dpr_auto,q_auto:good,f_auto,e_improve,e_shadow',
+      // Card view: Keep original square for team page
+      card: 'c_fill,g_auto:face,y_30,ar_1:1,w_auto,dpr_auto,q_auto:good,f_auto,e_shadow',
       
-      // Modal view: Enhanced with progressive loading and image improvement
-      modal: 'c_fill,g_auto:face,y_30,ar_3:4,w_auto,dpr_auto,q_auto:good,f_auto,fl_progressive,e_improve',
+      // Homepage cards - Portrait aspect ratio with face detection (removed e_improve)
+      homepage: 'c_fill,g_auto:faces,y_20,ar_3:4,w_400,h_533,q_auto:good,f_auto',
       
-      // Large view: Enhanced with progressive loading and auto improvement for banners
-      large: 'c_fill,g_face:center,ar_16:9,w_auto,dpr_auto,q_auto:good,f_auto,fl_progressive,e_improve'
+      // Modal view: Enhanced with progressive loading
+      modal: 'c_fill,g_auto:face,y_30,ar_3:4,w_auto,dpr_auto,q_auto:good,f_auto,fl_progressive',
+      
+      // Large view: Enhanced with progressive loading
+      large: 'c_fill,g_face:center,ar_16:9,w_auto,dpr_auto,q_auto:good,f_auto,fl_progressive'
     };
 
     // Construct the Cloudinary URL

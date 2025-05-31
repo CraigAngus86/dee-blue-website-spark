@@ -1,7 +1,7 @@
 import { sanityClient } from '@/lib/sanity/client';
 import { Person, Player, Staff, PersonType, StaffRole } from '../types';
 
-// Query that matches the actual schema
+// Query that matches the actual schema - now includes isYouthProduct
 const peopleQuery = `*[_type == "playerProfile"] {
   _id,
   _type,
@@ -16,6 +16,7 @@ const peopleQuery = `*[_type == "playerProfile"] {
   staffType,
   staffRole,
   nationality,
+  isYouthProduct,
   profileImage{
     ...,
     asset{

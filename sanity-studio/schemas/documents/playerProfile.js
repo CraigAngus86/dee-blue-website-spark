@@ -143,6 +143,16 @@ export default {
       initialValue: 'Scotland',
       group: 'basic'
     },
+    // NEW: Youth System Graduate field
+    {
+      name: 'isYouthProduct',
+      title: 'Youth System Graduate',
+      type: 'boolean',
+      description: 'Check if player came through Banks o\' Dee youth system',
+      initialValue: false,
+      group: 'basic',
+      hidden: ({document}) => document?.personType !== 'player'
+    },
     // Replace the existing image field with cloudinary.asset
     {
       name: 'profileImage',

@@ -1,74 +1,64 @@
+'use client';
 import React from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { Player } from '../types';
+import PlayerCard from './PlayerCard';
 import SectionHeader from '@/components/ui/sections/SectionHeader';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 
 interface PlayersSectionProps {
-  title: string;
+  players: Player[];
+  title?: string;
   subtitle?: string;
-  players: Array<{
-    id: string;
-    name: string;
-    position: string;
-    imageUrl?: string;
-  }>;
 }
 
 const PlayersSection: React.FC<PlayersSectionProps> = ({
-  title,
-  subtitle,
-  players
+  players,
+  title = "Our Squad",
+  subtitle = "Meet the players representing Banks o' Dee FC"
 }) => {
+  const handlePlayerClick = (player: Player) => {
+    // TODO: Open PersonDetailsModal or navigate to player page
+    console.log('Player clicked:', player.firstName, player.lastName);
+  };
+
   return (
-    <section className="py-16 bg-white">
+    <section className="py-20 bg-[#f5f7fb]">
       <div className="container mx-auto px-4">
         <SectionHeader 
           title={title}
           subtitle={subtitle}
         />
         
-        <div className="mt-8">
+        <div className="mt-16">
           <Carousel className="w-full">
-            <CarouselContent className="-ml-4">
+            <CarouselContent className="-ml-6">
               {players.map((player) => (
-                <CarouselItem key={player.id} className="pl-4 md:basis-1/2 lg:basis-1/3 xl:basis-1/4">
-                  <Link href={`/team/player/${player.id}`}>
-                    <div className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
-                      <div className="aspect-square relative bg-gray-100">
-                        {player.imageUrl ? (
-                          <Image
-                            src={player.imageUrl}
-                            alt={player.name}
-                            layout="fill"
-                            objectFit="cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <span className="text-gray-400">No image</span>
-                          </div>
-                        )}
-                      </div>
-                      <div className="p-4">
-                        <h3 className="font-bold">{player.name}</h3>
-                        <p className="text-sm text-gray-500">{player.position}</p>
-                      </div>
-                    </div>
-                  </Link>
+                <CarouselItem 
+                  key={player._id} 
+                  className="pl-6 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4"
+                >
+                  <div className="w-full max-w-sm mx-auto">
+                    <PlayerCard 
+                      player={player}
+                      onClick={() => handlePlayerClick(player)}
+                    />
+                  </div>
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
+            <CarouselPrevious className="text-[#00105A] hover:text-[#FFD700] -left-4" />
+            <CarouselNext className="text-[#00105A] hover:text-[#FFD700] -right-4" />
           </Carousel>
         </div>
         
-        <div className="mt-8 text-center">
+        {/* Simple CTA */}
+        <div className="mt-12 text-center">
           <Link 
             href="/team" 
-            className="inline-flex items-center text-primary hover:underline font-medium"
+            className="text-[#00105A] hover:text-[#FFD700] font-medium transition-colors text-lg"
           >
-            View All Players
+            View Full Squad →
           </Link>
         </div>
       </div>

@@ -68,6 +68,7 @@ export interface PersonBase {
 export interface Player extends PersonBase {
   personType: 'player';
   playerPosition: PlayerPosition;
+  isYouthProduct?: boolean; // NEW: Youth system graduate flag
 }
 
 export interface Staff extends PersonBase {

@@ -5,11 +5,13 @@ import SponsorsSection from "@/components/ui/sections/SponsorsSection";
 import GradientSeparator from "@/components/ui/separators/GradientSeparator";
 import FadeIn from "@/components/ui/animations/FadeIn";
 import MatchCenter from "@/components/ui/sections/MatchCenter";
-import PlayersSection from "@/components/ui/sections/PlayersSection";
+import PlayersSection from "@/features/team/components/PlayersSection";
 import { fetchSanityData } from "@/lib/sanity/sanityClient";
 import { supabase } from "@/lib/supabase/client";
 import { getHomepageUpcomingMatches, getHomepageRecentMatches, getHomepageLeagueTable } from "@/features/matches/hooks/useHomeMatchData";
 import { HomeHeroSection, OverlappingNewsCards } from "@/features/home";
+import { getTeamData } from "@/features/team/services/getTeamData";
+import { selectRandomPlayersByPosition } from "@/features/team/services/playerSelection";
 
 // Set the revalidation time to ensure fresh data
 export const revalidate = 10; // Revalidate every 10 seconds
@@ -93,18 +95,20 @@ async function getGalleryPhotos() {
   }
 }
 
-async function getFeaturedPlayers() {
+async function getRandomPlayers() {
   try {
-    const { data: players, error } = await supabase
-      .from("people")
-      .select("*")
-      .not("player_position", "is", null)
-      .order("jersey_number", { ascending: true })
-      .limit(8);
-    if (error) throw error;
-    return players || [];
+    const { people, error } = await getTeamData();
+    
+    if (error) {
+      console.error("Error fetching team data:", error);
+      return [];
+    }
+    
+    // Select random players by position
+    const randomPlayers = selectRandomPlayersByPosition(people);
+    return randomPlayers;
   } catch (error) {
-    console.error("Error fetching players:", error);
+    console.error("Error selecting random players:", error);
     return [];
   }
 }
@@ -121,7 +125,7 @@ export default async function HomePage() {
     sponsors,
     fanOfMonth,
     galleryPhotos,
-    featuredPlayers
+    randomPlayers
   ] = await Promise.all([
     getHomepageUpcomingMatches(5),
     getHomepageRecentMatches(5),
@@ -129,10 +133,11 @@ export default async function HomePage() {
     getSponsors(),
     getFanOfMonth(),
     getGalleryPhotos(),
-    getFeaturedPlayers()
+    getRandomPlayers()
   ]);
   
   console.log(`HomePage - Retrieved matches: ${upcomingMatches.length} upcoming, ${recentMatches.length} recent`);
+  console.log(`HomePage - Selected ${randomPlayers.length} random players`);
   
   // Process news articles for hero (top 3)
   const heroArticles = newsArticles.slice(0, 3).map(article => ({
@@ -160,13 +165,13 @@ export default async function HomePage() {
       {/* News Cards Section - no divider before this section */}
       <OverlappingNewsCards articles={cardsArticles} />
       
-      {/* Gradient Separator after news cards section */}
-      <GradientSeparator />
+      {/* Reduced Gradient Separator */}
+      <GradientSeparator className="py-6" />
       
-      {/* Match Center Section */}
+      {/* Match Center Section - Consistent Spacing */}
       <Section 
         background="transparent"
-        spacing="lg"
+        spacing="md"
         className="bg-[#f5f7fb]"
       > 
         <FadeIn>
@@ -178,24 +183,39 @@ export default async function HomePage() {
         </FadeIn>
       </Section>
       
-      {/* Fan Zone Section */}
-      <GradientSeparator />
-      <div className="py-12">
-        <FanZoneSection fanOfMonth={fanOfMonth} galleryPhotos={galleryPhotos} />
-      </div>
+      {/* Reduced Gradient Separator */}
+      <GradientSeparator className="py-6" />
       
-      {/* Players Section */}
-      <GradientSeparator />
-      <Section
+      {/* Fan Zone Section - Using Section Component for Consistency */}
+      <Section 
         background="transparent"
-        className="bg-[#f5f7fb]"
+        spacing="md"
       >
-        <PlayersSection players={featuredPlayers} />
+        <FanZoneSection fanOfMonth={fanOfMonth} galleryPhotos={galleryPhotos} />
       </Section>
       
-      {/* Sponsors Section */}
-      <GradientSeparator />
-      <SponsorsSection sponsors={sponsors} />
+      {/* Reduced Gradient Separator */}
+      <GradientSeparator className="py-6" />
+      
+      {/* Players Section - NEW Barcelona-style Cards */}
+      <Section
+        background="transparent"
+        spacing="md"
+        className="bg-[#f5f7fb]"
+      >
+        <PlayersSection players={randomPlayers} />
+      </Section>
+      
+      {/* Reduced Gradient Separator */}
+      <GradientSeparator className="py-6" />
+      
+      {/* Sponsors Section - Using Section Wrapper */}
+      <Section
+        background="transparent"
+        spacing="md"
+      >
+        <SponsorsSection sponsors={sponsors} />
+      </Section>
     </div>
   );
 }
