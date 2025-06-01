@@ -1,13 +1,12 @@
 import { Metadata } from "next";
 import Section from "@/components/ui/layout/Section";
 import { FanZoneSection } from "@/features/fanzone";
-import SponsorsSection from "@/components/ui/sections/SponsorsSection";
+import { SponsorsSection, getSponsorsForHomepage, type SanitySponsors } from "@/features/sponsors";
 import GradientSeparator from "@/components/ui/separators/GradientSeparator";
 import FadeIn from "@/components/ui/animations/FadeIn";
 import MatchCenter from "@/components/ui/sections/MatchCenter";
 import PlayersSection from "@/features/team/components/PlayersSection";
 import { fetchSanityData } from "@/lib/sanity/sanityClient";
-import { supabase } from "@/lib/supabase/client";
 import { getHomepageUpcomingMatches, getHomepageRecentMatches, getHomepageLeagueTable } from "@/features/matches/hooks/useHomeMatchData";
 import { HomeHeroSection, OverlappingNewsCards } from "@/features/home";
 import { getTeamData } from "@/features/team/services/getTeamData";
@@ -41,20 +40,6 @@ async function getNewsArticles(limit = 9) {
     return news || [];
   } catch (error) {
     console.error("Error fetching news:", error);
-    return [];
-  }
-}
-
-async function getSponsors() {
-  try {
-    const { data: sponsors, error } = await supabase
-      .from("sponsors")
-      .select("*")
-      .order("featured", { ascending: false });
-    if (error) throw error;
-    return sponsors || [];
-  } catch (error) {
-    console.error("Error fetching sponsors:", error);
     return [];
   }
 }
@@ -130,7 +115,7 @@ export default async function HomePage() {
     getHomepageUpcomingMatches(5),
     getHomepageRecentMatches(5),
     getHomepageLeagueTable(),
-    getSponsors(),
+    getSponsorsForHomepage(),
     getFanOfMonth(),
     getGalleryPhotos(),
     getRandomPlayers()
@@ -138,6 +123,7 @@ export default async function HomePage() {
   
   console.log(`HomePage - Retrieved matches: ${upcomingMatches.length} upcoming, ${recentMatches.length} recent`);
   console.log(`HomePage - Selected ${randomPlayers.length} random players`);
+  console.log(`🏆 Sponsors: ${sponsors.principal.length} principal, ${sponsors.main.length} main, ${sponsors.partner.length} partners`);
   
   // Process news articles for hero (top 3)
   const heroArticles = newsArticles.slice(0, 3).map(article => ({
@@ -209,7 +195,7 @@ export default async function HomePage() {
       {/* Reduced Gradient Separator */}
       <GradientSeparator className="py-6" />
       
-      {/* Sponsors Section - Using Section Wrapper */}
+      {/* Sponsors Section - NEW Barcelona-style with Sanity Data */}
       <Section
         background="transparent"
         spacing="md"

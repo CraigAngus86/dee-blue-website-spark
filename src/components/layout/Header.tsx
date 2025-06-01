@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -6,14 +5,37 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { ArrowRight, Menu, X } from "lucide-react";
+import { buildSponsorLogoUrl } from "@/features/sponsors";
 
 /**
- * Header component with responsive mobile menu
+ * Unified Header component - Man Utd style with sponsor bar
  */
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
+
+  // HARDCODED SPONSORS FOR TESTING NEW HORIZONTAL LOGOS
+  const headerSponsors = [
+    {
+      _id: '1',
+      name: 'Saltire',
+      website: '#',
+      logo: { public_id: 'saltire_zsbu8e_b52c14' }
+    },
+    {
+      _id: '2', 
+      name: 'Global',
+      website: '#',
+      logo: { public_id: 'global_mjxufj_32c9c6' }
+    },
+    {
+      _id: '3',
+      name: 'Three60',
+      website: '#', 
+      logo: { public_id: 'three60_usvkng_508993' }
+    }
+  ];
 
   // Handle scroll event for header styling
   useEffect(() => {
@@ -44,87 +66,120 @@ const Header = () => {
 
   return (
     <header 
-      className={`fixed top-0 left-0 w-full bg-primary text-white z-50 transition-shadow duration-300 ${
+      className={`fixed top-0 left-0 w-full z-50 transition-shadow duration-300 ${
         isScrolled ? "shadow-lg" : "shadow-md"
       }`}
     >
-      <div className="container mx-auto px-4 py-3">
-        <div className="flex items-center justify-between">
-          {/* Logo */}
-          <Link href="/" className="flex items-center">
-            <Image
-              src="/assets/images/logos/BOD_Logo_White_square.png"
-              alt="Banks o' Dee FC"
-              width={40}
-              height={40}
-              className="h-10 w-auto"
-            />
-            <span className="font-montserrat font-bold text-lg ml-2 hidden sm:block">
-              Banks o&apos; Dee FC
-            </span>
-          </Link>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-6">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`font-medium hover:text-blue-200 transition-colors ${
-                  pathname === item.href ? "font-bold" : ""
-                }`}
-              >
-                {item.name}
-              </Link>
-            ))}
-          </nav>
-
-          {/* Buy Tickets Button - Desktop */}
-          <div className="hidden md:block">
-            <Link 
-              href="/tickets" 
-              className="bg-accent hover:bg-accent-dark text-primary font-bold py-2 px-4 rounded-md flex items-center transition-colors"
-            >
-              <span>Buy Tickets</span>
-              <ArrowRight size={16} className="ml-1" />
-            </Link>
+      {/* Sponsor Bar - 44px total height with 24px logos */}
+      {headerSponsors.length > 0 && (
+        <div className="bg-[#C5E7FF] h-11">
+          <div className="container mx-auto px-4 h-full">
+            <div className="flex items-center justify-end h-full">
+              <div className="flex items-center space-x-4">
+                {headerSponsors.map((sponsor) => (
+                  <Link
+                    key={sponsor._id}
+                    href={sponsor.website || '#'}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:opacity-80 transition-opacity block"
+                    title={sponsor.name}
+                  >
+                    <Image
+                      src={buildSponsorLogoUrl(sponsor.logo?.public_id, 'header')}
+                      alt={sponsor.name}
+                      width={120}
+                      height={28}
+                      className="object-contain h-7"
+                    />
+                  </Link>
+                ))}
+              </div>
+            </div>
           </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            onClick={toggleMenu}
-            className="text-white p-2 md:hidden focus:outline-none"
-            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-          >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
         </div>
+      )}
 
-        {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <div className="fixed inset-0 top-16 bg-primary z-40 md:hidden">
-            <nav className="flex flex-col p-4">
+      {/* Main Header - Navy Blue */}
+      <div className="bg-primary text-white">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            {/* Logo */}
+            <Link href="/" className="flex items-center">
+              <Image
+                src="/assets/images/logos/BOD_Logo_White_square.png"
+                alt="Banks o' Dee FC"
+                width={40}
+                height={40}
+                className="h-10 w-auto"
+              />
+              <span className="font-montserrat font-bold text-lg ml-2 hidden sm:block">
+                Banks o&apos; Dee FC
+              </span>
+            </Link>
+
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex items-center space-x-6">
               {navigation.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`text-lg py-3 border-b border-primary-700 ${
+                  className={`font-medium hover:text-blue-200 transition-colors ${
                     pathname === item.href ? "font-bold" : ""
                   }`}
                 >
                   {item.name}
                 </Link>
               ))}
+            </nav>
+
+            {/* Buy Tickets Button - Desktop */}
+            <div className="hidden md:block">
               <Link 
                 href="/tickets" 
-                className="bg-accent hover:bg-accent-dark text-primary font-bold py-3 px-4 mt-4 rounded-md flex items-center justify-center transition-colors"
+                className="bg-accent hover:bg-accent-dark text-primary font-bold py-2 px-4 rounded-md flex items-center transition-colors"
               >
                 <span>Buy Tickets</span>
                 <ArrowRight size={16} className="ml-1" />
               </Link>
-            </nav>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={toggleMenu}
+              className="text-white p-2 md:hidden focus:outline-none"
+              aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+            >
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
           </div>
-        )}
+
+          {/* Mobile Navigation */}
+          {isMenuOpen && (
+            <div className="absolute left-0 right-0 top-full bg-primary z-40 md:hidden">
+              <nav className="flex flex-col p-4">
+                {navigation.map((item) => (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className={`text-lg py-3 border-b border-primary-700 ${
+                      pathname === item.href ? "font-bold" : ""
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                ))}
+                <Link 
+                  href="/tickets" 
+                  className="bg-accent hover:bg-accent-dark text-primary font-bold py-3 px-4 mt-4 rounded-md flex items-center justify-center transition-colors"
+                >
+                  <span>Buy Tickets</span>
+                  <ArrowRight size={16} className="ml-1" />
+                </Link>
+              </nav>
+            </div>
+          )}
+        </div>
       </div>
     </header>
   );

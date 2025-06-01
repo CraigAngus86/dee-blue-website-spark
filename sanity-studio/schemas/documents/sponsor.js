@@ -1,4 +1,3 @@
-
 export default {
     name: 'sponsor',
     title: 'Sponsor',
@@ -9,6 +8,10 @@ export default {
         title: 'Basic Information',
       },
       {
+        name: 'sponsorship',
+        title: 'Sponsorship Details',
+      },
+      {
         name: 'content',
         title: 'Content',
       },
@@ -17,31 +20,12 @@ export default {
         title: 'Media',
       },
       {
-        name: 'reference',
-        title: 'Database Reference',
+        name: 'linking',
+        title: 'System Linking',
       },
     ],
     fields: [
-      {
-        name: 'supabaseId',
-        title: 'Supabase ID',
-        type: 'string',
-        description: 'UUID from Supabase for this sponsor',
-        validation: Rule => Rule.required().regex(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/, {
-          name: 'UUID',
-          invert: false,
-          message: 'Must be a valid UUID format (example: 123e4567-e89b-12d3-a456-426614174000)'
-        }),
-        group: 'reference'
-      },
-      {
-        name: 'sponsorId',
-        title: 'Sponsor ID (Legacy)',
-        type: 'string',
-        description: 'Legacy ID field - use supabaseId instead',
-        hidden: true,
-        group: 'reference'
-      },
+      // Basic Information
       {
         name: 'name',
         title: 'Sponsor Name',
@@ -61,59 +45,83 @@ export default {
         group: 'basic'
       },
       {
-        name: 'logo',
-        title: 'Logo (Dark Background)',
-        type: 'image',
-        description: 'Logo optimized for dark backgrounds',
-        options: {
-          hotspot: true
-        },
-        group: 'media'
-      },
-      {
-        name: 'logoLight',
-        title: 'Logo (Light Background)',
-        type: 'image',
-        description: 'Logo optimized for light backgrounds',
-        options: {
-          hotspot: true
-        },
-        group: 'media'
-      },
-      {
-        name: 'tier',
-        title: 'Sponsorship Tier',
-        type: 'string',
-        options: {
-          list: [
-            {title: 'Principal Partner', value: 'principal'},
-            {title: 'Main Sponsor', value: 'main'},
-            {title: 'Official Partner', value: 'partner'},
-            {title: 'Supporter', value: 'supporter'},
-            {title: 'Player Sponsor', value: 'player'},
-            {title: 'Match Sponsor', value: 'match'}
-          ]
-        },
-        group: 'basic'
-      },
-      {
-        name: 'startDate',
-        title: 'Partnership Start Date',
-        type: 'date',
-        group: 'basic'
-      },
-      {
-        name: 'endDate',
-        title: 'Partnership End Date',
-        type: 'date',
-        group: 'basic'
-      },
-      {
         name: 'website',
         title: 'Website URL',
         type: 'url',
         group: 'basic'
       },
+      {
+        name: 'isActive',
+        title: 'Active Sponsor',
+        type: 'boolean',
+        description: 'Is this an active sponsor?',
+        initialValue: true,
+        group: 'basic'
+      },
+
+      // Sponsorship Details
+      {
+        name: 'primaryTier',
+        title: 'Primary Sponsorship Tier',
+        type: 'string',
+        description: 'Main tier for homepage display (mutually exclusive)',
+        options: {
+          list: [
+            {title: 'Principal Partner', value: 'principal'},
+            {title: 'Main Sponsor', value: 'main'},
+            {title: 'Official Partner', value: 'partner'}
+          ]
+        },
+        validation: Rule => Rule.required(),
+        group: 'sponsorship'
+      },
+      {
+        name: 'additionalTypes',
+        title: 'Additional Sponsorship Types',
+        type: 'object',
+        description: 'Additional sponsorship categories (can have multiple)',
+        group: 'sponsorship',
+        fields: [
+          {
+            name: 'isMatchSponsor',
+            title: 'Match Sponsor',
+            type: 'boolean',
+            description: 'Sponsors individual matches',
+            initialValue: false
+          },
+          {
+            name: 'isPlayerSponsor',
+            title: 'Player Sponsor',
+            type: 'boolean',
+            description: 'Sponsors individual players',
+            initialValue: false
+          }
+        ]
+      },
+      {
+        name: 'startDate',
+        title: 'Partnership Start Date',
+        type: 'date',
+        group: 'sponsorship'
+      },
+      {
+        name: 'endDate',
+        title: 'Partnership End Date',
+        type: 'date',
+        group: 'sponsorship'
+      },
+
+      // Media
+      {
+        name: 'logo',
+        title: 'Sponsor Logo',
+        type: 'cloudinary.asset',
+        description: 'Main sponsor logo (will be transformed to navy via Cloudinary)',
+        validation: Rule => Rule.required(),
+        group: 'media'
+      },
+
+      // Content
       {
         name: 'description',
         title: 'Short Description',
@@ -127,13 +135,6 @@ export default {
         title: 'Full Description',
         type: 'bodyContent',
         group: 'content'
-      },
-      {
-        name: 'images',
-        title: 'Sponsor Images',
-        type: 'gallery',
-        description: 'Images related to this sponsorship',
-        group: 'media'
       },
       {
         name: 'testimonial',
@@ -159,46 +160,71 @@ export default {
         name: 'socialMedia',
         title: 'Social Media',
         type: 'socialMedia',
-        group: 'basic'
+        group: 'content'
+      },
+
+      // System Linking
+      {
+        name: 'supabaseId',
+        title: 'Supabase ID',
+        type: 'string',
+        description: 'UUID from Supabase sponsors table (for match linking)',
+        validation: Rule => Rule.regex(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/, {
+          name: 'UUID',
+          invert: false,
+          message: 'Must be a valid UUID format'
+        }),
+        group: 'linking'
       },
       {
-        name: 'isActive',
-        title: 'Active Sponsor',
-        type: 'boolean',
-        description: 'Is this an active sponsor?',
-        initialValue: true,
-        group: 'basic'
+        name: 'linkedPlayers',
+        title: 'Sponsored Players',
+        type: 'array',
+        of: [{type: 'reference', to: [{type: 'playerProfile'}]}],
+        description: 'Players sponsored by this sponsor',
+        hidden: ({document}) => !document?.additionalTypes?.isPlayerSponsor,
+        group: 'linking'
       }
     ],
+    
     preview: {
       select: {
         title: 'name',
         media: 'logo',
-        tier: 'tier'
+        primaryTier: 'primaryTier',
+        isMatchSponsor: 'additionalTypes.isMatchSponsor',
+        isPlayerSponsor: 'additionalTypes.isPlayerSponsor'
       },
-      prepare({title, media, tier}) {
+      prepare({title, media, primaryTier, isMatchSponsor, isPlayerSponsor}) {
         const tierLabels = {
           principal: 'Principal Partner',
           main: 'Main Sponsor',
-          partner: 'Official Partner',
-          supporter: 'Supporter',
-          player: 'Player Sponsor',
-          match: 'Match Sponsor'
+          partner: 'Official Partner'
         }
+        
+        const additionalTypes = []
+        if (isMatchSponsor) additionalTypes.push('Match')
+        if (isPlayerSponsor) additionalTypes.push('Player')
+        
+        const subtitle = additionalTypes.length > 0 
+          ? `${tierLabels[primaryTier]} + ${additionalTypes.join(', ')}`
+          : tierLabels[primaryTier]
         
         return {
           title,
           media,
-          subtitle: tierLabels[tier] || tier
+          subtitle
         }
       }
     },
+    
     orderings: [
       {
-        title: 'Sponsorship Tier',
-        name: 'tierDesc',
+        title: 'Primary Tier',
+        name: 'primaryTierAsc',
         by: [
-          {field: 'tier', direction: 'asc'}
+          {field: 'primaryTier', direction: 'asc'},
+          {field: 'name', direction: 'asc'}
         ]
       },
       {
@@ -206,6 +232,13 @@ export default {
         name: 'nameAsc',
         by: [
           {field: 'name', direction: 'asc'}
+        ]
+      },
+      {
+        title: 'Partnership Start Date',
+        name: 'startDateDesc',
+        by: [
+          {field: 'startDate', direction: 'desc'}
         ]
       }
     ]

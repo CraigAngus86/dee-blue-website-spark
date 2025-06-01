@@ -1,4 +1,3 @@
-
 import type { Metadata } from "next";
 import { Inter, Montserrat } from "next/font/google";
 import Header from "@/components/layout/Header";
@@ -38,7 +37,7 @@ export default function RootLayout({
       <body className="antialiased flex flex-col min-h-screen">
         <Providers>
           <Header />
-          <main className="flex-grow pt-16"> {/* Padding top to account for fixed header */}
+          <main className="flex-grow pt-16">
             {children}
           </main>
           <Footer />
