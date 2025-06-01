@@ -12,6 +12,10 @@ export default {
         title: 'Content',
       },
       {
+        name: 'timeline',
+        title: 'Timeline',
+      },
+      {
         name: 'facilities',
         title: 'Facilities',
       },
@@ -71,6 +75,71 @@ export default {
         title: 'Stadium Capacity',
         type: 'number',
         group: 'basic'
+      },
+      // NEW: Timeline Array
+      {
+        name: 'timeline',
+        title: 'Stadium Timeline',
+        type: 'array',
+        description: 'Timeline milestones in stadium history',
+        of: [
+          {
+            type: 'object',
+            title: 'Timeline Milestone',
+            fields: [
+              {
+                name: 'year',
+                title: 'Year',
+                type: 'number',
+                validation: Rule => Rule.required().min(1900).max(2030)
+              },
+              {
+                name: 'title',
+                title: 'Milestone Title',
+                type: 'string',
+                validation: Rule => Rule.required().max(100)
+              },
+              {
+                name: 'description',
+                title: 'Brief Description',
+                type: 'text',
+                rows: 3,
+                description: 'Short description shown initially',
+                validation: Rule => Rule.required().max(300)
+              },
+              {
+                name: 'heroImage',
+                title: 'Timeline Hero Image',
+                type: 'cloudinaryImage',
+                description: 'Large image displayed when this milestone is active',
+                validation: Rule => Rule.required()
+              },
+              {
+                name: 'expandedContent',
+                title: 'Full Story (Read More)',
+                type: 'bodyContent',
+                description: 'Detailed content shown when user clicks "Read more"'
+              }
+            ],
+            preview: {
+              select: {
+                title: 'title',
+                year: 'year',
+                media: 'heroImage'
+              },
+              prepare({title, year, media}) {
+                return {
+                  title: `${year}: ${title}`,
+                  media
+                }
+              }
+            }
+          }
+        ],
+        options: {
+          sortable: true
+        },
+        group: 'timeline'
       },
       {
         name: 'facilities',

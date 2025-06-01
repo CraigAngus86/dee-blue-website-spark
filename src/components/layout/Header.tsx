@@ -6,36 +6,36 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { ArrowRight, Menu, X } from "lucide-react";
 import { buildSponsorLogoUrl } from "@/features/sponsors";
+import { getHeaderSponsors } from "@/features/sponsors/utils/sanityQueries";
 
 /**
- * Unified Header component - Man Utd style with sponsor bar
+ * Unified Header component - FIXED: Logo colors + restored our better gradient
  */
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [headerSponsors, setHeaderSponsors] = useState([]);
   const pathname = usePathname();
 
-  // HARDCODED SPONSORS FOR TESTING NEW HORIZONTAL LOGOS
-  const headerSponsors = [
-    {
-      _id: '1',
-      name: 'Saltire',
-      website: '#',
-      logo: { public_id: 'saltire_zsbu8e_b52c14' }
-    },
-    {
-      _id: '2', 
-      name: 'Global',
-      website: '#',
-      logo: { public_id: 'global_mjxufj_32c9c6' }
-    },
-    {
-      _id: '3',
-      name: 'Three60',
-      website: '#', 
-      logo: { public_id: 'three60_usvkng_508993' }
-    }
-  ];
+  // Fetch header sponsors dynamically
+  useEffect(() => {
+    const fetchSponsors = async () => {
+      try {
+        const sponsors = await getHeaderSponsors();
+        // Sort to ensure principal sponsors appear first
+        const sortedSponsors = sponsors.sort((a, b) => {
+          if (a.primaryTier === 'principal' && b.primaryTier === 'main') return -1;
+          if (a.primaryTier === 'main' && b.primaryTier === 'principal') return 1;
+          return a.name.localeCompare(b.name);
+        });
+        setHeaderSponsors(sortedSponsors);
+      } catch (error) {
+        console.error('Error loading header sponsors:', error);
+      }
+    };
+    
+    fetchSponsors();
+  }, []);
 
   // Handle scroll event for header styling
   useEffect(() => {
@@ -60,7 +60,7 @@ const Header = () => {
     { name: "News", href: "/news" },
     { name: "Team & Management", href: "/team" },
     { name: "Match Centre", href: "/matches" },
-    { name: "Spain Park", href: "/spain-park" },
+    { name: "Spain Park", href: "/stadium" },
     { name: "Commercial", href: "/commercial" },
   ];
 
@@ -70,116 +70,132 @@ const Header = () => {
         isScrolled ? "shadow-lg" : "shadow-md"
       }`}
     >
-      {/* Sponsor Bar - 44px total height with 24px logos */}
-      {headerSponsors.length > 0 && (
-        <div className="bg-[#C5E7FF] h-11">
-          <div className="container mx-auto px-4 h-full">
-            <div className="flex items-center justify-end h-full">
-              <div className="flex items-center space-x-4">
-                {headerSponsors.map((sponsor) => (
-                  <Link
-                    key={sponsor._id}
-                    href={sponsor.website || '#'}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:opacity-80 transition-opacity block"
-                    title={sponsor.name}
-                  >
-                    <Image
-                      src={buildSponsorLogoUrl(sponsor.logo?.public_id, 'header')}
-                      alt={sponsor.name}
-                      width={120}
-                      height={28}
-                      className="object-contain h-7"
-                    />
-                  </Link>
-                ))}
+      {/* Container for overlapping design */}
+      <div className="relative">
+        {/* Sponsor Bar - RESTORED: Our better gradient with precise positioning */}
+        {headerSponsors.length > 0 && (
+          <div className="bg-gradient-to-r from-[#00105A] from-55% via-[#C5E7FF] via-70% to-[#C5E7FF] h-[30px]">
+            <div className="container mx-auto px-2 h-full">
+              <div className="flex items-center justify-end h-full">
+                <div className="flex items-center space-x-1">
+                  {headerSponsors.map((sponsor) => (
+                    <Link
+                      key={sponsor._id}
+                      href={sponsor.website || '#'}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:opacity-80 hover:scale-105 transition-all duration-200 block"
+                      title={sponsor.name}
+                    >
+                      <Image
+                        src={buildSponsorLogoUrl(sponsor.logo?.public_id, 'header')}
+                        alt={sponsor.name}
+                        width={120}
+                        height={28}
+                        className="object-contain h-5"
+                      />
+                    </Link>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Main Header - Navy Blue */}
-      <div className="bg-primary text-white">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            {/* Logo */}
-            <Link href="/" className="flex items-center">
-              <Image
-                src="/assets/images/logos/BOD_Logo_White_square.png"
-                alt="Banks o' Dee FC"
-                width={40}
-                height={40}
-                className="h-10 w-auto"
-              />
-              <span className="font-montserrat font-bold text-lg ml-2 hidden sm:block">
-                Banks o&apos; Dee FC
-              </span>
-            </Link>
+        {/* Main Header - 38px height for better proportion */}
+        <div className="bg-[#00105A] text-white h-[38px]">
+          <div className="container mx-auto h-full">
+            <div className="flex items-center h-full w-full">
+              {/* Responsive logo spacer */}
+              <div className="w-52 md:w-56 xl:w-64 hidden sm:block"></div>
 
-            {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center space-x-6">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`font-medium hover:text-blue-200 transition-colors ${
-                    pathname === item.href ? "font-bold" : ""
-                  }`}
-                >
-                  {item.name}
-                </Link>
-              ))}
-            </nav>
-
-            {/* Buy Tickets Button - Desktop */}
-            <div className="hidden md:block">
-              <Link 
-                href="/tickets" 
-                className="bg-accent hover:bg-accent-dark text-primary font-bold py-2 px-4 rounded-md flex items-center transition-colors"
+              {/* Center - Enhanced navigation */}
+              <nav 
+                role="navigation" 
+                aria-label="Main Navigation"
+                className="hidden md:flex items-center justify-between flex-1 px-10 lg:px-20 xl:px-[140px]"
               >
-                <span>Buy Tickets</span>
-                <ArrowRight size={16} className="ml-1" />
-              </Link>
-            </div>
-
-            {/* Mobile Menu Button */}
-            <button
-              onClick={toggleMenu}
-              className="text-white p-2 md:hidden focus:outline-none"
-              aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-            >
-              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-          </div>
-
-          {/* Mobile Navigation */}
-          {isMenuOpen && (
-            <div className="absolute left-0 right-0 top-full bg-primary z-40 md:hidden">
-              <nav className="flex flex-col p-4">
                 {navigation.map((item) => (
                   <Link
                     key={item.name}
                     href={item.href}
-                    className={`text-lg py-3 border-b border-primary-700 ${
-                      pathname === item.href ? "font-bold" : ""
+                    className={`font-semibold hover:text-[#C5E7FF] transition-all duration-200 text-base whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-[#C5E7FF] focus:ring-opacity-50 rounded-sm px-1 py-1 ${
+                      pathname === item.href ? "text-[#C5E7FF] font-bold border-b-2 border-[#C5E7FF]" : "hover:scale-105"
                     }`}
                   >
                     {item.name}
                   </Link>
                 ))}
+              </nav>
+
+              {/* Right - Enhanced CTA button with reduced height */}
+              <div className="hidden md:flex">
                 <Link 
                   href="/tickets" 
-                  className="bg-accent hover:bg-accent-dark text-primary font-bold py-3 px-4 mt-4 rounded-md flex items-center justify-center transition-colors"
+                  className="bg-[#FFD700] hover:bg-[#00105A] hover:border-2 hover:border-[#FFD700] text-[#00105A] hover:text-[#FFD700] font-bold py-1.5 px-4 rounded-md flex items-center transition-all duration-200 text-sm whitespace-nowrap shadow-md hover:shadow-lg hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#FFD700] focus:ring-opacity-50"
                 >
                   <span>Buy Tickets</span>
-                  <ArrowRight size={16} className="ml-1" />
+                  <ArrowRight size={16} className="ml-2" />
                 </Link>
-              </nav>
+              </div>
+
+              {/* Mobile Menu Button */}
+              <button
+                onClick={toggleMenu}
+                className="text-white p-2 md:hidden focus:outline-none focus:ring-2 focus:ring-[#C5E7FF] focus:ring-opacity-50 rounded"
+                aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+              >
+                {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
+              </button>
             </div>
-          )}
+          </div>
         </div>
+
+        {/* OVERLAPPING LOGO - Enhanced */}
+        <div className="absolute top-0 left-4 z-20 h-full flex items-center">
+          <Link href="/" className="flex items-center group">
+            <Image
+              src={buildSponsorLogoUrl('BOD_Logo_White_square_joicd1', 'mainLogo')}
+              alt="Banks o' Dee FC"
+              width={64}
+              height={64}
+              className="h-16 w-16 object-contain drop-shadow-2xl transition-transform duration-200 group-hover:scale-105"
+            />
+            <span className="font-montserrat font-bold text-xl ml-4 text-white hidden sm:block drop-shadow-2xl tracking-wide">
+              Banks o&apos; Dee FC
+            </span>
+          </Link>
+        </div>
+
+        {/* Mobile Navigation */}
+        {isMenuOpen && (
+          <div className="absolute left-0 right-0 top-full bg-[#00105A] z-40 md:hidden shadow-lg">
+            <nav 
+              className="flex flex-col p-4" 
+              role="navigation" 
+              aria-label="Mobile Navigation"
+            >
+              {navigation.map((item) => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={`text-lg py-3 border-b border-[#1a237e] hover:text-[#C5E7FF] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5E7FF] focus:ring-opacity-50 rounded-sm px-2 ${
+                    pathname === item.href ? "font-bold text-[#C5E7FF]" : ""
+                  }`}
+                >
+                  {item.name}
+                </Link>
+              ))}
+              <Link 
+                href="/tickets" 
+                className="bg-[#FFD700] hover:bg-[#00105A] hover:border-2 hover:border-[#FFD700] text-[#00105A] hover:text-[#FFD700] font-bold py-3 px-4 mt-4 rounded-md flex items-center justify-center transition-all duration-200 text-base shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#FFD700] focus:ring-opacity-50"
+              >
+                <span>Buy Tickets</span>
+                <ArrowRight size={18} className="ml-2" />
+              </Link>
+            </nav>
+          </div>
+        )}
       </div>
     </header>
   );
