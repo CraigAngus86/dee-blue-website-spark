@@ -1,7 +1,6 @@
 /**
  * Simplified environment variables for Banks o' Dee FC website
  */
-
 // Helper function for safer env var access with optional validation
 function getEnvVar(key: string, defaultValue: string = '', required: boolean = false): string {
   const value = process.env[key] || defaultValue;
@@ -12,7 +11,6 @@ function getEnvVar(key: string, defaultValue: string = '', required: boolean = f
   
   return value;
 }
-
 export const env = {
   supabase: {
     url: getEnvVar('NEXT_PUBLIC_SUPABASE_URL', 'https://bbbxhwaixjjxgboeiktq.supabase.co'),
@@ -30,6 +28,9 @@ export const env = {
     cloudName: getEnvVar('NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME', 'dlkpaw2a0'),
     apiKey: getEnvVar('CLOUDINARY_API_KEY'),
     apiSecret: getEnvVar('CLOUDINARY_API_SECRET'),
+  },
+  mapbox: {
+    accessToken: getEnvVar('NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN', ''),
   },
   site: {
     url: getEnvVar('NEXT_PUBLIC_SITE_URL', 'http://localhost:3000'),

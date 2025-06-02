@@ -1,3 +1,4 @@
+@import 'mapbox-gl/dist/mapbox-gl.css';
 
 @tailwind base;
 @tailwind components;
@@ -236,4 +237,37 @@ p { @apply mb-4 leading-relaxed; }
 
 .border-gray-100, .border-gray-200, .border-gray-300 {
   border-color: #f5f7fb !important;
+}
+
+/* Custom Mapbox styling for Banks o' Dee branding */
+.mapboxgl-map {
+  background: #00105A !important;
+}
+
+.mapboxgl-ctrl-group {
+  background: #ffffff !important;
+  border: 1px solid #C5E7FF !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 16, 90, 0.1) !important;
+}
+
+.mapboxgl-ctrl-group button {
+  background: #ffffff !important;
+  border: none !important;
+  color: #00105A !important;
+}
+
+.mapboxgl-ctrl-group button:hover {
+  background: #C5E7FF !important;
+  color: #00105A !important;
+}
+
+.mapboxgl-popup-content {
+  border-radius: 0.75rem !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 16, 90, 0.1) !important;
+  border: 1px solid #C5E7FF !important;
+}
+
+.mapboxgl-popup-tip {
+  border-top-color: #C5E7FF !important;
 }

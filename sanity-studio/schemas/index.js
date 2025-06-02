@@ -8,6 +8,8 @@ import stadiumInfo from './documents/stadiumInfo'
 import fanOfMonth from './documents/fanOfMonth'
 import fanPhoto from './documents/fanPhoto'
 import fanPoll from './documents/fanPoll'
+import commercialEnquiry from './documents/commercialEnquiry'
+
 // Import object schemas (reusable components)
 import mainImage from './objects/mainImage'
 import cloudinaryImage from './objects/cloudinaryImage'
@@ -15,6 +17,7 @@ import bodyContent from './objects/bodyContent'
 import gallery from './objects/gallery'
 import socialMedia from './objects/socialMedia'
 import location from './objects/location'
+
 // Export all schemas
 export const schemaTypes = [
   // Documents
@@ -27,6 +30,7 @@ export const schemaTypes = [
   fanOfMonth,
   fanPhoto,
   fanPoll,
+  commercialEnquiry,
   
   // Objects
   mainImage,
