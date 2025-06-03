@@ -76,7 +76,6 @@ export function MatchCarousel({
           return new Date(b.match_date).getTime() - new Date(a.match_date).getTime();
         })
         .slice(0, 3).reverse();
-      console.log("Sorted recent matches for display:", sortedRecent.map(m => ({ date: m.match_date, home: m.home_team_name || m.home_team, away: m.away_team_name || m.away_team })));
 
       // Get upcoming matches (not completed matches)
       const sortedUpcoming = [...upcomingMatches]
@@ -104,8 +103,6 @@ export function MatchCarousel({
     }
   };
 
-    console.log("=== MATCH CAROUSEL DEBUG ===");
-    console.log("Recent matches from database:", recentMatches.map(m => ({ date: m.match_date, home: m.home_team_name || m.home_team, away: m.away_team_name || m.away_team })));
   const { matches: organizedMatches, nextMatchIndex } = getOrganizedMatches();
 
   // Get the match type for displaying badges

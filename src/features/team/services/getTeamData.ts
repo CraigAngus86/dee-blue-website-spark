@@ -1,6 +1,5 @@
 import { sanityClient } from '@/lib/sanity/client';
 import { Person, Player, Staff, PersonType, StaffRole } from '../types';
-
 // Query that matches the actual schema - now includes isYouthProduct
 const peopleQuery = `*[_type == "playerProfile"] {
   _id,
@@ -32,7 +31,6 @@ const peopleQuery = `*[_type == "playerProfile"] {
   gallery,
   videoUrl
 } | order(lastName asc)`;
-
 export async function getTeamData(): Promise<{
   people: Person[];
   error: Error | null;
@@ -41,19 +39,6 @@ export async function getTeamData(): Promise<{
     // Add timestamp parameter for cache-busting
     const timestamp = Date.now();
     const people = await sanityClient.fetch(peopleQuery, { timestamp });
-    
-    // Log detailed information about image structure
-    if (people && people.length > 0) {
-      // Find a person with an image
-      const personWithImage = people.find(p => p.profileImage);
-      
-      if (personWithImage) {
-        console.log('===== SERVER-SIDE IMAGE STRUCTURE =====');
-        console.log('Person name:', personWithImage.firstName, personWithImage.lastName);
-        console.log('Profile image structure:', JSON.stringify(personWithImage.profileImage, null, 2));
-        console.log('===== END SERVER-SIDE ANALYSIS =====');
-      }
-    }
     
     return { people, error: null };
   } catch (err) {
@@ -64,7 +49,6 @@ export async function getTeamData(): Promise<{
     };
   }
 }
-
 export function filterPeople(people: Person[], filter: string): Person[] {
   if (filter === 'all') {
     return people;
@@ -88,7 +72,6 @@ export function filterPeople(people: Person[], filter: string): Person[] {
   
   return people;
 }
-
 export function getTeamFilterOptions() {
   return [
     { label: 'All', value: 'all', order: 0 },
@@ -100,7 +83,6 @@ export function getTeamFilterOptions() {
     { label: 'Forwards', value: 'forward', order: 6 },
   ];
 }
-
 // Staff role priority order (lower number = higher priority)
 const staffRolePriorities: Record<StaffRole, number> = {
   'manager': 1,
@@ -116,7 +98,6 @@ const staffRolePriorities: Record<StaffRole, number> = {
   'secretary': 11,
   'other': 12
 };
-
 export function groupPeopleByPosition(people: Person[]): Record<string, Person[]> {
   const grouped: Record<string, Person[]> = {
     management: [],

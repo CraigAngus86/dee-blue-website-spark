@@ -1,24 +1,14 @@
 import React from 'react';
 import { NewsArticle } from '../types';
 import NewsCard from './cards/NewsCard';
-
 interface NewsGridProps {
   articles: NewsArticle[];
   onArticleClick?: (article: NewsArticle) => void;
 }
-
 const NewsGrid: React.FC<NewsGridProps> = ({
   articles,
   onArticleClick
 }) => {
-  // Add debugging logs
-  console.log('---------------------');
-  console.log('NewsGrid RENDER', new Date().toISOString());
-  console.log('Articles count:', articles.length);
-  console.log('Article IDs:', articles.map(a => a.id).join(', '));
-  console.log('---------------------');
-  console.log('LAYOUT ALGORITHM DEBUGGING:');
-
   if (!articles || articles.length === 0) {
     return (
       <div className="text-center py-12">
@@ -35,8 +25,6 @@ const NewsGrid: React.FC<NewsGridProps> = ({
     return new Date(b.publishedAt || '').getTime() - new Date(a.publishedAt || '').getTime();
   });
   
-  console.log('Sorted articles:', sortedArticles.map(a => ({ id: a.id, title: a.title })));
-  
   // Smart layout algorithm - arrange articles in balanced rows
   const rows: NewsArticle[][] = [];
   let currentRow: NewsArticle[] = [];
@@ -46,7 +34,6 @@ const NewsGrid: React.FC<NewsGridProps> = ({
   sortedArticles.forEach(article => {
     // Skip if we've already rendered this ID
     if (renderedIds.has(article.id)) {
-      console.log(`Skipping duplicate article: ${article.title} (${article.id})`);
       return;
     }
     
@@ -74,17 +61,6 @@ const NewsGrid: React.FC<NewsGridProps> = ({
     rows.push(currentRow);
   }
   
-  // Add detailed logging for row structure
-  console.log('Final row structure:', rows.map((row, i) => ({
-    rowIndex: i,
-    articles: row.map(a => ({
-      id: a.id,
-      title: a.title.substring(0, 20) + '...',
-      cols: a.isFeature ? 2 : 1
-    }))
-  })));
-  console.log('---------------------');
-  
   return (
     <div className="space-y-6">
       {rows.map((row, rowIndex) => (
@@ -106,5 +82,4 @@ const NewsGrid: React.FC<NewsGridProps> = ({
     </div>
   );
 };
-
 export default NewsGrid;

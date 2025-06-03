@@ -11,16 +11,13 @@ import { getHomepageUpcomingMatches, getHomepageRecentMatches, getHomepageLeague
 import { HomeHeroSection, OverlappingNewsCards } from "@/features/home";
 import { getTeamData } from "@/features/team/services/getTeamData";
 import { selectRandomPlayersByPosition } from "@/features/team/services/playerSelection";
-
 // Set the revalidation time to ensure fresh data
 export const revalidate = 10; // Revalidate every 10 seconds
-
 export const metadata: Metadata = {
   title: "Home | Banks o' Dee FC",
   description:
     "Welcome to the official website of Banks o' Dee Football Club",
 };
-
 // Fetch all news articles for homepage ordered by date
 async function getNewsArticles(limit = 9) {
   const query = `*[_type == "newsArticle" && !(_id in path("drafts.**"))] | order(publishedAt desc)[0...${limit}] {
@@ -43,7 +40,6 @@ async function getNewsArticles(limit = 9) {
     return [];
   }
 }
-
 async function getFanOfMonth() {
   const query = `*[_type == "fanOfMonth" && status == "featured"][0] {
     fanName,
@@ -62,7 +58,6 @@ async function getFanOfMonth() {
     return null;
   }
 }
-
 async function getGalleryPhotos() {
   const query = `*[_type == "fanPhoto" && approvalStatus == "approved"] | order(displayOrder asc, submittedAt desc)[0...6] {
     fanName,
@@ -79,7 +74,6 @@ async function getGalleryPhotos() {
     return [];
   }
 }
-
 async function getRandomPlayers() {
   try {
     const { people, error } = await getTeamData();
@@ -97,7 +91,6 @@ async function getRandomPlayers() {
     return [];
   }
 }
-
 export default async function HomePage() {
   // Fetch all news articles (up to 9 - 3 for hero, 6 for cards)
   const newsArticles = await getNewsArticles(9);
@@ -120,10 +113,6 @@ export default async function HomePage() {
     getGalleryPhotos(),
     getRandomPlayers()
   ]);
-  
-  console.log(`HomePage - Retrieved matches: ${upcomingMatches.length} upcoming, ${recentMatches.length} recent`);
-  console.log(`HomePage - Selected ${randomPlayers.length} random players`);
-  console.log(`🏆 Sponsors: ${sponsors.principal.length} principal, ${sponsors.main.length} main, ${sponsors.partner.length} partners`);
   
   // Process news articles for hero (top 3)
   const heroArticles = newsArticles.slice(0, 3).map(article => ({

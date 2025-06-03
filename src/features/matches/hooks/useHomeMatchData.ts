@@ -1,7 +1,5 @@
 import { supabase } from '@/lib/supabase/client';
-
 export async function getHomepageUpcomingMatches(limit = 5) {
-  console.log('Fetching homepage upcoming matches');
   const { data, error } = await supabase
     .from('vw_upcoming_matches')
     .select('*')
@@ -13,12 +11,9 @@ export async function getHomepageUpcomingMatches(limit = 5) {
     return [];
   }
   
-  console.log(`Retrieved ${data?.length || 0} upcoming matches for homepage`);
   return data || [];
 }
-
 export async function getHomepageRecentMatches(limit = 5) {
-  console.log('Fetching homepage recent matches');
   const { data, error } = await supabase
     .from('vw_latest_results')
     .select('*')
@@ -30,12 +25,9 @@ export async function getHomepageRecentMatches(limit = 5) {
     return [];
   }
   
-  console.log(`Retrieved ${data?.length || 0} recent matches for homepage`);
   return data || [];
 }
-
 export async function getHomepageLeagueTable() {
-  console.log('Fetching homepage league table');
   const { data, error } = await supabase
     .from('vw_current_league_table')
     .select('*')
@@ -46,6 +38,5 @@ export async function getHomepageLeagueTable() {
     return [];
   }
   
-  console.log(`Retrieved ${data?.length || 0} league table entries for homepage`);
   return data || [];
 }

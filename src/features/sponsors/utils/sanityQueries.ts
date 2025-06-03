@@ -31,8 +31,6 @@ export async function getSponsorsForHomepage(): Promise<SanitySponsors> {
       main: sponsors?.filter(s => s.primaryTier === 'main') || [],
       partner: sponsors?.filter(s => s.primaryTier === 'partner') || []
     };
-
-    console.log(`🏆 Sponsors loaded: ${groupedSponsors.principal.length} principal, ${groupedSponsors.main.length} main, ${groupedSponsors.partner.length} partners`);
     
     return groupedSponsors;
   } catch (error) {

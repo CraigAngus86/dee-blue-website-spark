@@ -1,12 +1,9 @@
-
 /**
  * Enhanced utility for syncing data from Supabase to Sanity
  * with detailed error logging and validation
  */
-
 import { sanitySimple } from '@/lib/sanity/sanity-simple';
 import { supabase } from '@/lib/supabase/client';
-
 // Import result interface
 export interface ImportResult {
   created: number;
@@ -18,7 +15,6 @@ export interface ImportResult {
     processed: number;
   };
 }
-
 // Import options interface
 export interface ImportOptions {
   batchSize?: number;
@@ -28,7 +24,6 @@ export interface ImportOptions {
   debug?: boolean; // Option to enable debug mode
   includeStaff?: boolean; // Option to include staff members
 }
-
 /**
  * Field mapping helper to transform Supabase data to Sanity format
  */
@@ -50,7 +45,6 @@ function mapPlayerFields(person: any) {
       }
     ] : [],
   };
-
   // Add player-specific fields if it's a player
   if (person.player_position) {
     return {
@@ -66,11 +60,9 @@ function mapPlayerFields(person: any) {
       staffRole: person.staff_role?.toLowerCase() || undefined,
     };
   }
-
   // For any other personnel type
   return baseFields;
 }
-
 /**
  * Import Supabase personnel (players and staff) to Sanity with enhanced error handling
  */
@@ -94,10 +86,7 @@ export async function importPlayersToSanity(options: ImportOptions = {}): Promis
       processed: 0
     }
   };
-
   try {
-    console.log('Fetching personnel from Supabase...');
-    
     let query = supabase.from('people').select('*');
     
     // If not including staff or only testing with a single player ID, adjust the query
@@ -124,14 +113,6 @@ export async function importPlayersToSanity(options: ImportOptions = {}): Promis
       person.last_name
     );
     
-    console.log(`Found ${people.length} personnel in Supabase, ${validPeople.length} with valid data`);
-    if (debug) {
-      console.log('Personnel breakdown:');
-      console.log(`- Players: ${people.filter(p => p.player_position).length}`);
-      console.log(`- Staff: ${people.filter(p => p.staff_role && !p.player_position).length}`);
-      console.log(`- Other: ${people.filter(p => !p.player_position && !p.staff_role).length}`);
-    }
-    
     result.processingStats.total = validPeople.length;
     
     // Process personnel in batches to avoid rate limits
@@ -143,29 +124,14 @@ export async function importPlayersToSanity(options: ImportOptions = {}): Promis
         try {
           result.processingStats.processed++;
           
-          // Check if person already exists in Sanity
-          if (debug) {
-            console.log(`Checking if ${person.first_name} ${person.last_name} exists in Sanity (supabaseId: ${person.id})...`);
-          }
-          
           // Build the query with proper syntax
           const query = `*[_type == "playerProfile" && supabaseId == $supabaseId][0]`;
           const params = { supabaseId: person.id };
-          
-          if (debug) {
-            // Log the exact query for debugging
-            console.log('Query:', query);
-            console.log('Params:', JSON.stringify(params, null, 2));
-          }
           
           let existingPerson;
           
           try {
             existingPerson = await sanitySimple.fetch(query, params);
-            
-            if (debug) {
-              console.log('Existing person record:', existingPerson ? 'Found' : 'Not found');
-            }
           } catch (sanityFetchError: any) {
             console.error('Sanity fetch error:', sanityFetchError);
             // Change the error message to avoid any string concatenation issues
@@ -177,7 +143,6 @@ export async function importPlayersToSanity(options: ImportOptions = {}): Promis
           
           // Skip actual writing if in dry run mode
           if (dryRun) {
-            console.log(`[DRY RUN] Would ${existingPerson ? 'update' : 'create'} ${person.name || `${person.first_name} ${person.last_name}`}`);
             existingPerson ? result.updated++ : result.created++;
             continue;
           }
@@ -190,7 +155,6 @@ export async function importPlayersToSanity(options: ImportOptions = {}): Promis
                 .set(personDoc)
                 .commit();
                 
-              console.log(`Updated profile for ${person.name || `${person.first_name} ${person.last_name}`}`);
               result.updated++;
             } catch (updateError: any) {
               console.error('Error updating person:', updateError);
@@ -201,7 +165,6 @@ export async function importPlayersToSanity(options: ImportOptions = {}): Promis
             try {
               const newPerson = await sanitySimple.create(personDoc);
               
-              console.log(`Created profile for ${person.name || `${person.first_name} ${person.last_name}`} with ID ${newPerson._id}`);
               result.created++;
             } catch (createError: any) {
               console.error('Error creating person:', createError);
@@ -240,7 +203,6 @@ export async function importPlayersToSanity(options: ImportOptions = {}): Promis
     return result;
   }
 }
-
 /**
  * Import Supabase sponsors to Sanity with enhanced error handling
  */
@@ -257,9 +219,7 @@ export async function importSponsorsToSanity(options: ImportOptions = {}): Promi
       processed: 0
     }
   };
-
   try {
-    console.log('Fetching sponsors from Supabase...');
     const { data: sponsors, error } = await supabase
       .from('sponsors')
       .select('*')
@@ -271,7 +231,6 @@ export async function importSponsorsToSanity(options: ImportOptions = {}): Promi
       return result;
     }
     
-    console.log(`Found ${sponsors.length} sponsors in Supabase`);
     result.processingStats.total = sponsors.length;
     
     // Process sponsors in batches
@@ -301,7 +260,6 @@ export async function importSponsorsToSanity(options: ImportOptions = {}): Promi
           
           // Skip actual writing if in dry run mode
           if (dryRun) {
-            console.log(`[DRY RUN] Would ${existingSponsor ? 'update' : 'create'} sponsor ${sponsor.name}`);
             existingSponsor ? result.updated++ : result.created++;
             continue;
           }
@@ -323,7 +281,6 @@ export async function importSponsorsToSanity(options: ImportOptions = {}): Promi
                 .set(sponsorDoc)
                 .commit();
                 
-              console.log(`Updated sponsor profile for ${sponsor.name}`);
               result.updated++;
             } catch (updateError) {
               console.error('Error updating sponsor:', updateError);
@@ -334,7 +291,6 @@ export async function importSponsorsToSanity(options: ImportOptions = {}): Promi
             try {
               const newSponsor = await sanitySimple.create(sponsorDoc);
               
-              console.log(`Created sponsor profile for ${sponsor.name} with ID ${newSponsor._id}`);
               result.created++;
             } catch (createError) {
               console.error('Error creating sponsor:', createError);

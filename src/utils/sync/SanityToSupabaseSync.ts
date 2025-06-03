@@ -1,10 +1,7 @@
-
 /**
  * Utility for syncing data from Sanity to Supabase
  */
-
 import { supabase } from '@/integrations/supabase/client';
-
 // Type for webhook payload
 interface SanityWebhookPayload {
   _id: string;
@@ -12,7 +9,6 @@ interface SanityWebhookPayload {
   _type: string;
   [key: string]: any;
 }
-
 // Result type
 interface ProcessResult {
   success: boolean;
@@ -20,14 +16,10 @@ interface ProcessResult {
   data?: any;
   error?: any;
 }
-
 /**
  * Process webhook from Sanity and sync to Supabase
  */
 export async function processSanityWebhook(payload: SanityWebhookPayload): Promise<boolean> {
-  // Log the received payload for debugging
-  console.log('Processing Sanity webhook payload:', JSON.stringify(payload, null, 2).substring(0, 500) + '...');
-  
   // Switch based on document type
   switch (payload._type) {
     case 'playerProfile':
@@ -44,14 +36,11 @@ export async function processSanityWebhook(payload: SanityWebhookPayload): Promi
       return false;
   }
 }
-
 /**
  * Sync player profile from Sanity to Supabase
  */
 async function syncPlayerProfile(doc: SanityWebhookPayload): Promise<boolean> {
   try {
-    console.log(`Syncing player profile: ${doc.playerName || doc._id}`);
-    
     // Check if we already have this player in Supabase
     let existingPlayer = null;
     
@@ -94,7 +83,6 @@ async function syncPlayerProfile(doc: SanityWebhookPayload): Promise<boolean> {
         return false;
       }
       
-      console.log(`Updated player ${doc.playerName || doc._id} in Supabase`);
       return true;
     } else {
       // Create new player
@@ -116,7 +104,6 @@ async function syncPlayerProfile(doc: SanityWebhookPayload): Promise<boolean> {
       // Note: This would ideally be done using the Sanity client directly
       // but we're working with what we have in this file
       
-      console.log(`Created player ${doc.playerName || doc._id} in Supabase with ID ${data[0].id}`);
       return true;
     }
   } catch (error) {
@@ -124,14 +111,11 @@ async function syncPlayerProfile(doc: SanityWebhookPayload): Promise<boolean> {
     return false;
   }
 }
-
 /**
  * Sync sponsor from Sanity to Supabase
  */
 async function syncSponsor(doc: SanityWebhookPayload): Promise<boolean> {
   try {
-    console.log(`Syncing sponsor: ${doc.name || doc._id}`);
-    
     // Check if we already have this sponsor in Supabase
     let existingSponsor = null;
     
@@ -172,7 +156,6 @@ async function syncSponsor(doc: SanityWebhookPayload): Promise<boolean> {
         return false;
       }
       
-      console.log(`Updated sponsor ${doc.name || doc._id} in Supabase`);
       return true;
     } else {
       // Create new sponsor
@@ -189,7 +172,6 @@ async function syncSponsor(doc: SanityWebhookPayload): Promise<boolean> {
         return false;
       }
       
-      console.log(`Created sponsor ${doc.name || doc._id} in Supabase with ID ${data[0].id}`);
       return true;
     }
   } catch (error) {
@@ -197,14 +179,11 @@ async function syncSponsor(doc: SanityWebhookPayload): Promise<boolean> {
     return false;
   }
 }
-
 /**
  * Sync match from Sanity to Supabase
  */
 async function syncMatch(doc: SanityWebhookPayload): Promise<boolean> {
   try {
-    console.log(`Syncing match: ${doc._id}`);
-    
     // Check if we already have this match in Supabase
     let existingMatch = null;
     
@@ -252,7 +231,6 @@ async function syncMatch(doc: SanityWebhookPayload): Promise<boolean> {
         return false;
       }
       
-      console.log(`Updated match ${doc._id} in Supabase`);
       return true;
     } else {
       // Create new match
@@ -269,7 +247,6 @@ async function syncMatch(doc: SanityWebhookPayload): Promise<boolean> {
         return false;
       }
       
-      console.log(`Created match in Supabase with ID ${data[0].id}`);
       return true;
     }
   } catch (error) {
@@ -277,7 +254,6 @@ async function syncMatch(doc: SanityWebhookPayload): Promise<boolean> {
     return false;
   }
 }
-
 /**
  * Record webhook activity in the database for auditing
  */
