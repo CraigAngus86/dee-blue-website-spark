@@ -25,3 +25,5 @@ Removed: debug API routes
 Final file count: 240
 === BATCH 5 REMOVAL: Tue Jun  3 16:28:01 UTC 2025 ===
 Removed: API test routes and legacy .js files
+=== BATCH 6 REMOVAL: Tue Jun  3 16:29:40 UTC 2025 ===
+Removed: Unused hooks, utilities, empty folders
