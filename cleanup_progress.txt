@@ -1,0 +1,8 @@
+=== BASELINE FILE COUNT ===
+TypeScript/React Files: 190
+TypeScript Files: 110
+Total Source Files: 300
+Total Project Files: 39890
+⏩ SKIPPED: Baseline build test - will fix during cleanup
+=== CLEANUP TOOLS INSTALLED ===
+unimported, depcheck, madge: Tue Jun  3 15:58:37 UTC 2025
