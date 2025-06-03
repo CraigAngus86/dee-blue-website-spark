@@ -21,7 +21,12 @@ Current file count: 254
 Removed: Debug.tsx and diagnostics folder
 Removed: cross-system testing utilities
 Removed: debug API routes
+=== BATCH 4-7 REMOVAL: Combined ===
 ✅ BATCH 7 SUCCESS: 237 files remaining (21% reduction)
+=== BATCH 5 REMOVAL: Tue Jun  3 16:28:01 UTC 2025 ===
+Removed: API test routes and legacy .js files
+=== BATCH 6 REMOVAL: Tue Jun  3 16:29:40 UTC 2025 ===
+Removed: Unused hooks, utilities, empty folders
 === DEPENDENCY CLEANUP BATCH 1 START: Tue Jun  3 16:57:44 UTC 2025 ===
 Removing: @radix-ui/react-hover-card, react-progress, react-switch, react-tooltip
-✅ BATCH 1 SUCCESS: 4 Radix UI components removed (12 packages total) - Tue Jun  3 17:00:51 UTC 2025
+✅ DEPENDENCY BATCH 1 SUCCESS: 4 Radix UI components removed (12 packages total) - Tue Jun  3 17:00:51 UTC 2025
