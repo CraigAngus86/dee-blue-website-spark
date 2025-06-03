@@ -9,3 +9,9 @@ unimported, depcheck, madge: Tue Jun  3 15:58:37 UTC 2025
 === BATCH 1 REMOVAL: Tue Jun  3 16:04:30 UTC 2025 ===
 Removed: src/app/admin/ (test dashboard)
 Removed: src/components/admin/ (admin components)
+✅ BATCH 1 SUCCESS: 29 files removed, dev server working
+Files remaining: ~271
+=== BATCH 2 REMOVAL: Tue Jun  3 16:09:00 UTC 2025 ===
+Removed: src/components/commercial/ (duplicated in features)
+Removed: src/components/news/ (duplicated in features)
+Removed: src/components/home/ (duplicated in features)
