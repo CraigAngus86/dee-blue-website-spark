@@ -4,18 +4,13 @@ import createImageUrlBuilder from '@sanity/image-url';
 import type { Image } from 'sanity';
 import { env } from '@/lib/env';
 
-// Environment variables with fallbacks
-const projectId = env.sanity.projectId;
-const dataset = env.sanity.dataset;
-const apiVersion = env.sanity.apiVersion || '2024-04-30';
-
 // Client configuration
 const config = {
-  projectId,
-  dataset,
-  apiVersion,
-  useCdn: false, // Disable CDN to always get fresh data
-  perspective: 'published'
+  projectId: env.sanity.projectId,
+  dataset: env.sanity.dataset,
+  apiVersion: env.sanity.apiVersion || '2024-04-30',
+  useCdn: false,
+  perspective: 'published' as const
 };
 
 // Standard client for regular content fetching

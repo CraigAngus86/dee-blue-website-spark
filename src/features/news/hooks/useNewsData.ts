@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
 import { NewsArticle } from '../types';
-import { fetchSanityData } from '@/lib/sanity/client';
+import { fetchSanityData } from '@/lib/sanity/sanityClient';
 import { env } from '@/lib/env';
 
 interface UseNewsDataOptions {

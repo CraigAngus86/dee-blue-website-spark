@@ -1,5 +1,4 @@
-
-import { fetchSanityData } from '@/lib/sanity/client';
+import { fetchSanityData } from '@/lib/sanity/sanityClient';
 import { HeroSlide } from '@/types/hero';
 
 /**

@@ -1,7 +1,7 @@
 // Seasons (chronological order, newest first)
 export const seasons = [
-  { value: '2025-2026', label: '2025-2026' },
-  { value: '2024-2025', label: '2024-2025' }, // DEFAULT
+  { value: '2025-2026', label: '2025-2026' }, // DEFAULT
+  { value: '2024-2025', label: '2024-2025' },
   { value: '2023-2024', label: '2023-2024' },
   { value: '2022-2023', label: '2022-2023' }
 ];
@@ -37,6 +37,6 @@ export const months = [
 ];
 
 // Default values
-export const DEFAULT_SEASON = '2024-2025';
+export const DEFAULT_SEASON = '2025-2026';
 export const DEFAULT_COMPETITION = 'all';
 export const DEFAULT_MONTH = 'all';
