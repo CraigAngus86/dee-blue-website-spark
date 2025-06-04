@@ -1,33 +1,28 @@
-
-// Match type definitions for the application
-
+// Match type definitions matching database schema
 export interface MatchTeam {
   id: string;
   name: string;
-  logo: string;
-  shortName?: string;
+  logo_url: string;
+  short_name?: string;
   score?: number;
+}
+
+export interface Competition {
+  id: string;
+  name: string;
+  short_name?: string;
 }
 
 export interface Match {
   id: string;
-  matchDate: string;
-  date?: string; // Legacy support
-  competition: string;
+  match_date: string;
+  match_time?: string;
+  competition: Competition;
   venue: string;
   status: 'scheduled' | 'live' | 'completed' | 'postponed' | 'cancelled';
-  homeTeam: MatchTeam;
-  awayTeam: MatchTeam;
-  home?: { // Legacy support
-    team: string;
-    logo: string;
-    score?: number;
-  };
-  away?: { // Legacy support
-    team: string;
-    logo: string;
-    score?: number;
-  };
+  home_team: MatchTeam;
+  away_team: MatchTeam;
+  ticket_link?: string;
   attendance?: number;
   referee?: string;
   highlights?: string;

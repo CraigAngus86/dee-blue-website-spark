@@ -13,3 +13,25 @@ export function getCachedReference(key: string): any {
 export function clearCache(): void {
   referenceCache.clear();
 }
+
+// Add the getOrSet method that cross-system files expect
+referenceCache.getOrSet = async function<T>(
+  key: string, 
+  factory: () => Promise<T>, 
+  skipCache: boolean = false
+): Promise<T> {
+  if (!skipCache && this.has(key)) {
+    return this.get(key);
+  }
+  
+  const value = await factory();
+  this.set(key, value);
+  return value;
+};
+
+// Extend the Map type to include our custom method
+declare global {
+  interface Map<K, V> {
+    getOrSet<T>(key: K, factory: () => Promise<T>, skipCache?: boolean): Promise<T>;
+  }
+}
