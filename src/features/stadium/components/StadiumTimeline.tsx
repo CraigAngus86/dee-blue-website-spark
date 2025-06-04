@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState, useEffect } from 'react';
 import { useStadiumData, TimelineMilestone } from '../hooks/useStadiumData';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -29,7 +28,7 @@ export function StadiumTimeline() {
       const img = new Image();
       img.src = buildTimelineImageUrl(milestone.heroImage.asset.public_id);
       img.onload = () => {
-        setPreloadedImages(prev => new Set([...prev, milestone.heroImage.asset.public_id]));
+        setPreloadedImages(prev => new Set([...Array.from(prev), milestone.heroImage.asset.public_id]));
       };
     });
   };

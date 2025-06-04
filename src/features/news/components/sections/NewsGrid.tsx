@@ -57,7 +57,7 @@ const NewsGrid: React.FC<NewsGridProps> = ({
     "teamNews": "Team News"
   };
   
-  const uniqueCategories = ["all", ...new Set(allContent.map(item => item.category))];
+  const uniqueCategories = ["all", ...Array.from(new Set(allContent.map(item => item.category)))];
   const categories = uniqueCategories
     .map(catId => ({ id: catId, name: categoryMap[catId] || catId }))
     .sort((a, b) => {
@@ -122,7 +122,7 @@ const NewsGrid: React.FC<NewsGridProps> = ({
     
     return layout;
   };
-  
+
   // Generate the mosaic layout
   const mosaicLayout = generateMosaicLayout(filteredContent.length);
   
@@ -209,7 +209,6 @@ const NewsGrid: React.FC<NewsGridProps> = ({
           onClose={() => setSelectedArticle(null)}
         />
       )}
-
       <MatchGalleryModal
         isOpen={!!selectedGalleryId}
         onClose={() => setSelectedGalleryId(null)}

@@ -1,4 +1,3 @@
-
 /**
  * Metadata types for Cloudinary uploads
  */
@@ -35,7 +34,7 @@ export function formatTags(tags: string[], contentType: ContentType | string): s
   }
   
   // Remove duplicates and return
-  return [...new Set(allTags)];
+  return Array.from(new Set(allTags));
 }
 
 /**
