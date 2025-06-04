@@ -10,12 +10,14 @@ interface NewsGridProps {
   articles: NewsArticle[];
   galleries?: any[];
   className?: string;
+  onArticleClick?: (article: NewsArticle) => void;
 }
 
 const NewsGrid: React.FC<NewsGridProps> = ({
   articles,
   galleries = [],
-  className
+  className,
+  onArticleClick // Added but not used - component manages its own modal state
 }) => {
   const [selectedArticle, setSelectedArticle] = useState<NewsArticle | null>(null);
   const [selectedGalleryId, setSelectedGalleryId] = useState<string | null>(null);

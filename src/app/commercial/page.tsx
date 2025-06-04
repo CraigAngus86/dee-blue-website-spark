@@ -34,7 +34,7 @@ export default function CommercialPage() {
 
   return (
     <main className="min-h-screen">
-      <CommercialHero onPartnershipClick={() => handleEnquiryClick()} />
+      <CommercialHero />
       <WhyPartnerWithUs onPartnershipClick={() => handleEnquiryClick()} />
       <SponsorshipOpportunities 
         onSponsorshipClick={(type) => handleEnquiryClick('sponsorship', type)}
