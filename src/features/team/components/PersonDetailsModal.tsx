@@ -147,13 +147,6 @@ export const PersonDetailsModal: React.FC<PersonDetailsModalProps> = ({
                     <span className="font-medium">Nationality</span>
                     <span>{person.nationality}</span>
                   </div>
-                  
-                  {person.jerseyNumber && (
-                    <div className="flex justify-between py-3 border-b border-gray-200">
-                      <span className="font-medium">Jersey Number</span>
-                      <span>#{person.jerseyNumber}</span>
-                    </div>
-                  )}
                 </div>
                 
                 {/* Bio heading */}

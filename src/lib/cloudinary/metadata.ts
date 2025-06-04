@@ -1,9 +1,7 @@
 /**
  * Metadata types for Cloudinary uploads
  */
-
-// Re-export for convenience
-export { ContentType } from './client';
+import { ContentType } from './client';
 
 /**
  * Interface for metadata to be attached to Cloudinary uploads
