@@ -1,10 +1,12 @@
 import React from 'react';
 import { NewsArticle } from '../types';
 import NewsCard from './cards/NewsCard';
+
 interface NewsGridProps {
   articles: NewsArticle[];
   onArticleClick?: (article: NewsArticle) => void;
 }
+
 const NewsGrid: React.FC<NewsGridProps> = ({
   articles,
   onArticleClick
@@ -73,7 +75,6 @@ const NewsGrid: React.FC<NewsGridProps> = ({
               <NewsCard
                 article={article}
                 onClick={onArticleClick}
-                featured={article.isFeature}
               />
             </div>
           ))}
@@ -82,4 +83,5 @@ const NewsGrid: React.FC<NewsGridProps> = ({
     </div>
   );
 };
+
 export default NewsGrid;

@@ -6,13 +6,13 @@ import { GalleryPhoto } from '../types';
 interface GalleryThumbnailGridProps {
   photos: GalleryPhoto[];
   currentIndex: number;
-  onThumbnailClick: (index: number) => void;
+  onIndexChange: (index: number) => void;
 }
 
 const GalleryThumbnailGrid: React.FC<GalleryThumbnailGridProps> = ({
   photos,
   currentIndex,
-  onThumbnailClick
+  onIndexChange
 }) => {
   const { getOptimizedImageUrl } = useGallery();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -75,7 +75,7 @@ const GalleryThumbnailGrid: React.FC<GalleryThumbnailGridProps> = ({
                 thumbnail-item transition-all duration-150 flex-shrink-0
                 ${isActive ? 'ring-3 ring-[#FFD700]' : 'ring-1 ring-gray-200 hover:ring-[#C5E7FF]'}
               `}
-              onClick={() => onThumbnailClick(idx)}
+              onClick={() => onIndexChange(idx)}
             >
               <img
                 src={getOptimizedImageUrl(photo.image, 'thumbnail')}
