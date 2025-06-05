@@ -76,3 +76,4 @@ banks-o-dee-old/node_modules/
 banks-o-dee-old/.next/
 banks-o-dee-old/dist/
 banks-o-dee-old/build/reference-designs
+tsconfig.tsbuildinfo
