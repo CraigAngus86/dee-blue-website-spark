@@ -117,48 +117,48 @@ const NewsModal: React.FC<NewsModalProps> = ({
       <div className="relative max-w-5xl w-full max-h-[95vh] bg-white rounded-lg shadow-xl overflow-hidden">
         {/* Light grey header bar with social buttons and close button */}
         <div className="absolute top-0 left-0 right-0 h-12 bg-[#f5f7fb] z-40 flex justify-between items-center px-4">
-          {/* Social sharing buttons */}
+          {/* Social sharing buttons - improved hover states */}
           <div className="flex space-x-2">
             <button 
               onClick={shareOnTwitter}
-              className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-[#e5e7eb] transition-colors"
+              className="w-8 h-8 flex items-center justify-center rounded-md text-[#00105A] hover:bg-[#C5E7FF] hover:text-[#00105A] transition-all duration-200"
               aria-label="Share on Twitter"
             >
-              <Twitter size={18} className="text-[#00105A]" />
+              <Twitter size={18} />
             </button>
             <button 
               onClick={shareOnFacebook}
-              className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-[#e5e7eb] transition-colors"
+              className="w-8 h-8 flex items-center justify-center rounded-md text-[#00105A] hover:bg-[#C5E7FF] hover:text-[#00105A] transition-all duration-200"
               aria-label="Share on Facebook"
             >
-              <Facebook size={18} className="text-[#00105A]" />
+              <Facebook size={18} />
             </button>
             <button 
               onClick={shareOnLinkedin}
-              className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-[#e5e7eb] transition-colors"
+              className="w-8 h-8 flex items-center justify-center rounded-md text-[#00105A] hover:bg-[#C5E7FF] hover:text-[#00105A] transition-all duration-200"
               aria-label="Share on LinkedIn"
             >
-              <Linkedin size={18} className="text-[#00105A]" />
+              <Linkedin size={18} />
             </button>
             <button 
               onClick={shareByEmail}
-              className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-[#e5e7eb] transition-colors"
+              className="w-8 h-8 flex items-center justify-center rounded-md text-[#00105A] hover:bg-[#C5E7FF] hover:text-[#00105A] transition-all duration-200"
               aria-label="Share by Email"
             >
-              <Mail size={18} className="text-[#00105A]" />
+              <Mail size={18} />
             </button>
             <button 
               onClick={copyLink}
-              className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-[#e5e7eb] transition-colors"
+              className="w-8 h-8 flex items-center justify-center rounded-md text-[#00105A] hover:bg-[#C5E7FF] hover:text-[#00105A] transition-all duration-200"
               aria-label="Copy link"
             >
-              <Copy size={18} className="text-[#00105A]" />
+              <Copy size={18} />
             </button>
           </div>
           
-          {/* Close button - now navy */}
+          {/* Close button - enhanced hover state */}
           <button 
-            className="text-[#00105A] hover:text-[#001C8C]"
+            className="text-[#00105A] hover:text-[#FFD700] transition-colors duration-200"
             onClick={onClose}
           >
             <X size={22} />
@@ -195,8 +195,8 @@ const NewsModal: React.FC<NewsModalProps> = ({
                 </div>
               </div>
             )}
-            {/* Enhanced gradient overlay for better text readability */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#00105A]/90 via-[#00105A]/70 to-transparent"></div>
+            {/* FIXED: Much lighter gradient overlay for better readability */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#00105A]/60 via-[#00105A]/30 to-transparent"></div>
             
             {/* Title overlay */}
             <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
@@ -216,14 +216,14 @@ const NewsModal: React.FC<NewsModalProps> = ({
           <div className="px-6 py-8 bg-white">
             {/* Excerpt with special styling */}
             {article.excerpt && (
-              <div className="mb-8 text-lg font-medium text-gray-700 border-l-4 border-[#00105A] pl-4 py-2 bg-[#f5f7fb]">
+              <div className="mb-8 text-lg font-medium text-[#4b5563] border-l-4 border-[#00105A] pl-4 py-2 bg-[#f5f7fb]">
                 {article.excerpt}
               </div>
             )}
             
             {/* Author if available */}
             {article.author && (
-              <div className="mb-6 text-sm font-medium text-gray-600">
+              <div className="mb-6 text-sm font-medium text-[#6b7280]">
                 By {article.author}
               </div>
             )}
@@ -236,11 +236,11 @@ const NewsModal: React.FC<NewsModalProps> = ({
                   components={portableTextComponents}
                 />
               ) : typeof article.body === 'string' && article.body ? (
-                <p className="text-gray-800">{article.body}</p>
+                <p className="text-[#1f2937]">{article.body}</p>
               ) : (
                 <div>
-                  <p className="text-gray-800">Banks o' Dee FC is excited to announce summer trials for our expanding youth academy program. The trials will take place at our Spain Park facility, which features our FIFA-standard 3G artificial pitch.</p>
-                  <p className="mt-4 text-orange-500">Note: Full article content is being loaded. The website is currently being updated to display rich text content correctly.</p>
+                  <p className="text-[#1f2937]">Banks o' Dee FC is excited to announce summer trials for our expanding youth academy program. The trials will take place at our Spain Park facility, which features our FIFA-standard 3G artificial pitch.</p>
+                  <p className="mt-4 text-[#f59e0b]">Note: Full article content is being loaded. The website is currently being updated to display rich text content correctly.</p>
                 </div>
               )}
             </div>
@@ -296,7 +296,7 @@ const NewsModal: React.FC<NewsModalProps> = ({
                           target.onerror = null;
                           const fallbackDiv = document.createElement('div');
                           fallbackDiv.className = 'w-full h-full bg-[#f5f7fb] flex items-center justify-center';
-                          fallbackDiv.innerHTML = '<span class="text-gray-500">Image not available</span>';
+                          fallbackDiv.innerHTML = '<span class="text-[#6b7280]">Image not available</span>';
                           if (target.parentNode) {
                             target.parentNode.replaceChild(fallbackDiv, target);
                           }

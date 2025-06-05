@@ -11,15 +11,18 @@ import { getHomepageUpcomingMatches, getHomepageRecentMatches, getHomepageLeague
 import { HomeHeroSection, OverlappingNewsCards } from "@/features/home";
 import { getTeamData } from "@/features/team/services/getTeamData";
 import { selectRandomPlayersByPosition } from "@/features/team/services/playerSelection";
+
 // Set the revalidation time to ensure fresh data
 export const revalidate = 10; // Revalidate every 10 seconds
+
 export const metadata: Metadata = {
   title: "Home | Banks o' Dee FC",
   description:
     "Welcome to the official website of Banks o' Dee Football Club",
 };
+
 // Fetch all news articles for homepage ordered by date
-async function getNewsArticles(limit = 9) {
+async function getNewsArticles(limit = 11) {
   const query = `*[_type == "newsArticle" && !(_id in path("drafts.**"))] | order(publishedAt desc)[0...${limit}] {
     _id,
     title,
@@ -40,6 +43,7 @@ async function getNewsArticles(limit = 9) {
     return [];
   }
 }
+
 async function getFanOfMonth() {
   const query = `*[_type == "fanOfMonth" && status == "featured"][0] {
     fanName,
@@ -58,6 +62,7 @@ async function getFanOfMonth() {
     return null;
   }
 }
+
 async function getGalleryPhotos() {
   const query = `*[_type == "fanPhoto" && approvalStatus == "approved"] | order(displayOrder asc, submittedAt desc)[0...6] {
     fanName,
@@ -74,6 +79,7 @@ async function getGalleryPhotos() {
     return [];
   }
 }
+
 async function getRandomPlayers() {
   try {
     const { people, error } = await getTeamData();
@@ -91,9 +97,24 @@ async function getRandomPlayers() {
     return [];
   }
 }
+
+// Mobile News Link Component
+const MobileNewsLink = () => (
+  <div className="block md:hidden bg-white py-6">
+    <div className="container mx-auto px-4 text-center">
+      <a 
+        href="/news" 
+        className="inline-flex items-center justify-center px-6 py-3 bg-[#C5E7FF] text-[#00105A] rounded-lg font-semibold hover:bg-[#00105A] hover:text-white transition-all duration-200 shadow-sm hover:shadow-md"
+      >
+        See all News
+      </a>
+    </div>
+  </div>
+);
+
 export default async function HomePage() {
-  // Fetch all news articles (up to 9 - 3 for hero, 6 for cards)
-  const newsArticles = await getNewsArticles(9);
+  // Fetch more news articles to accommodate mobile (5) + desktop cards (6) = 11 total
+  const newsArticles = await getNewsArticles(11);
   
   // Fetch all data in parallel
   const [
@@ -114,13 +135,14 @@ export default async function HomePage() {
     getRandomPlayers()
   ]);
   
-  // Process news articles for hero (top 3)
-  const heroArticles = newsArticles.slice(0, 3).map(article => ({
+  // Responsive article distribution:
+  // Mobile: 5 articles for hero, 0 for cards
+  // Desktop: 3 articles for hero, 6 for cards
+  const heroArticles = newsArticles.slice(0, 5).map(article => ({
     ...article,
     id: article._id
   }));
   
-  // Process news articles for cards (next 6)
   const cardsArticles = newsArticles.slice(3, 9).map(article => ({
     ...article,
     id: article._id
@@ -134,11 +156,16 @@ export default async function HomePage() {
   
   return (
     <div className="min-h-screen flex flex-col" style={cardShadowStyle}>
-      {/* Hero Section */}
+      {/* Hero Section - now handles 5 articles on mobile, 3 on desktop */}
       <HomeHeroSection articles={heroArticles} />
       
-      {/* News Cards Section - no divider before this section */}
-      <OverlappingNewsCards articles={cardsArticles} />
+      {/* Mobile News Link - only shows on mobile when cards are hidden */}
+      <MobileNewsLink />
+      
+      {/* News Cards Section - hidden on mobile, visible on desktop */}
+      <div className="hidden md:block">
+        <OverlappingNewsCards articles={cardsArticles} />
+      </div>
       
       {/* Reduced Gradient Separator */}
       <GradientSeparator className="py-6" />

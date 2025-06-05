@@ -15,6 +15,7 @@ interface HomeHeroSectionState {
   isTransitioning: boolean;
   selectedArticle: NewsArticle | null;
   isLoading: boolean;
+  isMobile: boolean;
 }
 
 class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSectionState> {
@@ -25,15 +26,20 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
       previousIndex: 0,
       isTransitioning: false,
       selectedArticle: null,
-      isLoading: false
+      isLoading: false,
+      isMobile: false
     };
   }
   
   componentDidMount() {
+    // Check if mobile
+    this.updateMobileState();
+    window.addEventListener('resize', this.updateMobileState);
+    
     // Auto-rotate slides every 6 seconds
     if (this.props.articles.length > 1) {
       this.rotationTimer = setInterval(() => {
-        this.goToSlide((this.state.currentIndex + 1) % this.props.articles.length);
+        this.goToSlide((this.state.currentIndex + 1) % this.getVisibleArticlesCount());
       }, 6000);
     }
   }
@@ -42,12 +48,32 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
     if (this.rotationTimer) {
       clearInterval(this.rotationTimer);
     }
+    window.removeEventListener('resize', this.updateMobileState);
   }
   
   rotationTimer: NodeJS.Timeout | null = null;
   
+  updateMobileState = () => {
+    const isMobile = window.innerWidth < 768;
+    this.setState({ isMobile });
+  }
+  
+  // Get the number of articles to show based on screen size
+  getVisibleArticlesCount = () => {
+    return this.state.isMobile ? 5 : 3;
+  }
+  
+  // Get the articles to display based on screen size
+  getVisibleArticles = () => {
+    const count = this.getVisibleArticlesCount();
+    return this.props.articles.slice(0, count);
+  }
+  
   goToSlide(index: number) {
     if (this.state.isTransitioning) return;
+    
+    const visibleCount = this.getVisibleArticlesCount();
+    if (index >= visibleCount) return;
     
     this.setState({
       previousIndex: this.state.currentIndex,
@@ -106,7 +132,12 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
       return null;
     }
     
-    const article = articles[currentIndex];
+    const visibleArticles = this.getVisibleArticles();
+    const article = visibleArticles[currentIndex];
+    
+    if (!article) {
+      return null;
+    }
     
     // Format date in a more concise format
     const formattedDate = article.publishedAt 
@@ -120,7 +151,7 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
     return (
       <div className="relative h-[70vh] min-h-[450px] max-h-[700px] overflow-hidden bg-[#00105A]">
         {/* Background image and overlay */}
-        {articles.map((slideArticle, i) => (
+        {visibleArticles.map((slideArticle, i) => (
           <div key={slideArticle.id}
                className={`absolute inset-0 transition-opacity duration-500 ${
                  i === currentIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'
@@ -168,9 +199,9 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
                 </div>
                 
                 {/* Navigation dots - positioned much closer to the cards below */}
-                {articles.length > 1 && (
+                {visibleArticles.length > 1 && (
                   <div className="flex justify-center space-x-2">
-                    {articles.map((_, i) => (
+                    {visibleArticles.map((_, i) => (
                       <button 
                         key={i}
                         className={`w-2.5 h-2.5 rounded-full transition-all mx-1 ${
