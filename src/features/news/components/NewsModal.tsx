@@ -86,11 +86,11 @@ const NewsModal: React.FC<NewsModalProps> = ({
             break;
           case 'modal':
             if (article.category === 'matchReport') {
-              // Keep smart adjustments for match photos
-              transformation = 'c_fill,g_auto:subject,ar_16:9,q_auto:good,f_auto,w_auto,y_-20,z_1.05';
+              // Keep smart adjustments for match photos + progressive loading
+              transformation = 'c_fill,g_auto:subject,ar_16:9,q_auto:good,f_auto,fl_progressive,w_auto,y_-20,z_1.05';
             } else {
-              // Standard modal images
-              transformation = 'c_fill,g_auto:subject,ar_16:9,q_auto:good,f_auto,w_auto';
+              // Standard modal images + progressive loading
+              transformation = 'c_fill,g_auto:subject,ar_16:9,q_auto:good,f_auto,fl_progressive,w_auto';
             }
             break;
           case 'card':
