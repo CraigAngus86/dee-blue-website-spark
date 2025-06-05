@@ -1,158 +1,137 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Facebook, Twitter, Instagram, Mail, Phone, MapPin, LayoutDashboard } from 'lucide-react';
+import { Facebook, Instagram, Linkedin, Mail, Phone, MapPin } from 'lucide-react';
+import { buildSponsorLogoUrl } from "@/features/sponsors";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
-  const isDevelopment = process.env.NODE_ENV === 'development';
   
   return (
-    <footer className="bg-primary text-white pt-12 pb-6">
+    <footer className="bg-[#00105A] text-white pt-4">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Club Information */}
-          <div>
-            <div className="flex items-center mb-4">
+        {/* Main Footer Content */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-3">
+          
+          {/* Left Column: Club Identity & Social */}
+          <div className="flex flex-col space-y-2">
+            <div className="flex items-center mb-1">
               <Image
-                src="/assets/images/logos/BOD_Logo_White_square.png"
+                src={buildSponsorLogoUrl('BOD_Logo_White_square_joicd1', 'mainLogo')}
                 alt="Banks o' Dee FC"
-                width={48}
-                height={48}
-                className="h-12 w-auto"
+                width={36}
+                height={36}
+                className="h-9 w-9 object-contain"
               />
-              <h3 className="text-xl font-montserrat font-bold ml-2">Banks o&apos; Dee FC</h3>
+              <div className="ml-3">
+                <h3 className="font-montserrat font-bold text-base mb-0">Banks o&apos; Dee FC</h3>
+                <p className="text-xs text-[#C5E7FF] mb-0">Established 1902</p>
+              </div>
             </div>
-            <p className="mb-2">Highland Football League Club</p>
-            <p className="mb-2">Established 1902</p>
-            <p className="mb-4">Spain Park, Aberdeen</p>
-          </div>
-          
-          {/* Quick Links */}
-          <div>
-            <h3 className="text-xl font-montserrat font-bold mb-4">Quick Links</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link href="/news" className="hover:text-accent transition-colors">
-                  News
-                </Link>
-              </li>
-              <li>
-                <Link href="/team" className="hover:text-accent transition-colors">
-                  Team
-                </Link>
-              </li>
-              <li>
-                <Link href="/matches" className="hover:text-accent transition-colors">
-                  Fixtures & Results
-                </Link>
-              </li>
-              <li>
-                <Link href="/spain-park" className="hover:text-accent transition-colors">
-                  Spain Park
-                </Link>
-              </li>
-              <li>
-                <Link href="/commercial" className="hover:text-accent transition-colors">
-                  Commercial
-                </Link>
-              </li>
-              <li>
-                <Link href="/tickets" className="hover:text-accent transition-colors">
-                  Tickets
-                </Link>
-              </li>
-              {isDevelopment && (
-                <li>
-                  <Link 
-                    href="/admin/test-dashboard" 
-                    className="hover:text-accent transition-colors flex items-center"
-                  >
-                    <LayoutDashboard size={16} className="mr-1" />
-                    Test Dashboard
-                  </Link>
-                </li>
-              )}
-            </ul>
-          </div>
-          
-          {/* Contact Information */}
-          <div>
-            <h3 className="text-xl font-montserrat font-bold mb-4">Contact & Follow</h3>
-            <ul className="space-y-3">
-              <li className="flex items-center">
-                <MapPin size={20} className="mr-2 text-accent" />
-                <span>Spain Park, Aberdeen AB24 5RX</span>
-              </li>
-              <li className="flex items-center">
-                <Mail size={20} className="mr-2 text-accent" />
-                <a href="mailto:info@banksodeefc.co.uk" className="hover:text-accent transition-colors">
-                  info@banksodeefc.co.uk
-                </a>
-              </li>
-              <li className="flex items-center">
-                <Phone size={20} className="mr-2 text-accent" />
-                <a href="tel:+441224251395" className="hover:text-accent transition-colors">
-                  01224 251395
-                </a>
-              </li>
-            </ul>
             
             {/* Social Media */}
-            <div className="mt-6">
-              <h4 className="font-semibold mb-3">Follow Us</h4>
-              <div className="flex space-x-4">
+            <div>
+              <p className="text-sm font-medium mb-2">Follow the Dee</p>
+              <div className="flex space-x-3">
                 <a 
-                  href="https://twitter.com/banksodeejfc" 
+                  href="https://x.com/banksodee_fc" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="hover:text-accent transition-colors"
-                  aria-label="Twitter"
+                  className="text-white/80 hover:text-[#C5E7FF] transition-colors duration-200 hover:scale-110 transform"
+                  aria-label="X (Twitter)"
                 >
-                  <Twitter size={24} />
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                  </svg>
                 </a>
                 <a 
-                  href="https://www.facebook.com/banksodeefootballclub/" 
+                  href="https://www.facebook.com/banksodeejfc/" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="hover:text-accent transition-colors"
+                  className="text-white/80 hover:text-[#C5E7FF] transition-colors duration-200 hover:scale-110 transform"
                   aria-label="Facebook"
                 >
-                  <Facebook size={24} />
+                  <Facebook size={18} />
                 </a>
                 <a 
                   href="https://www.instagram.com/banksodeefc/" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="hover:text-accent transition-colors"
+                  className="text-white/80 hover:text-[#C5E7FF] transition-colors duration-200 hover:scale-110 transform"
                   aria-label="Instagram"
                 >
-                  <Instagram size={24} />
+                  <Instagram size={18} />
+                </a>
+                <a 
+                  href="https://uk.linkedin.com/company/banks-o-deefc" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-white/80 hover:text-[#C5E7FF] transition-colors duration-200 hover:scale-110 transform"
+                  aria-label="LinkedIn"
+                >
+                  <Linkedin size={18} />
+                </a>
+              </div>
+            </div>
+          </div>
+          
+          {/* Right Column: Contact */}
+          <div className="flex flex-col space-y-2 md:ml-auto md:text-right">
+            <h4 className="font-semibold text-base mb-1">Get in Touch</h4>
+            
+            <div className="space-y-1">
+              <div className="flex items-start text-sm md:justify-end">
+                <MapPin size={14} className="mr-2 text-[#C5E7FF] flex-shrink-0 mt-0.5 md:order-2 md:ml-2 md:mr-0" />
+                <span className="text-white/80">Spain Park, Abbotswell Road, Aberdeen AB12 3AB</span>
+              </div>
+              <div className="flex items-center text-sm md:justify-end">
+                <Phone size={14} className="mr-2 text-[#C5E7FF] flex-shrink-0 md:order-2 md:ml-2 md:mr-0" />
+                <a 
+                  href="tel:+441224893333" 
+                  className="text-white/80 hover:text-[#C5E7FF] transition-colors duration-200"
+                >
+                  01224 893333
+                </a>
+              </div>
+              <div className="flex items-center text-sm md:justify-end">
+                <Mail size={14} className="mr-2 text-[#C5E7FF] flex-shrink-0 md:order-2 md:ml-2 md:mr-0" />
+                <a 
+                  href="mailto:info@banksodeefc.co.uk" 
+                  className="text-white/80 hover:text-[#C5E7FF] transition-colors duration-200"
+                >
+                  info@banksodeefc.co.uk
                 </a>
               </div>
             </div>
           </div>
         </div>
         
-        {/* Decorative Border */}
-        <div className="my-6 h-px bg-gradient-to-r from-primary-light via-accent to-primary-light opacity-30"></div>
-        
-        {/* Copyright */}
-        <div className="text-center text-sm">
-          <p>&copy; {currentYear} Banks o&apos; Dee Football Club. All rights reserved.</p>
-          
-          {/* Dev tools link (only visible in development) */}
-          {isDevelopment && (
-            <div className="mt-2 flex justify-center">
+        {/* Legal Section - Minimal bottom spacing */}
+        <div className="border-t border-white/20 pt-2 pb-1">
+          <div className="flex flex-col md:flex-row justify-between items-center text-xs text-white/60 space-y-1 md:space-y-0">
+            <p className="mb-0">&copy; {currentYear} Banks o&apos; Dee Football Club. All rights reserved.</p>
+            
+            <div className="flex space-x-3">
               <Link 
-                href="/admin/test-dashboard" 
-                className="flex items-center text-xs text-white/60 hover:text-accent/80 transition-colors"
+                href="/privacy" 
+                className="hover:text-[#C5E7FF] transition-colors duration-200"
               >
-                <LayoutDashboard size={12} className="mr-1" />
-                Developer Test Dashboard
+                Privacy Policy
+              </Link>
+              <Link 
+                href="/terms" 
+                className="hover:text-[#C5E7FF] transition-colors duration-200"
+              >
+                Terms of Use
+              </Link>
+              <Link 
+                href="/cookies" 
+                className="hover:text-[#C5E7FF] transition-colors duration-200"
+              >
+                Cookie Policy
               </Link>
             </div>
-          )}
+          </div>
         </div>
       </div>
     </footer>
