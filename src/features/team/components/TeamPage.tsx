@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { Person } from '../types';
+import { Person } from '..'; // Import from index.ts
 import { useTeamData } from '../hooks/useTeamData';
 import { getTeamFilterOptions } from '../services/getTeamData';
 import { TeamFilter } from './TeamFilter';
