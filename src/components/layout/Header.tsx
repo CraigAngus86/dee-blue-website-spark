@@ -114,9 +114,9 @@ const Header = () => {
         {/* Main Header - 38px height for better proportion */}
         <div className="bg-[#00105A] text-white h-[38px]">
           <div className="container mx-auto h-full">
-            <div className="flex items-center h-full w-full">
-              {/* Responsive logo spacer */}
-              <div className="w-52 md:w-56 xl:w-64 hidden sm:block"></div>
+            <div className="flex items-center justify-between h-full w-full px-4">
+              {/* Left - Logo spacer for desktop */}
+              <div className="w-52 md:w-56 xl:w-64 hidden md:block"></div>
 
               {/* Center - Enhanced navigation */}
               <nav 
@@ -137,30 +137,33 @@ const Header = () => {
                 ))}
               </nav>
 
-              {/* Right - Enhanced CTA button with reduced height */}
-              <div className="hidden md:flex">
-                <Link 
-                  href="/tickets" 
-                  className="bg-[#FFD700] hover:bg-[#00105A] hover:border-2 hover:border-[#FFD700] text-[#00105A] hover:text-[#FFD700] font-bold py-1.5 px-4 rounded-md flex items-center transition-all duration-200 text-sm whitespace-nowrap shadow-md hover:shadow-lg hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#FFD700] focus:ring-opacity-50"
-                >
-                  <span>Buy Tickets</span>
-                  <ArrowRight size={16} className="ml-2" />
-                </Link>
-              </div>
+              {/* Right - Enhanced CTA button + Mobile Menu Button */}
+              <div className="flex items-center space-x-4">
+                {/* Desktop CTA */}
+                <div className="hidden md:flex">
+                  <Link 
+                    href="/tickets" 
+                    className="bg-[#FFD700] hover:bg-[#00105A] hover:border-2 hover:border-[#FFD700] text-[#00105A] hover:text-[#FFD700] font-bold py-1.5 px-4 rounded-md flex items-center transition-all duration-200 text-sm whitespace-nowrap shadow-md hover:shadow-lg hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#FFD700] focus:ring-opacity-50"
+                  >
+                    <span>Buy Tickets</span>
+                    <ArrowRight size={16} className="ml-2" />
+                  </Link>
+                </div>
 
-              {/* Mobile Menu Button */}
-              <button
-                onClick={toggleMenu}
-                className="text-white p-2 md:hidden focus:outline-none focus:ring-2 focus:ring-[#C5E7FF] focus:ring-opacity-50 rounded"
-                aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-              >
-                {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
-              </button>
+                {/* Mobile Menu Button - FIXED POSITIONING */}
+                <button
+                  onClick={toggleMenu}
+                  className="text-white p-2 md:hidden focus:outline-none focus:ring-2 focus:ring-[#C5E7FF] focus:ring-opacity-50 rounded z-30 bg-[#00105A]"
+                  aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+                >
+                  {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
+                </button>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* OVERLAPPING LOGO - Enhanced */}
+        {/* OVERLAPPING LOGO - Enhanced but not covering mobile button */}
         <div className="absolute top-0 left-4 z-20 h-full flex items-center">
           <Link href="/" className="flex items-center group">
             <Image
