@@ -111,18 +111,20 @@ const Header = () => {
           </div>
         </div>
 
-        {/* Main Header - 38px height for better proportion */}
+        {/* Main Header - CLEANER MOBILE/DESKTOP SEPARATION */}
         <div className="bg-[#00105A] text-white h-[38px]">
           <div className="container mx-auto h-full">
-            <div className="flex items-center justify-between h-full w-full px-4">
-              {/* Left - Logo spacer for desktop */}
-              <div className="w-52 md:w-56 xl:w-64 hidden md:block"></div>
+            
+            {/* DESKTOP LAYOUT */}
+            <div className="hidden md:flex items-center h-full w-full">
+              {/* Desktop logo spacer */}
+              <div className="w-52 md:w-56 xl:w-64"></div>
 
-              {/* Center - Enhanced navigation */}
+              {/* Desktop navigation */}
               <nav 
                 role="navigation" 
                 aria-label="Main Navigation"
-                className="hidden md:flex items-center justify-between flex-1 px-10 lg:px-20 xl:px-[140px]"
+                className="flex items-center justify-between flex-1 px-10 lg:px-20 xl:px-[140px]"
               >
                 {navigation.map((item) => (
                   <Link
@@ -137,29 +139,30 @@ const Header = () => {
                 ))}
               </nav>
 
-              {/* Right - Enhanced CTA button + Mobile Menu Button */}
-              <div className="flex items-center space-x-4">
-                {/* Desktop CTA */}
-                <div className="hidden md:flex">
-                  <Link 
-                    href="/tickets" 
-                    className="bg-[#FFD700] hover:bg-[#00105A] hover:border-2 hover:border-[#FFD700] text-[#00105A] hover:text-[#FFD700] font-bold py-1.5 px-4 rounded-md flex items-center transition-all duration-200 text-sm whitespace-nowrap shadow-md hover:shadow-lg hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#FFD700] focus:ring-opacity-50"
-                  >
-                    <span>Buy Tickets</span>
-                    <ArrowRight size={16} className="ml-2" />
-                  </Link>
-                </div>
-
-                {/* Mobile Menu Button - FIXED POSITIONING */}
-                <button
-                  onClick={toggleMenu}
-                  className="text-white p-2 md:hidden focus:outline-none focus:ring-2 focus:ring-[#C5E7FF] focus:ring-opacity-50 rounded z-30 bg-[#00105A]"
-                  aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+              {/* Desktop CTA */}
+              <div className="flex">
+                <Link 
+                  href="/tickets" 
+                  className="bg-[#FFD700] hover:bg-[#00105A] hover:border-2 hover:border-[#FFD700] text-[#00105A] hover:text-[#FFD700] font-bold py-1.5 px-4 rounded-md flex items-center transition-all duration-200 text-sm whitespace-nowrap shadow-md hover:shadow-lg hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#FFD700] focus:ring-opacity-50"
                 >
-                  {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
-                </button>
+                  <span>Buy Tickets</span>
+                  <ArrowRight size={16} className="ml-2" />
+                </Link>
               </div>
             </div>
+
+            {/* MOBILE LAYOUT */}
+            <div className="flex md:hidden items-center justify-end h-full w-full px-4">
+              {/* Mobile Menu Button - FAR RIGHT */}
+              <button
+                onClick={toggleMenu}
+                className="text-white p-2 focus:outline-none focus:ring-2 focus:ring-[#C5E7FF] focus:ring-opacity-50 rounded z-30"
+                aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+              >
+                {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
+              </button>
+            </div>
+
           </div>
         </div>
 
@@ -179,7 +182,7 @@ const Header = () => {
           </Link>
         </div>
 
-        {/* Mobile Navigation */}
+        {/* Mobile Navigation - FIXED TEXT COLORS */}
         {isMenuOpen && (
           <div className="absolute left-0 right-0 top-full bg-[#00105A] z-40 md:hidden shadow-lg">
             <nav 
@@ -191,7 +194,7 @@ const Header = () => {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`text-lg py-3 border-b border-[#1a237e] hover:text-[#C5E7FF] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5E7FF] focus:ring-opacity-50 rounded-sm px-2 ${
+                  className={`text-white text-lg py-3 border-b border-[#1a237e] hover:text-[#C5E7FF] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5E7FF] focus:ring-opacity-50 rounded-sm px-2 ${
                     pathname === item.href ? "font-bold text-[#C5E7FF]" : ""
                   }`}
                 >
