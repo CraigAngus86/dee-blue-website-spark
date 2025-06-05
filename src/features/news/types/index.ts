@@ -1,5 +1,4 @@
 // Types for news features
-
 /**
  * Represents a Cloudinary image format
  */
@@ -9,6 +8,7 @@ export interface CloudinaryImage {
   secure_url?: string;
   url?: string;
   alt?: string;
+  caption?: string;
 }
 
 /**
@@ -17,6 +17,7 @@ export interface CloudinaryImage {
 export interface SanityImage {
   url: string;
   alt?: string;
+  caption?: string;
 }
 
 /**
