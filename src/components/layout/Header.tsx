@@ -8,35 +8,25 @@ import { ArrowRight, Menu, X } from "lucide-react";
 import { buildSponsorLogoUrl } from "@/features/sponsors";
 import { getHeaderSponsors } from "@/features/sponsors/utils/sanityQueries";
 
-/**
- * Unified Header component - FIXED: Logo colors + restored our better gradient
- */
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [headerSponsors, setHeaderSponsors] = useState([]);
-  const [sponsorError, setSponsorError] = useState(null);
   const pathname = usePathname();
 
   // Fetch header sponsors dynamically
   useEffect(() => {
     const fetchSponsors = async () => {
       try {
-        console.log('🔍 Attempting to fetch header sponsors...');
         const sponsors = await getHeaderSponsors();
-        console.log('✅ Sponsors fetched successfully:', sponsors);
-        // Sort to ensure principal sponsors appear first
         const sortedSponsors = sponsors.sort((a, b) => {
           if (a.primaryTier === 'principal' && b.primaryTier === 'main') return -1;
           if (a.primaryTier === 'main' && b.primaryTier === 'principal') return 1;
           return a.name.localeCompare(b.name);
         });
         setHeaderSponsors(sortedSponsors);
-        setSponsorError(null);
       } catch (error) {
-        console.error('❌ Error loading header sponsors:', error);
-        setSponsorError(error.message);
-        // Show sponsor bar anyway with empty space to maintain layout
+        console.error('Error loading header sponsors:', error);
         setHeaderSponsors([]);
       }
     };
@@ -71,6 +61,9 @@ const Header = () => {
     { name: "Commercial", href: "/commercial" },
   ];
 
+  // Get principal sponsor for mobile
+  const principalSponsor = headerSponsors.find(sponsor => sponsor.primaryTier === 'principal');
+
   return (
     <header 
       className={`fixed top-0 left-0 w-full z-50 transition-shadow duration-300 ${
@@ -79,48 +72,66 @@ const Header = () => {
     >
       {/* Container for overlapping design */}
       <div className="relative">
-        {/* Sponsor Bar - ALWAYS SHOW (to maintain layout even if sponsors fail to load) */}
+        {/* Sponsor Bar - Always show gradient */}
         <div className="bg-gradient-to-r from-[#00105A] from-55% via-[#C5E7FF] via-70% to-[#C5E7FF] h-[30px]">
           <div className="container mx-auto px-2 h-full">
             <div className="flex items-center justify-end h-full">
-              <div className="flex items-center space-x-1">
-                {headerSponsors.length > 0 ? (
-                  headerSponsors.map((sponsor) => (
-                    <Link
-                      key={sponsor._id}
-                      href={sponsor.website || '#'}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:opacity-80 hover:scale-105 transition-all duration-200 block"
-                      title={sponsor.name}
-                    >
-                      <Image
-                        src={buildSponsorLogoUrl(sponsor.logo?.public_id, 'header')}
-                        alt={sponsor.name}
-                        width={120}
-                        height={28}
-                        className="object-contain h-5"
-                      />
-                    </Link>
-                  ))
-                ) : sponsorError ? (
-                  <span className="text-xs text-white/60">Sponsors loading...</span>
-                ) : null}
+              
+              {/* Desktop: All Sponsors */}
+              <div className="hidden md:flex items-center space-x-1">
+                {headerSponsors.map((sponsor) => (
+                  <Link
+                    key={sponsor._id}
+                    href={sponsor.website || '#'}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:opacity-80 hover:scale-105 transition-all duration-200 block"
+                    title={sponsor.name}
+                  >
+                    <Image
+                      src={buildSponsorLogoUrl(sponsor.logo?.public_id, 'header')}
+                      alt={sponsor.name}
+                      width={120}
+                      height={28}
+                      className="object-contain h-5"
+                    />
+                  </Link>
+                ))}
               </div>
+
+              {/* Mobile: Principal Sponsor Only */}
+              <div className="flex md:hidden items-center">
+                {principalSponsor && (
+                  <Link
+                    href={principalSponsor.website || '#'}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:opacity-80 hover:scale-105 transition-all duration-200 block"
+                    title={principalSponsor.name}
+                  >
+                    <Image
+                      src={buildSponsorLogoUrl(principalSponsor.logo?.public_id, 'header')}
+                      alt={principalSponsor.name}
+                      width={100}
+                      height={28}
+                      className="object-contain h-5"
+                    />
+                  </Link>
+                )}
+              </div>
+
             </div>
           </div>
         </div>
 
-        {/* Main Header - CLEANER MOBILE/DESKTOP SEPARATION */}
+        {/* Main Header */}
         <div className="bg-[#00105A] text-white h-[38px]">
           <div className="container mx-auto h-full">
             
             {/* DESKTOP LAYOUT */}
             <div className="hidden md:flex items-center h-full w-full">
-              {/* Desktop logo spacer */}
               <div className="w-52 md:w-56 xl:w-64"></div>
 
-              {/* Desktop navigation */}
               <nav 
                 role="navigation" 
                 aria-label="Main Navigation"
@@ -139,7 +150,6 @@ const Header = () => {
                 ))}
               </nav>
 
-              {/* Desktop CTA */}
               <div className="flex">
                 <Link 
                   href="/tickets" 
@@ -153,7 +163,6 @@ const Header = () => {
 
             {/* MOBILE LAYOUT */}
             <div className="flex md:hidden items-center justify-end h-full w-full px-4">
-              {/* Mobile Menu Button - FAR RIGHT */}
               <button
                 onClick={toggleMenu}
                 className="text-white p-2 focus:outline-none focus:ring-2 focus:ring-[#C5E7FF] focus:ring-opacity-50 rounded z-30"
@@ -166,7 +175,7 @@ const Header = () => {
           </div>
         </div>
 
-        {/* OVERLAPPING LOGO - Enhanced but not covering mobile button */}
+        {/* OVERLAPPING LOGO */}
         <div className="absolute top-0 left-4 z-20 h-full flex items-center">
           <Link href="/" className="flex items-center group">
             <Image
@@ -182,7 +191,7 @@ const Header = () => {
           </Link>
         </div>
 
-        {/* Mobile Navigation - FIXED TEXT COLORS */}
+        {/* Mobile Navigation */}
         {isMenuOpen && (
           <div className="absolute left-0 right-0 top-full bg-[#00105A] z-40 md:hidden shadow-lg">
             <nav 
