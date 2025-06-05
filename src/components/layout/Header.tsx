@@ -6,33 +6,15 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { ArrowRight, Menu, X } from "lucide-react";
 import { buildSponsorLogoUrl } from "@/features/sponsors";
-import { getHeaderSponsors } from "@/features/sponsors/utils/sanityQueries";
 
-const Header = () => {
+interface HeaderProps {
+  sponsors: any[];
+}
+
+const Header = ({ sponsors = [] }: HeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [headerSponsors, setHeaderSponsors] = useState([]);
   const pathname = usePathname();
-
-  // Fetch header sponsors dynamically
-  useEffect(() => {
-    const fetchSponsors = async () => {
-      try {
-        const sponsors = await getHeaderSponsors();
-        const sortedSponsors = sponsors.sort((a, b) => {
-          if (a.primaryTier === 'principal' && b.primaryTier === 'main') return -1;
-          if (a.primaryTier === 'main' && b.primaryTier === 'principal') return 1;
-          return a.name.localeCompare(b.name);
-        });
-        setHeaderSponsors(sortedSponsors);
-      } catch (error) {
-        console.error('Error loading header sponsors:', error);
-        setHeaderSponsors([]);
-      }
-    };
-    
-    fetchSponsors();
-  }, []);
 
   // Handle scroll event for header styling
   useEffect(() => {
@@ -61,8 +43,15 @@ const Header = () => {
     { name: "Commercial", href: "/commercial" },
   ];
 
+  // Sort sponsors (same logic as before)
+  const sortedSponsors = sponsors.sort((a, b) => {
+    if (a.primaryTier === 'principal' && b.primaryTier === 'main') return -1;
+    if (a.primaryTier === 'main' && b.primaryTier === 'principal') return 1;
+    return a.name.localeCompare(b.name);
+  });
+
   // Get principal sponsor for mobile
-  const principalSponsor = headerSponsors.find(sponsor => sponsor.primaryTier === 'principal');
+  const principalSponsor = sortedSponsors.find(sponsor => sponsor.primaryTier === 'principal');
 
   return (
     <header 
@@ -79,7 +68,7 @@ const Header = () => {
               
               {/* Desktop: All Sponsors */}
               <div className="hidden md:flex items-center space-x-1">
-                {headerSponsors.map((sponsor) => (
+                {sortedSponsors.map((sponsor) => (
                   <Link
                     key={sponsor._id}
                     href={sponsor.website || '#'}
@@ -124,11 +113,10 @@ const Header = () => {
           </div>
         </div>
 
-        {/* Main Header */}
+        {/* Rest of header remains the same... */}
         <div className="bg-[#00105A] text-white h-[38px]">
           <div className="container mx-auto h-full">
             
-            {/* DESKTOP LAYOUT */}
             <div className="hidden md:flex items-center h-full w-full">
               <div className="w-52 md:w-56 xl:w-64"></div>
 
@@ -161,7 +149,6 @@ const Header = () => {
               </div>
             </div>
 
-            {/* MOBILE LAYOUT */}
             <div className="flex md:hidden items-center justify-end h-full w-full px-4">
               <button
                 onClick={toggleMenu}
@@ -175,7 +162,6 @@ const Header = () => {
           </div>
         </div>
 
-        {/* OVERLAPPING LOGO */}
         <div className="absolute top-0 left-4 z-20 h-full flex items-center">
           <Link href="/" className="flex items-center group">
             <Image
@@ -191,7 +177,6 @@ const Header = () => {
           </Link>
         </div>
 
-        {/* Mobile Navigation */}
         {isMenuOpen && (
           <div className="absolute left-0 right-0 top-full bg-[#00105A] z-40 md:hidden shadow-lg">
             <nav 

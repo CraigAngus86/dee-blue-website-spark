@@ -3,16 +3,17 @@ import { Inter, Montserrat } from "next/font/google";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { Providers } from "./providers";
+import { getHeaderSponsors } from "@/features/sponsors/utils/sanityQueries";
 import "@/styles/globals.css";
 
 // Font configuration
-const inter = Inter({ 
+const inter = Inter({
   subsets: ["latin"],
   variable: '--font-inter',
   display: 'swap',
 });
 
-const montserrat = Montserrat({ 
+const montserrat = Montserrat({
   subsets: ["latin"],
   variable: '--font-montserrat',
   display: 'swap',
@@ -27,16 +28,19 @@ export const metadata: Metadata = {
   keywords: ["Banks o' Dee", "football", "soccer", "Aberdeen", "Highland League", "Spain Park"],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Fetch sponsors server-side (same approach as main page)
+  const headerSponsors = await getHeaderSponsors();
+
   return (
     <html lang="en" className={`${inter.variable} ${montserrat.variable}`}>
       <body className="antialiased flex flex-col min-h-screen">
         <Providers>
-          <Header />
+          <Header sponsors={headerSponsors} />
           <main className="flex-grow pt-16">
             {children}
           </main>
