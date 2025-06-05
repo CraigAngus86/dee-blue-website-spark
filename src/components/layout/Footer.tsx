@@ -14,8 +14,8 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-3">
           
           {/* Left Column: Club Identity & Social */}
-          <div className="flex flex-col space-y-2">
-            <div className="flex items-center mb-1">
+          <div className="flex flex-col space-y-2 text-center md:text-left">
+            <div className="flex items-center mb-1 justify-center md:justify-start">
               <Image
                 src={buildSponsorLogoUrl('BOD_Logo_White_square_joicd1', 'mainLogo')}
                 alt="Banks o' Dee FC"
@@ -32,7 +32,7 @@ const Footer = () => {
             {/* Social Media */}
             <div>
               <p className="text-sm font-medium mb-2">Follow the Dee</p>
-              <div className="flex space-x-3">
+              <div className="flex space-x-3 justify-center md:justify-start">
                 <a 
                   href="https://x.com/banksodee_fc" 
                   target="_blank" 
@@ -76,15 +76,15 @@ const Footer = () => {
           </div>
           
           {/* Right Column: Contact */}
-          <div className="flex flex-col space-y-2 md:ml-auto md:text-right">
+          <div className="flex flex-col space-y-2 text-center md:text-right md:ml-auto">
             <h4 className="font-semibold text-base mb-1">Get in Touch</h4>
             
             <div className="space-y-1">
-              <div className="flex items-start text-sm md:justify-end">
+              <div className="flex items-start text-sm justify-center md:justify-end">
                 <MapPin size={14} className="mr-2 text-[#C5E7FF] flex-shrink-0 mt-0.5 md:order-2 md:ml-2 md:mr-0" />
                 <span className="text-white/80">Spain Park, Abbotswell Road, Aberdeen AB12 3AB</span>
               </div>
-              <div className="flex items-center text-sm md:justify-end">
+              <div className="flex items-center text-sm justify-center md:justify-end">
                 <Phone size={14} className="mr-2 text-[#C5E7FF] flex-shrink-0 md:order-2 md:ml-2 md:mr-0" />
                 <a 
                   href="tel:+441224893333" 
@@ -93,7 +93,7 @@ const Footer = () => {
                   01224 893333
                 </a>
               </div>
-              <div className="flex items-center text-sm md:justify-end">
+              <div className="flex items-center text-sm justify-center md:justify-end">
                 <Mail size={14} className="mr-2 text-[#C5E7FF] flex-shrink-0 md:order-2 md:ml-2 md:mr-0" />
                 <a 
                   href="mailto:info@banksodeefc.co.uk" 
@@ -106,9 +106,9 @@ const Footer = () => {
           </div>
         </div>
         
-        {/* Legal Section - Minimal bottom spacing */}
+        {/* Legal Section */}
         <div className="border-t border-white/20 pt-2 pb-1">
-          <div className="flex flex-col md:flex-row justify-between items-center text-xs text-white/60 space-y-1 md:space-y-0">
+          <div className="flex flex-col items-center text-center md:flex-row md:justify-between md:items-center text-xs text-white/60 space-y-1 md:space-y-0">
             <p className="mb-0">&copy; {currentYear} Banks o&apos; Dee Football Club. All rights reserved.</p>
             
             <div className="flex space-x-3">
