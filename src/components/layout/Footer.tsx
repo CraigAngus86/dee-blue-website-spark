@@ -15,7 +15,19 @@ const Footer = () => {
           
           {/* Left Column: Club Identity & Social */}
           <div className="flex flex-col space-y-2 text-center md:text-left">
-            <div className="flex items-center mb-1 justify-center md:justify-start">
+            {/* Mobile: Just Logo Centered */}
+            <div className="flex justify-center md:hidden mb-2">
+              <Image
+                src={buildSponsorLogoUrl('BOD_Logo_White_square_joicd1', 'mainLogo')}
+                alt="Banks o' Dee FC"
+                width={40}
+                height={40}
+                className="h-10 w-10 object-contain"
+              />
+            </div>
+            
+            {/* Desktop: Logo + Text */}
+            <div className="hidden md:flex items-center mb-1">
               <Image
                 src={buildSponsorLogoUrl('BOD_Logo_White_square_joicd1', 'mainLogo')}
                 alt="Banks o' Dee FC"
