@@ -29,10 +29,12 @@ const NewsGrid: React.FC<NewsGridProps> = ({
     ...galleries.map(gallery => ({
       id: gallery._id,
       title: gallery.title,
+      slug: gallery.slug || gallery._id, // Added missing slug property
       publishedAt: gallery.matchDate || gallery.publishedAt || gallery._createdAt,
       mainImage: gallery.coverImage,
       category: "matchGallery",
-      contentType: "gallery"
+      contentType: "gallery",
+      body: [] // Added missing body property (empty for galleries)
     }))
   ];
 

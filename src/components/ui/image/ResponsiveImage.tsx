@@ -1,6 +1,4 @@
-
 "use client";
-
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import { resolveImagePath, handleImageError, createPlaceholder, transformImage } from "@/lib/imageUtils";
@@ -41,7 +39,9 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
 }) => {
   const [imageSrc, setImageSrc] = useState(() => {
     const resolvedPath = resolveImagePath(src);
-    return transformImage(resolvedPath, { width, height });
+    // Build transform string if width/height provided
+    const transforms = width && height ? `w_${width},h_${height},c_fill` : '';
+    return transforms ? transformImage(resolvedPath, transforms) : resolvedPath;
   });
 
   const aspectRatioClasses = {
@@ -99,7 +99,7 @@ const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
 
   const handleImageLoadError = () => {
     console.error(`Failed to load image: ${src}`);
-    const fallback = createPlaceholder(width || 400, height || 300, alt);
+    const fallback = createPlaceholder(width || 400, height || 300);
     setImageSrc(fallback);
     onError?.();
   };

@@ -14,35 +14,35 @@ interface MarkerConfig {
 
 const MARKER_CONFIGS: MarkerConfig[] = [
   {
-    coordinates: STADIUM_COORDINATES.MAIN_ENTRANCE,
+    coordinates: [...STADIUM_COORDINATES.MAIN_ENTRANCE],
     title: 'Spain Park Stadium',
     icon: '🏟️',
     description: 'Home of Banks o\' Dee FC since 1902',
     directions: 'Main entrance on Abbotswell Road'
   },
   {
-    coordinates: STADIUM_COORDINATES.MAIN_PARKING,
+    coordinates: [...STADIUM_COORDINATES.MAIN_PARKING],
     title: 'Main Car Park',
     icon: '🅿️',
     description: '200 spaces available on match days',
     directions: 'Enter via Abbotswell Road'
   },
   {
-    coordinates: STADIUM_COORDINATES.OVERFLOW_PARKING,
+    coordinates: [...STADIUM_COORDINATES.OVERFLOW_PARKING],
     title: 'Overflow Parking',
     icon: '🚗',
     description: 'Additional parking for busy matches',
     directions: 'Follow signs from main car park'
   },
   {
-    coordinates: STADIUM_COORDINATES.BUS_STOP_ABBOTSWELL,
+    coordinates: [...STADIUM_COORDINATES.BUS_STOP_ABBOTSWELL],
     title: 'Bus Stop - Abbotswell Road',
     icon: '🚌',
     description: 'Services: 17, 19',
     directions: '5 minute walk to stadium'
   },
   {
-    coordinates: STADIUM_COORDINATES.BUS_STOP_WELLINGTON,
+    coordinates: [...STADIUM_COORDINATES.BUS_STOP_WELLINGTON],
     title: 'Bus Stop - Wellington Road',
     icon: '🚌',
     description: 'Services: 11, 13, 17',

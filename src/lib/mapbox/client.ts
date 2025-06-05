@@ -68,7 +68,7 @@ export const MAP_COLORS = {
 
 // WORLD-CLASS MODERN STYLE with depth and sophistication
 const WORLD_CLASS_STYLE = {
-  version: 8,
+  version: 8 as const,
   name: "Banks o Dee World Class",
   metadata: {
     "mapbox:origin": "basic-template-v1",
@@ -433,7 +433,7 @@ const WORLD_CLASS_STYLE = {
 };
 
 export const MAP_CONFIG = {
-  style: WORLD_CLASS_STYLE,
+  style: WORLD_CLASS_STYLE as any,
   center: SPAIN_PARK_COORDINATES,
   zoom: 14.5,
   minZoom: 13,
