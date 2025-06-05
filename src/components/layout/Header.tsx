@@ -15,13 +15,16 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [headerSponsors, setHeaderSponsors] = useState([]);
+  const [sponsorError, setSponsorError] = useState(null);
   const pathname = usePathname();
 
   // Fetch header sponsors dynamically
   useEffect(() => {
     const fetchSponsors = async () => {
       try {
+        console.log('🔍 Attempting to fetch header sponsors...');
         const sponsors = await getHeaderSponsors();
+        console.log('✅ Sponsors fetched successfully:', sponsors);
         // Sort to ensure principal sponsors appear first
         const sortedSponsors = sponsors.sort((a, b) => {
           if (a.primaryTier === 'principal' && b.primaryTier === 'main') return -1;
@@ -29,8 +32,12 @@ const Header = () => {
           return a.name.localeCompare(b.name);
         });
         setHeaderSponsors(sortedSponsors);
+        setSponsorError(null);
       } catch (error) {
-        console.error('Error loading header sponsors:', error);
+        console.error('❌ Error loading header sponsors:', error);
+        setSponsorError(error.message);
+        // Show sponsor bar anyway with empty space to maintain layout
+        setHeaderSponsors([]);
       }
     };
     
@@ -72,13 +79,13 @@ const Header = () => {
     >
       {/* Container for overlapping design */}
       <div className="relative">
-        {/* Sponsor Bar - RESTORED: Our better gradient with precise positioning */}
-        {headerSponsors.length > 0 && (
-          <div className="bg-gradient-to-r from-[#00105A] from-55% via-[#C5E7FF] via-70% to-[#C5E7FF] h-[30px]">
-            <div className="container mx-auto px-2 h-full">
-              <div className="flex items-center justify-end h-full">
-                <div className="flex items-center space-x-1">
-                  {headerSponsors.map((sponsor) => (
+        {/* Sponsor Bar - ALWAYS SHOW (to maintain layout even if sponsors fail to load) */}
+        <div className="bg-gradient-to-r from-[#00105A] from-55% via-[#C5E7FF] via-70% to-[#C5E7FF] h-[30px]">
+          <div className="container mx-auto px-2 h-full">
+            <div className="flex items-center justify-end h-full">
+              <div className="flex items-center space-x-1">
+                {headerSponsors.length > 0 ? (
+                  headerSponsors.map((sponsor) => (
                     <Link
                       key={sponsor._id}
                       href={sponsor.website || '#'}
@@ -95,12 +102,14 @@ const Header = () => {
                         className="object-contain h-5"
                       />
                     </Link>
-                  ))}
-                </div>
+                  ))
+                ) : sponsorError ? (
+                  <span className="text-xs text-white/60">Sponsors loading...</span>
+                ) : null}
               </div>
             </div>
           </div>
-        )}
+        </div>
 
         {/* Main Header - 38px height for better proportion */}
         <div className="bg-[#00105A] text-white h-[38px]">
