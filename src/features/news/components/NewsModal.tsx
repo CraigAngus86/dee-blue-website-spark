@@ -1,6 +1,6 @@
 "use client";
-import React from 'react';
-import { X, Twitter, Facebook, Linkedin, Mail, Copy } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { X, Facebook, Linkedin, Mail, Copy } from 'lucide-react';
 import { NewsArticle } from '../types';
 import { PortableText } from '@portabletext/react';
 import portableTextComponents from './portable-text/PortableTextComponents';
@@ -11,11 +11,40 @@ interface NewsModalProps {
   onClose: () => void;
 }
 
+// X (Twitter) Logo Component
+const XLogo = ({ size = 18 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+  </svg>
+);
+
 const NewsModal: React.FC<NewsModalProps> = ({
   article,
   isOpen,
   onClose
 }) => {
+  
+  // Prevent background scrolling when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      // Save current scroll position
+      const scrollY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+      document.body.style.overflow = 'hidden';
+      
+      return () => {
+        // Restore scroll position when modal closes
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
+        document.body.style.overflow = '';
+        window.scrollTo(0, scrollY);
+      };
+    }
+  }, [isOpen]);
+  
   if (!isOpen || !article) return null;
   
   // Map category values to display text
@@ -36,8 +65,8 @@ const NewsModal: React.FC<NewsModalProps> = ({
       })
     : '';
     
-  // Process image URL with improved transformations
-  const getImageUrl = (image: any, size: 'main' | 'gallery' = 'main'): string => {
+  // STANDARDIZED Cloudinary transforms
+  const getImageUrl = (image: any, type: 'hero' | 'modal' | 'card' = 'modal'): string => {
     if (!image) return '';
     
     // For Cloudinary assets from Sanity
@@ -47,22 +76,27 @@ const NewsModal: React.FC<NewsModalProps> = ({
         const format = image.format || 'jpg';
         const baseUrl = 'https://res.cloudinary.com/dlkpaw2a0/image/upload';
         
-        // Different transformations based on usage
+        // STANDARDIZED transforms based on usage
         let transformation = '';
         
-        // Main article image - enhanced with progressive loading and auto improvement
-        if (size === 'main') {
-          if (article.category === 'matchReport') {
-            // Special transformations for match report header images
-            transformation = 'c_fill,g_auto:faces,y_-20,z_1.05,ar_16:9,w_auto,dpr_auto,q_auto:good,f_auto,fl_progressive,e_vibrance:20';
-          } else {
-            // Standard transformations for other article types
-            transformation = 'c_fill,g_auto:subject,ar_16:9,w_auto,dpr_auto,q_auto:good,f_auto,fl_progressive,e_improve';
-          }
-        } 
-        // Gallery images - square with enhanced quality and face detection
-        else {
-          transformation = 'c_fill,g_auto:faces,ar_1:1,w_auto,dpr_auto,q_auto:good,f_auto,e_improve';
+        switch (type) {
+          case 'hero':
+            // 21:9 dramatic for heroes
+            transformation = 'c_fill,g_auto:subject,ar_21:9,q_auto:good,f_auto,w_auto';
+            break;
+          case 'modal':
+            if (article.category === 'matchReport') {
+              // Keep smart adjustments for match photos
+              transformation = 'c_fill,g_auto:subject,ar_16:9,q_auto:good,f_auto,w_auto,y_-20,z_1.05';
+            } else {
+              // Standard modal images
+              transformation = 'c_fill,g_auto:subject,ar_16:9,q_auto:good,f_auto,w_auto';
+            }
+            break;
+          case 'card':
+            // Fixed dimensions for cards
+            transformation = 'c_fill,g_auto:subject,ar_16:9,q_auto:good,f_auto,w_400,h_225';
+            break;
         }
         
         return `${baseUrl}/${transformation}/${publicId}.${format}`;
@@ -83,7 +117,7 @@ const NewsModal: React.FC<NewsModalProps> = ({
   };
     
   // Social sharing functions
-  const shareOnTwitter = () => {
+  const shareOnX = () => {
     const url = window.location.href;
     const text = `${article.title} | Banks o' Dee FC`;
     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
@@ -117,14 +151,14 @@ const NewsModal: React.FC<NewsModalProps> = ({
       <div className="relative max-w-5xl w-full max-h-[95vh] bg-white rounded-lg shadow-xl overflow-hidden">
         {/* Light grey header bar with social buttons and close button */}
         <div className="absolute top-0 left-0 right-0 h-12 bg-[#f5f7fb] z-40 flex justify-between items-center px-4">
-          {/* Social sharing buttons - improved hover states */}
+          {/* Social sharing buttons - with proper X logo */}
           <div className="flex space-x-2">
             <button 
-              onClick={shareOnTwitter}
+              onClick={shareOnX}
               className="w-8 h-8 flex items-center justify-center rounded-md text-[#00105A] hover:bg-[#C5E7FF] hover:text-[#00105A] transition-all duration-200"
-              aria-label="Share on Twitter"
+              aria-label="Share on X"
             >
-              <Twitter size={18} />
+              <XLogo size={18} />
             </button>
             <button 
               onClick={shareOnFacebook}
@@ -172,7 +206,7 @@ const NewsModal: React.FC<NewsModalProps> = ({
           <div className="relative w-full h-[50vh]">
             {article.mainImage ? (
               <img 
-                src={getImageUrl(article.mainImage, 'main')}
+                src={getImageUrl(article.mainImage, 'modal')}
                 alt={article.title}
                 className="w-full h-full object-cover"
                 onError={(e) => {
@@ -254,7 +288,7 @@ const NewsModal: React.FC<NewsModalProps> = ({
                     <div key={player.id} className="flex items-center space-x-2 bg-[#f5f7fb] p-2 rounded">
                       {player.profileImage ? (
                         <img 
-                          src={getImageUrl(player.profileImage, 'gallery')}
+                          src={getImageUrl(player.profileImage, 'card')}
                           alt={player.name}
                           className="w-12 h-12 rounded-full object-cover"
                           onError={(e) => {
@@ -288,7 +322,7 @@ const NewsModal: React.FC<NewsModalProps> = ({
                   {article.gallery.images.map((image, index) => (
                     <div key={index} className="relative aspect-square rounded-md overflow-hidden shadow-md">
                       <img 
-                        src={getImageUrl(image, 'gallery')}
+                        src={getImageUrl(image, 'card')}
                         alt={image.alt || `Image ${index + 1}`}
                         className="w-full h-full object-cover"
                         onError={(e) => {

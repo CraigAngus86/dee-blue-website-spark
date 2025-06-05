@@ -16,6 +16,9 @@ interface HomeHeroSectionState {
   selectedArticle: NewsArticle | null;
   isLoading: boolean;
   isMobile: boolean;
+  touchStart: number;
+  touchEnd: number;
+  isUserInteracting: boolean;
 }
 
 class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSectionState> {
@@ -27,7 +30,10 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
       isTransitioning: false,
       selectedArticle: null,
       isLoading: false,
-      isMobile: false
+      isMobile: false,
+      touchStart: 0,
+      touchEnd: 0,
+      isUserInteracting: false
     };
   }
   
@@ -38,9 +44,7 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
     
     // Auto-rotate slides every 6 seconds
     if (this.props.articles.length > 1) {
-      this.rotationTimer = setInterval(() => {
-        this.goToSlide((this.state.currentIndex + 1) % this.getVisibleArticlesCount());
-      }, 6000);
+      this.startAutoRotation();
     }
   }
   
@@ -48,14 +52,88 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
     if (this.rotationTimer) {
       clearInterval(this.rotationTimer);
     }
+    if (this.interactionTimeout) {
+      clearTimeout(this.interactionTimeout);
+    }
     window.removeEventListener('resize', this.updateMobileState);
   }
   
   rotationTimer: NodeJS.Timeout | null = null;
+  interactionTimeout: NodeJS.Timeout | null = null;
+  
+  startAutoRotation = () => {
+    if (this.rotationTimer) {
+      clearInterval(this.rotationTimer);
+    }
+    
+    this.rotationTimer = setInterval(() => {
+      // Only auto-advance if user is not interacting
+      if (!this.state.isUserInteracting) {
+        this.goToSlide((this.state.currentIndex + 1) % this.getVisibleArticlesCount());
+      }
+    }, 6000);
+  }
+  
+  pauseAutoRotation = () => {
+    this.setState({ isUserInteracting: true });
+    
+    // Resume auto-rotation after 10 seconds of no interaction
+    if (this.interactionTimeout) {
+      clearTimeout(this.interactionTimeout);
+    }
+    
+    this.interactionTimeout = setTimeout(() => {
+      this.setState({ isUserInteracting: false });
+    }, 10000);
+  }
   
   updateMobileState = () => {
     const isMobile = window.innerWidth < 768;
     this.setState({ isMobile });
+  }
+  
+  // Touch event handlers for mobile swipe
+  handleTouchStart = (e: React.TouchEvent) => {
+    if (!this.state.isMobile) return;
+    
+    this.setState({
+      touchStart: e.targetTouches[0].clientX,
+      touchEnd: 0
+    });
+    this.pauseAutoRotation();
+  }
+  
+  handleTouchMove = (e: React.TouchEvent) => {
+    if (!this.state.isMobile) return;
+    
+    this.setState({
+      touchEnd: e.targetTouches[0].clientX
+    });
+  }
+  
+  handleTouchEnd = () => {
+    if (!this.state.isMobile || !this.state.touchStart || !this.state.touchEnd) return;
+    
+    const distance = this.state.touchStart - this.state.touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+    const visibleCount = this.getVisibleArticlesCount();
+    
+    if (isLeftSwipe) {
+      // Swipe left = next slide
+      const nextIndex = (this.state.currentIndex + 1) % visibleCount;
+      this.goToSlide(nextIndex);
+    } else if (isRightSwipe) {
+      // Swipe right = previous slide
+      const prevIndex = this.state.currentIndex === 0 ? visibleCount - 1 : this.state.currentIndex - 1;
+      this.goToSlide(prevIndex);
+    }
+    
+    // Reset touch states
+    this.setState({
+      touchStart: 0,
+      touchEnd: 0
+    });
   }
   
   // Get the number of articles to show based on screen size
@@ -126,7 +204,7 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
   
   render() {
     const { articles } = this.props;
-    const { currentIndex, selectedArticle, isLoading } = this.state;
+    const { currentIndex, selectedArticle, isLoading, isMobile } = this.state;
     
     if (!articles || articles.length === 0) {
       return null;
@@ -149,7 +227,12 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
       : '';
     
     return (
-      <div className="relative h-[70vh] min-h-[450px] max-h-[700px] overflow-hidden bg-[#00105A]">
+      <div 
+        className="relative h-[70vh] min-h-[450px] max-h-[700px] overflow-hidden bg-[#00105A]"
+        onTouchStart={this.handleTouchStart}
+        onTouchMove={this.handleTouchMove}
+        onTouchEnd={this.handleTouchEnd}
+      >
         {/* Background image and overlay */}
         {visibleArticles.map((slideArticle, i) => (
           <div key={slideArticle.id}
@@ -198,22 +281,31 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
                   </span>
                 </div>
                 
-                {/* Navigation dots - positioned much closer to the cards below */}
+                {/* Navigation dots with swipe indicator for mobile */}
                 {visibleArticles.length > 1 && (
-                  <div className="flex justify-center space-x-2">
-                    {visibleArticles.map((_, i) => (
-                      <button 
-                        key={i}
-                        className={`w-2.5 h-2.5 rounded-full transition-all mx-1 ${
-                          i === currentIndex ? 'bg-white scale-125' : 'bg-white/40 hover:bg-white/60'
-                        }`}
-                        onClick={(e) => {
-                          e.stopPropagation(); // Prevent the hero click from triggering
-                          this.goToSlide(i);
-                        }}
-                        aria-label={`Go to slide ${i + 1}`}>
-                      </button>
-                    ))}
+                  <div className="flex flex-col items-center space-y-2">
+                    <div className="flex justify-center space-x-2">
+                      {visibleArticles.map((_, i) => (
+                        <button 
+                          key={i}
+                          className={`w-2.5 h-2.5 rounded-full transition-all mx-1 ${
+                            i === currentIndex ? 'bg-white scale-125' : 'bg-white/40 hover:bg-white/60'
+                          }`}
+                          onClick={(e) => {
+                            e.stopPropagation(); // Prevent the hero click from triggering
+                            this.goToSlide(i);
+                            this.pauseAutoRotation();
+                          }}
+                          aria-label={`Go to slide ${i + 1}`}>
+                        </button>
+                      ))}
+                    </div>
+                    {/* Swipe hint for mobile */}
+                    {isMobile && (
+                      <p className="text-xs text-white/60 font-medium">
+                        Swipe to navigate
+                      </p>
+                    )}
                   </div>
                 )}
               </div>
