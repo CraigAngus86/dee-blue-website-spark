@@ -1,6 +1,6 @@
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/supabase/client';
 
-// Simple interfaces without complex typing
+// Simple interfaces
 export interface SimplePoll {
   id: string;
   sanity_poll_id: string;
@@ -26,33 +26,31 @@ export interface SimplePollOption {
  */
 export async function getActivePoll(): Promise<SimplePoll | null> {
   try {
-    // Use any to bypass TypeScript issues
-    const pollResponse: any = await supabase
+    const { data: pollData, error: pollError } = await supabase
       .from('polls')
       .select('*')
       .eq('status', 'active')
       .single();
 
-    if (pollResponse.error && pollResponse.error.code !== 'PGRST116') {
-      throw pollResponse.error;
+    if (pollError && pollError.code !== 'PGRST116') {
+      throw pollError;
     }
 
-    if (!pollResponse.data) return null;
+    if (!pollData) return null;
 
-    // Get poll options
-    const optionsResponse: any = await supabase
+    const { data: optionsData, error: optionsError } = await supabase
       .from('poll_options')
       .select('*')
-      .eq('poll_id', pollResponse.data.id)
+      .eq('poll_id', pollData.id)
       .order('option_order');
 
-    if (optionsResponse.error) {
-      throw optionsResponse.error;
+    if (optionsError) {
+      throw optionsError;
     }
 
     return {
-      ...pollResponse.data,
-      options: optionsResponse.data || []
+      ...pollData,
+      options: optionsData || []
     } as SimplePoll;
   } catch (error) {
     console.error('Error fetching active poll:', error);
@@ -60,9 +58,6 @@ export async function getActivePoll(): Promise<SimplePoll | null> {
   }
 }
 
-/**
- * Create browser fingerprint for duplicate prevention
- */
 function getBrowserFingerprint(): string {
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d')!;
@@ -81,34 +76,28 @@ function getBrowserFingerprint(): string {
   return btoa(fingerprint).substring(0, 32);
 }
 
-/**
- * Generate voter hash for duplicate prevention
- */
 function getVoterHash(): string {
   return getBrowserFingerprint();
 }
 
-/**
- * Check if user has already voted on a poll
- */
 export async function checkIfUserVoted(pollId: string): Promise<{hasVoted: boolean, optionId: string | null}> {
   try {
     const voterHash = getVoterHash();
     
-    const response: any = await supabase
+    const { data, error } = await supabase
       .from('poll_votes')
       .select('option_id')
       .eq('poll_id', pollId)
       .eq('voter_hash', voterHash)
       .single();
 
-    if (response.error && response.error.code !== 'PGRST116') {
-      throw response.error;
+    if (error && error.code !== 'PGRST116') {
+      throw error;
     }
 
     return {
-      hasVoted: !!response.data,
-      optionId: response.data?.option_id || null
+      hasVoted: !!data,
+      optionId: data?.option_id || null
     };
   } catch (error) {
     console.error('Error checking vote status:', error);
@@ -116,14 +105,11 @@ export async function checkIfUserVoted(pollId: string): Promise<{hasVoted: boole
   }
 }
 
-/**
- * Submit a vote for a poll option
- */
 export async function submitVote(pollId: string, optionId: string): Promise<void> {
   try {
     const voterHash = getVoterHash();
     
-    const response: any = await supabase
+    const { error } = await supabase
       .from('poll_votes')
       .insert({
         poll_id: pollId,
@@ -131,11 +117,11 @@ export async function submitVote(pollId: string, optionId: string): Promise<void
         voter_hash: voterHash
       });
 
-    if (response.error) {
-      if (response.error.code === '23505') { // Unique constraint violation
+    if (error) {
+      if (error.code === '23505') {
         throw new Error('You have already voted on this poll');
       }
-      throw response.error;
+      throw error;
     }
   } catch (error) {
     console.error('Error submitting vote:', error);
@@ -143,9 +129,6 @@ export async function submitVote(pollId: string, optionId: string): Promise<void
   }
 }
 
-/**
- * Create a new poll in Supabase with complete data from Sanity
- */
 export async function createPoll(
   sanityPollId: string, 
   question: string, 
@@ -154,8 +137,7 @@ export async function createPoll(
   endDate?: string
 ): Promise<string> {
   try {
-    // Create poll with complete data
-    const pollResponse: any = await supabase
+    const { data: poll, error: pollError } = await supabase
       .from('polls')
       .insert({
         sanity_poll_id: sanityPollId,
@@ -167,23 +149,22 @@ export async function createPoll(
       .select()
       .single();
 
-    if (pollResponse.error) throw pollResponse.error;
+    if (pollError) throw pollError;
 
-    // Create poll options
     const optionsData = options.map((optionText, index) => ({
-      poll_id: pollResponse.data.id,
+      poll_id: poll.id,
       option_text: optionText,
       option_order: index,
       vote_count: 0
     }));
 
-    const optionsResponse: any = await supabase
+    const { error: optionsError } = await supabase
       .from('poll_options')
       .insert(optionsData);
 
-    if (optionsResponse.error) throw optionsResponse.error;
+    if (optionsError) throw optionsError;
 
-    return pollResponse.data.id;
+    return poll.id;
   } catch (error) {
     console.error('Error creating poll:', error);
     throw error;
