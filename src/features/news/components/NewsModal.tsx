@@ -4,20 +4,17 @@ import { X, Facebook, Linkedin, Mail, Copy } from 'lucide-react';
 import { NewsArticle } from '../types';
 import { PortableText } from '@portabletext/react';
 import portableTextComponents from './portable-text/PortableTextComponents';
-
 interface NewsModalProps {
   article: NewsArticle | null;
   isOpen: boolean;
   onClose: () => void;
 }
-
 // X (Twitter) Logo Component
 const XLogo = ({ size = 18 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
   </svg>
 );
-
 const NewsModal: React.FC<NewsModalProps> = ({
   article,
   isOpen,
@@ -147,7 +144,7 @@ const NewsModal: React.FC<NewsModalProps> = ({
   };
   
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50 flex items-center justify-center">
+    <div className="fixed inset-0 z-[9999] overflow-y-auto bg-black/50 flex items-center justify-center">
       <div className="relative max-w-5xl w-full max-h-[95vh] bg-white rounded-lg shadow-xl overflow-hidden">
         {/* Light grey header bar with social buttons and close button */}
         <div className="absolute top-0 left-0 right-0 h-12 bg-[#f5f7fb] z-40 flex justify-between items-center px-4">
@@ -352,5 +349,4 @@ const NewsModal: React.FC<NewsModalProps> = ({
     </div>
   );
 };
-
 export default NewsModal;

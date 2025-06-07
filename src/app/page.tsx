@@ -176,13 +176,11 @@ export default async function HomePage() {
         spacing="md"
         className="bg-[#f5f7fb]"
       > 
-        <FadeIn>
-          <MatchCenter 
-            upcomingMatches={upcomingMatches} 
-            recentResults={recentMatches} 
-            leagueTable={leagueTable} 
-          />
-        </FadeIn>
+        <MatchCenter 
+          upcomingMatches={upcomingMatches} 
+          recentResults={recentMatches} 
+          leagueTable={leagueTable} 
+        />
       </Section>
       
       {/* Reduced Gradient Separator */}

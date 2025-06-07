@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { X, Twitter, Facebook, Linkedin, Mail, Link, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, Twitter, Facebook, Linkedin, Mail, Link } from 'lucide-react';
 import { useGallery } from '../hooks/useGallery';
 import GalleryViewer from './GalleryViewer';
 import GalleryThumbnailGrid from './GalleryThumbnailGrid';
@@ -45,7 +45,7 @@ export function MatchGalleryModal({ isOpen, onClose, galleryId, matchId }: Match
     }
   };
 
-  // Navigation handlers
+  // Navigation handlers for GalleryViewer
   const handleNext = () => {
     setCurrentPhotoIndex(prev => Math.min(prev + 1, gallery!.photos.length - 1));
   };
@@ -83,8 +83,8 @@ export function MatchGalleryModal({ isOpen, onClose, galleryId, matchId }: Match
     );
   }
 
-  // Handle error state
-  if (error || !gallery) {
+  // Handle error state OR empty photos array
+  if (error || !gallery || !gallery.photos || gallery.photos.length === 0) {
     return (
       <div className="fixed inset-0 z-[9999] overflow-y-auto bg-black/50 flex items-center justify-center">
         <div className="relative max-w-5xl w-full max-h-[95vh] bg-white rounded-lg shadow-xl overflow-hidden">
@@ -103,7 +103,7 @@ export function MatchGalleryModal({ isOpen, onClose, galleryId, matchId }: Match
               <div className="text-6xl mb-4">📷</div>
               <h2 className="text-xl font-semibold text-gray-800 mb-2">Gallery Not Available</h2>
               <p className="text-gray-600">
-                {error ? 'Unable to load gallery' : 'No gallery found for this match'}
+                {error ? 'Unable to load gallery' : 'No photos available for this match'}
               </p>
             </div>
           </div>
@@ -112,7 +112,7 @@ export function MatchGalleryModal({ isOpen, onClose, galleryId, matchId }: Match
     );
   }
 
-  // Gallery found and loaded successfully
+  // Gallery found and loaded successfully with photos
   const currentPhoto = gallery.photos[currentPhotoIndex];
 
   return (
@@ -169,7 +169,7 @@ export function MatchGalleryModal({ isOpen, onClose, galleryId, matchId }: Match
 
         {/* Main content area */}
         <div className="flex-1 flex flex-col overflow-hidden">
-          {/* Main photo viewer */}
+          {/* Main photo viewer - GalleryViewer handles its own navigation */}
           <div className="flex-1 bg-black relative overflow-hidden">
             <GalleryViewer 
               photo={currentPhoto}
@@ -180,35 +180,6 @@ export function MatchGalleryModal({ isOpen, onClose, galleryId, matchId }: Match
               currentIndex={currentPhotoIndex}
               totalPhotos={gallery.photos.length}
             />
-            
-            {/* Navigation arrows */}
-            {gallery.photos.length > 1 && (
-              <>
-                <button
-                  onClick={() => setCurrentPhotoIndex(prev => 
-                    prev > 0 ? prev - 1 : gallery.photos.length - 1
-                  )}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
-                  aria-label="Previous photo"
-                >
-                  <ChevronLeft size={24} />
-                </button>
-                <button
-                  onClick={() => setCurrentPhotoIndex(prev => 
-                    prev < gallery.photos.length - 1 ? prev + 1 : 0
-                  )}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
-                  aria-label="Next photo"
-                >
-                  <ChevronRight size={24} />
-                </button>
-              </>
-            )}
-            
-            {/* Photo counter */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
-              {currentPhotoIndex + 1} of {gallery.photos.length}
-            </div>
           </div>
 
           {/* Thumbnail grid */}

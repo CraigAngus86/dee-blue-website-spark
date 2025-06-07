@@ -14,17 +14,26 @@ const GalleryThumbnailGrid: React.FC<GalleryThumbnailGridProps> = ({
   currentIndex,
   onIndexChange
 }) => {
-  const { getOptimizedImageUrl } = useGallery();
+  const { getOptimizedImageUrl, preloadImages } = useGallery();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  
+  // Safely filter and validate photos
+  const validPhotos = (photos || [])
+    .map((photo, originalIndex) => ({ photo, originalIndex }))
+    .filter(({ photo }) => photo && photo.image && photo.image.public_id)
+    .map(({ photo, originalIndex }) => ({ ...photo, originalIndex }));
+  
+  // Find the current photo in the valid photos array
+  const currentValidIndex = validPhotos.findIndex(photo => photo.originalIndex === currentIndex);
   
   // Auto-scroll to keep the active thumbnail visible
   useEffect(() => {
-    if (scrollContainerRef.current && currentIndex >= 0) {
+    if (scrollContainerRef.current && currentValidIndex >= 0) {
       const container = scrollContainerRef.current;
       const thumbnails = container.querySelectorAll('.thumbnail-item');
       
-      if (thumbnails.length > currentIndex) {
-        const activeThumb = thumbnails[currentIndex] as HTMLElement;
+      if (thumbnails.length > currentValidIndex) {
+        const activeThumb = thumbnails[currentValidIndex] as HTMLElement;
         if (activeThumb) {
           // Calculate scroll position to center the active thumbnail
           const containerWidth = container.clientWidth;
@@ -39,7 +48,12 @@ const GalleryThumbnailGrid: React.FC<GalleryThumbnailGridProps> = ({
         }
       }
     }
-  }, [currentIndex]);
+
+    // Preload adjacent images when user changes photos
+    if (preloadImages && photos && photos.length > 0) {
+      preloadImages(photos, currentIndex);
+    }
+  }, [currentValidIndex, currentIndex, photos, preloadImages]);
   
   // Handle thumbnail error
   const handleThumbnailError = (e: React.SyntheticEvent<HTMLImageElement>) => {
@@ -54,6 +68,10 @@ const GalleryThumbnailGrid: React.FC<GalleryThumbnailGridProps> = ({
     }
   };
   
+  if (!validPhotos.length) {
+    return <div className="h-full flex items-center justify-center text-gray-500">No images available</div>;
+  }
+  
   return (
     <div className="h-full relative">
       {/* Left gradient scroll indicator */}
@@ -64,25 +82,25 @@ const GalleryThumbnailGrid: React.FC<GalleryThumbnailGridProps> = ({
         ref={scrollContainerRef}
         className="flex space-x-1 overflow-x-auto pb-2 h-full scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent px-6"
       >
-        {photos.map((photo, idx) => {
-          const isActive = currentIndex === idx;
+        {validPhotos.map((photo, idx) => {
+          const isActive = currentValidIndex === idx;
           
           return (
             <div 
-              key={idx} 
+              key={`${photo.originalIndex}-${idx}`} 
               className={`
                 h-full aspect-square cursor-pointer relative overflow-hidden rounded 
                 thumbnail-item transition-all duration-150 flex-shrink-0
                 ${isActive ? 'ring-3 ring-[#FFD700]' : 'ring-1 ring-gray-200 hover:ring-[#C5E7FF]'}
               `}
-              onClick={() => onIndexChange(idx)}
+              onClick={() => onIndexChange(photo.originalIndex)}
             >
               <img
                 src={getOptimizedImageUrl(photo.image, 'thumbnail')}
-                alt={photo.caption || `Thumbnail ${idx + 1}`}
+                alt={photo.caption || `Gallery image ${idx + 1}`}
                 className="h-full w-full object-cover"
                 onError={handleThumbnailError}
-                loading="lazy" // Lazy load thumbnails for performance
+                loading="lazy"
               />
               {isActive && (
                 <div className="absolute inset-0 bg-[#00105A]/20 border-2 border-[#FFD700]"></div>

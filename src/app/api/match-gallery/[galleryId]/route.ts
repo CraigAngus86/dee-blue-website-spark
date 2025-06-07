@@ -12,21 +12,8 @@ export async function GET(
       _id,
       title,
       matchDate,
-      "coverImage": coverImage.asset->{
-        public_id,
-        url,
-        "secure_url": secure_url,
-        format,
-        _type
-      },
-      "galleryImages": galleryImages[].asset->{
-        _id,
-        public_id,
-        url,
-        "secure_url": secure_url,
-        format,
-        _type
-      },
+      coverImage,
+      galleryImages,
       photographer,
       publishedAt,
       supabaseMatchId
@@ -44,15 +31,21 @@ export async function GET(
     // Transform to match expected GalleryPhoto structure
     const transformedGallery = {
       ...gallery,
-      photos: (gallery.galleryImages || []).map((img: any) => ({
-        image: {
-          public_id: img.public_id,
-          url: img.url,
-          secure_url: img.secure_url,
-          format: img.format,
-          _type: img._type
-        }
-      }))
+      photos: (gallery.galleryImages || [])
+        .filter((img: any) => img && img.public_id) // Filter out null/invalid images
+        .map((img: any) => ({
+          image: {
+            public_id: img.public_id,
+            url: img.url,
+            secure_url: img.secure_url,
+            format: img.format,
+            _type: img._type
+          },
+          // Provide safe defaults for missing Sanity fields
+          caption: undefined,
+          category: undefined,
+          playerIds: undefined
+        }))
     };
 
     return NextResponse.json(transformedGallery);
