@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import FanSubmissionModal from './FanSubmissionModal';
 import PhotoUploadModal from './PhotoUploadModal';
 import PollCard from './PollCard';
+import FanZoneMobile from './FanZoneMobile';
 
 interface FanZoneSectionProps {
   fanOfMonth?: any;
@@ -11,6 +12,24 @@ interface FanZoneSectionProps {
 }
 
 export function FanZoneSection({ fanOfMonth, galleryPhotos = [], activePoll }: FanZoneSectionProps) {
+  // Mobile: Use optimized mobile component
+  return (
+    <>
+      {/* Desktop: Existing functionality */}
+      <div className="hidden md:block">
+        <FanZoneDesktop fanOfMonth={fanOfMonth} galleryPhotos={galleryPhotos} activePoll={activePoll} />
+      </div>
+
+      {/* Mobile: Optimized experience */}
+      <div className="block md:hidden">
+        <FanZoneMobile fanOfMonth={fanOfMonth} galleryPhotos={galleryPhotos} activePoll={activePoll} />
+      </div>
+    </>
+  );
+}
+
+// Desktop Component (Current FanZoneSection logic)
+function FanZoneDesktop({ fanOfMonth, galleryPhotos = [], activePoll }: FanZoneSectionProps) {
   // Modal state management (following your established patterns)
   const [fanSubmissionModalOpen, setFanSubmissionModalOpen] = useState(false);
   const [photoUploadModalOpen, setPhotoUploadModalOpen] = useState(false);
