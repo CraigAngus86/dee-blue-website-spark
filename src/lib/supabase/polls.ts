@@ -1,19 +1,20 @@
 import { supabase } from '@/integrations/supabase/client';
 
-export interface Poll {
+// Simplified interfaces to avoid type conflicts
+export interface SimplePoll {
   id: string;
   sanity_poll_id: string;
   question: string;
-  status: 'active' | 'closed';
+  status: string;
   total_votes: number;
-  options: PollOption[];
-  category: string;
-  end_date: string;
+  category?: string;
+  end_date?: string;
   created_at: string;
   updated_at: string;
+  options: SimplePollOption[];
 }
 
-export interface PollOption {
+export interface SimplePollOption {
   id: string;
   option_text: string;
   vote_count: number;
@@ -23,9 +24,9 @@ export interface PollOption {
 /**
  * Get active poll with options from Supabase
  */
-export async function getActivePoll(): Promise<Poll | null> {
+export async function getActivePoll(): Promise<SimplePoll | null> {
   try {
-    // Get active poll
+    // Get active poll with explicit typing
     const { data: pollData, error: pollError } = await supabase
       .from('polls')
       .select('*')
@@ -38,7 +39,7 @@ export async function getActivePoll(): Promise<Poll | null> {
 
     if (!pollData) return null;
 
-    // Get poll options
+    // Get poll options with explicit typing
     const { data: optionsData, error: optionsError } = await supabase
       .from('poll_options')
       .select('*')
@@ -52,7 +53,7 @@ export async function getActivePoll(): Promise<Poll | null> {
     return {
       ...pollData,
       options: optionsData || []
-    };
+    } as SimplePoll;
   } catch (error) {
     console.error('Error fetching active poll:', error);
     return null;
