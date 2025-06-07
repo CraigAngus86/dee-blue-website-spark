@@ -5,7 +5,6 @@ import { MatchCarousel } from '@/features/matches/components/home/MatchCarousel'
 import { LeaguePositionSummary } from '@/features/matches/components/common/LeaguePositionSummary';
 import { MatchGalleryModal } from '@/features/galleries';
 import { NewsModal } from '@/features/news/components';
-import { sanityClient } from '@/lib/sanity/client';
 
 interface MatchCenterProps {
   upcomingMatches?: any[];
@@ -54,40 +53,19 @@ export default function MatchCenter({
       // External link - open in new tab
       window.open(reportId, '_blank');
     } else {
-      // Sanity document ID - fetch article and open modal
+      // Sanity document ID - fetch via API route (fixes CORS)
       setArticleLoading(true);
       try {
-        const query = `*[_type == "newsArticle" && _id == $articleId][0] {
-          _id,
-          title,
-          "slug": slug.current,
-          publishedAt,
-          mainImage,
-          excerpt,
-          category,
-          body,
-          author,
-          "matchId": matchId,
-          "relatedPlayers": relatedPlayers[]-> {
-            "_id": _id,
-            "name": name,
-            "slug": slug.current,
-            "profileImage": profileImage
-          },
-          gallery
-        }`;
+        const response = await fetch(`/api/news-article/${reportId}`);
         
-        const article = await sanityClient.fetch(query, { articleId: reportId });
-        
-        if (article) {
-          setSelectedArticle({
-            ...article,
-            id: article._id
-          });
-          setNewsModalOpen(true);
-        } else {
-          console.error('Article not found:', reportId);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch article: ${response.status}`);
         }
+        
+        const article = await response.json();
+        
+        setSelectedArticle(article);
+        setNewsModalOpen(true);
       } catch (error) {
         console.error('Error fetching article:', error);
       } finally {

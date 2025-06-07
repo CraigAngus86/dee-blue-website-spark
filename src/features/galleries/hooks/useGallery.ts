@@ -1,156 +1,74 @@
 "use client";
 import { useState, useEffect } from 'react';
-import { sanityClient } from '@/lib/sanity/client';
-import { MatchGallery } from '../types';
 
-/**
- * Hook to fetch gallery data from Sanity CMS
- */
+interface GalleryPhoto {
+  _id: string;
+  url: string;
+  public_id?: string;
+  format?: string;
+  metadata?: {
+    dimensions?: {
+      width: number;
+      height: number;
+    };
+  };
+}
+
+interface Gallery {
+  _id: string;
+  title: string;
+  matchDate?: string;
+  coverImage?: any;
+  photos: GalleryPhoto[];
+  photographer?: string;
+  publishedAt?: string;
+  supabaseMatchId?: string;
+}
+
 export function useGallery(galleryId?: string, matchId?: string) {
-  const [gallery, setGallery] = useState<MatchGallery | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<Error | null>(null);
+  const [gallery, setGallery] = useState<Gallery | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchGallery = async () => {
       if (!galleryId && !matchId) {
-        setLoading(false);
+        setGallery(null);
         return;
       }
 
+      setLoading(true);
+      setError(null);
+
       try {
-        setLoading(true);
-        setError(null);
-        
-        let query = '';
-        let params = {};
-        
-        console.log('🔍 useGallery called with:', { galleryId, matchId });
+        let response;
         
         if (galleryId) {
-          // Fetch by gallery ID if provided
-          query = `*[_type == "matchGallery" && _id == $galleryId][0] {
-            _id,
-            title,
-            description,
-            supabaseId,
-            matchDate,
-            coverImage,
-            galleryImages,
-            photographer,
-            publishedAt
-          }`;
-          params = { galleryId };
+          // Fetch by gallery ID via API route (fixes CORS)
+          response = await fetch(`/api/match-gallery/${galleryId}`);
         } else if (matchId) {
-          // Fetch by match ID if gallery ID not provided
-          query = `*[_type == "matchGallery" && supabaseId == $matchId][0] {
-            _id,
-            title,
-            description,
-            supabaseId,
-            matchDate,
-            coverImage,
-            galleryImages,
-            photographer,
-            publishedAt
-          }`;
-          params = { matchId };
+          // For match ID, we might need a different endpoint
+          // For now, this will fail gracefully
+          throw new Error('Match ID lookup not implemented yet');
         }
-        
-        console.log('📝 Sanity query:', query);
-        console.log('📝 Query params:', params);
-        
-        const data = await sanityClient.fetch(query, params);
-        
-        console.log('📊 Raw gallery data:', data);
-        console.log('📊 Gallery images:', data?.galleryImages);
-        console.log('📊 Gallery images length:', data?.galleryImages?.length);
-        
-        if (data) {
-          // Transform galleryImages to photos to match the expected interface
-          const photos = (data.galleryImages || []).map((image: any, index: number) => {
-            console.log(`📸 Processing image ${index}:`, image);
-            return {
-              image: image,
-              caption: '',
-              category: undefined
-            };
-          });
-          
-          console.log('✅ Transformed photos:', photos);
-          console.log('✅ Photos length:', photos.length);
-          
-          const transformedData = {
-            ...data,
-            photos: photos
-          };
-          setGallery(transformedData);
-        } else {
-          console.error('❌ No gallery data found');
-          setError(new Error('Gallery not found'));
+
+        if (!response || !response.ok) {
+          throw new Error(`Failed to fetch gallery: ${response?.status || 'Unknown error'}`);
         }
+
+        const galleryData = await response.json();
+        setGallery(galleryData);
       } catch (err) {
-        console.error('💥 Error fetching gallery:', err);
-        setError(err instanceof Error ? err : new Error('An error occurred fetching the gallery'));
+        console.error('Error fetching gallery:', err);
+        setError(err instanceof Error ? err.message : 'Failed to load gallery');
+        setGallery(null);
       } finally {
         setLoading(false);
       }
     };
-    
+
     fetchGallery();
   }, [galleryId, matchId]);
-  
-  // Helper function to get optimized Cloudinary URL
-  const getOptimizedImageUrl = (
-    image: any, 
-    type: 'thumbnail' | 'viewer' | 'cover' = 'viewer'
-  ) => {
-    if (!image) return '';
-    
-    // For Cloudinary assets from Sanity
-    if (image._type === 'cloudinary.asset' || image._type === 'image') {
-      if (image.public_id) {
-        const publicId = image.public_id;
-        const format = image.format || 'jpg';
-        const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'dlkpaw2a0';
-        const baseUrl = `https://res.cloudinary.com/${cloudName}/image/upload`;
-        
-        // Different transformations based on usage
-        let transformation = '';
-        
-        if (type === 'thumbnail') {
-          // Larger thumbnails with face detection and good quality
-          transformation = 'c_fill,g_auto:faces,ar_1:1,w_250,h_250,q_auto:good,f_auto,dl_2';
-        } else if (type === 'viewer') {
-          // Main viewer - preserve aspect ratio, good quality, progressive loading
-          // Responsive sizing and dpr_auto for device-appropriate resolution
-          transformation = 'c_limit,w_1200,h_800,q_auto:good,f_auto,fl_progressive,dl_5';
-        } else if (type === 'cover') {
-          // Cover images - 16:9 ratio for consistency with news
-          transformation = 'c_fill,g_auto:faces,ar_16:9,w_800,q_auto:good,f_auto';
-        }
-        
-        return `${baseUrl}/${transformation}/${publicId}.${format}`;
-      } else if (image.secure_url) {
-        return image.secure_url;
-      }
-    } 
-    // Handle regular URLs
-    else if (image.url) {
-      return image.url;
-    }
-    // Handle direct string URLs
-    else if (typeof image === 'string') {
-      return image;
-    }
-    
-    return '';
-  };
-  
-  return {
-    gallery,
-    loading,
-    error,
-    getOptimizedImageUrl
-  };
+
+  return { gallery, loading, error };
 }
