@@ -2,13 +2,15 @@
 import React, { useState } from 'react';
 import FanSubmissionModal from './FanSubmissionModal';
 import PhotoUploadModal from './PhotoUploadModal';
+import PollCard from './PollCard';
 
 interface FanZoneSectionProps {
   fanOfMonth?: any;
   galleryPhotos?: any[];
+  activePoll?: any;
 }
 
-export function FanZoneSection({ fanOfMonth, galleryPhotos = [] }: FanZoneSectionProps) {
+export function FanZoneSection({ fanOfMonth, galleryPhotos = [], activePoll }: FanZoneSectionProps) {
   // Modal state management (following your established patterns)
   const [fanSubmissionModalOpen, setFanSubmissionModalOpen] = useState(false);
   const [photoUploadModalOpen, setPhotoUploadModalOpen] = useState(false);
@@ -146,28 +148,8 @@ export function FanZoneSection({ fanOfMonth, galleryPhotos = [] }: FanZoneSectio
           )}
         </div>
 
-        {/* Interactive Poll - MATCHED HEADER HEIGHT */}
-        <div className="bg-white rounded-lg shadow-md hover:shadow-xl border border-[#f3f4f6] h-[480px] flex flex-col transition-all duration-300 hover:-translate-y-1">
-          {/* Header - EXACT HEIGHT MATCH */}
-          <div className="p-6 h-[88px] flex items-center">
-            <h3 className="text-[1.125rem] font-semibold text-[#00105A]">Join the Conversation</h3>
-          </div>
-          
-          <div className="flex-1 overflow-hidden px-6">
-            {/* TYPEFORM EMBED - Adjusted for header */}
-            <div 
-              className="h-full w-full"
-              dangerouslySetInnerHTML={{
-                __html: '<div data-tf-live="01JW962WTWGM6HA3M6H5XWT165"></div><script src="//embed.typeform.com/next/embed.js"></script>'
-              }}
-            />
-          </div>
-          
-          <div className="flex justify-between items-center text-xs text-[#6b7280] px-6 pb-6 pt-4 border-t border-[#f3f4f6]">
-            <span>Voting closes: May 31st</span>
-            <a href="#" className="text-[#00105A] hover:text-[#C5E7FF] hover:underline transition-colors duration-300">View Past Polls</a>
-          </div>
-        </div>
+        {/* Custom Poll Card - REPLACES TYPEFORM */}
+        <PollCard activePoll={activePoll} />
       </div>
 
       {/* Fan Gallery Section - CONSISTENT COLORS */}

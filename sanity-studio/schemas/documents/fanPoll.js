@@ -8,12 +8,12 @@ export default {
       title: 'Poll Setup',
     },
     {
-      name: 'typeform',
-      title: 'Typeform Integration',
+      name: 'options',
+      title: 'Poll Options',
     },
     {
-      name: 'results',
-      title: 'Results',
+      name: 'status',
+      title: 'Status & Management',
     }
   ],
   fields: [
@@ -21,16 +21,26 @@ export default {
       name: 'question',
       title: 'Poll Question',
       type: 'string',
-      validation: Rule => Rule.required(),
+      validation: Rule => Rule.required().max(200),
       group: 'poll'
     },
     {
-      name: 'typeformId',
-      title: 'Typeform ID',
-      type: 'string',
-      description: 'The ID from the Typeform embed code',
-      validation: Rule => Rule.required(),
-      group: 'typeform'
+      name: 'pollOptions',
+      title: 'Poll Options',
+      type: 'array',
+      of: [{
+        type: 'object',
+        fields: [
+          {
+            name: 'text',
+            title: 'Option Text',
+            type: 'string',
+            validation: Rule => Rule.required().max(50)
+          }
+        ]
+      }],
+      validation: Rule => Rule.required().min(2).max(6),
+      group: 'options'
     },
     {
       name: 'startDate',
@@ -52,14 +62,14 @@ export default {
       type: 'string',
       options: {
         list: [
-          {title: 'Draft', value: 'draft'},
-          {title: 'Active - Voting', value: 'voting'},
-          {title: 'Closed - Show Results', value: 'results'},
-          {title: 'Archived', value: 'archived'}
+          {title: '📝 Draft', value: 'draft'},
+          {title: '🗳️ Active - Voting Open', value: 'active'},
+          {title: '📊 Closed - Show Results', value: 'closed'},
+          {title: '📁 Archived', value: 'archived'}
         ]
       },
       initialValue: 'draft',
-      group: 'poll'
+      group: 'status'
     },
     {
       name: 'category',
@@ -67,59 +77,29 @@ export default {
       type: 'string',
       options: {
         list: [
+          {title: 'Competition Excitement', value: 'competitions'},
           {title: 'Player of the Month', value: 'player_month'},
           {title: 'Match Predictions', value: 'predictions'},
           {title: 'Club Preferences', value: 'preferences'},
-          {title: 'Community Questions', value: 'community'},
-          {title: 'Commercial Research', value: 'commercial'}
+          {title: 'Community Questions', value: 'community'}
         ]
       },
       group: 'poll'
     },
     {
-      name: 'results',
-      title: 'Poll Results',
-      type: 'object',
-      fields: [
-        {
-          name: 'totalVotes',
-          title: 'Total Votes',
-          type: 'number'
-        },
-        {
-          name: 'options',
-          title: 'Voting Options & Results',
-          type: 'array',
-          of: [{
-            type: 'object',
-            fields: [
-              {name: 'text', type: 'string', title: 'Option Text'},
-              {name: 'votes', type: 'number', title: 'Vote Count'},
-              {name: 'percentage', type: 'number', title: 'Percentage'}
-            ]
-          }]
-        },
-        {
-          name: 'lastUpdated',
-          title: 'Results Last Updated',
-          type: 'datetime'
-        }
-      ],
-      group: 'results'
-    },
-    {
       name: 'isCurrentPoll',
       title: 'Currently Active Poll',
       type: 'boolean',
-      description: 'Only one poll should be active at a time',
-      group: 'poll'
+      description: 'Only one poll should be active at a time - shows ⭐ in document list',
+      group: 'status'
     },
     {
-      name: 'embedCode',
-      title: 'Typeform Embed Code',
-      type: 'text',
-      description: 'Full embed code from Typeform for reference',
-      group: 'typeform'
+      name: 'supabasePollId',
+      title: 'Supabase Poll ID',
+      type: 'string',
+      description: 'Automatically generated when poll is activated in Supabase',
+      readOnly: true,
+      group: 'status'
     },
     {
       name: 'notes',
@@ -133,26 +113,26 @@ export default {
     select: {
       title: 'question',
       status: 'status',
-      totalVotes: 'results.totalVotes',
       startDate: 'startDate',
-      isActive: 'isCurrentPoll'
+      isActive: 'isCurrentPoll',
+      optionsCount: 'pollOptions'
     },
-    prepare({title, status, totalVotes, startDate, isActive}) {
+    prepare({title, status, startDate, isActive, optionsCount}) {
       const displayDate = startDate 
         ? new Date(startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
         : '';
       const statusIcon = {
         draft: '📝',
-        voting: '🗳️',
-        results: '📊',
+        active: '🗳️',
+        closed: '📊',
         archived: '📁'
       }[status] || '';
       const activeIndicator = isActive ? '⭐ ' : '';
-      const voteCount = totalVotes ? ` (${totalVotes} votes)` : '';
+      const optionCount = optionsCount ? ` (${optionsCount.length} options)` : '';
         
       return {
         title: `${activeIndicator}${statusIcon} ${title}`,
-        subtitle: `${status.toUpperCase()} - ${displayDate}${voteCount}`
+        subtitle: `${status.toUpperCase()} - ${displayDate}${optionCount}`
       }
     }
   },

@@ -11,6 +11,7 @@ import { getHomepageUpcomingMatches, getHomepageRecentMatches, getHomepageLeague
 import { HomeHeroSection, OverlappingNewsCards } from "@/features/home";
 import { getTeamData } from "@/features/team/services/getTeamData";
 import { selectRandomPlayersByPosition } from "@/features/team/services/playerSelection";
+import { getActivePoll } from "@/lib/supabase/polls";
 
 // Set the revalidation time to ensure fresh data
 export const revalidate = 10; // Revalidate every 10 seconds
@@ -124,7 +125,8 @@ export default async function HomePage() {
     sponsors,
     fanOfMonth,
     galleryPhotos,
-    randomPlayers
+    randomPlayers,
+    activePoll
   ] = await Promise.all([
     getHomepageUpcomingMatches(5),
     getHomepageRecentMatches(5),
@@ -132,7 +134,8 @@ export default async function HomePage() {
     getSponsorsForHomepage(),
     getFanOfMonth(),
     getGalleryPhotos(),
-    getRandomPlayers()
+    getRandomPlayers(),
+    getActivePoll()
   ]);
   
   // Responsive article distribution:
@@ -191,7 +194,11 @@ export default async function HomePage() {
         background="transparent"
         spacing="md"
       >
-        <FanZoneSection fanOfMonth={fanOfMonth} galleryPhotos={galleryPhotos} />
+        <FanZoneSection 
+          fanOfMonth={fanOfMonth} 
+          galleryPhotos={galleryPhotos} 
+          activePoll={activePoll}
+        />
       </Section>
       
       {/* Reduced Gradient Separator */}
