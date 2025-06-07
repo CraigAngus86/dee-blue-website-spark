@@ -1,6 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 
-// Simplified interfaces to avoid type conflicts
+// Simple interfaces without complex typing
 export interface SimplePoll {
   id: string;
   sanity_poll_id: string;
@@ -26,33 +26,33 @@ export interface SimplePollOption {
  */
 export async function getActivePoll(): Promise<SimplePoll | null> {
   try {
-    // Get active poll with explicit typing
-    const { data: pollData, error: pollError } = await supabase
+    // Use any to bypass TypeScript issues
+    const pollResponse: any = await supabase
       .from('polls')
       .select('*')
       .eq('status', 'active')
       .single();
 
-    if (pollError && pollError.code !== 'PGRST116') {
-      throw pollError;
+    if (pollResponse.error && pollResponse.error.code !== 'PGRST116') {
+      throw pollResponse.error;
     }
 
-    if (!pollData) return null;
+    if (!pollResponse.data) return null;
 
-    // Get poll options with explicit typing
-    const { data: optionsData, error: optionsError } = await supabase
+    // Get poll options
+    const optionsResponse: any = await supabase
       .from('poll_options')
       .select('*')
-      .eq('poll_id', pollData.id)
+      .eq('poll_id', pollResponse.data.id)
       .order('option_order');
 
-    if (optionsError) {
-      throw optionsError;
+    if (optionsResponse.error) {
+      throw optionsResponse.error;
     }
 
     return {
-      ...pollData,
-      options: optionsData || []
+      ...pollResponse.data,
+      options: optionsResponse.data || []
     } as SimplePoll;
   } catch (error) {
     console.error('Error fetching active poll:', error);
@@ -95,20 +95,20 @@ export async function checkIfUserVoted(pollId: string): Promise<{hasVoted: boole
   try {
     const voterHash = getVoterHash();
     
-    const { data, error } = await supabase
+    const response: any = await supabase
       .from('poll_votes')
       .select('option_id')
       .eq('poll_id', pollId)
       .eq('voter_hash', voterHash)
       .single();
 
-    if (error && error.code !== 'PGRST116') {
-      throw error;
+    if (response.error && response.error.code !== 'PGRST116') {
+      throw response.error;
     }
 
     return {
-      hasVoted: !!data,
-      optionId: data?.option_id || null
+      hasVoted: !!response.data,
+      optionId: response.data?.option_id || null
     };
   } catch (error) {
     console.error('Error checking vote status:', error);
@@ -123,7 +123,7 @@ export async function submitVote(pollId: string, optionId: string): Promise<void
   try {
     const voterHash = getVoterHash();
     
-    const { error } = await supabase
+    const response: any = await supabase
       .from('poll_votes')
       .insert({
         poll_id: pollId,
@@ -131,11 +131,11 @@ export async function submitVote(pollId: string, optionId: string): Promise<void
         voter_hash: voterHash
       });
 
-    if (error) {
-      if (error.code === '23505') { // Unique constraint violation
+    if (response.error) {
+      if (response.error.code === '23505') { // Unique constraint violation
         throw new Error('You have already voted on this poll');
       }
-      throw error;
+      throw response.error;
     }
   } catch (error) {
     console.error('Error submitting vote:', error);
@@ -155,7 +155,7 @@ export async function createPoll(
 ): Promise<string> {
   try {
     // Create poll with complete data
-    const { data: poll, error: pollError } = await supabase
+    const pollResponse: any = await supabase
       .from('polls')
       .insert({
         sanity_poll_id: sanityPollId,
@@ -167,23 +167,23 @@ export async function createPoll(
       .select()
       .single();
 
-    if (pollError) throw pollError;
+    if (pollResponse.error) throw pollResponse.error;
 
     // Create poll options
     const optionsData = options.map((optionText, index) => ({
-      poll_id: poll.id,
+      poll_id: pollResponse.data.id,
       option_text: optionText,
       option_order: index,
       vote_count: 0
     }));
 
-    const { error: optionsError } = await supabase
+    const optionsResponse: any = await supabase
       .from('poll_options')
       .insert(optionsData);
 
-    if (optionsError) throw optionsError;
+    if (optionsResponse.error) throw optionsResponse.error;
 
-    return poll.id;
+    return pollResponse.data.id;
   } catch (error) {
     console.error('Error creating poll:', error);
     throw error;
