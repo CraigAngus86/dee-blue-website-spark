@@ -40,7 +40,6 @@ interface MatchCarouselProps {
     form: ('W' | 'L' | 'D')[];
   };
   showHeader?: boolean;
-  // NEW: Click handlers
   onGalleryClick?: (galleryId: string) => void;
   onReportClick?: (reportId: string) => void;
   onTicketClick?: (ticketUrl: string) => void;
@@ -58,11 +57,7 @@ export function MatchCarousel({
   const carouselRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
-
-  // Track drag state
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
+  const [hasInitiallyCentered, setHasInitiallyCentered] = useState(false);
 
   // Organize matches with proper ordering (oldest to newest results, then next match, then upcoming)
   const getOrganizedMatches = () => {
@@ -98,7 +93,6 @@ export function MatchCarousel({
         nextMatchIndex: sortedRecent.length // Index of the next match in the combined array
       };
     } catch (error) {
-      console.error("Error organizing matches:", error);
       return { matches: [], nextMatchIndex: -1 };
     }
   };
@@ -143,9 +137,9 @@ export function MatchCarousel({
     }
   };
 
-  // Center the next match card on initial load
+  // Center the next match card on initial load ONLY
   useEffect(() => {
-    if (carouselRef.current && nextMatchIndex >= 0) {
+    if (carouselRef.current && nextMatchIndex >= 0 && !hasInitiallyCentered) {
       const cardWidth = 360; // Width of each card
       const spacing = 24;    // space-x-6 = 1.5rem = 24px
       const scrollTo = nextMatchIndex * (cardWidth + spacing);
@@ -159,10 +153,11 @@ export function MatchCarousel({
         if (carouselRef.current) {
           carouselRef.current.scrollLeft = Math.max(0, scrollTo - centerOffset);
           checkScrollState();
+          setHasInitiallyCentered(true);
         }
       }, 100);
     }
-  }, [nextMatchIndex, organizedMatches]);
+  }, [nextMatchIndex, organizedMatches, hasInitiallyCentered]);
 
   // Add event listeners for scroll and resize
   useEffect(() => {
@@ -178,50 +173,11 @@ export function MatchCarousel({
     }
   }, []);
 
-  // Handle drag start
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (!carouselRef.current) return;
-    setIsDragging(true);
-    setStartX(e.pageX - carouselRef.current.offsetLeft);
-    setScrollLeft(carouselRef.current.scrollLeft);
-  };
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (!carouselRef.current || e.touches.length === 0) return;
-    setIsDragging(true);
-    setStartX(e.touches[0].pageX - carouselRef.current.offsetLeft);
-    setScrollLeft(carouselRef.current.scrollLeft);
-  };
-
-  // Handle drag move
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging || !carouselRef.current) return;
-    e.preventDefault();
-    const x = e.pageX - carouselRef.current.offsetLeft;
-    const walk = (x - startX) * 2; // Adjust scrolling speed
-    carouselRef.current.scrollLeft = scrollLeft - walk;
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging || !carouselRef.current || e.touches.length === 0) return;
-    const x = e.touches[0].pageX - carouselRef.current.offsetLeft;
-    const walk = (x - startX) * 2;
-    carouselRef.current.scrollLeft = scrollLeft - walk;
-  };
-
-  // Handle drag end
-  const handleDragEnd = () => {
-    setIsDragging(false);
-    if (carouselRef.current) {
-      checkScrollState();
-    }
-  };
-
   // If we have no matches, show placeholder
   if (organizedMatches.length === 0) {
     return (
-      <div className="w-full bg-white rounded-md shadow p-8 flex items-center justify-center">
-        <p className="text-gray-500">No upcoming or recent matches to display</p>
+      <div className="w-full bg-[#ffffff] rounded-md shadow p-8 flex items-center justify-center">
+        <p className="text-[#6b7280]">No upcoming or recent matches to display</p>
       </div>
     );
   }
@@ -248,7 +204,7 @@ export function MatchCarousel({
         {/* Left navigation arrow */}
         <button
           onClick={handleScrollLeft}
-          className={`absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full shadow-md p-2 focus:outline-none
+          className={`absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-[#ffffff] rounded-full shadow-md p-2 focus:outline-none
             ${canScrollLeft ? 'opacity-100' : 'opacity-50 cursor-not-allowed'}`}
           disabled={!canScrollLeft}
           aria-label="Previous matches"
@@ -256,18 +212,11 @@ export function MatchCarousel({
           <ChevronLeft className="h-5 w-5 text-[#00105A]" />
         </button>
 
-        {/* Match carousel with draggable functionality */}
+        {/* Match carousel */}
         <div 
           ref={carouselRef} 
-          className={`flex space-x-6 overflow-x-auto hide-scrollbar pb-6 pt-2 px-4 ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+          className="flex space-x-6 overflow-x-auto hide-scrollbar pb-6 pt-2 px-4"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleDragEnd}
-          onMouseLeave={handleDragEnd}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleDragEnd}
         >
           {organizedMatches.map((match, index) => {
             const matchType = getMatchType(match, index);
@@ -293,7 +242,7 @@ export function MatchCarousel({
         {/* Right navigation arrow */}
         <button
           onClick={handleScrollRight}
-          className={`absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full shadow-md p-2 focus:outline-none
+          className={`absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-[#ffffff] rounded-full shadow-md p-2 focus:outline-none
             ${canScrollRight ? 'opacity-100' : 'opacity-50 cursor-not-allowed'}`}
           disabled={!canScrollRight}
           aria-label="Next matches"

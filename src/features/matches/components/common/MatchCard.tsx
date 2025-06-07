@@ -46,7 +46,6 @@ export function MatchCard({
       
       return `${weekday} ${day} ${month}`;
     } catch (e) {
-      console.error('Error formatting date:', e);
       return 'TBA';
     }
   };
@@ -94,13 +93,13 @@ export function MatchCard({
         transition-all duration-300 hover:shadow-md`}
     >
       {/* Match card */}
-      <div className="h-full bg-white">
+      <div className="h-full bg-[#ffffff]">
         {/* Header with proper styling */}
         <div className={`px-4 py-3 text-center 
-          ${isNextMatch ? 'bg-[#00105A]' : 'bg-white border-b border-[#e5e7eb]'}`}
+          ${isNextMatch ? 'bg-[#00105A]' : 'bg-[#ffffff] border-b border-[#e5e7eb]'}`}
         >
           <div className={`text-sm font-semibold uppercase tracking-wide
-            ${isNextMatch ? 'text-white' : 'text-[#00105A]'}`}
+            ${isNextMatch ? 'text-[#ffffff]' : 'text-[#00105A]'}`}
           >
             {matchType}
           </div>
@@ -204,9 +203,9 @@ export function MatchCard({
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                </button>
-              </>
+                </svg>
+              </button>
+            </>
             )}
           </div>
         </div>
