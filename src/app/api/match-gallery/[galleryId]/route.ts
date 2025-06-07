@@ -8,38 +8,30 @@ export async function GET(
   try {
     const { galleryId } = params;
 
-    // Use existing query pattern from useGallery hook
     const query = `*[_type == "matchGallery" && _id == $galleryId][0] {
       _id,
       title,
       matchDate,
       "coverImage": coverImage.asset->{
+        public_id,
         url,
-        metadata {
-          dimensions {
-            width,
-            height
-          }
-        }
+        "secure_url": secure_url,
+        format,
+        _type
       },
       "galleryImages": galleryImages[].asset->{
         _id,
+        public_id,
         url,
-        "public_id": cloudinary.public_id,
-        "format": cloudinary.format,
-        metadata {
-          dimensions {
-            width,
-            height
-          }
-        }
+        "secure_url": secure_url,
+        format,
+        _type
       },
       photographer,
       publishedAt,
       supabaseMatchId
     }`;
     
-    // Server-side Sanity fetch (no CORS issues)
     const gallery = await sanityClient.fetch(query, { galleryId });
     
     if (!gallery) {
@@ -49,10 +41,18 @@ export async function GET(
       );
     }
 
-    // Transform to expected format
+    // Transform to match expected GalleryPhoto structure
     const transformedGallery = {
       ...gallery,
-      photos: gallery.galleryImages || []
+      photos: (gallery.galleryImages || []).map((img: any) => ({
+        image: {
+          public_id: img.public_id,
+          url: img.url,
+          secure_url: img.secure_url,
+          format: img.format,
+          _type: img._type
+        }
+      }))
     };
 
     return NextResponse.json(transformedGallery);

@@ -1,34 +1,22 @@
 "use client";
 import { useState, useEffect } from 'react';
-
-interface GalleryPhoto {
-  _id: string;
-  url: string;
-  public_id?: string;
-  format?: string;
-  metadata?: {
-    dimensions?: {
-      width: number;
-      height: number;
-    };
-  };
-}
-
-interface Gallery {
-  _id: string;
-  title: string;
-  matchDate?: string;
-  coverImage?: any;
-  photos: GalleryPhoto[];
-  photographer?: string;
-  publishedAt?: string;
-  supabaseMatchId?: string;
-}
+import { MatchGallery, GalleryPhoto, CloudinaryImage } from '../types';
 
 export function useGallery(galleryId?: string, matchId?: string) {
-  const [gallery, setGallery] = useState<Gallery | null>(null);
+  const [gallery, setGallery] = useState<MatchGallery | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const getOptimizedImageUrl = (photo: GalleryPhoto, transform = 'w_400,h_300,c_fill,q_auto') => {
+    if (photo.image.public_id) {
+      return `https://res.cloudinary.com/dlkpaw2a0/image/upload/${transform}/${photo.image.public_id}.${photo.image.format || 'jpg'}`;
+    } else if (photo.image.url) {
+      return photo.image.url;
+    } else if (photo.image.secure_url) {
+      return photo.image.secure_url;
+    }
+    return '';
+  };
 
   useEffect(() => {
     const fetchGallery = async () => {
@@ -44,11 +32,8 @@ export function useGallery(galleryId?: string, matchId?: string) {
         let response;
         
         if (galleryId) {
-          // Fetch by gallery ID via API route (fixes CORS)
           response = await fetch(`/api/match-gallery/${galleryId}`);
         } else if (matchId) {
-          // For match ID, we might need a different endpoint
-          // For now, this will fail gracefully
           throw new Error('Match ID lookup not implemented yet');
         }
 
@@ -70,5 +55,5 @@ export function useGallery(galleryId?: string, matchId?: string) {
     fetchGallery();
   }, [galleryId, matchId]);
 
-  return { gallery, loading, error };
+  return { gallery, loading, error, getOptimizedImageUrl };
 }
