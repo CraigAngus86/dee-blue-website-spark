@@ -7,13 +7,14 @@ export function useGallery(galleryId?: string, matchId?: string) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const getOptimizedImageUrl = (photo: GalleryPhoto, transform = 'w_400,h_300,c_fill,q_auto') => {
-    if (photo.image.public_id) {
-      return `https://res.cloudinary.com/dlkpaw2a0/image/upload/${transform}/${photo.image.public_id}.${photo.image.format || 'jpg'}`;
-    } else if (photo.image.url) {
-      return photo.image.url;
-    } else if (photo.image.secure_url) {
-      return photo.image.secure_url;
+  // Fix: Accept CloudinaryImage instead of GalleryPhoto
+  const getOptimizedImageUrl = (image: CloudinaryImage, transform = 'w_400,h_300,c_fill,q_auto') => {
+    if (image.public_id) {
+      return `https://res.cloudinary.com/dlkpaw2a0/image/upload/${transform}/${image.public_id}.${image.format || 'jpg'}`;
+    } else if (image.url) {
+      return image.url;
+    } else if (image.secure_url) {
+      return image.secure_url;
     }
     return '';
   };
