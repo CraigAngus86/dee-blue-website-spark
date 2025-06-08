@@ -64,10 +64,10 @@ export default function SponsorsSection({ sponsors }: SponsorsSectionProps) {
           </div>
         )}
 
-        {/* Main Sponsors - Even smaller container */}
+        {/* Main Sponsors - MOBILE: 2 columns, DESKTOP: 2 columns */}
         {hasMain && (
           <div className="mb-2 flex justify-center">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-3xl">
+            <div className="grid grid-cols-2 gap-2 max-w-3xl">
               {sponsors.main.map((sponsor) => (
                 <Link
                   key={sponsor._id}
