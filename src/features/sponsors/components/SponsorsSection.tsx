@@ -64,10 +64,10 @@ export default function SponsorsSection({ sponsors }: SponsorsSectionProps) {
           </div>
         )}
 
-        {/* Main Sponsors - MOBILE: 2 columns, DESKTOP: 2 columns */}
+        {/* Main Sponsors - BACK TO STACKED ON MOBILE */}
         {hasMain && (
           <div className="mb-2 flex justify-center">
-            <div className="grid grid-cols-2 gap-2 max-w-3xl">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-3xl">
               {sponsors.main.map((sponsor) => (
                 <Link
                   key={sponsor._id}
@@ -92,10 +92,10 @@ export default function SponsorsSection({ sponsors }: SponsorsSectionProps) {
           </div>
         )}
 
-        {/* Official Partners - More generous spacing */}
+        {/* Official Partners - 4 COLUMNS WITH MORE SPACING */}
         {hasPartners && (
           <div className="mb-4 flex justify-center">
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-6 gap-2 max-w-4xl">
+            <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-6 gap-4 max-w-4xl">
               {sponsors.partner.map((sponsor) => (
                 <Link
                   key={sponsor._id}
