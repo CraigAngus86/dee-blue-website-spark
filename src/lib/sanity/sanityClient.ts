@@ -10,10 +10,11 @@ const config = {
   dataset: env.sanity.dataset,
   apiVersion: env.sanity.apiVersion || '2024-04-30',
   useCdn: false,
-  perspective: 'published' as const
+  perspective: 'published' as const,
+  token: env.sanity.token  // ✅ ADD TOKEN TO STANDARD CLIENT
 };
 
-// Standard client for regular content fetching
+// Standard client for regular content fetching (NOW WITH TOKEN)
 export const sanityClient = createClient(config);
 
 // Preview client for draft content
