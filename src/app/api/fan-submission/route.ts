@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sanityClient } from '@/lib/sanity/client';
 
+// Function to count words properly
+function countWords(text: string): number {
+  return text.trim().split(/\s+/).filter(word => word.length > 0).length;
+}
+
 // Cloudinary upload function using upload presets
 async function uploadPhotosToCloudinary(photos: File[]): Promise<any[]> {
   const uploadedPhotos = [];
@@ -76,9 +81,25 @@ export async function POST(req: NextRequest) {
       );
     }
     
-    if (!story?.trim() || story.trim().length < 100) {
+    // UPDATED: Story word count validation (20-60 words)
+    if (!story?.trim()) {
       return NextResponse.json(
-        { error: 'Story must be at least 100 characters long' },
+        { error: 'Your story is required' },
+        { status: 400 }
+      );
+    }
+    
+    const wordCount = countWords(story);
+    if (wordCount < 20) {
+      return NextResponse.json(
+        { error: 'Please write at least 20 words for your story' },
+        { status: 400 }
+      );
+    }
+    
+    if (wordCount > 60) {
+      return NextResponse.json(
+        { error: 'Please keep your story under 60 words' },
         { status: 400 }
       );
     }

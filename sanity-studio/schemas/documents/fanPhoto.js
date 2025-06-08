@@ -42,7 +42,7 @@ export default {
       name: 'context',
       title: 'Photo Context',
       type: 'string',
-      description: 'Brief description of when/where photo was taken',
+      description: 'Brief description of when/where photo was taken (optional)',
       placeholder: 'e.g., "Match vs Huntly, celebrating goal"',
       group: 'content'
     },
@@ -70,21 +70,9 @@ export default {
     {
       name: 'socialPermissions',
       title: 'Social Media Permissions',
-      type: 'object',
-      fields: [
-        {
-          name: 'clubSocials',
-          title: 'Club Social Media Use',
-          type: 'boolean',
-          initialValue: true
-        },
-        {
-          name: 'fanSharing',
-          title: 'Fan Sharing Allowed',
-          type: 'boolean',
-          initialValue: true
-        }
-      ],
+      type: 'boolean',
+      description: 'Allow Banks o\' Dee FC to share this content on social media',
+      initialValue: true,
       group: 'submission'
     },
     {

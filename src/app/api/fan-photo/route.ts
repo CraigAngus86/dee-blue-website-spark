@@ -40,12 +40,11 @@ export async function POST(req: NextRequest) {
     // Parse form data
     const formData = await req.formData();
     
-    // Extract text fields
+    // Extract text fields - SIMPLIFIED PERMISSIONS
     const fanName = formData.get('fanName') as string;
     const email = formData.get('email') as string;
     const context = formData.get('context') as string;
-    const clubSocials = formData.get('clubSocials') === 'true';
-    const fanSharing = formData.get('fanSharing') === 'true';
+    const socialPermissions = formData.get('socialPermissions') === 'true';
     
     // Validate required fields
     if (!fanName?.trim()) {
@@ -62,21 +61,8 @@ export async function POST(req: NextRequest) {
       );
     }
     
-    if (!context?.trim()) {
-      return NextResponse.json(
-        { error: 'Photo context is required' },
-        { status: 400 }
-      );
-    }
-    
-    // Basic word count validation for context
-    const contextWords = context.trim().split(/\s+/).filter(word => word.length > 0).length;
-    if (contextWords < 10) {
-      return NextResponse.json(
-        { error: 'Please provide at least 10 words describing the photo' },
-        { status: 400 }
-      );
-    }
+    // REMOVED: Context requirement and word count validation
+    // Context is now optional - no validation needed
     
     // Extract photo
     const photoFile = formData.get('photo') as File;
@@ -115,12 +101,12 @@ export async function POST(req: NextRequest) {
       );
     }
     
-    // Prepare Sanity document
+    // Prepare Sanity document - SIMPLIFIED PERMISSIONS STRUCTURE
     const fanPhotoDoc = {
       _type: 'fanPhoto',
       fanName: fanName.trim(),
       email: email.trim(),
-      context: context.trim(),
+      context: context?.trim() || '', // Optional context
       photo: {
         _type: 'cloudinary.asset',
         public_id: uploadedPhoto.public_id,
@@ -129,10 +115,7 @@ export async function POST(req: NextRequest) {
         height: uploadedPhoto.height,
         format: uploadedPhoto.format
       },
-      socialPermissions: {
-        clubSocials,
-        fanSharing
-      },
+      socialPermissions: socialPermissions, // SIMPLIFIED: Single boolean
       approvalStatus: 'pending',
       submittedAt: new Date().toISOString()
     };

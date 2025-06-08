@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Upload, Check } from 'lucide-react';
 
 interface FanSubmissionModalProps {
@@ -30,6 +30,20 @@ export function FanSubmissionModal({ isOpen, onClose }: FanSubmissionModalProps)
     { value: 'match_day_magic', label: 'Match Day Magic', description: 'Great atmosphere/moment captures' },
     { value: 'next_generation', label: 'Next Generation', description: 'Young/new fans' }
   ];
+
+  // Prevent background scrolling when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -80,7 +94,7 @@ export function FanSubmissionModal({ isOpen, onClose }: FanSubmissionModalProps)
     setSelectedPhotos(prev => prev.filter((_, i) => i !== index));
   };
 
-  // Form validation
+  // Form validation - UPDATED WORD COUNT RANGE
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     
@@ -91,7 +105,14 @@ export function FanSubmissionModal({ isOpen, onClose }: FanSubmissionModalProps)
     }
     if (!formData.category) newErrors.category = 'Please select a category';
     if (!formData.story.trim()) newErrors.story = 'Your story is required';
-    if (countWords(formData.story) < 100) newErrors.story = 'Please write at least 100 words';
+    
+    // NEW: 20-60 word range validation
+    const wordCount = countWords(formData.story);
+    if (wordCount < 20) {
+      newErrors.story = 'Please write at least 20 words';
+    } else if (wordCount > 60) {
+      newErrors.story = 'Please keep your story under 60 words';
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -283,7 +304,7 @@ export function FanSubmissionModal({ isOpen, onClose }: FanSubmissionModalProps)
               </div>
             </div>
 
-            {/* Story */}
+            {/* Story - UPDATED WORD COUNT REQUIREMENTS */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-[#00105A] mb-2">
                 Your Banks o' Dee Story <span className="text-red-500">*</span>
@@ -298,15 +319,21 @@ export function FanSubmissionModal({ isOpen, onClose }: FanSubmissionModalProps)
                     ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
                     : 'border-[#e5e7eb] focus:border-[#00105A] focus:ring-[#00105A]'
                 }`}
-                placeholder="Tell us your Banks o' Dee story... (minimum 100 words)"
+                placeholder="Tell us your Banks o' Dee story... (20-60 words)"
               />
               <div className="flex justify-between text-sm mt-1">
                 {errors.story ? (
                   <p className="text-red-500">{errors.story}</p>
                 ) : (
-                  <p className="text-[#6b7280]">Minimum 100 words</p>
+                  <p className="text-[#6b7280]">20-60 words</p>
                 )}
-                <p className="text-[#6b7280]">{wordCount} words</p>
+                <p className={`${
+                  wordCount < 20 ? 'text-red-500' : 
+                  wordCount > 60 ? 'text-red-500' : 
+                  'text-[#6b7280]'
+                }`}>
+                  {wordCount} words
+                </p>
               </div>
             </div>
 
@@ -367,7 +394,7 @@ export function FanSubmissionModal({ isOpen, onClose }: FanSubmissionModalProps)
               )}
             </div>
 
-            {/* Permissions */}
+            {/* Permissions - STANDARDIZED WORDING */}
             <div className="mb-6">
               <label className="flex items-start space-x-3">
                 <input
@@ -378,9 +405,9 @@ export function FanSubmissionModal({ isOpen, onClose }: FanSubmissionModalProps)
                   className="mt-1 text-[#00105A] focus:ring-[#00105A]"
                 />
                 <div className="text-sm">
-                  <div className="font-medium text-[#00105A]">Social Media Permissions</div>
+                  <div className="font-medium text-[#00105A]">Allow Banks o' Dee FC to share this content on social media</div>
                   <div className="text-[#6b7280]">
-                    I give permission for Banks o' Dee FC to feature my story and photos on social media and the club website.
+                    Permission for the club to use this story and photos on official social media channels
                   </div>
                 </div>
               </label>

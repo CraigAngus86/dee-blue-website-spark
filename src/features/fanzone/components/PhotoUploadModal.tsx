@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Upload, Check } from 'lucide-react';
 
 interface PhotoUploadModalProps {
@@ -12,37 +12,35 @@ export function PhotoUploadModal({ isOpen, onClose }: PhotoUploadModalProps) {
     fanName: '',
     email: '',
     context: '',
-    socialPermissions: {
-      clubSocials: true,
-      fanSharing: true
-    }
+    socialPermissions: true
   });
   
   const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  if (!isOpen) return null;
+  // Prevent background scrolling when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
 
-  // Function to count words properly
-  const countWords = (text: string): number => {
-    return text.trim().split(/\s+/).filter(word => word.length > 0).length;
-  };
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
+
+  if (!isOpen) return null;
 
   // Handle form input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
     if (type === 'checkbox') {
       const checked = (e.target as HTMLInputElement).checked;
-      if (name === 'clubSocials' || name === 'fanSharing') {
-        setFormData(prev => ({ 
-          ...prev, 
-          socialPermissions: {
-            ...prev.socialPermissions,
-            [name]: checked
-          }
-        }));
-      }
+      setFormData(prev => ({ ...prev, [name]: checked }));
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
@@ -80,7 +78,7 @@ export function PhotoUploadModal({ isOpen, onClose }: PhotoUploadModalProps) {
     setSelectedPhoto(null);
   };
 
-  // Form validation
+  // Form validation - SIMPLIFIED, NO WORD COUNT
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     
@@ -90,8 +88,7 @@ export function PhotoUploadModal({ isOpen, onClose }: PhotoUploadModalProps) {
       newErrors.email = 'Please enter a valid email';
     }
     if (!selectedPhoto) newErrors.photo = 'Please select a photo to upload';
-    if (!formData.context.trim()) newErrors.context = 'Photo context is required';
-    if (countWords(formData.context) < 10) newErrors.context = 'Please provide at least 10 words describing the photo';
+    // REMOVED: Context word count requirement - now optional
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -113,8 +110,7 @@ export function PhotoUploadModal({ isOpen, onClose }: PhotoUploadModalProps) {
       apiFormData.append('fanName', formData.fanName);
       apiFormData.append('email', formData.email);
       apiFormData.append('context', formData.context);
-      apiFormData.append('clubSocials', formData.socialPermissions.clubSocials.toString());
-      apiFormData.append('fanSharing', formData.socialPermissions.fanSharing.toString());
+      apiFormData.append('socialPermissions', formData.socialPermissions.toString());
       
       // Add photo
       if (selectedPhoto) {
@@ -141,10 +137,7 @@ export function PhotoUploadModal({ isOpen, onClose }: PhotoUploadModalProps) {
         fanName: '',
         email: '',
         context: '',
-        socialPermissions: {
-          clubSocials: true,
-          fanSharing: true
-        }
+        socialPermissions: true
       });
       setSelectedPhoto(null);
       setErrors({});
@@ -157,8 +150,6 @@ export function PhotoUploadModal({ isOpen, onClose }: PhotoUploadModalProps) {
       setIsSubmitting(false);
     }
   };
-
-  const contextWordCount = countWords(formData.context);
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50 flex items-center justify-center">
@@ -288,67 +279,37 @@ export function PhotoUploadModal({ isOpen, onClose }: PhotoUploadModalProps) {
               </div>
             </div>
 
-            {/* Photo Context */}
+            {/* Photo Context - NOW OPTIONAL */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-[#00105A] mb-2">
-                Photo Context <span className="text-red-500">*</span>
+                Photo Context <span className="text-[#6b7280]">(Optional)</span>
               </label>
               <textarea
                 name="context"
                 value={formData.context}
                 onChange={handleInputChange}
                 rows={3}
-                className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-1 resize-none ${
-                  errors.context 
-                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-                    : 'border-[#e5e7eb] focus:border-[#00105A] focus:ring-[#00105A]'
-                }`}
+                className="w-full px-3 py-2 border border-[#e5e7eb] rounded focus:outline-none focus:ring-1 focus:border-[#00105A] focus:ring-[#00105A] resize-none"
                 placeholder="e.g., 'Match vs Huntly, celebrating goal in 85th minute'"
               />
-              <div className="flex justify-between text-sm mt-1">
-                {errors.context ? (
-                  <p className="text-red-500">{errors.context}</p>
-                ) : (
-                  <p className="text-[#6b7280]">Briefly describe when/where this photo was taken</p>
-                )}
-                <p className="text-[#6b7280]">{contextWordCount} words</p>
-              </div>
+              <p className="text-[#6b7280] text-sm mt-1">Briefly describe when/where this photo was taken</p>
             </div>
 
-            {/* Social Media Permissions */}
+            {/* Social Media Permissions - SIMPLIFIED */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-[#00105A] mb-3">
-                Social Media Permissions
+              <label className="flex items-start space-x-3">
+                <input
+                  type="checkbox"
+                  name="socialPermissions"
+                  checked={formData.socialPermissions}
+                  onChange={handleInputChange}
+                  className="mt-1 text-[#00105A] focus:ring-[#00105A]"
+                />
+                <div className="text-sm">
+                  <div className="font-medium text-[#00105A]">Allow Banks o' Dee FC to share this content on social media</div>
+                  <div className="text-[#6b7280]">Permission for the club to use this photo on official social media channels</div>
+                </div>
               </label>
-              <div className="space-y-3">
-                <label className="flex items-start space-x-3">
-                  <input
-                    type="checkbox"
-                    name="clubSocials"
-                    checked={formData.socialPermissions.clubSocials}
-                    onChange={handleInputChange}
-                    className="mt-1 text-[#00105A] focus:ring-[#00105A]"
-                  />
-                  <div className="text-sm">
-                    <div className="font-medium text-[#00105A]">Club Social Media Use</div>
-                    <div className="text-[#6b7280]">Allow Banks o' Dee FC to share this photo on official social media</div>
-                  </div>
-                </label>
-
-                <label className="flex items-start space-x-3">
-                  <input
-                    type="checkbox"
-                    name="fanSharing"
-                    checked={formData.socialPermissions.fanSharing}
-                    onChange={handleInputChange}
-                    className="mt-1 text-[#00105A] focus:ring-[#00105A]"
-                  />
-                  <div className="text-sm">
-                    <div className="font-medium text-[#00105A]">Fan Sharing Allowed</div>
-                    <div className="text-[#6b7280]">Allow other fans to share this photo on social media</div>
-                  </div>
-                </label>
-              </div>
             </div>
 
             {/* Submit Button */}
