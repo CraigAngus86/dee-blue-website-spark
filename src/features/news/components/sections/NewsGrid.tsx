@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useRef, useCallback, useMemo, useState, useEffect } from "react";
 import { NewsPageCard } from "../../components";
 import { NewsArticle } from "../../types";
 import { cn } from "@/lib/utils";
@@ -44,8 +44,8 @@ class MasonryLayoutEngine {
   private placements: CardPlacement[] = [];
   
   constructor(containerWidth: number, columns: number) {
-    // Tighter spacing: reduced padding for maximum content density
-    const padding = 16; // Reduced from 32
+    // Tighter spacing for 4-column layout
+    const padding = columns === 4 ? 12 : 16; // Even tighter for 4 columns
     const effectiveWidth = containerWidth - padding;
     const cellWidth = Math.floor(effectiveWidth / columns);
     const cellHeight = Math.floor(cellWidth * 0.5625); // 16:9 ratio
@@ -77,33 +77,118 @@ class MasonryLayoutEngine {
     return this.placements;
   }
   
-  // 🎨 SIMPLIFIED SIZE ASSIGNMENT - OPTIMIZED FOR ABUNDANCE
+  // 🎨 QUOTA-BASED SIZE ASSIGNMENT WITH BETTER DISTRIBUTION
   private assignCardSizes(content: any[]): CardSize[] {
     const sizes: CardSize[] = [];
     const totalItems = content.length;
-    let heroCardsPlaced = 0;
-    const maxHeroCards = Math.floor(totalItems / 8); // 1 hero per 8 items
+    
+    // Calculate quotas based on percentages
+    const quotas = {
+      hero: Math.max(1, Math.floor(totalItems * 0.10)),     // 10% (min 1)
+      wide: Math.max(2, Math.floor(totalItems * 0.15)),     // 15% (min 2)
+      tall: Math.max(2, Math.floor(totalItems * 0.15)),     // 15% (min 2)
+      standard: totalItems                                   // Rest will be standard
+    };
+    
+    // For smaller content counts, reduce variety
+    if (totalItems < 8) {
+      quotas.hero = Math.min(1, Math.floor(totalItems * 0.10));
+      quotas.wide = Math.min(1, Math.floor(totalItems * 0.20));
+      quotas.tall = Math.min(1, Math.floor(totalItems * 0.20));
+    }
+    
+    // Track how many of each size we've placed
+    let heroPlaced = 0;
+    let widePlaced = 0;
+    let tallPlaced = 0;
+    
+    // First pass: Assign featured articles as heroes
+    const assignments: { index: number; size: CardSize }[] = [];
     
     content.forEach((item, index) => {
-      // Featured articles get 2x2 (still respect the ratio)
-      if (item.isFeatured === true && heroCardsPlaced < maxHeroCards) {
-        sizes.push({ width: 2, height: 2 });
-        heroCardsPlaced++;
+      if (item.isFeatured === true && heroPlaced < quotas.hero) {
+        assignments.push({ index, size: { width: 2, height: 2 } });
+        heroPlaced++;
       }
-      // Match reports love being wide
-      else if (item.category === 'matchReport' && Math.random() > 0.4) {
-        sizes.push({ width: 2, height: 1 });
-      }
-      // Pure variety distribution - no restrictions!
-      else {
-        const random = Math.random();
-        if (random < 0.15) {
-          sizes.push({ width: 1, height: 2 }); // 15% tall
-        } else if (random < 0.45) {
-          sizes.push({ width: 2, height: 1 }); // 30% wide
-        } else {
-          sizes.push({ width: 1, height: 1 }); // 55% standard
+    });
+    
+    // Second pass: Distribute remaining large cards evenly
+    const remainingIndices = content
+      .map((_, index) => index)
+      .filter(index => !assignments.some(a => a.index === index));
+    
+    // Calculate distribution intervals to prevent clustering
+    const totalLargeCards = (quotas.hero - heroPlaced) + quotas.wide + quotas.tall;
+    const interval = Math.max(2, Math.floor(remainingIndices.length / totalLargeCards));
+    
+    // Distribute wide and tall cards with spacing
+    let position = 0;
+    
+    // Add remaining hero cards if needed
+    while (heroPlaced < quotas.hero && position < remainingIndices.length) {
+      assignments.push({ 
+        index: remainingIndices[position], 
+        size: { width: 2, height: 2 } 
+      });
+      heroPlaced++;
+      position += interval;
+    }
+    
+    // Add wide cards (prefer match reports)
+    position = Math.floor(interval / 2); // Offset to avoid clustering
+    content.forEach((item, index) => {
+      if (widePlaced < quotas.wide && 
+          !assignments.some(a => a.index === index)) {
+        if (item.category === 'matchReport' || position % interval === 0) {
+          assignments.push({ 
+            index, 
+            size: { width: 2, height: 1 } 
+          });
+          widePlaced++;
         }
+        position++;
+      }
+    });
+    
+    // Fill remaining wide quota
+    position = 1; // Different offset
+    while (widePlaced < quotas.wide && position < remainingIndices.length) {
+      const idx = remainingIndices[position];
+      if (!assignments.some(a => a.index === idx)) {
+        assignments.push({ 
+          index: idx, 
+          size: { width: 2, height: 1 } 
+        });
+        widePlaced++;
+        position += interval;
+      } else {
+        position++;
+      }
+    }
+    
+    // Add tall cards with different spacing
+    position = Math.floor(interval / 3); // Another offset
+    while (tallPlaced < quotas.tall && position < remainingIndices.length) {
+      const idx = remainingIndices[position];
+      if (!assignments.some(a => a.index === idx)) {
+        assignments.push({ 
+          index: idx, 
+          size: { width: 1, height: 2 } 
+        });
+        tallPlaced++;
+        position += interval;
+      } else {
+        position++;
+      }
+    }
+    
+    // Final pass: Build the sizes array
+    content.forEach((item, index) => {
+      const assignment = assignments.find(a => a.index === index);
+      if (assignment) {
+        sizes.push(assignment.size);
+      } else {
+        sizes.push({ width: 1, height: 1 }); // Standard size
       }
     });
     
@@ -251,10 +336,10 @@ const NewsGrid: React.FC<NewsGridProps> = ({
   const [selectedGalleryId, setSelectedGalleryId] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState<string>("all");
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
-  const [layout, setLayout] = useState<{ placements: CardPlacement[], containerHeight: number }>({
-    placements: [],
-    containerHeight: 0
-  });
+  
+  // Force re-render on resize
+  const [, forceUpdate] = useState({});
+  const forceRender = useCallback(() => forceUpdate({}), []);
   
   const containerRef = useRef<HTMLDivElement>(null);
   const resizeTimeoutRef = useRef<NodeJS.Timeout>();
@@ -306,72 +391,92 @@ const NewsGrid: React.FC<NewsGridProps> = ({
       return a.name.localeCompare(b.name);
     });
   
-  // 📐 RESPONSIVE COLUMNS
+  // 📐 RESPONSIVE COLUMNS - EXPANDED TO 4 FOR DESKTOP
   const getResponsiveColumns = useCallback((): number => {
-    if (typeof window === 'undefined') return 3;
+    if (typeof window === 'undefined') return 4;
     const width = window.innerWidth;
     if (width < 768) return 1;   // Mobile: Single column
     if (width < 1024) return 2;  // Tablet: 2 columns
-    return 3;                     // Desktop: 3 columns
+    return 4;                     // Desktop: 4 columns (expanded for more variety)
   }, []);
   
-  // 🎯 CALCULATE MASONRY LAYOUT
-  const calculateMasonryLayout = useCallback((
-    items: any[], 
-    container: HTMLDivElement | null
-  ): { placements: CardPlacement[], containerHeight: number } => {
-    if (!container || items.length === 0) {
+  // 🎯 SYNCHRONOUS LAYOUT CALCULATION - STABILIZED FOR MODAL INTERACTIONS
+  const layout = useMemo(() => {
+    const columns = getResponsiveColumns();
+    
+    // Don't use masonry on mobile
+    if (columns === 1 || filteredContent.length === 0) {
       return { placements: [], containerHeight: 0 };
     }
     
-    const containerWidth = container.offsetWidth;
-    const columns = getResponsiveColumns();
+    // Get container width - use window width as fallback for initial render
+    let containerWidth = 0;
+    if (containerRef.current) {
+      containerWidth = containerRef.current.offsetWidth;
+    } else {
+      // Estimate based on window width for initial render
+      const windowWidth = typeof window !== 'undefined' ? window.innerWidth : 1440;
+      const containerPadding = 32; // px-4 on each side
+      const maxWidth = 1536; // Increased for 4-column layout
+      containerWidth = Math.min(windowWidth - containerPadding, maxWidth);
+    }
     
-    // Don't use masonry on mobile (single column)
-    if (columns === 1) {
+    if (containerWidth <= 0) {
       return { placements: [], containerHeight: 0 };
     }
     
     const engine = new MasonryLayoutEngine(containerWidth, columns);
-    const placements = engine.calculateLayout(items);
+    const placements = engine.calculateLayout(filteredContent);
     const containerHeight = engine.getContainerHeight();
     
     return { placements, containerHeight };
-  }, [getResponsiveColumns]);
+  }, [filteredContent, getResponsiveColumns]);
   
-  // 🔄 UPDATE LAYOUT WITH DEBOUNCE
-  const updateLayout = useCallback(() => {
-    if (containerRef.current) {
-      const newLayout = calculateMasonryLayout(filteredContent, containerRef.current);
-      setLayout(newLayout);
-    }
-  }, [filteredContent, calculateMasonryLayout]);
+  // Create stable content key to prevent modal-triggered recalculations
+  const contentKey = useMemo(() => {
+    return filteredContent.map(item => item.id).join(',');
+  }, [filteredContent]);
   
   // 📱 DEBOUNCED RESIZE HANDLER
   const handleResize = useCallback(() => {
-    // Clear existing timeout
     if (resizeTimeoutRef.current) {
       clearTimeout(resizeTimeoutRef.current);
     }
     
-    // Set new timeout for debounced update
     resizeTimeoutRef.current = setTimeout(() => {
-      updateLayout();
-    }, 300); // 300ms debounce
-  }, [updateLayout]);
+      forceRender(); // Trigger re-render which will recalculate layout
+    }, 300);
+  }, [forceRender]);
   
-  // 🎯 INITIAL LAYOUT & RESIZE LISTENER
+  // 🎯 RESIZE LISTENER - ONLY FOR ACTUAL WINDOW RESIZES
   useEffect(() => {
-    updateLayout();
-    window.addEventListener('resize', handleResize);
+    // Store previous window width to detect actual resizes
+    let previousWidth = window.innerWidth;
+    
+    const handleActualResize = () => {
+      const currentWidth = window.innerWidth;
+      // Only trigger if width actually changed (not just modal opening)
+      if (Math.abs(currentWidth - previousWidth) > 10) {
+        previousWidth = currentWidth;
+        handleResize();
+      }
+    };
+    
+    window.addEventListener('resize', handleActualResize);
+    
+    // Force a render after mount to ensure container ref is available
+    const timer = setTimeout(() => {
+      forceRender();
+    }, 0);
     
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('resize', handleActualResize);
       if (resizeTimeoutRef.current) {
         clearTimeout(resizeTimeoutRef.current);
       }
+      clearTimeout(timer);
     };
-  }, [updateLayout, handleResize]);
+  }, [handleResize, forceRender]);
   
   // Handle card clicks (preserve existing logic)
   const handleCardClick = (item: any) => {
@@ -445,74 +550,83 @@ const NewsGrid: React.FC<NewsGridProps> = ({
     );
   };
   
-  // 🎨 SIMPLIFIED FALLBACK GRID
-  const renderFallbackGrid = () => {
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-[280px]">
-        {filteredContent.map((item) => (
-          <div key={item.id} className="col-span-1">
-            <NewsPageCard
-              article={item}
-              isFeatured={false}
-              isGallery={item.contentType === "gallery"}
-              className="h-full"
-              onClick={() => handleCardClick(item)}
-            />
-          </div>
-        ))}
-      </div>
-    );
-  };
-  
-  // 🎨 RENDER MASONRY OR FALLBACK
+  // 🎨 RENDER CONTENT
   const renderContent = () => {
-    const isMobile = getResponsiveColumns() === 1;
+    const columns = getResponsiveColumns();
     
-    // Use simple grid on mobile or if no placements calculated
-    if (isMobile || layout.placements.length === 0) {
-      return renderFallbackGrid();
-    }
-    
-    // Render masonry layout with tighter spacing
-    return (
-      <div 
-        ref={containerRef}
-        className="relative w-full"
-        style={{ height: `${layout.containerHeight}px` }}
-      >
-        {filteredContent.map((item, index) => {
-          const placement = layout.placements[index];
-          if (!placement) return null;
-          
-          // Safe property check for TypeScript
-          const isFeatured = placement.width === 2 && placement.height === 2;
-          
-          return (
-            <div
-              key={item.id}
-              className="absolute transition-all duration-500 ease-out p-2"
-              style={{
-                transform: `translate(${placement.pixelX}px, ${placement.pixelY}px)`,
-                width: `${placement.pixelWidth}px`,
-                height: `${placement.pixelHeight}px`,
-              }}
-            >
+    // Mobile: Simple grid
+    if (columns === 1) {
+      return (
+        <div className="grid grid-cols-1 gap-4 auto-rows-[280px]">
+          {filteredContent.map((item) => (
+            <div key={item.id}>
               <NewsPageCard
                 article={item}
-                isFeatured={isFeatured}
+                isFeatured={false}
                 isGallery={item.contentType === "gallery"}
                 className="h-full"
                 onClick={() => handleCardClick(item)}
               />
             </div>
-          );
-        })}
+          ))}
+        </div>
+      );
+    }
+    
+    // Desktop/Tablet: Masonry layout with stable positioning
+    if (layout.placements.length > 0) {
+      return (
+        <div 
+          ref={containerRef}
+          className="relative w-full"
+          style={{ height: `${layout.containerHeight}px` }}
+          key={contentKey} // Stable key prevents modal-triggered recalculations
+        >
+          {filteredContent.map((item, index) => {
+            const placement = layout.placements[index];
+            if (!placement) return null;
+            
+            const isFeatured = placement.width === 2 && placement.height === 2;
+            
+            return (
+              <div
+                key={item.id}
+                className="absolute transition-all duration-500 ease-out p-2"
+                style={{
+                  transform: `translate(${placement.pixelX}px, ${placement.pixelY}px)`,
+                  width: `${placement.pixelWidth}px`,
+                  height: `${placement.pixelHeight}px`,
+                }}
+              >
+                <NewsPageCard
+                  article={item}
+                  isFeatured={isFeatured}
+                  isGallery={item.contentType === "gallery"}
+                  className="h-full"
+                  onClick={() => handleCardClick(item)}
+                />
+              </div>
+            );
+          })}
+        </div>
+      );
+    }
+    
+    // Initial render: Show with min-height to allow measurement
+    return (
+      <div ref={containerRef} className="relative w-full min-h-[600px]">
+        {/* Show skeleton loading for better UX */}
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[...Array(8)].map((_, i) => (
+            <div key={i} className="bg-gray-200 animate-pulse rounded-lg h-64" />
+          ))}
+        </div>
       </div>
     );
   };
   
   return (
-    <div className={cn("container mx-auto px-4 py-6", className)}>
+    <div className={cn("container mx-auto px-4 py-6 max-w-7xl", className)}>
       {/* Category filters with mobile dropdown */}
       <div className="mb-6">
         {renderFilters()}
