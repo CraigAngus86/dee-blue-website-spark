@@ -4,17 +4,20 @@ import { X, Facebook, Linkedin, Mail, Copy } from 'lucide-react';
 import { NewsArticle } from '../types';
 import { PortableText } from '@portabletext/react';
 import portableTextComponents from './portable-text/PortableTextComponents';
+
 interface NewsModalProps {
   article: NewsArticle | null;
   isOpen: boolean;
   onClose: () => void;
 }
+
 // X (Twitter) Logo Component
 const XLogo = ({ size = 18 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
   </svg>
 );
+
 const NewsModal: React.FC<NewsModalProps> = ({
   article,
   isOpen,
@@ -50,7 +53,8 @@ const NewsModal: React.FC<NewsModalProps> = ({
     clubNews: 'Club News',
     teamNews: 'Team News',
     communityNews: 'Community News',
-    commercialNews: 'Commercial News'
+    commercialNews: 'Commercial News',
+    matchGallery: 'Match Gallery'
   };
   
   // Format date for display
@@ -62,7 +66,7 @@ const NewsModal: React.FC<NewsModalProps> = ({
       })
     : '';
     
-  // STANDARDIZED Cloudinary transforms
+  // ✅ UNIFIED: Use EXACT same transforms as working NewsPageCard
   const getImageUrl = (image: any, type: 'hero' | 'modal' | 'card' = 'modal'): string => {
     if (!image) return '';
     
@@ -73,30 +77,16 @@ const NewsModal: React.FC<NewsModalProps> = ({
         const format = image.format || 'jpg';
         const baseUrl = 'https://res.cloudinary.com/dlkpaw2a0/image/upload';
         
-        // STANDARDIZED transforms based on usage
-        let transformation = '';
-        
-        switch (type) {
-          case 'hero':
-            // 21:9 dramatic for heroes
-            transformation = 'c_fill,g_auto:subject,ar_21:9,q_auto:good,f_auto,w_auto';
-            break;
-          case 'modal':
-            if (article.category === 'matchReport') {
-              // Keep smart adjustments for match photos + progressive loading
-              transformation = 'c_fill,g_auto:subject,ar_16:9,q_auto:good,f_auto,fl_progressive,w_auto,y_-20,z_1.05';
-            } else {
-              // Standard modal images + progressive loading
-              transformation = 'c_fill,g_auto:subject,ar_16:9,q_auto:good,f_auto,fl_progressive,w_auto';
-            }
-            break;
-          case 'card':
-            // Fixed dimensions for cards
-            transformation = 'c_fill,g_auto:subject,ar_16:9,q_auto:good,f_auto,w_400,h_225';
-            break;
+        // Check if it's a match report (likely to have people/action)
+        if (article.category === 'matchReport') {
+          // Enhanced transformation for match reports/action shots:
+          // Responsive sizing, vibrance enhancement, face detection with position adjustment
+          return `${baseUrl}/c_fill,g_auto:faces,y_-20,z_1.05,ar_16:9,w_auto,dpr_auto,q_auto:good,f_auto,e_vibrance:20/${publicId}.${format}`;
+        } else {
+          // Enhanced transformation for other news categories:
+          // Responsive sizing, improved sharpness
+          return `${baseUrl}/c_fill,g_auto:subject,ar_16:9,w_auto,dpr_auto,q_auto:good,f_auto,e_sharpen/${publicId}.${format}`;
         }
-        
-        return `${baseUrl}/${transformation}/${publicId}.${format}`;
       } else if (image.secure_url) {
         return image.secure_url;
       }
@@ -200,7 +190,7 @@ const NewsModal: React.FC<NewsModalProps> = ({
         {/* Article content in a scrollable container */}
         <div className="overflow-y-auto max-h-[95vh] pt-12">
           {/* Main image with overlay */}
-          <div className="relative w-full h-[50vh]">
+          <div className="relative w-full aspect-[16/9]">
             {article.mainImage ? (
               <img 
                 src={getImageUrl(article.mainImage, 'modal')}
@@ -349,4 +339,5 @@ const NewsModal: React.FC<NewsModalProps> = ({
     </div>
   );
 };
+
 export default NewsModal;

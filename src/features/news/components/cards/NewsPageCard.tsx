@@ -34,7 +34,7 @@ const NewsPageCard: React.FC<NewsPageCardProps> = ({
     ? formatDistanceToNow(new Date(article.publishedAt), { addSuffix: true })
     : '';
 
-  // ✅ FIXED: Add Cloudinary transforms (matching NewsCard standards)
+  // ✅ RESTORED: Original working transforms, just removed CSS object-cover
   const getImageUrl = (image: any): string => {
     if (!image) return '';
     

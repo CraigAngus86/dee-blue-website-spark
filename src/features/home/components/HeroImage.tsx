@@ -3,10 +3,11 @@ import React from 'react';
 interface HeroImageProps {
   image: any;
   title: string;
+  category?: string;
 }
 
-const HeroImage: React.FC<HeroImageProps> = ({ image, title }) => {
-  // STANDARDIZED Cloudinary transform for hero images (21:9 dramatic)
+const HeroImage: React.FC<HeroImageProps> = ({ image, title, category }) => {
+  // Updated Cloudinary transform with face detection for match content
   const getImageUrl = (image: any): string => {
     if (!image) return '';
     
@@ -17,10 +18,14 @@ const HeroImage: React.FC<HeroImageProps> = ({ image, title }) => {
         const format = image.format || 'jpg';
         const baseUrl = 'https://res.cloudinary.com/dlkpaw2a0/image/upload';
         
-        // STANDARDIZED hero transform: 21:9 dramatic, subject focus, no enhancements
-        const transformation = 'c_fill,g_auto:subject,ar_21:9,q_auto:good,f_auto,w_auto';
-        
-        return `${baseUrl}/${transformation}/${publicId}.${format}`;
+        // Use face detection for match content, subject for others
+        if (category === 'matchReport' || category === 'matchGallery') {
+          // Face detection with slight downward adjustment for hero 21:9
+          return `${baseUrl}/c_fill,g_face,y_10,ar_21:9,q_auto:good,f_auto,w_auto/${publicId}.${format}`;
+        } else {
+          // Standard hero transform for non-match content
+          return `${baseUrl}/c_fill,g_auto:subject,ar_21:9,q_auto:good,f_auto,w_auto/${publicId}.${format}`;
+        }
       } else if (image.secure_url) {
         return image.secure_url;
       }
