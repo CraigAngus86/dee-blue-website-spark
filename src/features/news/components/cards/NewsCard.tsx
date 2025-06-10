@@ -22,7 +22,8 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, onClick, className }) => {
     matchReport: 'MATCH REPORT',
     clubNews: 'CLUB NEWS',
     teamNews: 'TEAM NEWS',
-    commercialNews: 'COMMERCIAL NEWS'
+    commercialNews: 'COMMERCIAL NEWS',
+    matchGallery: 'MATCH GALLERY'
   };
   
   // Handle click
@@ -32,13 +33,12 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, onClick, className }) => {
     }
   };
   
-  // Process Cloudinary image with improved transformations
+  // COPY EXACT image processing from NewsPageCard (which works with galleries)
   const getImageUrl = (image: any): string => {
     if (!image) return '';
     
     // For Cloudinary assets from Sanity
     if (image._type === 'cloudinary.asset') {
-      // Use either secure_url or construct from public_id
       if (image.public_id) {
         const publicId = image.public_id;
         const format = image.format || 'jpg';
@@ -47,11 +47,9 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, onClick, className }) => {
         // Check if it's a match report (likely to have people/action)
         if (article.category === 'matchReport') {
           // Enhanced transformation for match reports/action shots:
-          // Responsive sizing, vibrance enhancement, face detection with position adjustment
           return `${baseUrl}/c_fill,g_auto:faces,y_-20,z_1.05,ar_16:9,w_auto,dpr_auto,q_auto:good,f_auto,e_vibrance:20/${publicId}.${format}`;
         } else {
           // Enhanced transformation for other news categories:
-          // Responsive sizing, improved sharpness
           return `${baseUrl}/c_fill,g_auto:subject,ar_16:9,w_auto,dpr_auto,q_auto:good,f_auto,e_sharpen/${publicId}.${format}`;
         }
       } else if (image.secure_url) {
@@ -73,36 +71,36 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, onClick, className }) => {
   return (
     <div 
       className={cn(
-        "flex flex-col h-full bg-white overflow-hidden rounded-lg transition-all hover:shadow-lg hover:translate-y-[-4px]",
-        "border border-[#f5f7fb] shadow",
+        "bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer h-full flex flex-col",
+        "transform hover:scale-[1.02]",
         className
       )}
+      onClick={handleClick}
     >
-      {/* Image with 16:9 aspect ratio */}
-      <div className="relative aspect-[16/9] overflow-hidden">
+      {/* Image */}
+      <div className="relative w-full h-48 overflow-hidden rounded-t-lg">
         {article.mainImage ? (
-          <>
-            <img 
-              src={getImageUrl(article.mainImage)}
-              alt={article.title}
-              className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-              onError={(e) => {
-                console.error(`Failed to load card image for ${article.title}`);
-                console.error('Image data:', article.mainImage);
-                // Set fallback in case of error
-                const target = e.target as HTMLImageElement;
-                target.onerror = null; // Prevent infinite loop
-                target.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiA5Ij48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJzeXN0ZW0tdWksIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiNhM2E3YjAiPkltYWdlIG5vdCBhdmFpbGFibGU8L3RleHQ+PC9zdmc+';
-              }}
-            />
-            {/* Subtle gradient overlay - lighter than the hero */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#00105A]/40 to-transparent opacity-70"></div>
-          </>
+          <img 
+            src={getImageUrl(article.mainImage)}
+            alt={article.mainImage?.alt || article.title}
+            className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+            loading="lazy"
+            onError={(e) => {
+              console.error(`Failed to load image for ${article.title}`);
+              console.error('Image data:', article.mainImage);
+              const target = e.target as HTMLImageElement;
+              target.onerror = null; // Prevent infinite loop
+              target.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiA5Ij48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJzeXN0ZW0tdWksIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiNhM2E3YjAiPkltYWdlIG5vdCBhdmFpbGFibGU8L3RleHQ+PC9zdmc+';
+            }}
+          />
         ) : (
           <div className="w-full h-full bg-gray-200"></div>
         )}
         
-        {/* Category tag - repositioned with margin and rounded corners */}
+        {/* Subtle gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#00105A]/40 via-transparent to-transparent"></div>
+        
+        {/* Category tag */}
         <div className="absolute left-4 top-4 bg-[#00105A] text-white text-xs font-bold py-1 px-3 rounded">
           {categoryDisplay[article.category] || article.category}
         </div>
@@ -116,23 +114,19 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, onClick, className }) => {
         </h3>
         
         {/* Excerpt */}
-        <p className="text-gray-700 text-sm mb-4 line-clamp-3 flex-grow">
-          {article.excerpt}
-        </p>
+        {article.excerpt && (
+          <p className="text-[#6b7280] mb-4 flex-grow text-sm leading-relaxed">
+            {article.excerpt}
+          </p>
+        )}
         
-        {/* Footer with date and read more */}
-        <div className="flex justify-between items-center mt-auto pt-3 border-t border-[#f5f7fb]">
-          <span className="text-xs text-gray-500">
-            {timeAgo ? `${timeAgo} ago` : ''}
-          </span>
-          
-          <button 
-            onClick={handleClick}
-            className="flex items-center text-sm font-medium text-[#00105A] hover:text-[#FFD700] transition-colors"
-          >
+        {/* Footer with time and read more */}
+        <div className="flex items-center justify-between text-sm text-[#6b7280] mt-auto">
+          <span>{timeAgo} ago</span>
+          <div className="flex items-center text-[#00105A] font-medium">
             Read More
-            <ChevronRight className="h-4 w-4 ml-1" />
-          </button>
+            <ChevronRight className="w-4 h-4 ml-1" />
+          </div>
         </div>
       </div>
     </div>

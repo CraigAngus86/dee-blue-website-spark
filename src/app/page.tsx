@@ -45,6 +45,28 @@ async function getNewsArticles(limit = 11) {
   }
 }
 
+// Fetch match galleries
+async function getMatchGalleries() {
+  const query = `*[_type == "matchGallery" && !(_id in path("drafts.**"))] | order(matchDate desc) {
+    _id,
+    title,
+    matchDate,
+    homeTeam,
+    awayTeam,
+    coverImage,
+    galleryImages,
+    photographer
+  }`;
+  
+  try {
+    const galleries = await fetchSanityData(query, {}, false);
+    return galleries || [];
+  } catch (error) {
+    console.error("Error fetching match galleries:", error);
+    return [];
+  }
+}
+
 async function getFanOfMonth() {
   const query = `*[_type == "fanOfMonth" && status == "featured"][0] {
     fanName,
@@ -114,10 +136,38 @@ const MobileNewsLink = () => (
 );
 
 export default async function HomePage() {
-  // Fetch more news articles to accommodate mobile (5) + desktop cards (6) = 11 total
-  const newsArticles = await getNewsArticles(11);
-  
-  // Fetch all data in parallel
+  // Fetch both news articles and match galleries in parallel
+  const [newsArticles, matchGalleries] = await Promise.all([
+    getNewsArticles(20), // Fetch more to ensure we have enough mixed content
+    getMatchGalleries()
+  ]);
+
+  // COPY EXACT NewsGrid pattern for normalization
+  const allContent = [
+    ...newsArticles.map(article => ({ ...article, id: article._id, contentType: "article" })),
+    ...matchGalleries.map(gallery => ({
+      id: gallery._id,
+      _id: gallery._id,
+      title: gallery.title,
+      slug: gallery._id,
+      publishedAt: gallery.matchDate,
+      mainImage: gallery.coverImage,
+      excerpt: `Match Day photos now available for ${gallery.title}!`,
+      category: "matchGallery",
+      contentType: "gallery",
+      body: [],
+      author: gallery.photographer || 'Club Photographer'
+    }))
+  ];
+
+  // Sort by date (most recent first)
+  const sortedContent = [...allContent].sort((a, b) => {
+    const dateA = a.publishedAt ? new Date(a.publishedAt).getTime() : 0;
+    const dateB = b.publishedAt ? new Date(b.publishedAt).getTime() : 0;
+    return dateB - dateA;
+  });
+
+  // Fetch all other data in parallel
   const [
     upcomingMatches, 
     recentMatches,
@@ -138,18 +188,11 @@ export default async function HomePage() {
     getActivePoll()
   ]);
   
-  // Responsive article distribution:
-  // Mobile: 5 articles for hero, 0 for cards
-  // Desktop: 3 articles for hero, 6 for cards
-  const heroArticles = newsArticles.slice(0, 5).map(article => ({
-    ...article,
-    id: article._id
-  }));
-  
-  const cardsArticles = newsArticles.slice(3, 9).map(article => ({
-    ...article,
-    id: article._id
-  }));
+  // Apply same slicing logic to mixed content:
+  // Mobile: 5 items for hero, 0 for cards
+  // Desktop: 3 items for hero, 6 for cards (with overlap)
+  const heroItems = sortedContent.slice(0, 5);
+  const cardsItems = sortedContent.slice(3, 9);
   
   // Convert to the format expected by components
   const cardShadowStyle = {
@@ -159,15 +202,15 @@ export default async function HomePage() {
   
   return (
     <div className="min-h-screen flex flex-col" style={cardShadowStyle}>
-      {/* Hero Section - now handles 5 articles on mobile, 3 on desktop */}
-      <HomeHeroSection articles={heroArticles} />
+      {/* Hero Section - now handles 5 items on mobile, 3 on desktop (mixed articles + galleries) */}
+      <HomeHeroSection articles={heroItems} />
       
       {/* Mobile News Link - only shows on mobile when cards are hidden */}
       <MobileNewsLink />
       
-      {/* News Cards Section - hidden on mobile, visible on desktop */}
+      {/* News Cards Section - hidden on mobile, visible on desktop (mixed articles + galleries) */}
       <div className="hidden md:block">
-        <OverlappingNewsCards articles={cardsArticles} />
+        <OverlappingNewsCards articles={cardsItems} />
       </div>
       
       {/* Reduced Gradient Separator */}

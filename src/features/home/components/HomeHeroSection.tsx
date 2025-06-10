@@ -2,11 +2,12 @@
 import React from 'react';
 import { NewsArticle } from '@/features/news/types';
 import { NewsModal } from '@/features/news/components';
+import { MatchGalleryModal } from '@/features/galleries';
 import { ArrowRight } from 'lucide-react';
 import HeroImage from './HeroImage';
 
 interface HomeHeroSectionProps {
-  articles: NewsArticle[];
+  articles: (NewsArticle & { contentType?: string })[];
 }
 
 interface HomeHeroSectionState {
@@ -14,6 +15,7 @@ interface HomeHeroSectionState {
   previousIndex: number;
   isTransitioning: boolean;
   selectedArticle: NewsArticle | null;
+  selectedGalleryId: string | null;
   isLoading: boolean;
   isMobile: boolean;
   touchStart: number;
@@ -29,6 +31,7 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
       previousIndex: 0,
       isTransitioning: false,
       selectedArticle: null,
+      selectedGalleryId: null,
       isLoading: false,
       isMobile: false,
       touchStart: 0,
@@ -165,38 +168,47 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
     }, 500);
   }
   
-  // Function to fetch the full article data when clicked
-  handleArticleClick = async (article: NewsArticle) => {
+  // Function to handle clicks on content (articles or galleries)
+  handleContentClick = async (content: NewsArticle & { contentType?: string }) => {
     try {
       this.setState({ isLoading: true });
       
-      // Only fetch complete article if we need to (if it doesn't have a body)
-      if (Array.isArray(article.body) && article.body.length > 0) {
-        // Article already has complete data
-        this.setState({ selectedArticle: article });
+      if (content.contentType === 'gallery') {
+        // Handle gallery click - store gallery ID for modal
+        this.setState({ selectedGalleryId: content._id });
       } else {
-        // Fetch the complete article data by slug using the existing endpoint
-        const response = await fetch(`/api/sanity-test/news?slug=${encodeURIComponent(article.slug)}`);
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch article');
-        }
-        
-        const data = await response.json();
-        
-        if (data.success && data.data) {
-          // Set the complete article
-          this.setState({ selectedArticle: data.data });
+        // Handle article click - fetch complete article if needed
+        if (Array.isArray(content.body) && content.body.length > 0) {
+          // Article already has complete data
+          this.setState({ selectedArticle: content });
         } else {
-          // If fetch fails, use the original article data
-          console.warn('Failed to fetch complete article, using limited data');
-          this.setState({ selectedArticle: article });
+          // Fetch the complete article data by slug using the existing endpoint
+          const response = await fetch(`/api/sanity-test/news?slug=${encodeURIComponent(content.slug)}`);
+          
+          if (!response.ok) {
+            throw new Error('Failed to fetch article');
+          }
+          
+          const data = await response.json();
+          
+          if (data.success && data.data) {
+            // Set the complete article
+            this.setState({ selectedArticle: data.data });
+          } else {
+            // If fetch fails, use the original article data
+            console.warn('Failed to fetch complete article, using limited data');
+            this.setState({ selectedArticle: content });
+          }
         }
       }
     } catch (error) {
-      console.error('Error fetching article:', error);
+      console.error('Error handling content click:', error);
       // If there's an error, still show the modal with original data
-      this.setState({ selectedArticle: article });
+      if (content.contentType === 'gallery') {
+        this.setState({ selectedGalleryId: content._id });
+      } else {
+        this.setState({ selectedArticle: content });
+      }
     } finally {
       this.setState({ isLoading: false });
     }
@@ -204,22 +216,22 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
   
   render() {
     const { articles } = this.props;
-    const { currentIndex, selectedArticle, isLoading, isMobile } = this.state;
+    const { currentIndex, selectedArticle, selectedGalleryId, isLoading, isMobile } = this.state;
     
     if (!articles || articles.length === 0) {
       return null;
     }
     
     const visibleArticles = this.getVisibleArticles();
-    const article = visibleArticles[currentIndex];
+    const content = visibleArticles[currentIndex];
     
-    if (!article) {
+    if (!content) {
       return null;
     }
     
     // Format date in a more concise format
-    const formattedDate = article.publishedAt 
-      ? new Date(article.publishedAt).toLocaleDateString('en-US', { 
+    const formattedDate = content.publishedAt 
+      ? new Date(content.publishedAt).toLocaleDateString('en-US', { 
           day: 'numeric',
           month: 'long',
           year: 'numeric'
@@ -234,16 +246,16 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
         onTouchEnd={this.handleTouchEnd}
       >
         {/* Background image and overlay */}
-        {visibleArticles.map((slideArticle, i) => (
-          <div key={slideArticle.id}
+        {visibleArticles.map((slideContent, i) => (
+          <div key={slideContent.id}
                className={`absolute inset-0 transition-opacity duration-500 ${
                  i === currentIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'
                }`}
                aria-hidden={i !== currentIndex}>
-            {slideArticle.mainImage && (
+            {slideContent.mainImage && (
               <HeroImage 
-                image={slideArticle.mainImage}
-                title={slideArticle.title}
+                image={slideContent.mainImage}
+                title={slideContent.title}
               />
             )}
             {/* Slightly stronger gradient */}
@@ -254,8 +266,8 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
         {/* Clickable area for the entire hero */}
         <div 
           className="absolute inset-0 z-20 cursor-pointer" 
-          onClick={() => this.handleArticleClick(article)}
-          aria-label={`Read more about ${article.title}`}
+          onClick={() => this.handleContentClick(content)}
+          aria-label={`View ${content.contentType === 'gallery' ? 'gallery' : 'article'}: ${content.title}`}
         >
           {/* Using margin-top approach instead of padding-bottom */}
           <div className="absolute inset-0 flex flex-col items-center justify-center">
@@ -263,7 +275,7 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
               <div className="max-w-6xl mx-auto">
                 {/* Title - wider container to get text on 2 lines instead of 3 */}
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-white font-montserrat">
-                  {article.title}
+                  {content.title}
                 </h1>
                 
                 {/* Gold separator - keeping this as requested */}
@@ -274,7 +286,7 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
                   <span>{formattedDate}</span>
                   <span className="mx-2">|</span>
                   <span className="flex items-center hover:text-white transition-colors">
-                    Read More 
+                    {content.contentType === 'gallery' ? 'View Photos' : 'Read More'}
                     <span className="inline-flex items-center justify-center w-5 h-5 ml-1.5 rounded-full bg-white/20 hover:bg-white/30 transition-colors">
                       <ArrowRight className="w-3 h-3" />
                     </span>
@@ -322,7 +334,7 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                <span>Loading article...</span>
+                <span>Loading {content?.contentType === 'gallery' ? 'gallery' : 'article'}...</span>
               </div>
             </div>
           </div>
@@ -334,6 +346,15 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
             article={selectedArticle}
             isOpen={!!selectedArticle}
             onClose={() => this.setState({ selectedArticle: null })}
+          />
+        )}
+        
+        {/* Gallery Modal */}
+        {selectedGalleryId && (
+          <MatchGalleryModal
+            galleryId={selectedGalleryId}
+            isOpen={!!selectedGalleryId}
+            onClose={() => this.setState({ selectedGalleryId: null })}
           />
         )}
       </div>
