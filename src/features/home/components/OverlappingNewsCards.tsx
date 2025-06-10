@@ -29,7 +29,7 @@ const OverlappingNewsCards: React.FC<OverlappingNewsCardsProps> = ({
       
       if (content.contentType === 'gallery') {
         // Handle gallery click - store gallery ID for modal
-        setSelectedGalleryId(content._id);
+        setSelectedGalleryId(content.id);
       } else {
         // Handle article click - fetch complete article if needed
         if (Array.isArray(content.body) && content.body.length > 0) {
@@ -59,7 +59,7 @@ const OverlappingNewsCards: React.FC<OverlappingNewsCardsProps> = ({
       console.error('Error handling content click:', error);
       // If there's an error, still show the modal with original data
       if (content.contentType === 'gallery') {
-        setSelectedGalleryId(content._id);
+        setSelectedGalleryId(content.id);
       } else {
         setSelectedArticle(content);
       }

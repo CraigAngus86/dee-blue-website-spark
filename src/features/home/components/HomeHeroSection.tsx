@@ -175,7 +175,7 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
       
       if (content.contentType === 'gallery') {
         // Handle gallery click - store gallery ID for modal
-        this.setState({ selectedGalleryId: content._id });
+        this.setState({ selectedGalleryId: content.id });
       } else {
         // Handle article click - fetch complete article if needed
         if (Array.isArray(content.body) && content.body.length > 0) {
@@ -205,7 +205,7 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
       console.error('Error handling content click:', error);
       // If there's an error, still show the modal with original data
       if (content.contentType === 'gallery') {
-        this.setState({ selectedGalleryId: content._id });
+        this.setState({ selectedGalleryId: content.id });
       } else {
         this.setState({ selectedArticle: content });
       }
