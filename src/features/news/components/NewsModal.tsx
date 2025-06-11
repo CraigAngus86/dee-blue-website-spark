@@ -221,7 +221,7 @@ const NewsModal: React.FC<NewsModalProps> = ({
             
             {/* Title overlay */}
             <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 leading-tight">
+              <h1 className="text-xl md:text-4xl lg:text-5xl font-bold mb-3 leading-tight">
                 {article.title}
               </h1>
               <div className="flex items-center flex-wrap gap-2">

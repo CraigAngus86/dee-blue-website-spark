@@ -30,7 +30,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, onClick, className }) => {
     }
   };
   
-  // ✅ FIXED DIMENSIONS: Use exact pixel dimensions like working modal approach
+  // COPY EXACT NewsPageCard getImageUrl function that works
   const getImageUrl = (image: any): string => {
     if (!image) return '';
     
@@ -41,9 +41,16 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, onClick, className }) => {
         const format = image.format || 'jpg';
         const baseUrl = 'https://res.cloudinary.com/dlkpaw2a0/image/upload';
         
-        // ✅ UNIFIED: Fixed dimensions approach (no CSS object-cover interference)
-        // Cards get exact 800x450 image (16:9), optimized for h-48 containers
-        return `${baseUrl}/w_800,h_450,c_fill,g_auto:faces,q_auto:good,f_auto,dpr_auto/${publicId}.${format}`;
+        // Check if it's a match report (likely to have people/action)
+        if (article.category === 'matchReport') {
+          // Enhanced transformation for match reports/action shots:
+          // Responsive sizing, vibrance enhancement, face detection with position adjustment
+          return `${baseUrl}/c_fill,g_auto:faces,y_-20,z_1.05,ar_16:9,w_auto,dpr_auto,q_auto:good,f_auto,e_vibrance:20/${publicId}.${format}`;
+        } else {
+          // Enhanced transformation for other news categories:
+          // Responsive sizing, improved sharpness
+          return `${baseUrl}/c_fill,g_auto:subject,ar_16:9,w_auto,dpr_auto,q_auto:good,f_auto,e_sharpen/${publicId}.${format}`;
+        }
       } else if (image.secure_url) {
         return image.secure_url;
       }
@@ -69,13 +76,13 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, onClick, className }) => {
       )}
       onClick={handleClick}
     >
-      {/* ✅ FIXED DIMENSIONS: Keep h-48 layout, remove CSS object-cover, let Cloudinary do everything */}
+      {/* Keep original h-48 layout with proper transforms */}
       <div className="relative w-full h-48 overflow-hidden rounded-t-lg">
         {article.mainImage ? (
           <img 
             src={getImageUrl(article.mainImage)}
             alt={article.mainImage?.alt || article.title}
-            className="w-full h-full transition-transform duration-300 hover:scale-105"
+            className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
             loading="lazy"
           />
         ) : (
