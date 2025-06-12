@@ -75,9 +75,9 @@ export function TablePanel() {
   // Form indicator component for W/L/D
   const FormIndicator = ({ result }: { result: 'W' | 'L' | 'D' }) => {
     const bgColor = 
-      result === 'W' ? 'bg-green-500 text-white' : 
-      result === 'D' ? 'bg-amber-500 text-white' : 
-      'bg-red-500 text-white';
+      result === 'W' ? 'bg-[#22c55e] text-white' : 
+      result === 'D' ? 'bg-[#f59e0b] text-white' : 
+      'bg-[#ef4444] text-white';
     
     return (
       <div className={`w-6 h-6 rounded-full ${bgColor} flex items-center justify-center text-xs font-medium`}>
@@ -93,7 +93,7 @@ export function TablePanel() {
   if (error) {
     return (
       <div className="py-8 text-center">
-        <p className="text-red-500 mb-2">{error}</p>
+        <p className="text-[#ef4444] mb-2">{error}</p>
       </div>
     );
   }
@@ -101,7 +101,7 @@ export function TablePanel() {
   if (tableData.length === 0) {
     return (
       <div className="py-8 text-center">
-        <p className="text-gray-500">No league table data available for {season}</p>
+        <p className="text-[#6b7280]">No league table data available for {season}</p>
       </div>
     );
   }
@@ -113,7 +113,7 @@ export function TablePanel() {
         <div>
           <h3 className="text-xl font-bold mb-4">{season} League Table</h3>
           
-          <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
+          <div className="overflow-x-auto rounded-lg border border-[#e5e7eb] shadow-sm">
             <table className="min-w-full bg-white">
               <thead className="bg-[#00105A] text-white border-b">
                 <tr>
@@ -130,7 +130,7 @@ export function TablePanel() {
                   <th className="px-3 py-3 text-center text-xs font-semibold uppercase tracking-wider">Form</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-[#f3f4f6]">
                 {tableData.map((row, index) => {
                   const isBanksODee = row.team_name?.toLowerCase().includes("banks o' dee");
                   const isFirstPosition = row.position === 1;
@@ -141,17 +141,17 @@ export function TablePanel() {
                   if (isBanksODee) {
                     rowBg = 'bg-[#F3F4F6]'; // Explicit grey for Banks o' Dee
                   } else if (isFirstPosition) {
-                    rowBg = 'bg-green-50'; // Promotion position
+                    rowBg = 'bg-[#f0fdf4]'; // Promotion position
                   } else if (isLastPosition) {
-                    rowBg = 'bg-red-50'; // Relegation position
+                    rowBg = 'bg-[#fef2f2]'; // Relegation position
                   } else {
-                    rowBg = index % 2 === 0 ? 'bg-white' : 'bg-gray-50'; // Alternating
+                    rowBg = index % 2 === 0 ? 'bg-white' : 'bg-[#f9fafb]'; // Alternating
                   }
                   
                   return (
                     <tr 
                       key={row.id}
-                      className={`${rowBg} hover:bg-gray-200 transition-colors duration-150`}
+                      className={`${rowBg} hover:bg-[#e5e7eb] transition-colors duration-150`}
                     >
                       <td className="px-3 py-3 whitespace-nowrap text-sm text-center font-medium">{row.position}</td>
                       <td className="px-3 py-3 whitespace-nowrap text-sm">

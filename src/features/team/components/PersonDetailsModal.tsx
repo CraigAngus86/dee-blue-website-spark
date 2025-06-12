@@ -32,12 +32,17 @@ export const PersonDetailsModal: React.FC<PersonDetailsModalProps> = ({
     ? person.playerPosition 
     : person.staffRole?.replace('_', ' ');
   
-  // Check if social media links exist
-  const hasTwitter = person.socialMedia?.twitter;
-  const hasFacebook = person.socialMedia?.facebook;
-  const hasInstagram = person.socialMedia?.instagram;
-  const hasLinkedin = person.socialMedia?.linkedin;
-  const hasWebsite = person.socialMedia?.website;
+  // Capitalize first letter of position
+  const capitalizedPosition = position 
+    ? position.charAt(0).toUpperCase() + position.slice(1).toLowerCase()
+    : '';
+  
+  // ROBUST boolean checks - treat empty strings as false
+  const hasTwitter = person.socialMedia?.twitter && person.socialMedia.twitter.trim() !== '';
+  const hasFacebook = person.socialMedia?.facebook && person.socialMedia.facebook.trim() !== '';
+  const hasInstagram = person.socialMedia?.instagram && person.socialMedia.instagram.trim() !== '';
+  const hasLinkedin = person.socialMedia?.linkedin && person.socialMedia.linkedin.trim() !== '';
+  const hasWebsite = person.socialMedia?.website && person.socialMedia.website.trim() !== '';
 
   // Social functions
   const openSocialProfile = (url: string) => {
@@ -49,56 +54,71 @@ export const PersonDetailsModal: React.FC<PersonDetailsModalProps> = ({
       <div className="relative w-full max-w-4xl bg-white rounded-lg shadow-xl overflow-hidden">
         {/* Header bar with social buttons and close button */}
         <div className="absolute top-0 left-0 right-0 h-12 bg-white z-40 flex justify-between items-center px-4 border-b">
-          {/* Social sharing buttons */}
-          <div className="flex space-x-4">
+          {/* Social sharing buttons - Updated to match news modal hover effect */}
+          <div className="flex space-x-2">
             {/* Twitter button */}
             <button 
               onClick={() => hasTwitter ? openSocialProfile(person.socialMedia.twitter) : null}
-              className={hasTwitter ? "text-[#00105A] hover:text-[#FFD700] transition-colors" : "text-gray-300 cursor-default"}
+              className={hasTwitter 
+                ? "w-8 h-8 flex items-center justify-center rounded-md text-[#00105A] hover:bg-[#C5E7FF] hover:text-[#00105A] transition-all duration-200" 
+                : "w-8 h-8 flex items-center justify-center rounded-md text-[#9CA3AF] cursor-default"
+              }
               aria-label="Twitter Profile"
               disabled={!hasTwitter}
             >
-              <Twitter size={20} />
+              <Twitter size={18} />
             </button>
             
             {/* Facebook button */}
             <button 
               onClick={() => hasFacebook ? openSocialProfile(person.socialMedia.facebook) : null}
-              className={hasFacebook ? "text-[#00105A] hover:text-[#FFD700] transition-colors" : "text-gray-300 cursor-default"}
+              className={hasFacebook 
+                ? "w-8 h-8 flex items-center justify-center rounded-md text-[#00105A] hover:bg-[#C5E7FF] hover:text-[#00105A] transition-all duration-200" 
+                : "w-8 h-8 flex items-center justify-center rounded-md text-[#9CA3AF] cursor-default"
+              }
               aria-label="Facebook Profile"
               disabled={!hasFacebook}
             >
-              <Facebook size={20} />
+              <Facebook size={18} />
             </button>
             
             {/* Instagram button */}
             <button 
               onClick={() => hasInstagram ? openSocialProfile(person.socialMedia.instagram) : null}
-              className={hasInstagram ? "text-[#00105A] hover:text-[#FFD700] transition-colors" : "text-gray-300 cursor-default"}
+              className={hasInstagram 
+                ? "w-8 h-8 flex items-center justify-center rounded-md text-[#00105A] hover:bg-[#C5E7FF] hover:text-[#00105A] transition-all duration-200" 
+                : "w-8 h-8 flex items-center justify-center rounded-md text-[#9CA3AF] cursor-default"
+              }
               aria-label="Instagram Profile"
               disabled={!hasInstagram}
             >
-              <Instagram size={20} />
+              <Instagram size={18} />
             </button>
             
             {/* LinkedIn button */}
             <button 
               onClick={() => hasLinkedin ? openSocialProfile(person.socialMedia.linkedin) : null}
-              className={hasLinkedin ? "text-[#00105A] hover:text-[#FFD700] transition-colors" : "text-gray-300 cursor-default"}
+              className={hasLinkedin 
+                ? "w-8 h-8 flex items-center justify-center rounded-md text-[#00105A] hover:bg-[#C5E7FF] hover:text-[#00105A] transition-all duration-200" 
+                : "w-8 h-8 flex items-center justify-center rounded-md text-[#9CA3AF] cursor-default"
+              }
               aria-label="LinkedIn Profile"
               disabled={!hasLinkedin}
             >
-              <Linkedin size={20} />
+              <Linkedin size={18} />
             </button>
             
             {/* Website button */}
             <button 
               onClick={() => hasWebsite ? openSocialProfile(person.socialMedia.website) : null}
-              className={hasWebsite ? "text-[#00105A] hover:text-[#FFD700] transition-colors" : "text-gray-300 cursor-default"}
+              className={hasWebsite 
+                ? "w-8 h-8 flex items-center justify-center rounded-md text-[#00105A] hover:bg-[#C5E7FF] hover:text-[#00105A] transition-all duration-200" 
+                : "w-8 h-8 flex items-center justify-center rounded-md text-[#9CA3AF] cursor-default"
+              }
               aria-label="Website"
               disabled={!hasWebsite}
             >
-              <Link2 size={20} />
+              <Link2 size={18} />
             </button>
           </div>
           
@@ -119,7 +139,7 @@ export const PersonDetailsModal: React.FC<PersonDetailsModalProps> = ({
             <div className="grid md:grid-cols-2 gap-6">
               {/* Left column - Player image */}
               <div className="p-6 pb-0">
-                <div className="aspect-[3/4] rounded-md overflow-hidden bg-gray-100">
+                <div className="aspect-[3/4] rounded-md overflow-hidden bg-[#f3f4f6]">
                   <PlayerImage 
                     image={person.profileImage}
                     name={fullName}
@@ -132,18 +152,18 @@ export const PersonDetailsModal: React.FC<PersonDetailsModalProps> = ({
               {/* Right column - Basic info and scrollable bio */}
               <div className="p-6 pb-0 flex flex-col">
                 {/* Player name */}
-                <h1 className="text-3xl md:text-4xl font-bold text-[#00105A] mb-4 border-b border-gray-200 pb-3">
+                <h1 className="text-3xl md:text-4xl font-bold text-[#00105A] mb-4 border-b border-[#e5e7eb] pb-3">
                   {fullName}
                 </h1>
                 
                 {/* Details */}
                 <div>
-                  <div className="flex justify-between py-3 border-b border-gray-200">
+                  <div className="flex justify-between py-3 border-b border-[#e5e7eb]">
                     <span className="font-medium">Position</span>
-                    <span>{position}</span>
+                    <span>{capitalizedPosition}</span>
                   </div>
                   
-                  <div className="flex justify-between py-3 border-b border-gray-200">
+                  <div className="flex justify-between py-3 border-b border-[#e5e7eb]">
                     <span className="font-medium">Nationality</span>
                     <span>{person.nationality}</span>
                   </div>
@@ -159,7 +179,7 @@ export const PersonDetailsModal: React.FC<PersonDetailsModalProps> = ({
                       <PortableText value={person.extendedBio} />
                     </div>
                   ) : (
-                    <p className="text-gray-700">No biography available.</p>
+                    <p className="text-[#374151]">No biography available.</p>
                   )}
                 </div>
               </div>
@@ -173,9 +193,9 @@ export const PersonDetailsModal: React.FC<PersonDetailsModalProps> = ({
                   <h2 className="text-2xl font-bold text-[#00105A] mb-4">Personal Facts</h2>
                   <div className="grid sm:grid-cols-2 gap-4">
                     {person.personalFacts.map((fact) => (
-                      <div key={fact._key} className="bg-gray-50 p-4 rounded-lg shadow-sm">
+                      <div key={fact._key} className="bg-[#f9fafb] p-4 rounded-lg shadow-sm">
                         <h3 className="font-medium text-[#00105A]">{fact.question}</h3>
-                        <p className="mt-1 text-gray-700">{fact.answer}</p>
+                        <p className="mt-1 text-[#374151]">{fact.answer}</p>
                       </div>
                     ))}
                   </div>
@@ -188,9 +208,9 @@ export const PersonDetailsModal: React.FC<PersonDetailsModalProps> = ({
                   <h2 className="text-2xl font-bold text-[#00105A] mb-4">Club History</h2>
                   <div className="grid sm:grid-cols-2 gap-4">
                     {person.careerHistory.map((item) => (
-                      <div key={item._key} className="bg-gray-50 p-4 rounded-lg shadow-sm border-l-4 border-[#00105A]">
+                      <div key={item._key} className="bg-[#f9fafb] p-4 rounded-lg shadow-sm border-l-4 border-[#00105A]">
                         <h3 className="font-bold text-lg">{item.club}</h3>
-                        <p className="text-gray-600">
+                        <p className="text-[#4b5563]">
                           {item.startYear}{item.endYear ? `-${item.endYear}` : '-Present'}
                         </p>
                         {(item.appearances || item.goals) && (
@@ -219,13 +239,13 @@ export const PersonDetailsModal: React.FC<PersonDetailsModalProps> = ({
                   <h2 className="text-2xl font-bold text-[#00105A] mb-4">Achievements</h2>
                   <div className="grid sm:grid-cols-2 gap-4">
                     {person.accolades.map((accolade) => (
-                      <div key={accolade._key} className="bg-gray-50 p-4 rounded-lg shadow-sm border-l-4 border-[#FFD700]">
+                      <div key={accolade._key} className="bg-[#f9fafb] p-4 rounded-lg shadow-sm border-l-4 border-[#FFD700]">
                         <h3 className="font-bold text-lg">
                           {accolade.title} 
-                          {accolade.year && <span className="ml-2 text-gray-600">({accolade.year})</span>}
+                          {accolade.year && <span className="ml-2 text-[#4b5563]">({accolade.year})</span>}
                         </h3>
                         {accolade.description && (
-                          <p className="mt-2 text-gray-700">{accolade.description}</p>
+                          <p className="mt-2 text-[#374151]">{accolade.description}</p>
                         )}
                       </div>
                     ))}
@@ -237,7 +257,7 @@ export const PersonDetailsModal: React.FC<PersonDetailsModalProps> = ({
               {person.favoriteMoment && (
                 <div className="mb-8">
                   <h2 className="text-2xl font-bold text-[#00105A] mb-4">Favorite Banks o' Dee Moment</h2>
-                  <div className="text-lg font-medium text-gray-700 border-l-4 border-[#00105A] pl-4 py-2 bg-gray-50">
+                  <div className="text-lg font-medium text-[#374151] border-l-4 border-[#00105A] pl-4 py-2 bg-[#f9fafb]">
                     {person.favoriteMoment}
                   </div>
                 </div>

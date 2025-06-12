@@ -172,8 +172,8 @@ export function ResultsPanel() {
   if (Object.keys(groupedResults).length === 0) {
     return (
       <div className="py-8 text-center">
-        <p className="text-gray-500">No recent results found</p>
-        <p className="text-xs text-gray-400 mt-2">
+        <p className="text-[#6b7280]">No recent results found</p>
+        <p className="text-xs text-[#9ca3af] mt-2">
           Using filters: Season: {season},
           Competition: {competition},
           Month: {month}
@@ -189,8 +189,8 @@ export function ResultsPanel() {
         <div className="space-y-8">
           {Object.entries(groupedResults).map(([month, monthResults]) => (
             <div key={month}>
-              <div className="bg-gray-200 py-3 px-4 rounded mb-6 border-b border-gray-300">
-                <h3 className="text-xl font-bold text-gray-800">{month}</h3>
+              <div className="bg-[#e5e7eb] py-3 px-4 rounded mb-6 border-b border-[#d1d5db]">
+                <h3 className="text-xl font-bold text-[#1f2937]">{month}</h3>
               </div>
               
               <div className="grid gap-6">
@@ -208,12 +208,14 @@ export function ResultsPanel() {
         </div>
       </div>
 
-      {/* Mobile: 1x column stack */}
+      {/* Mobile: Added grey backgrounds to match desktop */}
       <div className="block md:hidden">
         <div className="space-y-6">
           {Object.entries(groupedResults).map(([month, monthResults]) => (
             <div key={month}>
-              <h3 className="text-lg font-bold text-[#00105A] mb-4 px-4">{month}</h3>
+              <div className="bg-[#e5e7eb] py-3 px-4 rounded mb-6">
+                <h3 className="text-lg font-bold text-[#1f2937]">{month}</h3>
+              </div>
               
               <div className="space-y-4">
                 {monthResults.map(result => (
