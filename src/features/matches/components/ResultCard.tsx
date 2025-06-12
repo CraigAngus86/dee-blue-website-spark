@@ -1,6 +1,7 @@
 "use client";
 import React from 'react';
 import { format, parseISO } from 'date-fns';
+import { FileText, Camera } from 'lucide-react';
 import { TeamLogo } from './TeamLogo';
 
 interface ResultCardProps {
@@ -78,9 +79,7 @@ export function ResultCard({ result, onGalleryClick, onReportClick }: ResultCard
                 onClick={e => { e.preventDefault(); if (result.match_report_link && onReportClick) onReportClick(result.match_report_link); }}
                 disabled={!result.match_report_link}
               >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
+                <FileText className="w-5 h-5" />
               </button>
               
               <a 
@@ -89,9 +88,7 @@ export function ResultCard({ result, onGalleryClick, onReportClick }: ResultCard
                 title="Photo Gallery"
                 onClick={e => { e.preventDefault(); if (result.gallery_link && onGalleryClick) onGalleryClick(result.gallery_link); }}
               >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
+                <Camera className="w-5 h-5" />
               </a>
             </div>
           </div>

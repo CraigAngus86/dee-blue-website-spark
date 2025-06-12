@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase/client';
 import { format } from 'date-fns';
 import { DEFAULT_SEASON, DEFAULT_COMPETITION, DEFAULT_MONTH } from '../../constants';
 import { FixtureCard } from '../FixtureCard';
+import { MobileFixtureCard } from '../mobile/MobileFixtureCard';
 
 export function FixturesPanel() {
   const searchParams = useSearchParams();
@@ -88,6 +89,10 @@ export function FixturesPanel() {
     
     return grouped;
   }
+
+  const handleTicketClick = (ticketUrl: string) => {
+    window.open(ticketUrl, '_blank');
+  };
   
   if (loading) {
     return <div className="py-8 text-center">Loading fixtures...</div>;
@@ -107,20 +112,46 @@ export function FixturesPanel() {
   }
   
   return (
-    <div className="space-y-8">
-      {Object.entries(groupedFixtures).map(([month, monthFixtures]) => (
-        <div key={month}>
-          <div className="bg-gray-200 py-3 px-4 rounded mb-6 border-b border-gray-300">
-            <h3 className="text-xl font-bold text-gray-800">{month}</h3>
-          </div>
-          
-          <div className="grid gap-6">
-            {monthFixtures.map(fixture => (
-              <FixtureCard key={fixture.id} fixture={fixture} />
-            ))}
-          </div>
+    <>
+      {/* Desktop: Existing layout */}
+      <div className="hidden md:block">
+        <div className="space-y-8">
+          {Object.entries(groupedFixtures).map(([month, monthFixtures]) => (
+            <div key={month}>
+              <div className="bg-gray-200 py-3 px-4 rounded mb-6 border-b border-gray-300">
+                <h3 className="text-xl font-bold text-gray-800">{month}</h3>
+              </div>
+              
+              <div className="grid gap-6">
+                {monthFixtures.map(fixture => (
+                  <FixtureCard key={fixture.id} fixture={fixture} />
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
-      ))}
-    </div>
+      </div>
+
+      {/* Mobile: 1x column stack */}
+      <div className="block md:hidden">
+        <div className="space-y-6">
+          {Object.entries(groupedFixtures).map(([month, monthFixtures]) => (
+            <div key={month}>
+              <h3 className="text-lg font-bold text-[#00105A] mb-4 px-4">{month}</h3>
+              
+              <div className="space-y-4">
+                {monthFixtures.map(fixture => (
+                  <MobileFixtureCard 
+                    key={fixture.id} 
+                    fixture={fixture}
+                    onTicketClick={handleTicketClick}
+                  />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
   );
 }

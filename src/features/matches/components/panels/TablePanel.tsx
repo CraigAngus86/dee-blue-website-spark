@@ -4,6 +4,7 @@ import { useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
 import { DEFAULT_SEASON } from '../../constants';
 import { TeamLogo } from "../TeamLogo";
+import { MobileTableCard } from '../mobile/MobileTableCard';
 
 export function TablePanel() {
   const searchParams = useSearchParams();
@@ -106,82 +107,92 @@ export function TablePanel() {
   }
   
   return (
-    <div>
-      <h3 className="text-xl font-bold mb-4">{season} League Table</h3>
-      
-      <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
-        <table className="min-w-full bg-white">
-          <thead className="bg-[#00105A] text-white border-b">
-            <tr>
-              <th className="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wider">Pos</th>
-              <th className="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wider">Team</th>
-              <th className="px-3 py-3 text-center text-xs font-semibold uppercase tracking-wider">P</th>
-              <th className="px-3 py-3 text-center text-xs font-semibold uppercase tracking-wider">W</th>
-              <th className="px-3 py-3 text-center text-xs font-semibold uppercase tracking-wider">D</th>
-              <th className="px-3 py-3 text-center text-xs font-semibold uppercase tracking-wider">L</th>
-              <th className="px-3 py-3 text-center text-xs font-semibold uppercase tracking-wider">GF</th>
-              <th className="px-3 py-3 text-center text-xs font-semibold uppercase tracking-wider">GA</th>
-              <th className="px-3 py-3 text-center text-xs font-semibold uppercase tracking-wider">GD</th>
-              <th className="px-3 py-3 text-center text-xs font-semibold uppercase tracking-wider">Pts</th>
-              <th className="px-3 py-3 text-center text-xs font-semibold uppercase tracking-wider">Form</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-100">
-            {tableData.map((row, index) => {
-              const isBanksODee = row.team_name?.toLowerCase().includes("banks o' dee");
-              const isFirstPosition = row.position === 1;
-              const isLastPosition = row.position === tableData.length;
-              
-              // Apply different backgrounds
-              let rowBg = '';
-              if (isBanksODee) {
-                rowBg = 'bg-[#F3F4F6]'; // Explicit grey for Banks o' Dee
-              } else if (isFirstPosition) {
-                rowBg = 'bg-green-50'; // Promotion position
-              } else if (isLastPosition) {
-                rowBg = 'bg-red-50'; // Relegation position
-              } else {
-                rowBg = index % 2 === 0 ? 'bg-white' : 'bg-gray-50'; // Alternating
-              }
-              
-              return (
-                <tr 
-                  key={row.id}
-                  className={`${rowBg} hover:bg-gray-200 transition-colors duration-150`}
-                >
-                  <td className="px-3 py-3 whitespace-nowrap text-sm text-center font-medium">{row.position}</td>
-                  <td className="px-3 py-3 whitespace-nowrap text-sm">
-                    <div className="flex items-center">
-                      <TeamLogo 
-                        logoId={row.team_logo} 
-                        teamName={row.team_name} 
-                        size="sm" 
-                        className="mr-2" 
-                      />
-                      <span className={isBanksODee ? "font-bold" : ""}>{row.team_name}</span>
-                    </div>
-                  </td>
-                  <td className="px-3 py-3 whitespace-nowrap text-sm text-center">{row.matches_played}</td>
-                  <td className="px-3 py-3 whitespace-nowrap text-sm text-center">{row.wins}</td>
-                  <td className="px-3 py-3 whitespace-nowrap text-sm text-center">{row.draws}</td>
-                  <td className="px-3 py-3 whitespace-nowrap text-sm text-center">{row.losses}</td>
-                  <td className="px-3 py-3 whitespace-nowrap text-sm text-center">{row.goals_for}</td>
-                  <td className="px-3 py-3 whitespace-nowrap text-sm text-center">{row.goals_against}</td>
-                  <td className="px-3 py-3 whitespace-nowrap text-sm text-center">{row.goal_difference}</td>
-                  <td className="px-3 py-3 whitespace-nowrap text-sm font-bold text-center">{row.points}</td>
-                  <td className="px-3 py-3 whitespace-nowrap">
-                    <div className="flex justify-center space-x-1">
-                      {(row.form || []).slice(0, 5).map((result: string, i: number) => (
-                        <FormIndicator key={i} result={result as 'W' | 'L' | 'D'} />
-                      ))}
-                    </div>
-                  </td>
+    <>
+      {/* Desktop: Existing table */}
+      <div className="hidden md:block">
+        <div>
+          <h3 className="text-xl font-bold mb-4">{season} League Table</h3>
+          
+          <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
+            <table className="min-w-full bg-white">
+              <thead className="bg-[#00105A] text-white border-b">
+                <tr>
+                  <th className="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wider">Pos</th>
+                  <th className="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wider">Team</th>
+                  <th className="px-3 py-3 text-center text-xs font-semibold uppercase tracking-wider">P</th>
+                  <th className="px-3 py-3 text-center text-xs font-semibold uppercase tracking-wider">W</th>
+                  <th className="px-3 py-3 text-center text-xs font-semibold uppercase tracking-wider">D</th>
+                  <th className="px-3 py-3 text-center text-xs font-semibold uppercase tracking-wider">L</th>
+                  <th className="px-3 py-3 text-center text-xs font-semibold uppercase tracking-wider">GF</th>
+                  <th className="px-3 py-3 text-center text-xs font-semibold uppercase tracking-wider">GA</th>
+                  <th className="px-3 py-3 text-center text-xs font-semibold uppercase tracking-wider">GD</th>
+                  <th className="px-3 py-3 text-center text-xs font-semibold uppercase tracking-wider">Pts</th>
+                  <th className="px-3 py-3 text-center text-xs font-semibold uppercase tracking-wider">Form</th>
                 </tr>
-              );
-            })}
-          </tbody>
-        </table>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {tableData.map((row, index) => {
+                  const isBanksODee = row.team_name?.toLowerCase().includes("banks o' dee");
+                  const isFirstPosition = row.position === 1;
+                  const isLastPosition = row.position === tableData.length;
+                  
+                  // Apply different backgrounds
+                  let rowBg = '';
+                  if (isBanksODee) {
+                    rowBg = 'bg-[#F3F4F6]'; // Explicit grey for Banks o' Dee
+                  } else if (isFirstPosition) {
+                    rowBg = 'bg-green-50'; // Promotion position
+                  } else if (isLastPosition) {
+                    rowBg = 'bg-red-50'; // Relegation position
+                  } else {
+                    rowBg = index % 2 === 0 ? 'bg-white' : 'bg-gray-50'; // Alternating
+                  }
+                  
+                  return (
+                    <tr 
+                      key={row.id}
+                      className={`${rowBg} hover:bg-gray-200 transition-colors duration-150`}
+                    >
+                      <td className="px-3 py-3 whitespace-nowrap text-sm text-center font-medium">{row.position}</td>
+                      <td className="px-3 py-3 whitespace-nowrap text-sm">
+                        <div className="flex items-center">
+                          <TeamLogo 
+                            logoId={row.team_logo} 
+                            teamName={row.team_name} 
+                            size="sm" 
+                            className="mr-2" 
+                          />
+                          <span className={isBanksODee ? "font-bold" : ""}>{row.team_name}</span>
+                        </div>
+                      </td>
+                      <td className="px-3 py-3 whitespace-nowrap text-sm text-center">{row.matches_played}</td>
+                      <td className="px-3 py-3 whitespace-nowrap text-sm text-center">{row.wins}</td>
+                      <td className="px-3 py-3 whitespace-nowrap text-sm text-center">{row.draws}</td>
+                      <td className="px-3 py-3 whitespace-nowrap text-sm text-center">{row.losses}</td>
+                      <td className="px-3 py-3 whitespace-nowrap text-sm text-center">{row.goals_for}</td>
+                      <td className="px-3 py-3 whitespace-nowrap text-sm text-center">{row.goals_against}</td>
+                      <td className="px-3 py-3 whitespace-nowrap text-sm text-center">{row.goal_difference}</td>
+                      <td className="px-3 py-3 whitespace-nowrap text-sm font-bold text-center">{row.points}</td>
+                      <td className="px-3 py-3 whitespace-nowrap">
+                        <div className="flex justify-center space-x-1">
+                          {(row.form || []).slice(0, 5).map((result: string, i: number) => (
+                            <FormIndicator key={i} result={result as 'W' | 'L' | 'D'} />
+                          ))}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
-    </div>
+
+      {/* Mobile: Single table card */}
+      <div className="block md:hidden">
+        <MobileTableCard tableData={tableData} />
+      </div>
+    </>
   );
 }
