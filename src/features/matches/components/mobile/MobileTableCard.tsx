@@ -65,18 +65,30 @@ export function MobileTableCard({
           </div>
         </div>
         
-        {/* Table Data - All Teams */}
+        {/* Table Data - All Teams with Position-Based Coloring */}
         {tableData.map((team, index) => {
           const isBanksODee = team.team_name?.toLowerCase().includes("banks o' dee");
+          const isFirstPosition = team.position === 1;
+          const isLastPosition = team.position === tableData.length;
+          
+          // UPDATED: Standardized position-based coloring (same as desktop)
+          let rowBg = '';
+          if (isBanksODee) {
+            rowBg = 'bg-[#f0f7ff]'; // Light blue for Banks o' Dee
+          } else if (isFirstPosition) {
+            rowBg = 'bg-[#f0fdf4]'; // Green for 1st position
+          } else if (isLastPosition) {
+            rowBg = 'bg-[#fef2f2]'; // Red for 18th position
+          } else {
+            rowBg = 'bg-white'; // White for all others
+          }
           
           return (
             <div 
               key={team.position}
               className={`flex items-center p-3 ${
                 index !== tableData.length - 1 ? 'border-b border-[#e5e7eb]' : ''
-              } ${
-                isBanksODee ? 'bg-[#f0f7ff]' : 'bg-white'
-              }`}
+              } ${rowBg}`}
             >
               {/* Position */}
               <div className="flex-shrink-0 w-8 text-center">

@@ -136,16 +136,16 @@ export function TablePanel() {
                   const isFirstPosition = row.position === 1;
                   const isLastPosition = row.position === tableData.length;
                   
-                  // Apply different backgrounds
+                  // UPDATED: Standardized position-based coloring
                   let rowBg = '';
                   if (isBanksODee) {
-                    rowBg = 'bg-[#F3F4F6]'; // Explicit grey for Banks o' Dee
+                    rowBg = 'bg-[#f0f7ff]'; // Light blue for Banks o' Dee
                   } else if (isFirstPosition) {
-                    rowBg = 'bg-[#f0fdf4]'; // Promotion position
+                    rowBg = 'bg-[#f0fdf4]'; // Green for 1st position
                   } else if (isLastPosition) {
-                    rowBg = 'bg-[#fef2f2]'; // Relegation position
+                    rowBg = 'bg-[#fef2f2]'; // Red for 18th position
                   } else {
-                    rowBg = index % 2 === 0 ? 'bg-white' : 'bg-[#f9fafb]'; // Alternating
+                    rowBg = 'bg-white'; // White for all others
                   }
                   
                   return (
