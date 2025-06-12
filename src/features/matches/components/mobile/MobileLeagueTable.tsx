@@ -2,10 +2,10 @@
 import React from 'react';
 import Link from 'next/link';
 import { TeamLogo } from '../common/TeamLogo';
-
 interface LeagueTableTeam {
   position: number;
   team_name: string;
+  team_short_name: string;
   team_logo?: string;
   points: number;
   matches_played: number;
@@ -17,12 +17,10 @@ interface LeagueTableTeam {
   goal_difference: number;
   form?: ('W' | 'D' | 'L')[];
 }
-
 interface MobileLeagueTableProps {
   leagueTable: LeagueTableTeam[];
   banksODeePosition: number;
 }
-
 export function MobileLeagueTable({ 
   leagueTable = [], 
   banksODeePosition 
@@ -33,10 +31,8 @@ export function MobileLeagueTable({
     if (!leagueTable || leagueTable.length === 0 || !banksODeePosition) {
       return [];
     }
-
     let startPosition: number;
     let endPosition: number;
-
     if (banksODeePosition === 1) {
       // If BOD is 1st, show positions 1, 2, 3
       startPosition = 1;
@@ -50,14 +46,11 @@ export function MobileLeagueTable({
       startPosition = banksODeePosition - 1;
       endPosition = banksODeePosition + 1;
     }
-
     return leagueTable
       .filter(team => team.position >= startPosition && team.position <= endPosition)
       .sort((a, b) => a.position - b.position);
   };
-
   const displayTeams = getDisplayTeams();
-
   if (displayTeams.length === 0) {
     return (
       <div className="w-full">
@@ -74,7 +67,6 @@ export function MobileLeagueTable({
       </div>
     );
   }
-
   return (
     <div className="w-full">
       {/* League Header */}
@@ -107,7 +99,6 @@ export function MobileLeagueTable({
             <span className="text-xs font-bold uppercase">PTS</span>
           </div>
         </div>
-
         {/* Table Data */}
         {displayTeams.map((team, index) => {
           const isBanksODee = team.team_name?.toLowerCase().includes("banks o' dee");
@@ -135,14 +126,14 @@ export function MobileLeagueTable({
                 <div className="flex-shrink-0 mr-2">
                   <TeamLogo 
                     logoUrl={team.team_logo} 
-                    teamName={team.team_name}
+                    teamName={team.team_short_name || team.team_name}
                     size="sm"
                   />
                 </div>
                 <span className={`text-sm font-medium truncate ${
                   isBanksODee ? 'text-[#00105A]' : 'text-[#374151]'
                 }`}>
-                  {team.team_name}
+                  {team.team_short_name || team.team_name}
                 </span>
               </div>
               
@@ -167,7 +158,6 @@ export function MobileLeagueTable({
           );
         })}
       </div>
-
       {/* View Full Table Link */}
       <div className="text-center pt-4">
         <Link 

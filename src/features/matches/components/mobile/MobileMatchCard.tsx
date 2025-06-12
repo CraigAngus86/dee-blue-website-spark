@@ -156,7 +156,7 @@ export function MobileMatchCard({
         </div>
       </div>
 
-      {/* 6. Action Icons - Light blue hover effect */}
+      {/* 6. Action Icons - Now with inactive states like desktop */}
       <div className="px-4 py-1 border-t border-[#e5e7eb] bg-[#f9fafb] flex justify-center">
         <div className="flex space-x-8">
           {isUpcoming ? (
@@ -169,11 +169,22 @@ export function MobileMatchCard({
                   console.log('Ticket click - no link available');
                 }
               }}
-              className="flex flex-col items-center p-1 hover:bg-[#C5E7FF] rounded transition-colors min-h-[44px] min-w-[44px]"
+              className={`flex flex-col items-center p-1 rounded transition-colors min-h-[44px] min-w-[44px] ${
+                match.ticket_link 
+                  ? 'hover:bg-[#C5E7FF] cursor-pointer' 
+                  : 'cursor-default'
+              }`}
+              disabled={!match.ticket_link}
               aria-label="Buy tickets"
             >
-              <Ticket className="h-5 w-5 text-[#00105A]" />
-              <span className="text-xs text-[#6b7280] mt-1 font-medium">Tickets</span>
+              <Ticket className={`h-5 w-5 ${
+                match.ticket_link ? 'text-[#00105A]' : 'text-[#9CA3AF]'
+              }`} />
+              <span className={`text-xs mt-1 font-medium ${
+                match.ticket_link ? 'text-[#6b7280]' : 'text-[#9CA3AF]'
+              }`}>
+                Tickets
+              </span>
             </button>
           ) : (
             /* Gallery + Report for Last Result */
@@ -186,11 +197,22 @@ export function MobileMatchCard({
                     console.log('Gallery click - no link available');
                   }
                 }}
-                className="flex flex-col items-center p-1 hover:bg-[#C5E7FF] rounded transition-colors min-h-[44px] min-w-[44px]"
+                className={`flex flex-col items-center p-1 rounded transition-colors min-h-[44px] min-w-[44px] ${
+                  match.gallery_link 
+                    ? 'hover:bg-[#C5E7FF] cursor-pointer' 
+                    : 'cursor-default'
+                }`}
+                disabled={!match.gallery_link}
                 aria-label="View gallery"
               >
-                <Camera className="h-5 w-5 text-[#00105A]" />
-                <span className="text-xs text-[#6b7280] mt-1 font-medium">Gallery</span>
+                <Camera className={`h-5 w-5 ${
+                  match.gallery_link ? 'text-[#00105A]' : 'text-[#9CA3AF]'
+                }`} />
+                <span className={`text-xs mt-1 font-medium ${
+                  match.gallery_link ? 'text-[#6b7280]' : 'text-[#9CA3AF]'
+                }`}>
+                  Gallery
+                </span>
               </button>
               
               <button
@@ -201,11 +223,22 @@ export function MobileMatchCard({
                     console.log('Report click - no link available');
                   }
                 }}
-                className="flex flex-col items-center p-1 hover:bg-[#C5E7FF] rounded transition-colors min-h-[44px] min-w-[44px]"
+                className={`flex flex-col items-center p-1 rounded transition-colors min-h-[44px] min-w-[44px] ${
+                  match.match_report_link 
+                    ? 'hover:bg-[#C5E7FF] cursor-pointer' 
+                    : 'cursor-default'
+                }`}
+                disabled={!match.match_report_link}
                 aria-label="Read report"
               >
-                <FileText className="h-5 w-5 text-[#00105A]" />
-                <span className="text-xs text-[#6b7280] mt-1 font-medium">Report</span>
+                <FileText className={`h-5 w-5 ${
+                  match.match_report_link ? 'text-[#00105A]' : 'text-[#9CA3AF]'
+                }`} />
+                <span className={`text-xs mt-1 font-medium ${
+                  match.match_report_link ? 'text-[#6b7280]' : 'text-[#9CA3AF]'
+                }`}>
+                  Report
+                </span>
               </button>
             </>
           )}
