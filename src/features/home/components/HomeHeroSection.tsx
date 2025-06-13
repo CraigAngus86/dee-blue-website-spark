@@ -274,8 +274,8 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <div className="mt-40 w-full text-center px-4">
               <div className="max-w-6xl mx-auto">
-                {/* Title - wider container to get text on 2 lines instead of 3 */}
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-white font-montserrat">
+                {/* Title - reduced size on mobile */}
+                <h1 className="text-2xl md:text-5xl lg:text-6xl font-bold mb-4 text-white font-montserrat">
                   {content.title}
                 </h1>
                 

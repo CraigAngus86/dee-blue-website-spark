@@ -1,4 +1,5 @@
 import React from 'react';
+import { getCloudinaryImageUrl } from '@/lib/cloudinary/imageTransforms';
 
 interface PlayerImageProps {
   image: any;
@@ -30,60 +31,42 @@ export const PlayerImage: React.FC<PlayerImageProps> = ({
       </svg>
     </div>
   );
-
+  
   // If no image data
-  if (!image) {
+  if (!image || !image.public_id) {
     return renderFallback();
   }
-
-  try {
-    // Extract public_id directly from the image object
-    const publicId = image.public_id;
-    const format = image.format || 'jpg';
-    
-    // If public_id is missing, use fallback
-    if (!publicId) {
-      console.error('Missing public_id for image:', name);
-      return renderFallback();
+  
+  // Map size to variant
+  const getVariant = () => {
+    switch(size) {
+      case 'card': return 'playerCard';
+      case 'homepage': return 'portrait';
+      case 'modal': return 'playerModal';
+      case 'large': return 'card';
+      default: return 'playerCard';
     }
-
-    // Define transformations for different sizes with enhanced parameters
-    const transformations = {
-      // Card view: Keep original square for team page
-      card: 'c_fill,g_auto:face,y_30,ar_1:1,w_auto,dpr_auto,q_auto:good,f_auto,e_shadow',
-      
-      // Homepage cards - Portrait aspect ratio with face detection (removed e_improve)
-      homepage: 'c_fill,g_auto:faces,y_20,ar_3:4,w_400,h_533,q_auto:good,f_auto',
-      
-      // Modal view: Enhanced with progressive loading
-      modal: 'c_fill,g_auto:face,y_30,ar_3:4,w_auto,dpr_auto,q_auto:good,f_auto,fl_progressive',
-      
-      // Large view: Enhanced with progressive loading
-      large: 'c_fill,g_face:center,ar_16:9,w_auto,dpr_auto,q_auto:good,f_auto,fl_progressive'
-    };
-
-    // Construct the Cloudinary URL
-    const baseUrl = 'https://res.cloudinary.com/dlkpaw2a0/image/upload';
-    const imageUrl = `${baseUrl}/${transformations[size]}/${publicId}.${format}`;
-
-    return (
-      <img 
-        src={imageUrl}
-        alt={name}
-        className={`object-cover w-full h-full ${className}`}
-        onError={(e) => {
-          console.error(`Failed to load image for ${name} from ${imageUrl}`);
-          // Set fallback in case of error
-          const target = e.target as HTMLImageElement;
-          target.onerror = null; // Prevent infinite loop
-          target.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMDAxMDVBIi8+PHBhdGggZD0iTTUwIDI1QzQzLjEgMjUgMzcuNSAzMC42IDM3LjUgMzcuNVMzOC4xIDUwIDUwIDUwICA2MS45IDUwIDYyLjUgMzcuNSA1Ni45IDI1IDUwIDI1ek0yNSA4Ny41QzI1IDY4LjggMzAuOCA2Mi41IDUwIDYyLjVDNjkuMiA2Mi41IDc1IDY4LjggNzUgODcuNUgyNVoiIGZpbGw9IiMwMDFDOEMiLz48L3N2Zz4=';
-        }}
-      />
-    );
-  } catch (error) {
-    console.error(`Error processing image for ${name}:`, error);
-    return renderFallback();
-  }
+  };
+  
+  const imageUrl = getCloudinaryImageUrl(image, {
+    variant: getVariant(),
+    contentType: 'player',
+    width: size === 'modal' ? 600 : 400
+  });
+  
+  return (
+    <img 
+      src={imageUrl}
+      alt={name}
+      className={`w-full h-full ${className}`}
+      onError={(e) => {
+        console.error(`Failed to load image for ${name}`);
+        const target = e.target as HTMLImageElement;
+        target.onerror = null;
+        target.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMDAxMDVBIi8+PHBhdGggZD0iTTUwIDI1QzQzLjEgMjUgMzcuNSAzMC42IDM3LjUgMzcuNVM0My4xIDUwIDUwIDUwIDYyLjUgNDQuNCA2Mi41IDM3LjUgNTYuOSAyNSA1MCAyNXpNMjUgODcuNUM1IDY4LjggMzkuOCA2Mi41IDUwIDYyLjVDNjkuMiA2Mi41IDc1IDY4LjggNzUgODcuNUgyNVoiIGZpbGw9IiMwMDFDOEMiLz48L3N2Zz4=';
+      }}
+    />
+  );
 };
 
 export default PlayerImage;
