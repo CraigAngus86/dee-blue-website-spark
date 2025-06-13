@@ -4,6 +4,7 @@ import { X, Facebook, Linkedin, Mail, Copy } from 'lucide-react';
 import { NewsArticle } from '../types';
 import { PortableText } from '@portabletext/react';
 import portableTextComponents from './portable-text/PortableTextComponents';
+import { getCloudinaryImageUrl, getContentType } from '@/lib/cloudinary/imageTransforms';
 
 interface NewsModalProps {
   article: NewsArticle | null;
@@ -65,43 +66,9 @@ const NewsModal: React.FC<NewsModalProps> = ({
         year: 'numeric'
       })
     : '';
-    
-  // ✅ UNIFIED: Use EXACT same transforms as working NewsPageCard
-  const getImageUrl = (image: any, type: 'hero' | 'modal' | 'card' = 'modal'): string => {
-    if (!image) return '';
-    
-    // For Cloudinary assets from Sanity
-    if (image._type === 'cloudinary.asset') {
-      if (image.public_id) {
-        const publicId = image.public_id;
-        const format = image.format || 'jpg';
-        const baseUrl = 'https://res.cloudinary.com/dlkpaw2a0/image/upload';
-        
-        // Check if it's a match report (likely to have people/action)
-        if (article.category === 'matchReport') {
-          // Enhanced transformation for match reports/action shots:
-          // Responsive sizing, vibrance enhancement, face detection with position adjustment
-          return `${baseUrl}/c_fill,g_auto:faces,y_-20,z_1.05,ar_16:9,w_auto,dpr_auto,q_auto:good,f_auto,e_vibrance:20/${publicId}.${format}`;
-        } else {
-          // Enhanced transformation for other news categories:
-          // Responsive sizing, improved sharpness
-          return `${baseUrl}/c_fill,g_auto:subject,ar_16:9,w_auto,dpr_auto,q_auto:good,f_auto,e_sharpen/${publicId}.${format}`;
-        }
-      } else if (image.secure_url) {
-        return image.secure_url;
-      }
-    } 
-    // Handle regular URLs
-    else if (image.url) {
-      return image.url;
-    }
-    // Handle direct string URLs
-    else if (typeof image === 'string') {
-      return image;
-    }
-    
-    return '';
-  };
+  
+  // Get content type for Cloudinary transforms
+  const contentType = getContentType(article.category);
     
   // Social sharing functions
   const shareOnX = () => {
@@ -193,9 +160,13 @@ const NewsModal: React.FC<NewsModalProps> = ({
           <div className="relative w-full aspect-[16/9]">
             {article.mainImage ? (
               <img 
-                src={getImageUrl(article.mainImage, 'modal')}
+                src={getCloudinaryImageUrl(article.mainImage, { 
+                  variant: 'modal',
+                  contentType,
+                  width: 1200
+                })}
                 alt={article.title}
-                className="w-full h-full object-cover"
+                className="w-full h-full"
                 onError={(e) => {
                   console.error(`Failed to load modal image for ${article.title}`);
                   // Set fallback in case of error
@@ -274,21 +245,27 @@ const NewsModal: React.FC<NewsModalProps> = ({
                   {article.relatedPlayers.map(player => (
                     <div key={player.id} className="flex items-center space-x-2 bg-[#f5f7fb] p-2 rounded">
                       {player.profileImage ? (
-                        <img 
-                          src={getImageUrl(player.profileImage, 'card')}
-                          alt={player.name}
-                          className="w-12 h-12 rounded-full object-cover"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.onerror = null;
-                            const fallbackDiv = document.createElement('div');
-                            fallbackDiv.className = 'w-12 h-12 rounded-full bg-[#00105A] flex items-center justify-center';
-                            fallbackDiv.innerHTML = `<span class="text-white text-xs">${player.name.charAt(0)}</span>`;
-                            if (target.parentNode) {
-                              target.parentNode.replaceChild(fallbackDiv, target);
-                            }
-                          }}
-                        />
+                        <div className="w-12 h-12 rounded-full overflow-hidden">
+                          <img 
+                            src={getCloudinaryImageUrl(player.profileImage, { 
+                              variant: 'square',
+                              contentType: 'player',
+                              width: 100
+                            })}
+                            alt={player.name}
+                            className="w-full h-full"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.onerror = null;
+                              const fallbackDiv = document.createElement('div');
+                              fallbackDiv.className = 'w-12 h-12 rounded-full bg-[#00105A] flex items-center justify-center';
+                              fallbackDiv.innerHTML = `<span class="text-white text-xs">${player.name.charAt(0)}</span>`;
+                              if (target.parentNode) {
+                                target.parentNode.replaceChild(fallbackDiv, target);
+                              }
+                            }}
+                          />
+                        </div>
                       ) : (
                         <div className="w-12 h-12 rounded-full bg-[#00105A] flex items-center justify-center">
                           <span className="text-white text-xs">{player.name.charAt(0)}</span>
@@ -309,9 +286,13 @@ const NewsModal: React.FC<NewsModalProps> = ({
                   {article.gallery.images.map((image, index) => (
                     <div key={index} className="relative aspect-square rounded-md overflow-hidden shadow-md">
                       <img 
-                        src={getImageUrl(image, 'card')}
+                        src={getCloudinaryImageUrl(image, { 
+                          variant: 'square',
+                          contentType,
+                          width: 400
+                        })}
                         alt={image.alt || `Image ${index + 1}`}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
                           target.onerror = null;

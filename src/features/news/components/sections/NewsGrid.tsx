@@ -323,6 +323,7 @@ const NewsGrid: React.FC<NewsGridProps> = ({
             >
               <NewsPageCard
                 article={item}
+                cardSize={cardSize}
                 isFeatured={isFeatured}
                 isGallery={item.contentType === "gallery"}
                 className="h-full"

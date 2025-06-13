@@ -4,6 +4,7 @@ import { NewsArticle } from '@/features/news/types';
 import { formatDistanceToNow } from 'date-fns';
 import { ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import CloudinaryImage from '@/components/ui/cloudinary/CloudinaryImage';
 
 interface NewsCardProps {
   article: NewsArticle;
@@ -30,43 +31,6 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, onClick, className }) => {
     }
   };
   
-  // COPY EXACT NewsPageCard getImageUrl function that works
-  const getImageUrl = (image: any): string => {
-    if (!image) return '';
-    
-    // For Cloudinary assets from Sanity
-    if (image._type === 'cloudinary.asset') {
-      if (image.public_id) {
-        const publicId = image.public_id;
-        const format = image.format || 'jpg';
-        const baseUrl = 'https://res.cloudinary.com/dlkpaw2a0/image/upload';
-        
-        // Check if it's a match report (likely to have people/action)
-        if (article.category === 'matchReport') {
-          // Enhanced transformation for match reports/action shots:
-          // Responsive sizing, vibrance enhancement, face detection with position adjustment
-          return `${baseUrl}/c_fill,g_auto:faces,y_-20,z_1.05,ar_16:9,w_auto,dpr_auto,q_auto:good,f_auto,e_vibrance:20/${publicId}.${format}`;
-        } else {
-          // Enhanced transformation for other news categories:
-          // Responsive sizing, improved sharpness
-          return `${baseUrl}/c_fill,g_auto:subject,ar_16:9,w_auto,dpr_auto,q_auto:good,f_auto,e_sharpen/${publicId}.${format}`;
-        }
-      } else if (image.secure_url) {
-        return image.secure_url;
-      }
-    } 
-    // Handle regular URLs
-    else if (image.url) {
-      return image.url;
-    }
-    // Handle direct string URLs
-    else if (typeof image === 'string') {
-      return image;
-    }
-    
-    return '';
-  };
-  
   return (
     <div 
       className={cn(
@@ -76,15 +40,18 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, onClick, className }) => {
       )}
       onClick={handleClick}
     >
-      {/* Keep original h-48 layout with proper transforms */}
-      <div className="relative w-full h-48 overflow-hidden rounded-t-lg">
+      {/* Updated to use aspect ratio container with CloudinaryImage */}
+      <div className="relative w-full aspect-[16/9] overflow-hidden rounded-t-lg">
         {article.mainImage ? (
-          <img 
-            src={getImageUrl(article.mainImage)}
-            alt={article.mainImage?.alt || article.title}
-            className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-            loading="lazy"
-          />
+          <>
+            <CloudinaryImage
+              image={article.mainImage}
+              variant="card"
+              alt={article.mainImage?.alt || article.title}
+              category={article.category}
+              className="transition-transform duration-300 hover:scale-105"
+            />
+          </>
         ) : (
           <div className="w-full h-full bg-gray-200"></div>
         )}

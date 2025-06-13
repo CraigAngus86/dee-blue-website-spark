@@ -3,10 +3,12 @@ import React from 'react';
 import { NewsArticle } from '../../types';
 import { formatDistanceToNow } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { getCloudinaryImageUrl, getContentType, getMosaicVariant } from '@/lib/cloudinary/imageTransforms';
 
 interface NewsPageCardProps {
   article: NewsArticle & { contentType?: string };
   className?: string;
+  cardSize?: string; // New prop for grid size
   isFeatured?: boolean;
   isGallery?: boolean;
   onClick?: (article: NewsArticle) => void;
@@ -15,6 +17,7 @@ interface NewsPageCardProps {
 const NewsPageCard: React.FC<NewsPageCardProps> = ({
   article,
   className,
+  cardSize = '1x1', // Default to standard size
   isFeatured = false,
   isGallery = false,
   onClick
@@ -28,48 +31,37 @@ const NewsPageCard: React.FC<NewsPageCardProps> = ({
     commercialNews: 'COMMERCIAL NEWS',
     matchGallery: 'MATCH GALLERY'
   };
-
-  // ✅ FIXED: Format date for display (ensure it works for galleries too)
+  
+  // Format date for display
   const formattedDate = article.publishedAt 
     ? formatDistanceToNow(new Date(article.publishedAt), { addSuffix: true })
     : '';
-
-  // ✅ RESTORED: Original working transforms
-  const getImageUrl = (image: any): string => {
-    if (!image) return '';
-    
-    // For Cloudinary assets from Sanity
-    if (image._type === 'cloudinary.asset') {
-      if (image.public_id) {
-        const publicId = image.public_id;
-        const format = image.format || 'jpg';
-        const baseUrl = 'https://res.cloudinary.com/dlkpaw2a0/image/upload';
-        
-        // Check if it's a match report (likely to have people/action)
-        if (article.category === 'matchReport') {
-          // Enhanced transformation for match reports/action shots:
-          // Responsive sizing, vibrance enhancement, face detection with position adjustment
-          return `${baseUrl}/c_fill,g_auto:faces,y_-20,z_1.05,ar_16:9,w_auto,dpr_auto,q_auto:good,f_auto,e_vibrance:20/${publicId}.${format}`;
-        } else {
-          // Enhanced transformation for other news categories:
-          // Responsive sizing, improved sharpness
-          return `${baseUrl}/c_fill,g_auto:subject,ar_16:9,w_auto,dpr_auto,q_auto:good,f_auto,e_sharpen/${publicId}.${format}`;
-        }
-      } else if (image.secure_url) {
-        return image.secure_url;
-      }
-    } 
-    // Handle regular URLs
-    else if (image.url) {
-      return image.url;
+  
+  // Get content type for Cloudinary transforms
+  const contentType = getContentType(article.category);
+  
+  // Get the appropriate variant based on card size
+  const variant = getMosaicVariant(cardSize);
+  
+  // Set width based on card size
+  const getWidth = () => {
+    switch(cardSize) {
+      case '2x2': return 1200; // Largest
+      case '2x1': return 800;  // Wide
+      case '1x2': return 400;  // Tall but narrow
+      case '1x1': return 600;  // Standard
+      default: return 600;
     }
-    // Handle direct string URLs
-    else if (typeof image === 'string') {
-      return image;
-    }
-    
-    return '';
   };
+  
+  // Get optimized image URL using smart mosaic transforms
+  const imageUrl = article.mainImage 
+    ? getCloudinaryImageUrl(article.mainImage, {
+        variant,
+        contentType,
+        width: getWidth()
+      })
+    : '';
   
   return (
     <div 
@@ -81,14 +73,14 @@ const NewsPageCard: React.FC<NewsPageCardProps> = ({
     >
       {/* Image with full overlay */}
       <div className="absolute inset-0">
-        {article.mainImage ? (
+        {article.mainImage && imageUrl ? (
           <img 
-            src={getImageUrl(article.mainImage)}
+            src={imageUrl}
             alt={article.mainImage.alt || article.title}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            loading="lazy"
             onError={(e) => {
               console.error(`Failed to load news page card image for ${article.title}`);
-              console.error('Image data:', article.mainImage);
               // Set fallback in case of error
               const target = e.target as HTMLImageElement;
               target.onerror = null; // Prevent infinite loop
@@ -105,7 +97,7 @@ const NewsPageCard: React.FC<NewsPageCardProps> = ({
           </div>
         )}
         
-        {/* ✅ FIXED: Lighter gradient overlay (matching homepage NewsCard) */}
+        {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#00105A]/40 to-transparent"></div>
       </div>
       
@@ -118,10 +110,12 @@ const NewsPageCard: React.FC<NewsPageCardProps> = ({
           </span>
         </div>
         
-        {/* Title */}
+        {/* Title - adjust size based on card size */}
         <h3 className={cn(
           "font-bold text-white font-montserrat leading-tight mb-2",
-          isFeatured ? "text-2xl md:text-3xl" : "text-xl"
+          cardSize === '2x2' ? "text-2xl md:text-3xl" : 
+          cardSize === '2x1' ? "text-xl md:text-2xl" :
+          "text-lg md:text-xl"
         )}>
           {article.title}
         </h3>

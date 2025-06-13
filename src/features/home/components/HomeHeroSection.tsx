@@ -240,7 +240,7 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
     
     return (
       <div 
-        className="relative h-[70vh] min-h-[450px] max-h-[700px] overflow-hidden bg-[#00105A]"
+        className="relative w-full aspect-[4/3] md:aspect-[16/9] lg:aspect-[21/9] overflow-hidden bg-[#00105A]"
         onTouchStart={this.handleTouchStart}
         onTouchMove={this.handleTouchMove}
         onTouchEnd={this.handleTouchEnd}
