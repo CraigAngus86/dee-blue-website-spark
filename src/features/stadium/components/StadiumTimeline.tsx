@@ -50,7 +50,7 @@ export function StadiumTimeline({ data }: StadiumTimelineProps) {
   const currentIndex = data.timeline.findIndex(m => m.year === activeYear);
   const hoveredMilestone = data.timeline.find(m => m.year === hoveredYear);
 
-  // Build Cloudinary URL with timeline-specific transformation
+  // Build Cloudinary URL with timeline-specific transformation - REVERTED to working version
   const buildTimelineImageUrl = (publicId: string, transformation?: string): string => {
     const baseUrl = "https://res.cloudinary.com/dlkpaw2a0/image/upload";
     const defaultTransform = "c_fill,g_auto:subject,ar_21:9,q_auto:good,f_auto,e_sharpen";
@@ -115,7 +115,7 @@ export function StadiumTimeline({ data }: StadiumTimelineProps) {
 
       {/* Enhanced Hero Image Area with Crossfade & Ken Burns */}
       <div className="relative h-[400px] mb-12 overflow-hidden rounded-xl shadow-2xl mx-4 md:mx-8">
-        {/* Background Images with Crossfade */}
+        {/* Background Images with Crossfade - REVERTED to working version */}
         <div className="absolute inset-0">
           {data.timeline.map((milestone) => (
             <div
@@ -226,45 +226,74 @@ export function StadiumTimeline({ data }: StadiumTimelineProps) {
         </div>
       </div>
 
-      {/* Staggered Content Animation */}
+      {/* Staggered Content Animation - Mobile responsive content */}
       <div className="max-w-4xl mx-auto text-center px-4">
         <h3 className="text-2xl md:text-3xl font-montserrat font-bold text-[#00105A] mb-6 animate-slide-up">
           {activeMilestone.title}
         </h3>
-        <p className="text-lg text-[#374151] mb-8 leading-relaxed animate-slide-up-delay">
-          {activeMilestone.description}
-        </p>
         
-        {/* Enhanced Read More Button */}
-        {activeMilestone.expandedContent && (
-          <button 
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="group inline-flex items-center text-[#00105A] font-semibold hover:text-[#FFD700] transition-all duration-300 animate-slide-up-delay-2"
-          >
-            <span className="mr-2">{isExpanded ? 'Read less' : 'Read more'}</span>
-            <span className={`transform transition-transform duration-300 ${isExpanded ? 'rotate-180' : 'group-hover:translate-y-1'}`}>
-              {isExpanded ? '↑' : '↓'}
-            </span>
-          </button>
-        )}
+        {/* Desktop: Keep existing behavior with expand/collapse */}
+        <div className="hidden md:block">
+          <p className="text-lg text-[#374151] mb-8 leading-relaxed animate-slide-up-delay">
+            {activeMilestone.description}
+          </p>
+          
+          {/* Enhanced Read More Button */}
+          {activeMilestone.expandedContent && (
+            <button 
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="group inline-flex items-center text-[#00105A] font-semibold hover:text-[#FFD700] transition-all duration-300 animate-slide-up-delay-2"
+            >
+              <span className="mr-2">{isExpanded ? 'Read less' : 'Read more'}</span>
+              <span className={`transform transition-transform duration-300 ${isExpanded ? 'rotate-180' : 'group-hover:translate-y-1'}`}>
+                {isExpanded ? '↑' : '↓'}
+              </span>
+            </button>
+          )}
 
-        {/* Expanded Content with Smooth Animation */}
-        <div className={`overflow-hidden transition-all duration-500 ease-out ${
-          isExpanded ? 'max-h-96 opacity-100 mt-8' : 'max-h-0 opacity-0'
-        }`}>
-          <div className="pt-6 border-t border-[#e5e7eb] text-left">
-            <div className="prose prose-lg max-w-none text-[#374151] space-y-4">
-              {activeMilestone.expandedContent?.map((block: any, index: number) => {
-                if (block._type === 'block') {
-                  return (
-                    <p key={index} className="leading-relaxed animate-fade-in" style={{animationDelay: `${index * 100}ms`}}>
-                      {block.children?.map((child: any) => child.text).join('')}
-                    </p>
-                  );
-                }
-                return null;
-              })}
+          {/* Expanded Content with Smooth Animation */}
+          <div className={`overflow-hidden transition-all duration-500 ease-out ${
+            isExpanded ? 'max-h-96 opacity-100 mt-8' : 'max-h-0 opacity-0'
+          }`}>
+            <div className="pt-6 border-t border-[#e5e7eb] text-left">
+              <div className="prose prose-lg max-w-none text-[#374151] space-y-4">
+                {activeMilestone.expandedContent?.map((block: any, index: number) => {
+                  if (block._type === 'block') {
+                    return (
+                      <p key={index} className="leading-relaxed animate-fade-in" style={{animationDelay: `${index * 100}ms`}}>
+                        {block.children?.map((child: any) => child.text).join('')}
+                      </p>
+                    );
+                  }
+                  return null;
+                })}
+              </div>
             </div>
+          </div>
+        </div>
+
+        {/* Mobile: Show full content directly, no expand/collapse */}
+        <div className="block md:hidden">
+          <div className="text-left">
+            <p className="text-lg text-[#374151] mb-6 leading-relaxed">
+              {activeMilestone.description}
+            </p>
+            
+            {/* Show expanded content directly on mobile */}
+            {activeMilestone.expandedContent && (
+              <div className="prose prose-lg max-w-none text-[#374151] space-y-4">
+                {activeMilestone.expandedContent?.map((block: any, index: number) => {
+                  if (block._type === 'block') {
+                    return (
+                      <p key={index} className="leading-relaxed">
+                        {block.children?.map((child: any) => child.text).join('')}
+                      </p>
+                    );
+                  }
+                  return null;
+                })}
+              </div>
+            )}
           </div>
         </div>
       </div>

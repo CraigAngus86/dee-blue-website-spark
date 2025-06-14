@@ -6,6 +6,12 @@ import { StadiumFacilities } from '@/features/stadium/components/StadiumFaciliti
 import { LocationDirections } from '@/features/stadium/components/LocationDirections';
 import { fetchSanityData } from '@/lib/sanity/sanityClient';
 
+// Mobile Components (only the ones we still need)
+import { MobileStadiumOverview } from '@/features/stadium/components/mobile/MobileStadiumOverview';
+import { MobileStadiumFacilities } from '@/features/stadium/components/mobile/MobileStadiumFacilities';
+import { MobileLocationMap } from '@/features/stadium/components/mobile/MobileLocationMap';
+import { MobileGettingThere } from '@/features/stadium/components/mobile/MobileGettingThere';
+
 export const metadata: Metadata = {
   title: 'Spain Park Stadium | Banks o\' Dee FC',
   description: 'Discover the home of Banks o\' Dee FC - Spain Park Stadium. Explore our history, facilities, and heritage dating back to 1902.',
@@ -48,22 +54,28 @@ export default async function StadiumPage() {
   
   return (
     <main className="min-h-screen">
-      {/* Hero Section */}
+      {/* Hero Section - Shared for both desktop and mobile */}
       <SpainParkHero />
       
-      {/* Content Container */}
-      <div className="container mx-auto px-4 py-8">
-        {/* Stadium Overview */}
-        <StadiumOverview />
-        
-        {/* Stadium Timeline - Pass data as props */}
-        <StadiumTimeline data={stadiumData} />
-        
-        {/* Stadium Facilities */}
-        <StadiumFacilities />
-        
-        {/* Location & Directions */}
-        <LocationDirections />
+      {/* DESKTOP VERSION */}
+      <div className="hidden md:block">
+        <div className="container mx-auto px-4 py-8">
+          <StadiumOverview />
+          <StadiumTimeline data={stadiumData} />
+          <StadiumFacilities />
+          <LocationDirections />
+        </div>
+      </div>
+      
+      {/* MOBILE VERSION */}
+      <div className="block md:hidden">
+        <div className="container mx-auto px-4 py-8">
+          <MobileStadiumOverview />
+          <StadiumTimeline data={stadiumData} />  {/* Using same component - handles mobile internally */}
+          <MobileStadiumFacilities />
+          <MobileLocationMap />
+          <MobileGettingThere />
+        </div>
       </div>
     </main>
   );
