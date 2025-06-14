@@ -1,10 +1,13 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { useStadiumData, TimelineMilestone } from '../hooks/useStadiumData';
+import { StadiumData, TimelineMilestone } from '../hooks/useStadiumData';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-export function StadiumTimeline() {
-  const { data, loading, error } = useStadiumData();
+interface StadiumTimelineProps {
+  data: StadiumData | null;
+}
+
+export function StadiumTimeline({ data }: StadiumTimelineProps) {
   const [activeYear, setActiveYear] = useState<number | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const [imageLoading, setImageLoading] = useState(false);
@@ -32,30 +35,6 @@ export function StadiumTimeline() {
       };
     });
   };
-
-  if (loading) {
-    return (
-      <section className="py-16 bg-[#f9fafb]">
-        <div className="text-center">
-          <div className="animate-pulse">
-            <div className="h-8 bg-[#e5e7eb] rounded w-64 mx-auto mb-4"></div>
-            <div className="h-4 bg-[#e5e7eb] rounded w-96 mx-auto mb-8"></div>
-            <div className="h-[400px] bg-[#e5e7eb] rounded-lg mx-auto max-w-6xl"></div>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  if (error) {
-    return (
-      <section className="py-16 bg-[#f9fafb]">
-        <div className="text-center">
-          <p className="text-[#ef4444]">Error: {error}</p>
-        </div>
-      </section>
-    );
-  }
 
   if (!data?.timeline || data.timeline.length === 0) {
     return (
