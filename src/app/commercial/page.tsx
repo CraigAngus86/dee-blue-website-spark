@@ -8,6 +8,11 @@ import { UpcomingHospitality } from '@/features/commercial/components/UpcomingHo
 import { SponsorTestimonials } from '@/features/commercial/components/SponsorTestimonials';
 import { CommercialEnquiryModal } from '@/features/commercial/components/CommercialEnquiryModal';
 
+// Mobile Components
+import { MobileWhyPartnerWithUs } from '@/features/commercial/components/mobile/MobileWhyPartnerWithUs';
+import { MobileSponsorshipOpportunities } from '@/features/commercial/components/mobile/MobileSponsorshipOpportunities';
+import { MobileMatchDayHospitality } from '@/features/commercial/components/mobile/MobileMatchDayHospitality';
+
 export default function CommercialPage() {
   // Modal state management (following Fan Zone pattern)
   const [enquiryModalOpen, setEnquiryModalOpen] = useState(false);
@@ -35,21 +40,39 @@ export default function CommercialPage() {
   return (
     <main className="min-h-screen">
       <CommercialHero />
-      <WhyPartnerWithUs onPartnershipClick={() => handleEnquiryClick()} />
-      <SponsorshipOpportunities 
-        onSponsorshipClick={(type) => handleEnquiryClick('sponsorship', type)}
-        onDiscussOptions={() => handleEnquiryClick('sponsorship')}
-      />
-      <MatchDayHospitality 
-        onPackageClick={(pkg) => handleEnquiryClick('hospitality', pkg)}
-      />
-      <UpcomingHospitality 
-        onEnquireClick={(matchId, homeTeam, awayTeam) => 
+
+      {/* Desktop Versions */}
+      <div className="hidden md:block">
+        <WhyPartnerWithUs onPartnershipClick={() => handleEnquiryClick()} />
+        <SponsorshipOpportunities
+          onSponsorshipClick={(type) => handleEnquiryClick('sponsorship', type)}
+          onDiscussOptions={() => handleEnquiryClick('sponsorship')}
+        />
+        <MatchDayHospitality
+          onPackageClick={(pkg) => handleEnquiryClick('hospitality', pkg)}
+        />
+      </div>
+
+      {/* Mobile Versions */}
+      <div className="block md:hidden">
+        <MobileWhyPartnerWithUs onPartnershipClick={() => handleEnquiryClick()} />
+        <MobileSponsorshipOpportunities
+          onSponsorshipClick={(type) => handleEnquiryClick('sponsorship', type)}
+          onDiscussOptions={() => handleEnquiryClick('sponsorship')}
+        />
+        <MobileMatchDayHospitality
+          onPackageClick={(pkg) => handleEnquiryClick('hospitality', pkg)}
+        />
+      </div>
+
+      {/* Unchanged Sections - Work on Both Desktop & Mobile */}
+      <UpcomingHospitality
+        onEnquireClick={(matchId, homeTeam, awayTeam) =>
           handleEnquiryClick('hospitality', '', `${homeTeam} vs ${awayTeam}`)
         }
       />
       <SponsorTestimonials onPartnershipClick={() => handleEnquiryClick()} />
-      
+
       {/* Modal */}
       <CommercialEnquiryModal
         isOpen={enquiryModalOpen}
