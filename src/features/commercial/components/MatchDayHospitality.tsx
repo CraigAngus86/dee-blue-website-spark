@@ -1,6 +1,6 @@
 "use client";
 import React from 'react';
-import { Check, X, Crown, Award, Users } from 'lucide-react';
+import { Check, X } from 'lucide-react';
 
 interface MatchDayHospitalityProps {
   onPackageClick: (packageName: string) => void;
@@ -12,25 +12,13 @@ export function MatchDayHospitality({ onPackageClick }: MatchDayHospitalityProps
       feature: "Number of Guests",
       matchDay: "10",
       matchBall: "10", 
-      standard: "1"
+      standard: "min. 6"
     },
     {
       feature: "Arrival Time",
       matchDay: "2 hours before kick-off",
       matchBall: "90 mins before kick-off",
-      standard: "1 hour before kick-off"
-    },
-    {
-      feature: "Complimentary Drinks Package",
-      matchDay: true,
-      matchBall: true,
-      standard: false
-    },
-    {
-      feature: "Food Service", 
-      matchDay: "Three-course meal",
-      matchBall: "Two-course meal",
-      standard: "One-course meal"
+      standard: "90 mins before kick-off"
     },
     {
       feature: "Boardroom Access",
@@ -39,13 +27,37 @@ export function MatchDayHospitality({ onPackageClick }: MatchDayHospitalityProps
       standard: false
     },
     {
-      feature: "Man of the Match Selection",
+      feature: "Complimentary Drinks Package",
       matchDay: true,
+      matchBall: true,
+      standard: true
+    },
+    {
+      feature: "Food Service", 
+      matchDay: "Three-course meal",
+      matchBall: "Three-course meal",
+      standard: "Three-course meal"
+    },
+    {
+      feature: "Saltire Stand Seating",
+      matchDay: true,
+      matchBall: true,
+      standard: true
+    },
+    {
+      feature: "Half time Snacks",
+      matchDay: true,
+      matchBall: true,
+      standard: true
+    },
+    {
+      feature: "Man of the Match Selection",
+      matchDay: false,
       matchBall: true,
       standard: false
     },
     {
-      feature: "Programme Recognition",
+      feature: "Match Day Promotion",
       matchDay: true,
       matchBall: true,
       standard: false
@@ -55,6 +67,12 @@ export function MatchDayHospitality({ onPackageClick }: MatchDayHospitalityProps
       matchDay: true,
       matchBall: true,
       standard: false
+    },
+    {
+      feature: "Post Match Entertainment",
+      matchDay: true,
+      matchBall: true,
+      standard: true
     }
   ];
 
@@ -78,36 +96,33 @@ export function MatchDayHospitality({ onPackageClick }: MatchDayHospitalityProps
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                {/* Package Header Cards - Integrated with Table */}
+                {/* Package Header Cards - Cleaned Up */}
                 <tr>
                   <th className="bg-[#00105A] text-left py-6 px-6 font-semibold text-white">
                     Package Features
                   </th>
-                  {/* Match Day Sponsorship - Premium Package */}
+                  {/* Match Day Sponsorship */}
                   <th className="bg-gradient-to-br from-[#FFD700] to-[#f1c40f] text-center py-6 px-6 relative">
                     <div className="flex flex-col items-center">
-                      <Crown className="h-8 w-8 text-[#00105A] mb-2" />
                       <div className="font-bold text-[#00105A] text-lg mb-1">Match Day Sponsorship</div>
                       <div className="text-[#00105A] font-semibold text-xl">£1,000</div>
-                      <div className="text-[#00105A] text-sm font-medium">for 10 people</div>
                     </div>
                   </th>
-                  {/* Matchball Sponsorship - Premium Package */}
+                  {/* Matchball Sponsorship */}
                   <th className="bg-gradient-to-br from-[#C5E7FF] to-[#a3d5ff] text-center py-6 px-6 relative">
                     <div className="flex flex-col items-center">
-                      <Award className="h-8 w-8 text-[#00105A] mb-2" />
                       <div className="font-bold text-[#00105A] text-lg mb-1">Matchball Sponsorship</div>
                       <div className="text-[#00105A] font-semibold text-xl">£800</div>
-                      <div className="text-[#00105A] text-sm font-medium">for 10 people</div>
                     </div>
                   </th>
-                  {/* Standard Hospitality */}
+                  {/* Small Groups */}
                   <th className="bg-gradient-to-br from-[#f3f4f6] to-[#e5e7eb] text-center py-6 px-6 relative">
                     <div className="flex flex-col items-center">
-                      <Users className="h-8 w-8 text-[#00105A] mb-2" />
-                      <div className="font-bold text-[#00105A] text-lg mb-1">Standard Hospitality</div>
-                      <div className="text-[#00105A] font-semibold text-xl">£90</div>
-                      <div className="text-[#00105A] text-sm font-medium">per head</div>
+                      <div className="font-bold text-[#00105A] text-lg mb-1">Small Groups</div>
+                      <div>
+                        <span className="text-[#00105A] font-semibold text-xl">£90</span>
+                        <span className="text-[#00105A] text-sm ml-1">per head</span>
+                      </div>
                     </div>
                   </th>
                 </tr>

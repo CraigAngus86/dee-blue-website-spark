@@ -11,6 +11,7 @@ export function SponsorshipOpportunities({ onSponsorshipClick, onDiscussOptions 
     {
       title: "Perimeter Sponsorship Boards",
       pricing: "£1,750-£3,000 (3 seasons)",
+      imageId: "boards_mw4zjd",
       description: "Premium pitch-side advertising offering season-long visibility to all match attendees and in match photography.",
       features: [
         "10ft or 20ft board options available",
@@ -22,7 +23,8 @@ export function SponsorshipOpportunities({ onSponsorshipClick, onDiscussOptions 
     },
     {
       title: "Player Sponsorship",
-      pricing: "£250-£500 per season",
+      pricing: "£500 per season",
+      imageId: "player_sponsor_gei2s0",
       description: "Connect your brand with one of our first-team players throughout the season with digital and social integration.",
       features: [
         "Company logo on player's web profile",
@@ -35,6 +37,7 @@ export function SponsorshipOpportunities({ onSponsorshipClick, onDiscussOptions 
     {
       title: "Kit & Equipment Branding",
       pricing: "Contact for pricing",
+      imageId: "kit_sponsor_u5hwqg",
       description: "Brand visibility on training gear, equipment, and match day materials with photography and content rights.",
       features: [
         "Logo placement on training equipment",
@@ -45,6 +48,12 @@ export function SponsorshipOpportunities({ onSponsorshipClick, onDiscussOptions 
       ]
     }
   ];
+
+  const getImageUrl = (publicId: string) => {
+    const baseUrl = "https://res.cloudinary.com/dlkpaw2a0/image/upload";
+    const transformation = "c_fill,g_auto:subject,ar_16:9,q_auto:good,f_auto,w_400,h_225";
+    return `${baseUrl}/${transformation}/${publicId}`;
+  };
 
   return (
     <section className="py-16 bg-white">
@@ -68,15 +77,21 @@ export function SponsorshipOpportunities({ onSponsorshipClick, onDiscussOptions 
               key={index}
               className="bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group hover:-translate-y-2 h-full flex flex-col"
             >
-              {/* Package Image Placeholder */}
-              <div className="relative h-48 overflow-hidden bg-[#f3f4f6] flex-shrink-0">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#C5E7FF] to-[#00105A] opacity-20"></div>
+              {/* Package Image with Navy Overlay */}
+              <div className="relative h-48 overflow-hidden flex-shrink-0">
+                <img 
+                  src={getImageUrl(pkg.imageId)}
+                  alt={pkg.title}
+                  className="w-full h-full object-cover"
+                />
+                {/* Navy Overlay */}
+                <div className="absolute inset-0 bg-[#00105A]/60"></div>
+                {/* Title Overlay */}
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-[#00105A] font-bold text-lg text-center p-4">
+                  <div className="text-white font-bold text-lg text-center p-4">
                     {pkg.title}
                   </div>
                 </div>
-                <div className="absolute inset-0 bg-[#00105A]/10 group-hover:bg-[#00105A]/5 transition-colors duration-300" />
               </div>
 
               {/* Package Content */}

@@ -11,7 +11,7 @@ export function WhyPartnerWithUs({ onPartnershipClick }: WhyPartnerWithUsProps) 
     {
       icon: <Eye className="w-8 h-8" />,
       title: "Local Visibility",
-      description: "Connect with our passionate fanbase of over 1,000 match attendees and gain authentic local recognition in Aberdeen's business community."
+      description: "Connect with our passionate fanbase at Spain Park, with a capacity of just under 1,000 attendees and ongoing activities daily thanks to our Banks o' Dee Sports Club."
     },
     {
       icon: <Building2 className="w-8 h-8" />,
