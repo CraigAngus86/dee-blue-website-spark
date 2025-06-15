@@ -1,31 +1,45 @@
 import { AdminCard } from '@/components/ui/admin/AdminCard';
-import { AlertCircle, CheckCircle, Clock } from 'lucide-react';
+import { AlertTriangle, CheckCircle, Clock } from 'lucide-react';
 
 export function StatusWidgets() {
   const statusItems = [
     {
-      title: "Pending Actions",
-      count: 6,
-      items: ["3 fan photos awaiting review", "2 commercial enquiries (last 7 days)", "1 match result needs updating"],
-      icon: AlertCircle,
-      color: "text-red-500",
-      bgColor: "bg-red-50"
+      title: "Pending Review",
+      count: 11,
+      items: [
+        "8 fan photos awaiting approval",
+        "2 commercial enquiries (time sensitive)",
+        "1 match result needs updating"
+      ],
+      icon: AlertTriangle,
+      color: "text-amber-600",
+      bgColor: "bg-amber-50"
     },
     {
-      title: "This Week",
-      count: 4,
-      items: ["2 news articles published", "1 match gallery uploaded", "1 poll created"],
+      title: "Recently Completed",
+      count: 6,
+      items: [
+        "News article: Match preview published",
+        "Fan photo from @BanksODeeFan87 approved",
+        "League table updated (BBC scraper)",
+        "Commercial enquiry responded to"
+      ],
       icon: CheckCircle,
-      color: "text-green-500", 
+      color: "text-green-600",
       bgColor: "bg-green-50"
     },
     {
-      title: "Upcoming",
-      count: 3,
-      items: ["Sat: vs Huntly (Home)", "Wed: at Fraserburgh (Away)", "Sponsor renewal due"],
+      title: "This Week's Schedule",
+      count: 4,
+      items: [
+        "Monday: Weekly news article due",
+        "Wednesday: Away vs Fraserburgh (7:45pm)",
+        "Friday: Fan of the Month selection",
+        "Saturday: Home vs Inverurie Loco"
+      ],
       icon: Clock,
-      color: "text-amber-500",
-      bgColor: "bg-amber-50"
+      color: "text-blue-600",
+      bgColor: "bg-blue-50"
     }
   ];
 
@@ -37,7 +51,7 @@ export function StatusWidgets() {
           <AdminCard key={index} className={status.bgColor}>
             <div className="flex items-center space-x-3 mb-4">
               <Icon size={20} className={status.color} />
-              <h4 className="font-semibold text-[#00105A]">{status.title}</h4>
+              <h4 className="font-semibold text-[#00105A] m-0">{status.title}</h4>
               <span className={`text-sm font-bold px-2 py-1 rounded-full bg-white ${status.color}`}>
                 {status.count}
               </span>
@@ -50,6 +64,33 @@ export function StatusWidgets() {
                 </li>
               ))}
             </ul>
+            
+            {/* Action button for pending items */}
+            {index === 0 && (
+              <div className="mt-4">
+                <button className="w-full px-3 py-2 bg-amber-100 text-amber-700 rounded text-sm font-medium hover:bg-amber-200">
+                  Review All Pending →
+                </button>
+              </div>
+            )}
+            
+            {/* View more button for completed items */}
+            {index === 1 && (
+              <div className="mt-4">
+                <button className="w-full px-3 py-2 bg-green-100 text-green-700 rounded text-sm font-medium hover:bg-green-200">
+                  View Activity Log →
+                </button>
+              </div>
+            )}
+            
+            {/* Calendar view for schedule */}
+            {index === 2 && (
+              <div className="mt-4">
+                <button className="w-full px-3 py-2 bg-blue-100 text-blue-700 rounded text-sm font-medium hover:bg-blue-200">
+                  View Full Calendar →
+                </button>
+              </div>
+            )}
           </AdminCard>
         );
       })}
