@@ -142,6 +142,12 @@ const Footer = () => {
               >
                 Cookie Policy
               </Link>
+              <Link 
+                href="/admin" 
+                className="hover:text-[#C5E7FF] transition-colors duration-200"
+              >
+                Admin
+              </Link>
             </div>
           </div>
         </div>
