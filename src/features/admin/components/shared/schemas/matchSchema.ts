@@ -1,6 +1,10 @@
 export interface SelectOption {
   value: string;
   label: string;
+  shortName?: string;
+  logoUrl?: string;
+  type?: string;
+  isCurrent?: boolean;
 }
 
 export interface FieldConfig {
@@ -11,9 +15,10 @@ export interface FieldConfig {
   placeholder?: string;
   options?: SelectOption[];
   defaultValue?: any;
-  dataSource?: 'supabase' | 'sanity';
+  dataSource?: 'supabase' | 'sanity' | 'dynamic';
   tableName?: string;
-  readOnlyInEdit?: boolean; // NEW: Show but disabled in EDIT mode
+  readOnlyInEdit?: boolean;
+  dynamicSource?: 'teams' | 'competitions' | 'seasons'; // NEW: For dynamic loading
 }
 
 export const matchSchema: FieldConfig[] = [
@@ -23,95 +28,64 @@ export const matchSchema: FieldConfig[] = [
     type: 'select',
     label: 'Season',
     required: true,
-    readOnlyInEdit: true, // ✅ FROZEN in EDIT
-    dataSource: 'supabase',
-    tableName: 'seasons',
-    options: [
-      { value: '1', label: '2024/25' },
-      { value: '2', label: '2023/24' },
-      { value: '3', label: '2022/23' }
-    ]
+    readOnlyInEdit: true,
+    dataSource: 'dynamic',
+    dynamicSource: 'seasons',
+    options: [] // Will be populated dynamically
   },
   {
     name: 'competition_id',
     type: 'select',
     label: 'Competition',
     required: true,
-    readOnlyInEdit: true, // ✅ FROZEN in EDIT
-    dataSource: 'supabase',
-    tableName: 'competitions',
-    options: [
-      { value: '1', label: 'Highland Football League' },
-      { value: '2', label: 'Scottish FA Cup' },
-      { value: '3', label: 'Highland League Cup' },
-      { value: '4', label: 'Aberdeenshire Cup' },
-      { value: '5', label: 'Premier Sports Cup' }
-    ]
+    readOnlyInEdit: true,
+    dataSource: 'dynamic',
+    dynamicSource: 'competitions',
+    options: [] // Will be populated dynamically
   },
   {
     name: 'home_team_id',
     type: 'select',
     label: 'Home Team',
     required: true,
-    readOnlyInEdit: true, // ✅ FROZEN in EDIT
-    dataSource: 'supabase',
-    tableName: 'teams',
-    options: [
-      { value: '1', label: 'Banks o\' Dee' },
-      { value: '2', label: 'Forres Mechanics' },
-      { value: '3', label: 'Cove Rangers' },
-      { value: '4', label: 'Brora Rangers' },
-      { value: '5', label: 'Fraserburgh' },
-      { value: '6', label: 'Inverurie Loco Works' },
-      { value: '7', label: 'Keith' }
-    ]
+    readOnlyInEdit: true,
+    dataSource: 'dynamic',
+    dynamicSource: 'teams',
+    options: [] // Will be populated dynamically
   },
   {
     name: 'away_team_id',
     type: 'select',
     label: 'Away Team',
     required: true,
-    readOnlyInEdit: true, // ✅ FROZEN in EDIT
-    dataSource: 'supabase',
-    tableName: 'teams',
-    options: [
-      { value: '1', label: 'Banks o\' Dee' },
-      { value: '2', label: 'Forres Mechanics' },
-      { value: '3', label: 'Cove Rangers' },
-      { value: '4', label: 'Brora Rangers' },
-      { value: '5', label: 'Fraserburgh' },
-      { value: '6', label: 'Inverurie Loco Works' },
-      { value: '7', label: 'Keith' }
-    ]
+    readOnlyInEdit: true,
+    dataSource: 'dynamic',
+    dynamicSource: 'teams',
+    options: [] // Will be populated dynamically
   },
   {
     name: 'match_date',
     type: 'date',
     label: 'Match Date',
     required: true,
-    readOnlyInEdit: true, // ✅ FROZEN in EDIT
-    dataSource: 'supabase',
-    tableName: 'match'
+    readOnlyInEdit: true
   },
   {
     name: 'match_time',
     type: 'time',
     label: 'Kick-off Time',
-    required: true,
-    readOnlyInEdit: true, // ✅ FROZEN in EDIT
-    dataSource: 'supabase',
-    tableName: 'match'
+    required: false,
+    readOnlyInEdit: true,
+    defaultValue: '15:00'
   },
   {
     name: 'venue',
     type: 'text',
     label: 'Venue',
     required: true,
-    readOnlyInEdit: true, // ✅ FROZEN in EDIT
+    readOnlyInEdit: true,
     placeholder: 'Spain Park',
-    defaultValue: 'Spain Park',
-    dataSource: 'supabase',
-    tableName: 'match'
+    defaultValue: 'Spain Park'
   },
   
   // EDITABLE FIELDS IN BOTH ADD AND EDIT (match results and links)
@@ -119,28 +93,25 @@ export const matchSchema: FieldConfig[] = [
     name: 'home_score',
     type: 'number',
     label: 'Home Score',
-    readOnlyInEdit: false, // ✅ EDITABLE in EDIT
-    dataSource: 'supabase',
-    tableName: 'match'
+    readOnlyInEdit: false,
+    placeholder: 'Home goals scored'
   },
   {
     name: 'away_score',
     type: 'number',
     label: 'Away Score',
-    readOnlyInEdit: false, // ✅ EDITABLE in EDIT
-    dataSource: 'supabase',
-    tableName: 'match'
+    readOnlyInEdit: false,
+    placeholder: 'Away goals scored'
   },
   {
     name: 'status',
     type: 'select',
     label: 'Status',
-    readOnlyInEdit: false, // ✅ EDITABLE in EDIT
-    dataSource: 'supabase',
-    tableName: 'match',
+    readOnlyInEdit: false,
     defaultValue: 'scheduled',
     options: [
       { value: 'scheduled', label: 'Scheduled' },
+      { value: 'in_progress', label: 'In Progress' },
       { value: 'completed', label: 'Completed' }
     ]
   },
@@ -148,60 +119,43 @@ export const matchSchema: FieldConfig[] = [
     name: 'hospitality_available',
     type: 'boolean',
     label: 'Hospitality Available',
-    readOnlyInEdit: false, // ✅ EDITABLE in EDIT
-    defaultValue: false,
-    dataSource: 'supabase',
-    tableName: 'match'
+    readOnlyInEdit: false,
+    defaultValue: false
   },
   {
     name: 'is_highlighted',
     type: 'boolean',
     label: 'Featured Match',
-    readOnlyInEdit: false, // ✅ EDITABLE in EDIT
-    defaultValue: false,
-    dataSource: 'supabase',
-    tableName: 'match'
+    readOnlyInEdit: false,
+    defaultValue: false
   },
   {
     name: 'ticket_link',
     type: 'url',
     label: 'Ticket Link',
-    readOnlyInEdit: false, // ✅ EDITABLE in EDIT
-    placeholder: 'https://...',
-    dataSource: 'supabase',
-    tableName: 'match'
+    readOnlyInEdit: false,
+    placeholder: 'https://...'
   },
   {
     name: 'match_report_link',
     type: 'url',
     label: 'Match Report Link',
-    readOnlyInEdit: false, // ✅ EDITABLE in EDIT
-    placeholder: 'Link to Sanity news article',
-    dataSource: 'supabase',
-    tableName: 'match'
+    readOnlyInEdit: false,
+    placeholder: 'Link to Sanity news article'
   },
   {
     name: 'gallery_idsanity',
     type: 'text',
     label: 'Gallery ID (Sanity)',
-    readOnlyInEdit: false, // ✅ EDITABLE in EDIT
-    placeholder: 'Sanity document ID',
-    dataSource: 'supabase',
-    tableName: 'match'
+    readOnlyInEdit: false,
+    placeholder: 'Sanity document ID for match photos'
   },
   {
     name: 'match_sponsor_id',
-    type: 'select',
-    label: 'Match Sponsor',
-    readOnlyInEdit: false, // ✅ EDITABLE in EDIT
-    dataSource: 'supabase',
-    tableName: 'match',
-    options: [
-      { value: '', label: 'No Sponsor' },
-      { value: '1', label: 'Local Business A' },
-      { value: '2', label: 'Local Business B' },
-      { value: '3', label: 'Local Business C' }
-    ]
+    type: 'text',
+    label: 'Match Sponsor ID',
+    readOnlyInEdit: false,
+    placeholder: 'Sanity sponsor document ID (optional)'
   }
 ];
 

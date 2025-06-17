@@ -8,7 +8,6 @@ export function MatchOperations() {
   return (
     <div className="flex">
       <SharedAdminNav />
-      
       <div className="flex-1">
         <header className="bg-white border-b border-[#e5e7eb] px-8 py-6">
           <div className="flex justify-between items-center">
@@ -26,20 +25,20 @@ export function MatchOperations() {
           {/* Tab System */}
           <Tabs defaultValue="match-data" className="w-full">
             <TabsList className="grid w-full grid-cols-3 bg-[#f9fafb] border border-[#e5e7eb]">
-              <TabsTrigger 
-                value="match-data" 
+              <TabsTrigger
+                value="match-data"
                 className="data-[state=active]:bg-[#C5E7FF] data-[state=active]:text-[#00105A] font-medium"
               >
-                🔥 Match Data Management
+                ✅ Match Data Management
               </TabsTrigger>
-              <TabsTrigger 
-                value="league-tables" 
+              <TabsTrigger
+                value="league-tables"
                 className="data-[state=active]:bg-[#C5E7FF] data-[state=active]:text-[#00105A] font-medium"
               >
                 ⚡ League Tables & Scraping
               </TabsTrigger>
-              <TabsTrigger 
-                value="teams-competitions" 
+              <TabsTrigger
+                value="teams-competitions"
                 className="data-[state=active]:bg-[#C5E7FF] data-[state=active]:text-[#00105A] font-medium"
               >
                 📅 Teams & Competitions

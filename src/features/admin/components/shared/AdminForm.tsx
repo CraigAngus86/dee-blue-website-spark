@@ -28,6 +28,11 @@ export function AdminForm({ schema, initialData = {}, onSubmit, mode, isLoading 
     setFormData(initData);
   }, [initialData, schema]);
 
+  // Word count function
+  const countWords = (text: string): number => {
+    return text.trim().split(/\s+/).filter(word => word.length > 0).length;
+  };
+
   const handleFieldChange = (fieldName: string, value: any) => {
     setFormData(prev => ({
       ...prev,
@@ -49,16 +54,36 @@ export function AdminForm({ schema, initialData = {}, onSubmit, mode, isLoading 
     schema.forEach(field => {
       // Only validate required fields that are not read-only in current mode
       const isReadOnly = mode === 'edit' && field.readOnlyInEdit;
+      const fieldValue = formData[field.name];
       
-      if (field.required && !isReadOnly && (!formData[field.name] || formData[field.name] === '')) {
+      if (field.required && !isReadOnly && (!fieldValue || fieldValue === '')) {
         newErrors[field.name] = `${field.label} is required`;
       }
       
+      // Word count validation
+      if (field.validation?.wordCount && fieldValue && typeof fieldValue === 'string') {
+        const wordCount = countWords(fieldValue);
+        const { min, max } = field.validation.wordCount;
+        
+        if (wordCount < min) {
+          newErrors[field.name] = `${field.label} must be at least ${min} words`;
+        } else if (wordCount > max) {
+          newErrors[field.name] = `${field.label} must be no more than ${max} words`;
+        }
+      }
+      
+      // Max length validation
+      if (field.validation?.maxLength && fieldValue && typeof fieldValue === 'string') {
+        if (fieldValue.length > field.validation.maxLength) {
+          newErrors[field.name] = `${field.label} must be no more than ${field.validation.maxLength} characters`;
+        }
+      }
+      
       // Type-specific validation (only for non-read-only fields)
-      if (!isReadOnly && formData[field.name]) {
+      if (!isReadOnly && fieldValue) {
         if (field.type === 'url') {
           try {
-            new URL(formData[field.name]);
+            new URL(fieldValue);
           } catch {
             newErrors[field.name] = 'Please enter a valid URL';
           }
@@ -74,6 +99,7 @@ export function AdminForm({ schema, initialData = {}, onSubmit, mode, isLoading 
     e.preventDefault();
     
     if (validateForm()) {
+      // Check if form has file fields - if so, data is already in correct format from AdminModal
       onSubmit(formData);
     }
   };
@@ -87,9 +113,9 @@ export function AdminForm({ schema, initialData = {}, onSubmit, mode, isLoading 
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
             </svg>
           </div>
-          <h3 className="text-lg font-medium text-[#374151] mb-2">Delete Match</h3>
+          <h3 className="text-lg font-medium text-[#374151] mb-2">Delete Item</h3>
           <p className="text-sm text-[#6b7280] mb-6">
-            Are you sure you want to delete this match? This action cannot be undone.
+            Are you sure you want to delete this item? This action cannot be undone.
           </p>
           <div className="flex justify-center space-x-3">
             <button
@@ -108,68 +134,26 @@ export function AdminForm({ schema, initialData = {}, onSubmit, mode, isLoading 
 
   return (
     <form onSubmit={handleSubmit} className="p-6">
-      {/* Form sections for better organization */}
-      {mode === 'add' && (
-        <div className="mb-6">
-          <h3 className="text-lg font-medium text-[#00105A] mb-4">Match Details</h3>
-          <div className="space-y-4">
-            {schema.slice(0, 7).map((field) => ( // First 7 fields: season, competition, teams, date, time, venue
-              <AdminField
-                key={field.name}
-                field={field}
-                value={formData[field.name]}
-                onChange={(value) => handleFieldChange(field.name, value)}
-                error={errors[field.name]}
-                mode={mode}
-              />
-            ))}
-          </div>
-        </div>
-      )}
-      
-      {mode === 'edit' && (
-        <div className="mb-6">
-          <h3 className="text-lg font-medium text-[#00105A] mb-4">Match Information (Read-Only)</h3>
-          <div className="bg-[#f9fafb] p-4 rounded-lg border border-[#e5e7eb] space-y-4">
-            {schema.slice(0, 7).map((field) => ( // First 7 fields: frozen in edit
-              <AdminField
-                key={field.name}
-                field={field}
-                value={formData[field.name]}
-                onChange={(value) => handleFieldChange(field.name, value)}
-                error={errors[field.name]}
-                mode={mode}
-              />
-            ))}
-          </div>
-        </div>
-      )}
-      
-      <div className="mb-6">
-        <h3 className="text-lg font-medium text-[#00105A] mb-4">
-          {mode === 'add' ? 'Match Status & Links (Optional)' : 'Match Results & Links'}
-        </h3>
-        <div className="space-y-4">
-          {schema.slice(7).map((field) => ( // Remaining fields: scores, status, links
-            <AdminField
-              key={field.name}
-              field={field}
-              value={formData[field.name]}
-              onChange={(value) => handleFieldChange(field.name, value)}
-              error={errors[field.name]}
-              mode={mode}
-            />
-          ))}
-        </div>
+      <div className="space-y-4">
+        {schema.map((field) => (
+          <AdminField
+            key={field.name}
+            field={field}
+            value={formData[field.name]}
+            onChange={(value) => handleFieldChange(field.name, value)}
+            error={errors[field.name]}
+            mode={mode}
+          />
+        ))}
       </div>
       
-      <div className="flex justify-end space-x-3 pt-4 border-t border-[#e5e7eb]">
+      <div className="flex justify-end space-x-3 pt-4 border-t border-[#e5e7eb] mt-6">
         <button
           type="submit"
           disabled={isLoading}
           className="px-4 py-2 bg-[#00105A] text-white rounded hover:bg-[#FFD700] hover:text-[#00105A] disabled:opacity-50 font-medium transition-colors"
         >
-          {isLoading ? 'Saving...' : mode === 'add' ? 'Add Match' : 'Save Changes'}
+          {isLoading ? 'Saving...' : mode === 'add' ? 'Create' : 'Save Changes'}
         </button>
       </div>
     </form>
