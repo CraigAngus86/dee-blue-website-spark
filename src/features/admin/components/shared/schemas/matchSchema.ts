@@ -9,7 +9,7 @@ export interface SelectOption {
 
 export interface FieldConfig {
   name: string;
-  type: 'text' | 'number' | 'select' | 'date' | 'time' | 'boolean' | 'textarea' | 'url';
+  type: 'text' | 'number' | 'select' | 'date' | 'time' | 'boolean' | 'textarea' | 'url' | 'datetime' | 'file';
   label: string;
   required?: boolean;
   placeholder?: string;
@@ -18,7 +18,13 @@ export interface FieldConfig {
   dataSource?: 'supabase' | 'sanity' | 'dynamic';
   tableName?: string;
   readOnlyInEdit?: boolean;
-  dynamicSource?: 'teams' | 'competitions' | 'seasons'; // NEW: For dynamic loading
+  dynamicSource?: 'teams' | 'competitions' | 'seasons';
+  validation?: {
+    wordCount?: { min: number; max: number };
+    maxLength?: number;
+    fileTypes?: string[];
+    maxSize?: number;
+  };
 }
 
 export const matchSchema: FieldConfig[] = [
@@ -87,7 +93,6 @@ export const matchSchema: FieldConfig[] = [
     placeholder: 'Spain Park',
     defaultValue: 'Spain Park'
   },
-  
   // EDITABLE FIELDS IN BOTH ADD AND EDIT (match results and links)
   {
     name: 'home_score',
