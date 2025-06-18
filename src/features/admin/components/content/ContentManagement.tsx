@@ -28,13 +28,13 @@ export function ContentManagement() {
                 value="news-management"
                 className="data-[state=active]:bg-[#C5E7FF] data-[state=active]:text-[#00105A] font-medium"
               >
-                🔥 News Management
+                ✅ News Management
               </TabsTrigger>
               <TabsTrigger
                 value="match-reports"
                 className="data-[state=active]:bg-[#C5E7FF] data-[state=active]:text-[#00105A] font-medium"
               >
-                🔥 Match Reports
+                ✅ Match Reports
               </TabsTrigger>
               <TabsTrigger
                 value="match-gallery"

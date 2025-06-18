@@ -6,7 +6,7 @@ import { X } from 'lucide-react';
 interface AdminModalProps {
   isOpen: boolean;
   onClose: () => void;
-  entityType: 'match' | 'fanSubmission' | 'news' | 'team';
+  entityType: 'match' | 'fanSubmission' | 'news' | 'matchReport'; // Added matchReport
   mode: 'add' | 'edit' | 'delete';
   recordId?: string;
   onSuccess?: () => void;
@@ -39,6 +39,9 @@ export function AdminModal({
       } else if (entityType === 'news') {
         const { getSchemaForEntity } = await import('./schemas/newsSchema');
         baseSchema = getSchemaForEntity(entityType);
+      } else if (entityType === 'matchReport') {
+        const { getSchemaForEntity } = await import('./schemas/matchReportSchema');
+        baseSchema = getSchemaForEntity(entityType);
       } else {
         console.warn(`No schema found for entity type: ${entityType}`);
         setSchema([]);
@@ -55,6 +58,12 @@ export function AdminModal({
       let dropdownData = null;
       if (entityType === 'match') {
         const response = await fetch('/api/admin/matches/dropdowns');
+        const result = await response.json();
+        if (result.success) {
+          dropdownData = result.data;
+        }
+      } else if (entityType === 'matchReport') {
+        const response = await fetch('/api/admin/match-reports/dropdowns');
         const result = await response.json();
         if (result.success) {
           dropdownData = result.data;
@@ -89,6 +98,9 @@ export function AdminModal({
               ...season,
               label: season.isCurrent ? `${season.label} (Current)` : season.label
             })) || [];
+            break;
+          case 'recentMatches':
+            dynamicOptions = dropdownData.recentMatches || [];
             break;
           default:
             console.warn(`Unknown dynamic source: ${field.dynamicSource}`);
@@ -167,6 +179,27 @@ export function AdminModal({
           console.error('Article not found');
           setInitialData({});
         }
+      } else if (entityType === 'matchReport') {
+        // Fetch specific match report from Sanity
+        const response = await fetch(`/api/admin/match-reports?id=${recordId}`);
+        const result = await response.json();
+        
+        if (result.success && result.articles && result.articles.length > 0) {
+          const articleData = result.articles[0];
+          setInitialData({
+            matchId: articleData.matchId,
+            title: articleData.title,
+            author: articleData.author,
+            mainImage: articleData.mainImage?.public_id || '',
+            excerpt: articleData.excerpt,
+            publishedAt: articleData.publishedAt ? articleData.publishedAt.substring(0, 16) : '',
+            seoMetaTitle: articleData.seo?.metaTitle || '',
+            seoMetaDescription: articleData.seo?.metaDescription || ''
+          });
+        } else {
+          console.error('Match report not found');
+          setInitialData({});
+        }
       }
       
     } catch (error) {
@@ -235,8 +268,8 @@ export function AdminModal({
           
           console.log('Update successful:', result.message);
         }
-      } else if (entityType === 'news') {
-        // News uses FormData for Cloudinary uploads
+      } else if (entityType === 'news' || entityType === 'matchReport') {
+        // Both news and match reports use FormData for Cloudinary uploads
         const apiFormData = new FormData();
         
         // Add all form fields to FormData
@@ -246,8 +279,10 @@ export function AdminModal({
           }
         });
 
+        const apiPath = entityType === 'news' ? '/api/admin/news' : '/api/admin/match-reports';
+
         if (mode === 'delete') {
-          const response = await fetch(`/api/admin/news?id=${recordId}`, {
+          const response = await fetch(`${apiPath}?id=${recordId}`, {
             method: 'DELETE'
           });
           const result = await response.json();
@@ -259,7 +294,7 @@ export function AdminModal({
           console.log('Delete successful:', result.message);
           
         } else if (mode === 'add') {
-          const response = await fetch('/api/admin/news', {
+          const response = await fetch(apiPath, {
             method: 'POST',
             body: apiFormData
           });
@@ -275,7 +310,7 @@ export function AdminModal({
           // Add the article ID for updates
           apiFormData.append('id', recordId || '');
           
-          const response = await fetch('/api/admin/news', {
+          const response = await fetch(apiPath, {
             method: 'PUT',
             body: apiFormData
           });
@@ -333,7 +368,8 @@ export function AdminModal({
   if (!isOpen) return null;
 
   const getModalTitle = () => {
-    const entityName = entityType.charAt(0).toUpperCase() + entityType.slice(1);
+    const entityName = entityType === 'matchReport' ? 'Match Report' : 
+                      entityType.charAt(0).toUpperCase() + entityType.slice(1);
     switch (mode) {
       case 'add':
         return `Add New ${entityName}`;

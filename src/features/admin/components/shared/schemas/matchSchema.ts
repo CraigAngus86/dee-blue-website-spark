@@ -18,7 +18,7 @@ export interface FieldConfig {
   dataSource?: 'supabase' | 'sanity' | 'dynamic';
   tableName?: string;
   readOnlyInEdit?: boolean;
-  dynamicSource?: 'teams' | 'competitions' | 'seasons';
+  dynamicSource?: 'teams' | 'competitions' | 'seasons' | 'recentMatches'; // Added recentMatches
   validation?: {
     wordCount?: { min: number; max: number };
     maxLength?: number;

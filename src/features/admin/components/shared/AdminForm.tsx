@@ -33,6 +33,28 @@ export function AdminForm({ schema, initialData = {}, onSubmit, mode, isLoading 
     return text.trim().split(/\s+/).filter(word => word.length > 0).length;
   };
 
+  // Auto-generate title when match is selected (for match reports)
+  useEffect(() => {
+    const matchIdField = schema.find(field => field.name === 'matchId');
+    const titleField = schema.find(field => field.name === 'title');
+    
+    if (matchIdField && titleField && formData.matchId && mode === 'add') {
+      // Find the selected match from the dropdown options
+      const selectedMatch = matchIdField.options?.find(option => option.value === formData.matchId);
+      
+      if (selectedMatch && selectedMatch.label) {
+        // Extract match info from label and generate title
+        // Format: "Home Team v Away Team Match Report" 
+        const generatedTitle = selectedMatch.label;
+        
+        setFormData(prev => ({
+          ...prev,
+          title: generatedTitle
+        }));
+      }
+    }
+  }, [formData.matchId, schema, mode]);
+
   const handleFieldChange = (fieldName: string, value: any) => {
     setFormData(prev => ({
       ...prev,
@@ -99,7 +121,6 @@ export function AdminForm({ schema, initialData = {}, onSubmit, mode, isLoading 
     e.preventDefault();
     
     if (validateForm()) {
-      // Check if form has file fields - if so, data is already in correct format from AdminModal
       onSubmit(formData);
     }
   };
