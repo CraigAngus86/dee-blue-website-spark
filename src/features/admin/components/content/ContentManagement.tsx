@@ -40,7 +40,7 @@ export function ContentManagement() {
                 value="match-gallery"
                 className="data-[state=active]:bg-[#C5E7FF] data-[state=active]:text-[#00105A] font-medium"
               >
-                ⚡ Match Gallery Creator
+                ✅ Match Gallery Creator
               </TabsTrigger>
             </TabsList>
             <TabsContent value="news-management" className="mt-6">

@@ -5,152 +5,132 @@ export default {
   groups: [
     { name: 'basic', title: 'Basic Information' },
     { name: 'photos', title: 'Photos' },
+    { name: 'seo', title: 'SEO & Publishing' },
     { name: 'reference', title: 'Database Reference' },
   ],
   fields: [
     {
-      name: 'homeTeam',
-      title: 'Home Team',
-      type: 'string',
-      options: {
-        list: [
-          'Banks O\' Dee',
-          'Brechin City',
-          'Brora Rangers',
-          'Buckie Thistle',
-          'Clachnacuddin',
-          'Deveronvale',
-          'Formartine United',
-          'Forres Mechanics',
-          'Fraserburgh',
-          'Huntly',
-          'Inverurie Loco Works',
-          'Keith',
-          'Lossiemouth',
-          'Nairn County',
-          'Rothes',
-          'Strathspey Thistle',
-          'Turriff United',
-          'Wick Academy'
-        ].sort()
-      },
-      description: 'Select the home team',
-      validation: Rule => Rule.required(),
-      group: 'basic'
-    },
-    {
-      name: 'awayTeam',
-      title: 'Away Team',
-      type: 'string',
-      options: {
-        list: [
-          'Banks O\' Dee',
-          'Brechin City',
-          'Brora Rangers',
-          'Buckie Thistle',
-          'Clachnacuddin',
-          'Deveronvale',
-          'Formartine United',
-          'Forres Mechanics',
-          'Fraserburgh',
-          'Huntly',
-          'Inverurie Loco Works',
-          'Keith',
-          'Lossiemouth',
-          'Nairn County',
-          'Rothes',
-          'Strathspey Thistle',
-          'Turriff United',
-          'Wick Academy'
-        ].sort()
-      },
-      description: 'Select the away team',
-      validation: Rule => Rule.required(),
-      group: 'basic'
-    },
-    {
-      name: 'matchDate',
-      title: 'Match Date',
-      type: 'date',
-      description: 'Select the date of the match',
-      validation: Rule => Rule.required(),
-      group: 'basic'
-    },
-    {
       name: 'title',
       title: 'Gallery Title',
       type: 'string',
-      description: 'Title will be auto-generated when you click the "Generate Names" button',
+      description: 'Auto-generated from admin: "Team A v Team B Gallery"',
+      validation: Rule => Rule.required(),
       group: 'basic'
     },
     {
-      name: 'supabaseId',
-      title: 'Supabase UUID',
-      type: 'string',
-      description: 'Match ID in Supabase database (for future use)',
-      group: 'reference'
+      name: 'slug',
+      title: 'URL Slug',
+      type: 'slug',
+      options: {
+        source: 'title',
+        maxLength: 96,
+      },
+      description: 'Auto-generated from title',
+      group: 'basic'
     },
     {
-      name: 'sanityId',
-      title: 'Sanity ID',
+      name: 'excerpt',
+      title: 'Gallery Description',
+      type: 'text',
+      rows: 3,
+      description: 'Brief gallery description (20 words max)',
+      validation: Rule => Rule.required().max(300),
+      group: 'basic'
+    },
+    {
+      name: 'author',
+      title: 'Photographer/Author',
       type: 'string',
-      description: 'Sanity document ID (auto-filled when you click the "Generate Names" button)',
-      readOnly: true,
-      group: 'reference'
+      description: 'Photographer or gallery creator name',
+      validation: Rule => Rule.required(),
+      group: 'basic'
     },
     {
       name: 'folderName',
       title: 'Cloudinary Folder Name',
       type: 'string',
-      description: 'Folder name will be auto-generated when you click the "Generate Names" button',
-      group: 'photos',
+      description: 'Auto-generated: YYMMDD_HomeTeam_AwayTeam',
+      readOnly: true,
+      group: 'photos'
     },
     {
-      name: 'galleryImages',
+      name: 'photoCount',
+      title: 'Photo Count',
+      type: 'number',
+      description: 'Number of photos in gallery',
+      readOnly: true,
+      group: 'photos'
+    },
+    {
+      name: 'photos',
       title: 'Match Photos',
       type: 'array',
       of: [{ type: 'cloudinary.asset' }],
       options: {
         layout: 'grid'
       },
-      description: 'Upload match photos to this gallery',
+      description: 'All match photos uploaded via admin',
       group: 'photos'
     },
     {
       name: 'coverImage',
       title: 'Cover Image',
       type: 'cloudinary.asset',
-      options: {
-        folder: 'banksofdeefc/matches/gallery'
-      },
-      description: 'Select an image to be used as the cover image',
+      description: 'Gallery cover/preview image',
       validation: Rule => Rule.required(),
       group: 'photos'
     },
     {
-      name: 'photographer',
-      title: 'Photographer',
+      name: 'publishedAt',
+      title: 'Published Date',
+      type: 'datetime',
+      description: 'When gallery was published',
+      group: 'seo'
+    },
+    {
+      name: 'seo',
+      title: 'SEO Settings',
+      type: 'object',
+      group: 'seo',
+      fields: [
+        {
+          name: 'metaTitle',
+          title: 'Meta Title',
+          type: 'string',
+          validation: Rule => Rule.max(60)
+        },
+        {
+          name: 'metaDescription',
+          title: 'Meta Description',
+          type: 'text',
+          rows: 2,
+          validation: Rule => Rule.max(160)
+        }
+      ]
+    },
+    {
+      name: 'matchId',
+      title: 'Supabase Match ID',
       type: 'string',
-      description: 'Name of photographer for attribution',
-      group: 'basic'
+      description: 'Links to match record in Supabase database',
+      validation: Rule => Rule.regex(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/),
+      group: 'reference'
     }
   ],
   preview: {
     select: {
       title: 'title',
       media: 'coverImage',
-      date: 'matchDate',
-      homeTeam: 'homeTeam',
-      awayTeam: 'awayTeam'
+      author: 'author',
+      photoCount: 'photoCount'
     },
-    prepare({title, media, date, homeTeam, awayTeam}) {
-      const matchInfo = homeTeam && awayTeam ? `${homeTeam} vs ${awayTeam}` : '';
+    prepare({title, media, author, photoCount}) {
       return {
         title: title || 'Untitled Gallery',
         media,
         subtitle: [
-          matchInfo,
-          date ? new Date(date).toLocaleDateString() : 'No date'
+          author && `by ${author}`,
+          photoCount && `${photoCount} photos`
         ].filter(Boolean).join(' • ')
       }
     }

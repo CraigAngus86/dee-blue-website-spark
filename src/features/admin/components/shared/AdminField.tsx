@@ -11,6 +11,7 @@ interface AdminFieldProps {
 }
 
 export function AdminField({ field, value, onChange, error, mode = 'add' }: AdminFieldProps) {
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   
   // Determine if field should be read-only
@@ -21,7 +22,38 @@ export function AdminField({ field, value, onChange, error, mode = 'add' }: Admi
     return text.trim().split(/\s+/).filter(word => word.length > 0).length;
   };
 
-  // File upload handler
+  // Multiple file upload handler (for photos field)
+  const handleMultipleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    // Validate file count
+    if (field.validation?.maxFiles && files.length > field.validation.maxFiles) {
+      alert(`Maximum ${field.validation.maxFiles} files allowed`);
+      return;
+    }
+
+    // Validate each file
+    for (const file of files) {
+      // Validate file type
+      if (field.validation?.fileTypes && !field.validation.fileTypes.includes(file.type)) {
+        alert(`Invalid file format for ${file.name}. Please use: ${field.validation.fileTypes.join(', ')}`);
+        return;
+      }
+
+      // Validate file size
+      if (field.validation?.maxSize && file.size > field.validation.maxSize) {
+        const maxSizeMB = field.validation.maxSize / (1024 * 1024);
+        alert(`File ${file.name} too large. Maximum size: ${maxSizeMB}MB`);
+        return;
+      }
+    }
+
+    setSelectedFiles(files);
+    onChange(files);
+  };
+
+  // Single file upload handler
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -43,10 +75,23 @@ export function AdminField({ field, value, onChange, error, mode = 'add' }: Admi
     onChange(file);
   };
 
-  // Remove selected file
-  const removeFile = () => {
-    setSelectedFile(null);
-    onChange(null);
+  // Remove selected file(s)
+  const removeFile = (index?: number) => {
+    if (field.multiple) {
+      if (index !== undefined) {
+        // Remove specific file
+        const newFiles = selectedFiles.filter((_, i) => i !== index);
+        setSelectedFiles(newFiles);
+        onChange(newFiles);
+      } else {
+        // Remove all files
+        setSelectedFiles([]);
+        onChange([]);
+      }
+    } else {
+      setSelectedFile(null);
+      onChange(null);
+    }
   };
 
   const fieldProps = {
@@ -176,6 +221,97 @@ export function AdminField({ field, value, onChange, error, mode = 'add' }: Admi
       );
 
     case 'file':
+      // Handle multiple files (for photos field)
+      if (field.multiple) {
+        return (
+          <div>
+            <label className="block text-sm font-medium text-[#374151] mb-2">
+              {field.label}
+              {field.required && <span className="text-red-500 ml-1">*</span>}
+            </label>
+            
+            {selectedFiles.length === 0 ? (
+              <div className="border-2 border-dashed border-[#e5e7eb] rounded-lg p-6 text-center">
+                <Upload className="mx-auto h-12 w-12 text-[#6b7280] mb-4" />
+                <div className="text-sm text-[#6b7280] mb-2">
+                  {field.placeholder || 'Click to upload files'}
+                </div>
+                <input
+                  type="file"
+                  onChange={handleMultipleFileSelect}
+                  accept={field.validation?.fileTypes?.join(',')}
+                  multiple
+                  className="hidden"
+                  id={`file-upload-${field.name}`}
+                  disabled={isReadOnly}
+                />
+                <label
+                  htmlFor={`file-upload-${field.name}`}
+                  className="inline-block bg-[#C5E7FF] text-[#00105A] px-4 py-2 rounded cursor-pointer hover:bg-[#b3deff] transition-colors"
+                >
+                  Choose Files
+                </label>
+                {field.validation && (
+                  <div className="text-xs text-[#6b7280] mt-2">
+                    {field.validation.fileTypes && `Formats: ${field.validation.fileTypes.join(', ')}`}
+                    {field.validation.maxSize && ` • Max: ${(field.validation.maxSize / (1024 * 1024)).toFixed(1)}MB each`}
+                    {field.validation.maxFiles && ` • Max files: ${field.validation.maxFiles}`}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-medium text-[#374151]">
+                    {selectedFiles.length} file{selectedFiles.length > 1 ? 's' : ''} selected
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => removeFile()}
+                    className="text-red-500 hover:text-red-700 text-sm"
+                  >
+                    Remove All
+                  </button>
+                </div>
+                <div className="grid grid-cols-2 gap-3 max-h-60 overflow-y-auto">
+                  {selectedFiles.map((file, index) => (
+                    <div key={index} className="border border-[#e5e7eb] rounded-lg p-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2 min-w-0">
+                          {file.type.startsWith('image/') && (
+                            <img
+                              src={URL.createObjectURL(file)}
+                              alt="Preview"
+                              className="w-8 h-8 object-cover rounded flex-shrink-0"
+                            />
+                          )}
+                          <div className="min-w-0">
+                            <div className="text-xs font-medium text-[#374151] truncate">{file.name}</div>
+                            <div className="text-xs text-[#6b7280]">
+                              {(file.size / (1024 * 1024)).toFixed(1)} MB
+                            </div>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => removeFile(index)}
+                          className="text-red-500 hover:text-red-700 p-1 flex-shrink-0"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
+          </div>
+        );
+      }
+
+      // Handle single file upload
       return (
         <div>
           <label className="block text-sm font-medium text-[#374151] mb-2">
@@ -230,7 +366,7 @@ export function AdminField({ field, value, onChange, error, mode = 'add' }: Admi
                 </div>
                 <button
                   type="button"
-                  onClick={removeFile}
+                  onClick={() => removeFile()}
                   className="text-red-500 hover:text-red-700 p-1"
                 >
                   <X className="w-4 h-4" />

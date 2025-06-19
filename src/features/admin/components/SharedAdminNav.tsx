@@ -23,7 +23,7 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { id: 'dashboard', name: 'Dashboard', icon: Home, href: '/admin', enabled: true },
-  { id: 'content', name: 'Content Management', icon: FileText, href: '/admin/content', enabled: true, priority: '🔥' },
+  { id: 'content', name: 'Content Management', icon: FileText, href: '/admin/content', enabled: true, priority: '✅' },
   { id: 'matches', name: 'Match Operations', icon: Trophy, href: '/admin/matches', enabled: true, priority: '🔥' },
   { id: 'community', name: 'Community Management', icon: Users2, href: '/admin/community', enabled: true, priority: '🔥' },
   { id: 'commercial', name: 'Commercial Management', icon: Building2, href: '/admin/commercial', enabled: true, priority: '⚡' },

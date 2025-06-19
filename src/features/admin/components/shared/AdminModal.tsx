@@ -6,7 +6,7 @@ import { X } from 'lucide-react';
 interface AdminModalProps {
   isOpen: boolean;
   onClose: () => void;
-  entityType: 'match' | 'fanSubmission' | 'news' | 'matchReport'; // Added matchReport
+  entityType: 'match' | 'fanSubmission' | 'news' | 'matchReport' | 'matchGallery'; // Added matchGallery
   mode: 'add' | 'edit' | 'delete';
   recordId?: string;
   onSuccess?: () => void;
@@ -42,6 +42,9 @@ export function AdminModal({
       } else if (entityType === 'matchReport') {
         const { getSchemaForEntity } = await import('./schemas/matchReportSchema');
         baseSchema = getSchemaForEntity(entityType);
+      } else if (entityType === 'matchGallery') {
+        const { getSchemaForEntity } = await import('./schemas/matchGallerySchema');
+        baseSchema = getSchemaForEntity(entityType);
       } else {
         console.warn(`No schema found for entity type: ${entityType}`);
         setSchema([]);
@@ -64,6 +67,12 @@ export function AdminModal({
         }
       } else if (entityType === 'matchReport') {
         const response = await fetch('/api/admin/match-reports/dropdowns');
+        const result = await response.json();
+        if (result.success) {
+          dropdownData = result.data;
+        }
+      } else if (entityType === 'matchGallery') {
+        const response = await fetch('/api/admin/match-galleries/dropdowns');
         const result = await response.json();
         if (result.success) {
           dropdownData = result.data;
@@ -200,6 +209,29 @@ export function AdminModal({
           console.error('Match report not found');
           setInitialData({});
         }
+      } else if (entityType === 'matchGallery') {
+        // Fetch specific match gallery from Sanity
+        const response = await fetch(`/api/admin/match-galleries?id=${recordId}`);
+        const result = await response.json();
+        
+        if (result.success && result.articles && result.articles.length > 0) {
+          const galleryData = result.articles[0];
+          setInitialData({
+            matchId: galleryData.matchId,
+            title: galleryData.title,
+            folderName: galleryData.folderName,
+            author: galleryData.author,
+            excerpt: galleryData.excerpt,
+            coverImage: galleryData.coverImage?.public_id || '',
+            photoCount: galleryData.photoCount || 0,
+            publishedAt: galleryData.publishedAt ? galleryData.publishedAt.substring(0, 16) : '',
+            seoMetaTitle: galleryData.seo?.metaTitle || '',
+            seoMetaDescription: galleryData.seo?.metaDescription || ''
+          });
+        } else {
+          console.error('Match gallery not found');
+          setInitialData({});
+        }
       }
       
     } catch (error) {
@@ -268,18 +300,27 @@ export function AdminModal({
           
           console.log('Update successful:', result.message);
         }
-      } else if (entityType === 'news' || entityType === 'matchReport') {
-        // Both news and match reports use FormData for Cloudinary uploads
+      } else if (entityType === 'news' || entityType === 'matchReport' || entityType === 'matchGallery') {
+        // News, match reports, and match galleries use FormData for Cloudinary uploads
         const apiFormData = new FormData();
         
         // Add all form fields to FormData
         Object.keys(formData).forEach(key => {
           if (formData[key] !== null && formData[key] !== undefined && formData[key] !== '') {
-            apiFormData.append(key, formData[key]);
+            // Handle multiple files for photos field
+            if (key === 'photos' && Array.isArray(formData[key])) {
+              formData[key].forEach((file: File) => {
+                apiFormData.append('photos', file);
+              });
+            } else {
+              apiFormData.append(key, formData[key]);
+            }
           }
         });
 
-        const apiPath = entityType === 'news' ? '/api/admin/news' : '/api/admin/match-reports';
+        const apiPath = entityType === 'news' ? '/api/admin/news' : 
+                       entityType === 'matchReport' ? '/api/admin/match-reports' :
+                       '/api/admin/match-galleries';
 
         if (mode === 'delete') {
           const response = await fetch(`${apiPath}?id=${recordId}`, {
@@ -307,7 +348,7 @@ export function AdminModal({
           console.log('Create successful:', result.message);
           
         } else if (mode === 'edit') {
-          // Add the article ID for updates
+          // Add the article/gallery ID for updates
           apiFormData.append('id', recordId || '');
           
           const response = await fetch(apiPath, {
@@ -369,6 +410,7 @@ export function AdminModal({
 
   const getModalTitle = () => {
     const entityName = entityType === 'matchReport' ? 'Match Report' : 
+                      entityType === 'matchGallery' ? 'Match Gallery' :
                       entityType.charAt(0).toUpperCase() + entityType.slice(1);
     switch (mode) {
       case 'add':

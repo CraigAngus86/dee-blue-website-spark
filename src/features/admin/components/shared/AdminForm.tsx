@@ -33,24 +33,64 @@ export function AdminForm({ schema, initialData = {}, onSubmit, mode, isLoading 
     return text.trim().split(/\s+/).filter(word => word.length > 0).length;
   };
 
-  // Auto-generate title when match is selected (for match reports)
+  // Auto-generate title and folderName when match is selected
   useEffect(() => {
     const matchIdField = schema.find(field => field.name === 'matchId');
     const titleField = schema.find(field => field.name === 'title');
+    const folderNameField = schema.find(field => field.name === 'folderName');
     
-    if (matchIdField && titleField && formData.matchId && mode === 'add') {
+    if (matchIdField && formData.matchId && mode === 'add') {
       // Find the selected match from the dropdown options
       const selectedMatch = matchIdField.options?.find(option => option.value === formData.matchId);
       
-      if (selectedMatch && selectedMatch.label) {
-        // Extract match info from label and generate title
-        // Format: "Home Team v Away Team Match Report" 
-        const generatedTitle = selectedMatch.label;
+      if (selectedMatch) {
+        const updates: any = {};
         
-        setFormData(prev => ({
-          ...prev,
-          title: generatedTitle
-        }));
+        // Auto-generate title (works for both match reports and galleries)
+        if (titleField && selectedMatch.label) {
+          updates.title = selectedMatch.label;
+        }
+        
+        // Auto-generate folder name (for match galleries only)
+        if (folderNameField && selectedMatch.matchDate && selectedMatch.homeTeam && selectedMatch.awayTeam) {
+          // Import and use the generateFolderName function
+          import('./schemas/matchGallerySchema').then(({ generateFolderName }) => {
+            const generatedFolderName = generateFolderName(
+              selectedMatch.matchDate,
+              selectedMatch.homeTeam,
+              selectedMatch.awayTeam
+            );
+            
+            setFormData(prev => ({
+              ...prev,
+              folderName: generatedFolderName
+            }));
+          }).catch(() => {
+            // Fallback: generate folder name inline if import fails
+            const date = new Date(selectedMatch.matchDate);
+            const yy = date.getFullYear().toString().slice(-2);
+            const mm = (date.getMonth() + 1).toString().padStart(2, '0');
+            const dd = date.getDate().toString().padStart(2, '0');
+            
+            const cleanHome = selectedMatch.homeTeam.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_');
+            const cleanAway = selectedMatch.awayTeam.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_');
+            
+            const fallbackFolderName = `${yy}${mm}${dd}_${cleanHome}_${cleanAway}`;
+            
+            setFormData(prev => ({
+              ...prev,
+              folderName: fallbackFolderName
+            }));
+          });
+        }
+        
+        // Apply title update immediately if we have it
+        if (Object.keys(updates).length > 0) {
+          setFormData(prev => ({
+            ...prev,
+            ...updates
+          }));
+        }
       }
     }
   }, [formData.matchId, schema, mode]);
