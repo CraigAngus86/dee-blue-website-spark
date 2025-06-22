@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Upload, X } from 'lucide-react';
-import { FieldConfig } from './schemas/matchSchema';
+import { FieldConfig } from './types';
 
 interface AdminFieldProps {
   field: FieldConfig;

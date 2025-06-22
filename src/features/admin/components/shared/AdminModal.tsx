@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { AdminForm } from './AdminForm';
-import { FieldConfig } from './schemas/matchSchema'; // Use FieldConfig interface from either schema
+import { FieldConfig } from './types'; // CHANGED: Import from unified types
 import { X } from 'lucide-react';
 
 interface AdminModalProps {

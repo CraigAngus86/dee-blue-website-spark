@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AdminField } from './AdminField';
-import { FieldConfig } from './schemas/matchSchema';
+import { FieldConfig } from './types';
 
 interface AdminFormProps {
   schema: FieldConfig[];

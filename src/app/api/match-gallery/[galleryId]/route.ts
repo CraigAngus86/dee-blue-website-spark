@@ -13,7 +13,7 @@ export async function GET(
       title,
       matchDate,
       coverImage,
-      galleryImages,
+      photos,
       photographer,
       publishedAt,
       supabaseMatchId
@@ -31,7 +31,7 @@ export async function GET(
     // Transform to match expected GalleryPhoto structure
     const transformedGallery = {
       ...gallery,
-      photos: (gallery.galleryImages || [])
+      photos: (gallery.photos || [])
         .filter((img: any) => img && img.public_id) // Filter out null/invalid images
         .map((img: any) => ({
           image: {

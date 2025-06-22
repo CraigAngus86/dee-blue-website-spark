@@ -1,4 +1,4 @@
-import { FieldConfig, SelectOption } from './newsSchema';
+import { FieldConfig, SelectOption } from '../types';
 
 export const matchGallerySchema: FieldConfig[] = [
   {
@@ -53,7 +53,7 @@ export const matchGallerySchema: FieldConfig[] = [
     type: 'file',
     label: 'Match Photos',
     required: true,
-    multiple: true, // Enable bulk upload
+    multiple: true, // Enable bulk upload - NOW SUPPORTED!
     placeholder: 'Upload match photos (max 50 files, 5MB each)',
     validation: {
       fileTypes: ['image/jpeg', 'image/jpg', 'image/png'],

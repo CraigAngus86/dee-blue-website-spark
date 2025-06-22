@@ -54,7 +54,7 @@ async function getMatchGalleries() {
     homeTeam,
     awayTeam,
     coverImage,
-    galleryImages,
+    photos,
     photographer
   }`;
   

@@ -1,30 +1,4 @@
-export interface SelectOption {
-  value: string;
-  label: string;
-  shortName?: string;
-  logoUrl?: string;
-  type?: string;
-  isCurrent?: boolean;
-}
-
-export interface FieldConfig {
-  name: string;
-  type: 'text' | 'number' | 'select' | 'date' | 'time' | 'boolean' | 'textarea' | 'url' | 'datetime' | 'file';
-  label: string;
-  required?: boolean;
-  placeholder?: string;
-  options?: SelectOption[];
-  defaultValue?: any;
-  dataSource?: 'supabase' | 'sanity' | 'dynamic';
-  tableName?: string;
-  readOnlyInEdit?: boolean;
-  validation?: {
-    wordCount?: { min: number; max: number };
-    maxLength?: number;
-    fileTypes?: string[];
-    maxSize?: number;
-  };
-}
+import { FieldConfig, SelectOption } from '../types';
 
 export const newsSchema: FieldConfig[] = [
   {

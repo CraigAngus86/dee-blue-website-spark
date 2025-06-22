@@ -1,4 +1,4 @@
-import { FieldConfig, SelectOption } from './newsSchema';
+import { FieldConfig, SelectOption } from '../types';
 
 export const matchReportSchema: FieldConfig[] = [
   {
