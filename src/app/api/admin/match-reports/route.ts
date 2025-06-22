@@ -297,26 +297,43 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// PUT: Update existing match report
+// PUT: Update existing match report - NOW USES FORMDATA
 export async function PUT(request: NextRequest) {
+  console.log('PUT /api/admin/match-reports called');
   try {
-    const body = await request.json();
-    const { id, ...updateData } = body;
+    // CHANGE: Use FormData instead of JSON (like POST method)
+    const formData = await request.formData();
+    console.log('PUT FormData received');
+    
+    // Extract ID and fields (same pattern as POST)
+    const id = formData.get('id') as string;
+    const title = formData.get('title') as string;
+    const author = formData.get('author') as string;
+    const excerpt = formData.get('excerpt') as string;
+    const publishedAt = formData.get('publishedAt') as string;
+    const seoMetaTitle = formData.get('seoMetaTitle') as string;
+    const seoMetaDescription = formData.get('seoMetaDescription') as string;
+    const mainImageFile = formData.get('mainImage') as File;
+
+    console.log('Extracted fields:', { id, title, author });
 
     if (!id) {
       return NextResponse.json({ error: 'Match report ID is required' }, { status: 400 });
     }
 
-    // Title validation if being updated
-    if (updateData.title) {
-      const titleWordCount = countWords(updateData.title);
+    // Prepare update object
+    let updateData: any = {};
+
+    // Title validation and update
+    if (title && title.trim()) {
+      const titleWordCount = countWords(title);
       if (titleWordCount > 10) {
         return NextResponse.json({ error: 'Headline should be maximum 10 words' }, { status: 400 });
       }
       
-      // Update slug
+      updateData.title = title.trim();
       updateData.slug = {
-        current: updateData.title
+        current: title
           .toLowerCase()
           .replace(/[^a-z0-9\s-]/g, '')
           .replace(/\s+/g, '-')
@@ -325,32 +342,65 @@ export async function PUT(request: NextRequest) {
       };
     }
 
-    // Excerpt validation if being updated
-    if (updateData.excerpt) {
-      const excerptWordCount = countWords(updateData.excerpt);
+    // Other field updates
+    if (author && author.trim()) updateData.author = author.trim();
+    if (publishedAt !== undefined) updateData.publishedAt = publishedAt || null;
+
+    // Excerpt validation and update
+    if (excerpt && excerpt.trim()) {
+      const excerptWordCount = countWords(excerpt);
       if (excerptWordCount > 20) {
         return NextResponse.json({ error: 'Summary must be 20 words or less' }, { status: 400 });
+      }
+      updateData.excerpt = excerpt.trim();
+    }
+
+    // Handle new image upload if provided
+    if (mainImageFile && mainImageFile.size > 0) {
+      // Validate image
+      if (mainImageFile.size > 5 * 1024 * 1024) {
+        return NextResponse.json({ error: 'Image too large. Maximum 5MB.' }, { status: 400 });
+      }
+      
+      if (!['image/jpeg', 'image/jpg', 'image/png'].includes(mainImageFile.type)) {
+        return NextResponse.json({ error: 'Invalid image format. Use JPG or PNG.' }, { status: 400 });
+      }
+
+      try {
+        const uploadedImage = await uploadImageToCloudinary(mainImageFile);
+        updateData.mainImage = {
+          _type: 'cloudinary.asset',
+          public_id: uploadedImage.public_id,
+          secure_url: uploadedImage.secure_url,
+          width: uploadedImage.width,
+          height: uploadedImage.height,
+          format: uploadedImage.format
+        };
+      } catch (error) {
+        return NextResponse.json({ error: 'Failed to upload image' }, { status: 500 });
       }
     }
 
     // Handle SEO fields
-    if (updateData.seoMetaTitle || updateData.seoMetaDescription) {
+    if (seoMetaTitle !== undefined || seoMetaDescription !== undefined) {
       updateData.seo = {
-        metaTitle: updateData.seoMetaTitle || null,
-        metaDescription: updateData.seoMetaDescription || null
+        metaTitle: seoMetaTitle?.trim() || null,
+        metaDescription: seoMetaDescription?.trim() || null
       };
-      delete updateData.seoMetaTitle;
-      delete updateData.seoMetaDescription;
     }
 
     // Ensure category remains matchReport
     updateData.category = 'matchReport';
+
+    console.log('About to update Sanity with:', updateData);
 
     // Update article in Sanity
     const result = await sanityClient
       .patch(id)
       .set(updateData)
       .commit();
+
+    console.log('Sanity update successful:', result._id);
 
     return NextResponse.json({
       success: true,
@@ -359,7 +409,7 @@ export async function PUT(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('PUT match report error:', error);
+    console.error('PUT match report error details:', error);
     return NextResponse.json({ error: 'Failed to update match report' }, { status: 500 });
   }
 }
