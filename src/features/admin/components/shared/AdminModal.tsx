@@ -6,7 +6,7 @@ import { X } from 'lucide-react';
 interface AdminModalProps {
   isOpen: boolean;
   onClose: () => void;
-  entityType: 'match' | 'fanSubmission' | 'news' | 'matchReport' | 'matchGallery'; // Added matchGallery
+  entityType: 'match' | 'fanSubmission' | 'news' | 'matchReport' | 'matchGallery' | 'poll'; // ADDED poll
   mode: 'add' | 'edit' | 'delete';
   recordId?: string;
   onSuccess?: () => void;
@@ -45,6 +45,9 @@ export function AdminModal({
       } else if (entityType === 'matchGallery') {
         const { getSchemaForEntity } = await import('./schemas/matchGallerySchema');
         baseSchema = getSchemaForEntity(entityType);
+      } else if (entityType === 'poll') {
+        const { getSchemaForEntity } = await import('./schemas/pollSchema');
+        baseSchema = getSchemaForEntity(entityType);
       } else {
         console.warn(`No schema found for entity type: ${entityType}`);
         setSchema([]);
@@ -77,8 +80,8 @@ export function AdminModal({
         if (result.success) {
           dropdownData = result.data;
         }
-      } else if (entityType === 'news') {
-        // News has static categories, no dynamic loading needed for now
+      } else if (entityType === 'news' || entityType === 'poll') {
+        // News and polls have static options, no dynamic loading needed
         setSchema(baseSchema);
         return;
       }
@@ -232,6 +235,31 @@ export function AdminModal({
           console.error('Match gallery not found');
           setInitialData({});
         }
+      } else if (entityType === 'poll') {
+        // Fetch specific poll data from Supabase
+        const response = await fetch(`/api/admin/polls?id=${recordId}`);
+        const result = await response.json();
+        
+        if (result.success && result.polls && result.polls.length > 0) {
+          const pollData = result.polls[0];
+          const options = pollData.poll_options || [];
+          
+          setInitialData({
+            question: pollData.question,
+            category: pollData.category,
+            option1: options[0]?.option_text || '',
+            option2: options[1]?.option_text || '',
+            option3: options[2]?.option_text || '',
+            option4: options[3]?.option_text || '',
+            option5: options[4]?.option_text || '',
+            option6: options[5]?.option_text || '',
+            end_date: pollData.end_date ? pollData.end_date.substring(0, 16) : '',
+            status: pollData.status
+          });
+        } else {
+          console.error('Poll not found');
+          setInitialData({});
+        }
       }
       
     } catch (error) {
@@ -299,6 +327,52 @@ export function AdminModal({
           }
           
           console.log('Update successful:', result.message);
+        }
+      } else if (entityType === 'poll') {
+        // Handle poll creation/update/delete
+        if (mode === 'delete') {
+          const response = await fetch(`/api/admin/polls?id=${recordId}`, {
+            method: 'DELETE'
+          });
+          const result = await response.json();
+          
+          if (!result.success) {
+            throw new Error(result.error || 'Delete failed');
+          }
+          
+          console.log('Delete successful:', result.message);
+          
+        } else if (mode === 'add') {
+          // Convert form data to API format
+          const options = [
+            formData.option1,
+            formData.option2,
+            formData.option3,
+            formData.option4,
+            formData.option5,
+            formData.option6
+          ].filter(option => option && option.trim()); // Filter out empty options
+
+          const pollData = {
+            question: formData.question,
+            category: formData.category,
+            end_date: formData.end_date,
+            status: formData.status,
+            options
+          };
+
+          const response = await fetch('/api/admin/polls', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(pollData)
+          });
+          const result = await response.json();
+          
+          if (!result.success) {
+            throw new Error(result.error || 'Create failed');
+          }
+          
+          console.log('Create successful:', result.message);
         }
       } else if (entityType === 'news' || entityType === 'matchReport' || entityType === 'matchGallery') {
         // News, match reports, and match galleries use FormData for Cloudinary uploads

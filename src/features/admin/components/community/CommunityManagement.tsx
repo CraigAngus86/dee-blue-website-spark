@@ -15,7 +15,7 @@ export function CommunityManagement() {
               <p className="text-[#6b7280] m-0">Moderate fan submissions and manage community engagement</p>
             </div>
             <div className="text-sm text-[#6b7280]">
-              <span className="font-medium">Priority:</span> 🔥 High Priority Moderation
+              <span className="font-medium">Priority:</span> ✅ Complete
             </div>
           </div>
         </header>
@@ -27,13 +27,13 @@ export function CommunityManagement() {
                 value="fan-zone-moderation"
                 className="data-[state=active]:bg-[#C5E7FF] data-[state=active]:text-[#00105A] font-medium"
               >
-                🔥 Fan Zone Moderation
+                ✅ Fan Zone Moderation
               </TabsTrigger>
               <TabsTrigger
                 value="poll-management"
                 className="data-[state=active]:bg-[#C5E7FF] data-[state=active]:text-[#00105A] font-medium"
               >
-                📅 Poll Management
+                ✅ Poll Management
               </TabsTrigger>
             </TabsList>
             <TabsContent value="fan-zone-moderation" className="mt-6">
