@@ -8,7 +8,7 @@ export const newsSchema: FieldConfig[] = [
     required: true,
     placeholder: 'Enter article headline (8-10 words recommended)',
     validation: {
-      wordCount: { min: 8, max: 10 }
+      wordCount: { max: 10 }
     }
   },
   {
