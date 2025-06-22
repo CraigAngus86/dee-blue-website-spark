@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Montserrat } from "next/font/google";
+import Script from "next/script";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { Providers } from "./providers";
@@ -38,6 +39,21 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className={`${inter.variable} ${montserrat.variable}`}>
+      <head>
+        {/* Google Analytics */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-JEX30K4HHZ"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-JEX30K4HHZ');
+          `}
+        </Script>
+      </head>
       <body className="antialiased flex flex-col min-h-screen">
         <Providers>
           <Header sponsors={headerSponsors} />
