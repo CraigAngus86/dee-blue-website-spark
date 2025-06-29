@@ -27,7 +27,19 @@ export async function POST(request: NextRequest) {
   try {
     console.log('🚀 BBC Scraper API called');
     
-    // Step 1: Get team mapping and season info
+    // Step 1: Clear staging table before new scrape
+    console.log('🧹 Clearing staging table...');
+    const { error: clearError } = await supabase
+      .from('league_table_staging')
+      .delete()
+      .neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all records
+    
+    if (clearError) {
+      throw new Error(`Staging table clear failed: ${clearError.message}`);
+    }
+    console.log('✅ Staging table cleared');
+    
+    // Step 2: Get team mapping and season info
     const { data: teamMapping, error: mappingError } = await supabase
       .from('vw_scraper_team_mapping')
       .select('*')
@@ -41,7 +53,7 @@ export async function POST(request: NextRequest) {
     const competitionId = teamMapping[0].highland_league_competition_id;
     console.log('✅ Season ID:', seasonId);
     
-    // Step 2: Get all team mappings
+    // Step 3: Get all team mappings
     const { data: allTeams, error: teamsError } = await supabase
       .from('vw_scraper_team_mapping')
       .select('*');
@@ -50,7 +62,7 @@ export async function POST(request: NextRequest) {
       throw new Error(`Teams fetch failed: ${teamsError.message}`);
     }
     
-    // Step 3: Fetch and parse BBC table
+    // Step 4: Fetch and parse BBC table
     const bbcUrl = 'https://feeds.bbci.co.uk/sport/football/highland-league/table';
     const response = await fetch(bbcUrl, {
       headers: {
@@ -70,7 +82,7 @@ export async function POST(request: NextRequest) {
     console.log('📅 BBC timestamp raw:', bbcTimestamp);
     console.log('📅 BBC timestamp parsed:', parsedBBCTimestamp);
     
-    // Step 4: Parse complete table data
+    // Step 5: Parse complete table data
     const $ = cheerio.load(htmlContent);
     const tableRows = $('table tbody tr');
     const scrapeTimestamp = new Date().toISOString();
@@ -113,7 +125,7 @@ export async function POST(request: NextRequest) {
       }
     });
     
-    // Step 5: Insert into staging table
+    // Step 6: Insert into staging table
     const { error: insertError } = await supabase
       .from('league_table_staging')
       .insert(stagingData);
