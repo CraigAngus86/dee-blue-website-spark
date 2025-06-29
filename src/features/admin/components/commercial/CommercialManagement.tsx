@@ -28,7 +28,7 @@ export function CommercialManagement() {
                 value="enquiry-manager"
                 className="data-[state=active]:bg-[#C5E7FF] data-[state=active]:text-[#00105A] font-medium"
               >
-                ⚡ Business Enquiry Manager
+                ✅ Business Enquiry Manager
               </TabsTrigger>
               <TabsTrigger
                 value="sponsor-manager"

@@ -35,7 +35,7 @@ export function MatchOperations() {
                 value="league-tables"
                 className="data-[state=active]:bg-[#C5E7FF] data-[state=active]:text-[#00105A] font-medium"
               >
-                ⚡ League Tables & Scraping
+                ✅ League Tables & Scraping
               </TabsTrigger>
               <TabsTrigger
                 value="teams-competitions"

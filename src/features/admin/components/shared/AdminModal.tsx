@@ -6,7 +6,7 @@ import { X } from 'lucide-react';
 interface AdminModalProps {
   isOpen: boolean;
   onClose: () => void;
-  entityType: 'match' | 'fanSubmission' | 'news' | 'matchReport' | 'matchGallery' | 'poll'; // ADDED poll
+  entityType: 'match' | 'fanSubmission' | 'news' | 'matchReport' | 'matchGallery' | 'poll' | 'businessEnquiry'; // ADDED businessEnquiry
   mode: 'add' | 'edit' | 'delete';
   recordId?: string;
   onSuccess?: () => void;
@@ -48,6 +48,9 @@ export function AdminModal({
       } else if (entityType === 'poll') {
         const { getSchemaForEntity } = await import('./schemas/pollSchema');
         baseSchema = getSchemaForEntity(entityType);
+      } else if (entityType === 'businessEnquiry') {
+        const { getSchemaForEntity } = await import('./schemas/businessEnquirySchema');
+        baseSchema = getSchemaForEntity(entityType);
       } else {
         console.warn(`No schema found for entity type: ${entityType}`);
         setSchema([]);
@@ -80,8 +83,8 @@ export function AdminModal({
         if (result.success) {
           dropdownData = result.data;
         }
-      } else if (entityType === 'news' || entityType === 'poll') {
-        // News and polls have static options, no dynamic loading needed
+      } else if (entityType === 'news' || entityType === 'poll' || entityType === 'businessEnquiry') {
+        // News, polls, and business enquiries have static options, no dynamic loading needed
         setSchema(baseSchema);
         return;
       }
@@ -260,6 +263,36 @@ export function AdminModal({
           console.error('Poll not found');
           setInitialData({});
         }
+      } else if (entityType === 'businessEnquiry') {
+        // Fetch specific business enquiry from Sanity
+        const response = await fetch(`/api/admin/business-enquiries?id=${recordId}`);
+        const result = await response.json();
+        
+        if (result.success && result.enquiries && result.enquiries.length > 0) {
+          const enquiryData = result.enquiries[0];
+          setInitialData({
+            company: enquiryData.company,
+            name: enquiryData.name,
+            email: enquiryData.email,
+            phone: enquiryData.phone,
+            preferredContact: enquiryData.preferredContact,
+            interestType: enquiryData.interestType,
+            sponsorshipType: enquiryData.sponsorshipType,
+            budgetRange: enquiryData.budgetRange,
+            packageInterest: enquiryData.packageInterest,
+            groupSize: enquiryData.groupSize,
+            message: enquiryData.message,
+            hearAboutUs: enquiryData.hearAboutUs,
+            status: enquiryData.status,
+            assignedTo: enquiryData.assignedTo,
+            followUpDate: enquiryData.followUpDate,
+            source: enquiryData.source,
+            submittedAt: enquiryData.submittedAt
+          });
+        } else {
+          console.error('Business enquiry not found');
+          setInitialData({});
+        }
       }
       
     } catch (error) {
@@ -319,6 +352,46 @@ export function AdminModal({
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: recordId, ...editableData })
+          });
+          const result = await response.json();
+          
+          if (!result.success) {
+            throw new Error(result.error || 'Update failed');
+          }
+          
+          console.log('Update successful:', result.message);
+        }
+      } else if (entityType === 'businessEnquiry') {
+        // Handle business enquiry operations
+        if (mode === 'delete') {
+          const response = await fetch(`/api/admin/business-enquiries?id=${recordId}`, {
+            method: 'DELETE'
+          });
+          const result = await response.json();
+          
+          if (!result.success) {
+            throw new Error(result.error || 'Delete failed');
+          }
+          
+          console.log('Delete successful:', result.message);
+          
+        } else if (mode === 'edit') {
+          // Business enquiries use FormData for consistency
+          const apiFormData = new FormData();
+          
+          // Add form data
+          Object.keys(formData).forEach(key => {
+            if (formData[key] !== null && formData[key] !== undefined && formData[key] !== '') {
+              apiFormData.append(key, formData[key]);
+            }
+          });
+          
+          // Add the enquiry ID for updates
+          apiFormData.append('id', recordId || '');
+          
+          const response = await fetch('/api/admin/business-enquiries', {
+            method: 'PUT',
+            body: apiFormData
           });
           const result = await response.json();
           
@@ -485,6 +558,7 @@ export function AdminModal({
   const getModalTitle = () => {
     const entityName = entityType === 'matchReport' ? 'Match Report' : 
                       entityType === 'matchGallery' ? 'Match Gallery' :
+                      entityType === 'businessEnquiry' ? 'Business Enquiry' :
                       entityType.charAt(0).toUpperCase() + entityType.slice(1);
     switch (mode) {
       case 'add':
