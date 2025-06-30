@@ -223,7 +223,7 @@ export function LeagueTablesTab({ initialData }: LeagueTablesTabProps) {
             
             {/* BBC Scraper Controls */}
             <div className="mb-6">
-              <h4 className="font-medium text-[#00105A] mb-4 m-0">🔄 BBC Scraper Controls:</h4>
+              <h4 className="font-medium text-[#00105A] mb-4 m-0"></h4>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="bg-white p-4 rounded-lg border border-[#e5e7eb]">
                   <h5 className="font-medium text-[#374151] mb-2">Last Scrape Status</h5>

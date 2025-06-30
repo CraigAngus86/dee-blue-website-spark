@@ -10,11 +10,16 @@ export interface SelectOption {
   matchDate?: string;
   homeTeam?: string;
   awayTeam?: string;
+  // Added for player selection
+  firstName?: string;
+  lastName?: string;
+  position?: string;
+  hasImage?: boolean;
 }
 
 export interface FieldConfig {
   name: string;
-  type: 'text' | 'number' | 'select' | 'date' | 'time' | 'boolean' | 'textarea' | 'url' | 'datetime' | 'file';
+  type: 'text' | 'number' | 'select' | 'date' | 'time' | 'boolean' | 'textarea' | 'url' | 'datetime' | 'file' | 'multiselect'; // ADDED multiselect
   label: string;
   required?: boolean;
   placeholder?: string;
@@ -23,14 +28,23 @@ export interface FieldConfig {
   dataSource?: 'supabase' | 'sanity' | 'dynamic';
   tableName?: string;
   readOnlyInEdit?: boolean;
-  dynamicSource?: 'teams' | 'competitions' | 'seasons' | 'recentMatches'; // UNIFIED - all possible values
+  dynamicSource?: 'teams' | 'competitions' | 'seasons' | 'recentMatches' | 'upcomingMatches' | 'activePlayers'; // ADDED new sources
   readOnly?: boolean;
   multiple?: boolean; // Added for bulk file uploads
+  conditional?: {
+    field: string;
+    value: any;
+    operator: 'equals' | 'not_equals' | 'includes' | 'greater_than' | 'less_than';
+  };
+  helpText?: string;
   validation?: {
     wordCount?: { min: number; max: number };
     maxLength?: number;
+    minLength?: number;  // ADDED for minimum length validation
     fileTypes?: string[];
     maxSize?: number;
     maxFiles?: number;
+    pattern?: RegExp;    // ADDED for regex pattern validation
+    message?: string;    // ADDED for custom validation messages
   };
 }

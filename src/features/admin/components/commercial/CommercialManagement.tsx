@@ -34,7 +34,7 @@ export function CommercialManagement() {
                 value="sponsor-manager"
                 className="data-[state=active]:bg-[#C5E7FF] data-[state=active]:text-[#00105A] font-medium"
               >
-                📅 Sponsor Management
+                ✅ Sponsor Management
               </TabsTrigger>
               <TabsTrigger
                 value="testimonials"

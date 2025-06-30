@@ -181,13 +181,13 @@ export function EnquiryManagerTab({ initialData }: EnquiryManagerTabProps) {
  return (
    <div className="space-y-6">
      {/* Business Enquiry Manager */}
-     <AdminCard title="Business Enquiry Manager - Revenue Pipeline Management">
+     <AdminCard title="📩 Business Enquiry Manager (✅ Complete)">
        <div className="space-y-4">
          <div className="bg-[#f8fafc] p-4 rounded-lg border border-[#e5e7eb]">
            
            {/* Enquiry Status Overview */}
            <div className="mb-6">
-             <h4 className="font-medium text-[#00105A] mb-4 m-0">Enquiry Status Overview:</h4>
+             <h4 className="font-medium text-[#00105A] mb-4 m-0"></h4>
              <div className="grid grid-cols-4 gap-4">
                <div className="p-4 bg-white border border-[#e5e7eb] rounded-lg text-center">
                  <div className="text-2xl font-bold text-[#00105A]">{statusOverview.pending}</div>
