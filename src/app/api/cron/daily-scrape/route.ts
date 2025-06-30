@@ -4,9 +4,9 @@ export async function POST(request: NextRequest) {
   try {
     console.log('🚀 Daily scrape cron started at', new Date().toISOString());
     
-    // Step 1: Scrape BBC data
+    // Step 1: Scrape BBC data - using hardcoded URL for reliability
     console.log('📡 Scraping BBC Highland League table...');
-    const scrapeResponse = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/scrape-league-table`, {
+    const scrapeResponse = await fetch('https://banks-o-dee-fc.vercel.app/api/scrape-league-table', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' }
     });
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     
     // Step 2: Get staging data and validate
     console.log('🔍 Fetching staging data for validation...');
-    const dataResponse = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/admin/league-tables`);
+    const dataResponse = await fetch('https://banks-o-dee-fc.vercel.app/api/admin/league-tables');
     const dataResult = await dataResponse.json();
     
     if (!dataResult.success) {
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
     console.log('✅ Validation passed - applying to live table');
     
     // Step 4: Apply staging to live table
-    const applyResponse = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/admin/league-tables`, {
+    const applyResponse = await fetch('https://banks-o-dee-fc.vercel.app/api/admin/league-tables', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'apply_staging' })
