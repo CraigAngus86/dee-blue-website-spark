@@ -209,7 +209,7 @@ export function PlayerManagementTab() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <AdminCard title="Player Profile Management">
+        <AdminCard title="👤 Player Profile Management">
           <div className="flex items-center justify-center h-64">
             <div className="text-[#6b7280]">Loading players...</div>
           </div>
@@ -220,12 +220,12 @@ export function PlayerManagementTab() {
 
   return (
     <div className="space-y-6">
-      <AdminCard title="Player Profile Management">
+      <AdminCard title="👤 Player Profile Management">
         <div className="space-y-6">
           
           {/* Squad Overview Statistics */}
           <div className="mb-6">
-            <h4 className="font-medium text-[#00105A] mb-4 m-0">Squad Overview:</h4>
+            <h4 className="font-medium text-[#00105A] mb-4 m-0">📊 Squad Overview:</h4>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
               <div className="p-3 bg-white border border-[#e5e7eb] rounded-lg text-center">
                 <div className="text-xl font-bold text-[#00105A]">{players.length}</div>
@@ -258,7 +258,7 @@ export function PlayerManagementTab() {
           {/* Position Filter & Add Button */}
           <div className="flex justify-between items-center mb-6">
             <div className="flex items-center space-x-4">
-              <h4 className="font-medium text-[#00105A] m-0">Filter by Position:</h4>
+              <h4 className="font-medium text-[#00105A] m-0">🎯 Filter by Position:</h4>
               <div className="relative">
                 <select 
                   value={selectedPosition}
@@ -289,10 +289,10 @@ export function PlayerManagementTab() {
           
           {/* Player Grid by Position Sections */}
           <div className="bg-white p-4 rounded-lg border border-[#e5e7eb]">
-            {renderPositionSection('goalkeeper', 'Goalkeepers')}
-            {renderPositionSection('defender', 'Defenders')}
-            {renderPositionSection('midfielder', 'Midfielders')}
-            {renderPositionSection('forward', 'Forwards')}
+            {renderPositionSection('goalkeeper', 'Goalkeepers', '🥅')}
+            {renderPositionSection('defender', 'Defenders', '🛡️')}
+            {renderPositionSection('midfielder', 'Midfielders', '⚽')}
+            {renderPositionSection('forward', 'Forwards', '🎯')}
           </div>
            </div>
       </AdminCard>

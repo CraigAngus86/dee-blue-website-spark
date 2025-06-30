@@ -198,7 +198,7 @@ export function StaffManagementTab() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <AdminCard title="Staff Management">
+        <AdminCard title="👥 Staff Management">
           <div className="flex items-center justify-center h-64">
             <div className="text-[#6b7280]">Loading staff...</div>
           </div>
@@ -209,12 +209,12 @@ export function StaffManagementTab() {
 
   return (
     <div className="space-y-6">
-      <AdminCard title="Staff Management">
+      <AdminCard title="👥 Staff Management">
         <div className="space-y-6">
           
           {/* Staff Overview Statistics */}
           <div className="mb-6">
-            <h4 className="font-medium text-[#00105A] mb-4 m-0">Staff Overview:</h4>
+            <h4 className="font-medium text-[#00105A] mb-4 m-0">📊 Staff Overview:</h4>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="p-3 bg-white border border-[#e5e7eb] rounded-lg text-center">
                 <div className="text-xl font-bold text-[#00105A]">{staff.length}</div>
@@ -242,7 +242,7 @@ export function StaffManagementTab() {
           {/* Staff Type Filter & Add Button */}
           <div className="flex justify-between items-center mb-6">
             <div className="flex items-center space-x-4">
-              <h4 className="font-medium text-[#00105A] m-0">Filter by Category:</h4>
+              <h4 className="font-medium text-[#00105A] m-0">🎯 Filter by Category:</h4>
               <div className="relative">
                 <select 
                   value={selectedStaffType}
@@ -272,9 +272,9 @@ export function StaffManagementTab() {
           
           {/* Staff Grid by Type Sections */}
           <div className="bg-white p-4 rounded-lg border border-[#e5e7eb]">
-            {renderStaffTypeSection('manager', 'Management Team')}
-            {renderStaffTypeSection('coach', 'Coaching Staff')}
-            {renderStaffTypeSection('staff', 'Support Staff')}
+            {renderStaffTypeSection('manager', 'Management Team', '👔')}
+            {renderStaffTypeSection('coach', 'Coaching Staff', '⚽')}
+            {renderStaffTypeSection('staff', 'Support Staff', '🛠️')}
           </div>
         </div>
       </AdminCard>
