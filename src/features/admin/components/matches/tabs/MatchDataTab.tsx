@@ -161,7 +161,7 @@ export function MatchDataTab({ initialData }: MatchDataTabProps) {
   return (
     <div className="space-y-6">
       {/* Match Data Manager */}
-      <AdminCard title="Match Data Manager (✅ Complete)">
+      <AdminCard title="Match Data Manager">
         <div className="space-y-4">
           <div className="bg-[#f8fafc] p-4 rounded-lg border border-[#e5e7eb]">
             

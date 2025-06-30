@@ -159,7 +159,7 @@ export function SponsorManagerTab({ initialSponsors = [], initialTierCounts }: S
 
   return (
     <>
-      <AdminCard title="🤝 Sponsor Management (✅ Complete)">
+      <AdminCard title="Sponsor Management">
         <div className="space-y-4">
           <div className="bg-[#f8fafc] p-4 rounded-lg border border-[#e5e7eb]">
             

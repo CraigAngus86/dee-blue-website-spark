@@ -181,7 +181,7 @@ export function EnquiryManagerTab({ initialData }: EnquiryManagerTabProps) {
  return (
    <div className="space-y-6">
      {/* Business Enquiry Manager */}
-     <AdminCard title="📩 Business Enquiry Manager (✅ Complete)">
+     <AdminCard title="Business Enquiry Manager">
        <div className="space-y-4">
          <div className="bg-[#f8fafc] p-4 rounded-lg border border-[#e5e7eb]">
            

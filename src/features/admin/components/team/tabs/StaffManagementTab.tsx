@@ -1,395 +1,293 @@
-import React from 'react';
+'use client';
+
+import React, { useState, useEffect } from 'react';
 import { AdminCard } from '@/components/ui/admin/AdminCard';
+import { AdminModal } from '../../shared/AdminModal';
+
+interface Staff {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  staffType: 'manager' | 'coach' | 'staff';
+  staffRole: string;
+  profileImage?: {
+    public_id: string;
+    secure_url: string;
+    version?: number;
+  };
+}
 
 export function StaffManagementTab() {
+  const [staff, setStaff] = useState<Staff[]>([]);
+  const [staffCounts, setStaffCounts] = useState({
+    manager: 0,
+    coach: 0,
+    staff: 0
+  });
+  const [selectedStaffType, setSelectedStaffType] = useState<string>('all');
+  const [loading, setLoading] = useState(true);
+
+  type AdminMode = 'add' | 'edit' | 'delete';
+
+  interface ModalState {
+    isOpen: boolean;
+    mode: AdminMode;
+    recordId: string | null;
+  }
+
+  const [modalState, setModalState] = useState<ModalState>({
+    isOpen: false,
+    mode: 'add',
+    recordId: null
+  });
+
+  // Fetch staff data on component mount
+  const fetchStaff = async () => {
+    try {
+      const response = await fetch('/api/admin/staff?pageSize=50');
+      const data = await response.json();
+      
+      if (data.success) {
+        console.log('Staff data:', data.staff);
+        setStaff(data.staff || []);
+        setStaffCounts(data.staffCounts || {
+          manager: 0,
+          coach: 0,
+          staff: 0
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching staff:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchStaff();
+  }, []);
+
+  // Transform function that we know works
+  const getTransformedUrl = (image: any) => {
+    if (!image?.secure_url) return '';
+    
+    return image.secure_url.replace(
+      '/upload/',
+      '/upload/c_fill,g_auto:face,ar_1:1,w_200/'
+    );
+  };
+
+  // Universal modal functions
+  const openModal = (mode: AdminMode, recordId?: string) => {
+    setModalState({
+      isOpen: true,
+      mode,
+      recordId: recordId || null
+    });
+  };
+
+  const closeModal = () => {
+    setModalState({
+      ...modalState,
+      isOpen: false
+    });
+  };
+
+  const handleModalSuccess = () => {
+    console.log('Staff operation successful - refreshing grid...');
+    fetchStaff(); // Actually refresh the grid
+    closeModal();
+  };
+
+  // Group staff by type
+  const staffByType = {
+    manager: staff.filter(s => s.staffType === 'manager'),
+    coach: staff.filter(s => s.staffType === 'coach'),
+    staff: staff.filter(s => s.staffType === 'staff')
+  };
+
+  // Get filtered staff for display
+  const getStaffToShow = () => {
+    if (selectedStaffType === 'all') {
+      return staffByType; // Show all sections
+    } else {
+      // Show only selected type section
+      return {
+        manager: selectedStaffType === 'manager' ? staffByType.manager : [],
+        coach: selectedStaffType === 'coach' ? staffByType.coach : [],
+        staff: selectedStaffType === 'staff' ? staffByType.staff : []
+      };
+    }
+  };
+
+  const displayStaff = getStaffToShow();
+
+  // Render staff card
+  const renderStaffCard = (staffMember: Staff) => {
+    return (
+      <div 
+        key={staffMember._id} 
+        onClick={() => openModal('edit', staffMember._id)}
+        className="relative group cursor-pointer transform hover:scale-105 transition-transform duration-200">
+        {/* Square aspect ratio container */}
+        <div className="aspect-square rounded-lg overflow-hidden relative">
+          {staffMember.profileImage ? (
+            <img 
+              src={getTransformedUrl(staffMember.profileImage)}
+              alt={`${staffMember.firstName} ${staffMember.lastName}`}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full bg-[#00105A] flex items-center justify-center">
+              <div className="text-white text-2xl font-bold">
+                {staffMember.firstName.charAt(0)}{staffMember.lastName.charAt(0)}
+              </div>
+            </div>
+          )}
+        </div>
+        
+        {/* Staff Info */}
+        <div className="mt-2 text-center">
+          <div className="text-sm font-medium text-[#374151] truncate">
+            {staffMember.firstName} {staffMember.lastName}
+          </div>
+          <div className="text-xs text-[#6b7280] capitalize">
+            {staffMember.staffRole}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // Render staff type section
+  const renderStaffTypeSection = (type: keyof typeof staffByType, title: string, emoji: string) => {
+    const typeStaff = displayStaff[type];
+    
+    if (typeStaff.length === 0 && selectedStaffType !== 'all') {
+      return null; // Don't show empty sections when filtering
+    }
+
+    return (
+      <div key={type} className="mb-8">
+        <h5 className="text-lg font-semibold text-[#00105A] mb-4 flex items-center">
+          <span className="mr-2">{emoji}</span>
+          {title} ({typeStaff.length})
+        </h5>
+        <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-4">
+          {typeStaff.map(renderStaffCard)}
+          
+          {/* Add new staff card */}
+          {(selectedStaffType === 'all' || selectedStaffType === type) && (
+            <div 
+              onClick={() => openModal('add')}
+              className="relative group cursor-pointer transform hover:scale-105 transition-transform duration-200"
+            >
+              <div className="aspect-square bg-[#f9fafb] border-2 border-dashed border-[#C5E7FF] rounded-lg flex items-center justify-center hover:bg-[#C5E7FF] hover:bg-opacity-10 transition-colors">
+                <div className="text-center text-[#00105A]">
+                  <div className="text-xl mb-1">+</div>
+                  <div className="text-xs font-medium">Add New</div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <AdminCard title="Staff Management">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-[#6b7280]">Loading staff...</div>
+          </div>
+        </AdminCard>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
-      {/* Staff Management */}
-      <AdminCard title="👔 Staff Profile Management (📅 Low Priority) - Management and coaching team updates">
-        <div className="space-y-4">
-          <div className="bg-[#f8fafc] p-4 rounded-lg border border-[#e5e7eb]">
-            
-            {/* Staff Overview Statistics */}
-            <div className="mb-6">
-              <h4 className="font-medium text-[#00105A] mb-4 m-0">📊 Staff Overview:</h4>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="p-4 bg-white border border-[#e5e7eb] rounded-lg text-center">
-                  <div className="text-2xl font-bold text-[#00105A]">8</div>
-                  <div className="text-sm text-[#6b7280]">Total Staff</div>
-                  <div className="text-xs text-[#6b7280] mt-1">Management + Coaching</div>
-                </div>
-                <div className="p-4 bg-white border border-[#e5e7eb] rounded-lg text-center">
-                  <div className="text-2xl font-bold text-[#00105A]">3</div>
-                  <div className="text-sm text-[#6b7280]">Management</div>
-                  <div className="text-xs text-[#6b7280] mt-1">Senior positions</div>
-                </div>
-                <div className="p-4 bg-white border border-[#e5e7eb] rounded-lg text-center">
-                  <div className="text-2xl font-bold text-[#00105A]">4</div>
-                  <div className="text-sm text-[#6b7280]">Coaching Staff</div>
-                  <div className="text-xs text-[#6b7280] mt-1">Specialized coaches</div>
-                </div>
-                <div className="p-4 bg-white border border-[#e5e7eb] rounded-lg text-center">
-                  <div className="text-2xl font-bold text-[#00105A]">1</div>
-                  <div className="text-sm text-[#6b7280]">Support Staff</div>
-                  <div className="text-xs text-[#6b7280] mt-1">Medical + Admin</div>
-                </div>
+      <AdminCard title="Staff Management">
+        <div className="space-y-6">
+          
+          {/* Staff Overview Statistics */}
+          <div className="mb-6">
+            <h4 className="font-medium text-[#00105A] mb-4 m-0">Staff Overview:</h4>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="p-3 bg-white border border-[#e5e7eb] rounded-lg text-center">
+                <div className="text-xl font-bold text-[#00105A]">{staff.length}</div>
+                <div className="text-sm text-[#6b7280]">Total Staff</div>
+                <div className="text-xs text-[#6b7280] mt-1">All Categories</div>
               </div>
-            </div>
-
-            {/* Staff Category Filters */}
-            <div className="mb-6">
-              <h4 className="font-medium text-[#00105A] mb-4 m-0">🎯 Staff Categories:</h4>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-                <div className="relative">
-                  <select className="w-full px-4 py-3 bg-white border-2 border-[#00105A] rounded text-[#00105A] appearance-none focus:outline-none focus:ring-2 focus:ring-[#C5E7FF] font-medium">
-                    <option>All Staff</option>
-                  </select>
-                  <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                    <svg className="w-4 h-4 text-[#00105A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </div>
-                </div>
-                
-                <div className="relative">
-                  <select className="w-full px-4 py-3 bg-white border border-[#e5e7eb] rounded text-[#374151] appearance-none focus:outline-none focus:ring-2 focus:ring-[#C5E7FF] focus:border-[#00105A]">
-                    <option>Management</option>
-                  </select>
-                  <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                    <svg className="w-4 h-4 text-[#6b7280]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </div>
-                </div>
-                
-                <div className="relative">
-                  <select className="w-full px-4 py-3 bg-white border border-[#e5e7eb] rounded text-[#374151] appearance-none focus:outline-none focus:ring-2 focus:ring-[#C5E7FF] focus:border-[#00105A]">
-                    <option>Coaching Staff</option>
-                  </select>
-                  <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                    <svg className="w-4 h-4 text-[#6b7280]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </div>
-                </div>
-                
-                <div className="flex items-end">
-                  <button className="px-4 py-3 bg-[#00105A] text-white rounded hover:bg-[#FFD700] hover:text-[#00105A] font-medium transition-colors w-full">
-                    + Add New Staff
-                  </button>
-                </div>
+              <div className="p-3 bg-white border border-[#e5e7eb] rounded-lg text-center">
+                <div className="text-xl font-bold text-[#00105A]">{staffCounts.manager}</div>
+                <div className="text-sm text-[#6b7280]">Management</div>
+                <div className="text-xs text-[#6b7280] mt-1">Leadership team</div>
               </div>
-            </div>
-
-            {/* Management Team */}
-            <div className="mb-6">
-              <h4 className="font-medium text-[#00105A] mb-4 m-0">👥 Management Team:</h4>
-              <div className="bg-white p-4 rounded-lg border border-[#e5e7eb]">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  
-                  {/* Manager */}
-                  <div className="relative group cursor-pointer p-4 border border-[#e5e7eb] rounded-lg hover:border-[#C5E7FF] transition-colors">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-16 h-16 bg-gradient-to-b from-[#00105A] to-[#C5E7FF] rounded-lg flex items-center justify-center">
-                        <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
-                          <span className="text-[#00105A] font-bold text-sm">PJ</span>
-                        </div>
-                      </div>
-                      <div className="flex-1">
-                        <div className="text-sm font-medium text-[#374151]">Paul Johnstone</div>
-                        <div className="text-xs text-[#FFD700] font-medium">Manager</div>
-                        <div className="text-xs text-[#6b7280]">Since 2022</div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-xs text-[#6b7280]">Contract</div>
-                        <div className="text-xs font-medium text-[#374151]">2025</div>
-                      </div>
-                    </div>
-                    <div className="mt-3 text-xs text-[#6b7280]">
-                      Former Aberdeen FC coach • UEFA A License
-                    </div>
-                  </div>
-                  
-                  {/* Assistant Manager */}
-                  <div className="relative group cursor-pointer p-4 border border-[#e5e7eb] rounded-lg hover:border-[#C5E7FF] transition-colors">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-16 h-16 bg-gradient-to-b from-[#00105A] to-[#C5E7FF] rounded-lg flex items-center justify-center">
-                        <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
-                          <span className="text-[#00105A] font-bold text-sm">SM</span>
-                        </div>
-                      </div>
-                      <div className="flex-1">
-                        <div className="text-sm font-medium text-[#374151]">Steve Mitchell</div>
-                        <div className="text-xs text-[#00105A] font-medium">Assistant Manager</div>
-                        <div className="text-xs text-[#6b7280]">Since 2023</div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-xs text-[#6b7280]">Contract</div>
-                        <div className="text-xs font-medium text-[#374151]">2024</div>
-                      </div>
-                    </div>
-                    <div className="mt-3 text-xs text-[#6b7280]">
-                      Former Formartine United manager • UEFA B License
-                    </div>
-                  </div>
-                  
-                  {/* General Manager */}
-                  <div className="relative group cursor-pointer p-4 border border-[#e5e7eb] rounded-lg hover:border-[#C5E7FF] transition-colors">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-16 h-16 bg-gradient-to-b from-[#00105A] to-[#C5E7FF] rounded-lg flex items-center justify-center">
-                        <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
-                          <span className="text-[#00105A] font-bold text-sm">AB</span>
-                        </div>
-                      </div>
-                      <div className="flex-1">
-                        <div className="text-sm font-medium text-[#374151]">Alan Brown</div>
-                        <div className="text-xs text-[#00105A] font-medium">General Manager</div>
-                        <div className="text-xs text-[#6b7280]">Since 2020</div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-xs text-[#6b7280]">Role</div>
-                        <div className="text-xs font-medium text-[#374151]">Operations</div>
-                      </div>
-                    </div>
-                    <div className="mt-3 text-xs text-[#6b7280]">
-                      Club operations and player recruitment specialist
-                    </div>
-                  </div>
-                </div>
+              <div className="p-3 bg-white border border-[#e5e7eb] rounded-lg text-center">
+                <div className="text-xl font-bold text-[#00105A]">{staffCounts.coach}</div>
+                <div className="text-sm text-[#6b7280]">Coaching</div>
+                <div className="text-xs text-[#6b7280] mt-1">Training staff</div>
               </div>
-            </div>
-
-            {/* Coaching Staff */}
-            <div className="mb-6">
-              <h4 className="font-medium text-[#00105A] mb-4 m-0">⚽ Coaching Staff:</h4>
-              <div className="bg-white p-4 rounded-lg border border-[#e5e7eb]">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  
-                  {/* First Team Coach */}
-                  <div className="relative group cursor-pointer p-3 border border-[#e5e7eb] rounded-lg hover:border-[#C5E7FF] transition-colors text-center">
-                    <div className="w-12 h-12 bg-gradient-to-b from-[#00105A] to-[#C5E7FF] rounded-lg mx-auto mb-2 flex items-center justify-center">
-                      <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
-                        <span className="text-[#00105A] font-bold text-xs">RC</span>
-                      </div>
-                    </div>
-                    <div className="text-sm font-medium text-[#374151]">Robert Clark</div>
-                    <div className="text-xs text-[#00105A] font-medium">First Team Coach</div>
-                    <div className="text-xs text-[#6b7280]">UEFA B License</div>
-                  </div>
-                  
-                  {/* Goalkeeper Coach */}
-                  <div className="relative group cursor-pointer p-3 border border-[#e5e7eb] rounded-lg hover:border-[#C5E7FF] transition-colors text-center">
-                    <div className="w-12 h-12 bg-gradient-to-b from-[#00105A] to-[#C5E7FF] rounded-lg mx-auto mb-2 flex items-center justify-center">
-                      <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
-                        <span className="text-[#00105A] font-bold text-xs">JW</span>
-                      </div>
-                    </div>
-                    <div className="text-sm font-medium text-[#374151]">John Watson</div>
-                    <div className="text-xs text-[#00105A] font-medium">Goalkeeper Coach</div>
-                    <div className="text-xs text-[#6b7280]">FA Level 3</div>
-                  </div>
-                  
-                  {/* Youth Coach */}
-                  <div className="relative group cursor-pointer p-3 border border-[#e5e7eb] rounded-lg hover:border-[#C5E7FF] transition-colors text-center">
-                    <div className="w-12 h-12 bg-gradient-to-b from-[#00105A] to-[#C5E7FF] rounded-lg mx-auto mb-2 flex items-center justify-center">
-                      <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
-                        <span className="text-[#00105A] font-bold text-xs">MT</span>
-                      </div>
-                    </div>
-                    <div className="text-sm font-medium text-[#374151]">Michael Taylor</div>
-                    <div className="text-xs text-[#00105A] font-medium">Youth Coach</div>
-                    <div className="text-xs text-[#6b7280]">UEFA B License</div>
-                  </div>
-                  
-                  {/* Fitness Coach */}
-                  <div className="relative group cursor-pointer p-3 border border-[#e5e7eb] rounded-lg hover:border-[#C5E7FF] transition-colors text-center">
-                    <div className="w-12 h-12 bg-gradient-to-b from-[#00105A] to-[#C5E7FF] rounded-lg mx-auto mb-2 flex items-center justify-center">
-                      <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
-                        <span className="text-[#00105A] font-bold text-xs">LG</span>
-                      </div>
-                    </div>
-                    <div className="text-sm font-medium text-[#374151]">Lisa Grant</div>
-                    <div className="text-xs text-[#00105A] font-medium">Fitness Coach</div>
-                    <div className="text-xs text-[#6b7280]">Sports Science</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Support Staff */}
-            <div className="mb-6">
-              <h4 className="font-medium text-[#00105A] mb-4 m-0">🏥 Support Staff:</h4>
-              <div className="bg-white p-4 rounded-lg border border-[#e5e7eb]">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  
-                  {/* Physiotherapist */}
-                  <div className="relative group cursor-pointer p-4 border border-[#e5e7eb] rounded-lg hover:border-[#C5E7FF] transition-colors">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-12 h-12 bg-gradient-to-b from-[#00105A] to-[#C5E7FF] rounded-lg flex items-center justify-center">
-                        <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
-                          <span className="text-[#00105A] font-bold text-xs">DH</span>
-                        </div>
-                      </div>
-                      <div className="flex-1">
-                        <div className="text-sm font-medium text-[#374151]">Dr. Helen Ross</div>
-                        <div className="text-xs text-[#00105A] font-medium">Club Physiotherapist</div>
-                        <div className="text-xs text-[#6b7280]">Chartered Physiotherapist • Sports Medicine</div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Kit Manager */}
-                  <div className="relative group cursor-pointer p-4 border border-[#e5e7eb] rounded-lg hover:border-[#C5E7FF] transition-colors">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-12 h-12 bg-gradient-to-b from-[#00105A] to-[#C5E7FF] rounded-lg flex items-center justify-center">
-                        <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
-                          <span className="text-[#00105A] font-bold text-xs">TM</span>
-                        </div>
-                      </div>
-                      <div className="flex-1">
-                        <div className="text-sm font-medium text-[#374151]">Tommy MacDonald</div>
-                        <div className="text-xs text-[#00105A] font-medium">Kit Manager</div>
-                        <div className="text-xs text-[#6b7280]">Equipment management • 15 years experience</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Staff Profile Editor Modal Wireframe */}
-            <div className="bg-white p-4 rounded-lg border border-[#e5e7eb]">
-              <h4 className="font-medium text-[#00105A] mb-4 m-0">✏️ Staff Profile Editor (Modal Interface):</h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                
-                {/* Personal & Role Information */}
-                <div>
-                  <div className="text-sm font-medium text-[#374151] mb-3">Personal & Role Information:</div>
-                  <div className="space-y-3">
-                    <div>
-                      <label className="block text-xs font-medium text-[#374151] mb-1">Full Name:</label>
-                      <input 
-                        type="text" 
-                        value="Paul Johnstone"
-                        className="w-full px-3 py-2 bg-white border border-[#e5e7eb] rounded text-sm text-[#374151] focus:outline-none focus:ring-2 focus:ring-[#C5E7FF] focus:border-[#00105A]"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-[#374151] mb-1">Role:</label>
-                      <div className="relative">
-                        <select className="w-full px-3 py-2 bg-white border border-[#e5e7eb] rounded text-sm text-[#374151] appearance-none focus:outline-none focus:ring-2 focus:ring-[#C5E7FF] focus:border-[#00105A]">
-                          <option>Manager</option>
-                          <option>Assistant Manager</option>
-                          <option>First Team Coach</option>
-                          <option>Goalkeeper Coach</option>
-                          <option>Youth Coach</option>
-                          <option>Fitness Coach</option>
-                          <option>Physiotherapist</option>
-                          <option>General Manager</option>
-                          <option>Kit Manager</option>
-                        </select>
-                        <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                          <svg className="w-3 h-3 text-[#6b7280]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <label className="block text-xs font-medium text-[#374151] mb-1">Start Date:</label>
-                        <input 
-                          type="date" 
-                          value="2022-07-01"
-                          className="w-full px-3 py-2 bg-white border border-[#e5e7eb] rounded text-sm text-[#374151] focus:outline-none focus:ring-2 focus:ring-[#C5E7FF] focus:border-[#00105A]"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium text-[#374151] mb-1">Contract Until:</label>
-                        <input 
-                          type="date" 
-                          value="2025-06-30"
-                          className="w-full px-3 py-2 bg-white border border-[#e5e7eb] rounded text-sm text-[#374151] focus:outline-none focus:ring-2 focus:ring-[#C5E7FF] focus:border-[#00105A]"
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-[#374151] mb-1">Qualifications:</label>
-                      <input 
-                        type="text" 
-                        value="UEFA A License"
-                        placeholder="e.g. UEFA A License, Sports Science Degree"
-                        className="w-full px-3 py-2 bg-white border border-[#e5e7eb] rounded text-sm text-[#374151] focus:outline-none focus:ring-2 focus:ring-[#C5E7FF] focus:border-[#00105A]"
-                      />
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Photo & Career History */}
-                <div>
-                  <div className="text-sm font-medium text-[#374151] mb-3">Photo & Career History:</div>
-                  <div className="space-y-3">
-                    <div className="flex items-center space-x-4">
-                      <div className="w-20 h-20 bg-gradient-to-b from-[#00105A] to-[#C5E7FF] rounded-lg flex items-center justify-center">
-                        <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
-                          <span className="text-[#00105A] font-bold">PJ</span>
-                        </div>
-                      </div>
-                      <div className="flex-1">
-                        <button className="px-4 py-2 bg-[#C5E7FF] text-[#00105A] rounded text-sm font-medium hover:bg-opacity-80 mb-2">
-                          Upload Photo
-                        </button>
-                        <div className="text-xs text-[#6b7280]">Professional headshot • Square crop preferred</div>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <label className="block text-xs font-medium text-[#374151] mb-1">Previous Experience:</label>
-                      <textarea 
-                        rows={4}
-                        value="Aberdeen FC Youth Coach (2018-2022), Cove Rangers Assistant Manager (2015-2018), Former professional player at Dundee FC and Arbroath FC"
-                        className="w-full px-3 py-2 bg-white border border-[#e5e7eb] rounded text-sm text-[#374151] focus:outline-none focus:ring-2 focus:ring-[#C5E7FF] focus:border-[#00105A] resize-none"
-                      />
-                    </div>
-                    
-                    <div>
-                      <label className="block text-xs font-medium text-[#374151] mb-1">Key Achievements:</label>
-                      <textarea 
-                        rows={3}
-                        value="Led Aberdeen FC Youth to Scottish Cup Final (2021), Developed 5 players to professional level, Highland League Manager of the Year nominee (2023)"
-                        className="w-full px-3 py-2 bg-white border border-[#e5e7eb] rounded text-sm text-[#374151] focus:outline-none focus:ring-2 focus:ring-[#C5E7FF] focus:border-[#00105A] resize-none"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="flex justify-end space-x-3 mt-6">
-                <button className="px-4 py-2 bg-[#f9fafb] border border-[#e5e7eb] rounded text-sm text-[#374151] hover:bg-[#f3f4f6]">
-                  Cancel
-                </button>
-                <button className="px-6 py-2 bg-[#00105A] text-white rounded font-medium hover:bg-[#FFD700] hover:text-[#00105A] transition-colors">
-                  Save Staff Member
-                </button>
+              <div className="p-3 bg-white border border-[#e5e7eb] rounded-lg text-center">
+                <div className="text-xl font-bold text-[#00105A]">{staffCounts.staff}</div>
+                <div className="text-sm text-[#6b7280]">Support</div>
+                <div className="text-xs text-[#6b7280] mt-1">Operations team</div>
               </div>
             </div>
           </div>
+
+          {/* Staff Type Filter & Add Button */}
+          <div className="flex justify-between items-center mb-6">
+            <div className="flex items-center space-x-4">
+              <h4 className="font-medium text-[#00105A] m-0">Filter by Category:</h4>
+              <div className="relative">
+                <select 
+                  value={selectedStaffType}
+                  onChange={(e) => setSelectedStaffType(e.target.value)}
+                  className="px-4 py-2 bg-white border-2 border-[#00105A] rounded text-[#00105A] appearance-none focus:outline-none focus:ring-2 focus:ring-[#C5E7FF] font-medium min-w-[150px]"
+                >
+                  <option value="all">All Categories</option>
+                  <option value="manager">Management ({staffCounts.manager})</option>
+                  <option value="coach">Coaching ({staffCounts.coach})</option>
+                  <option value="staff">Support ({staffCounts.staff})</option>
+                </select>
+                <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                  <svg className="w-4 h-4 text-[#00105A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+            
+            <button 
+              onClick={() => openModal('add')}
+              className="px-4 py-2 bg-[#00105A] text-white rounded hover:bg-[#FFD700] hover:text-[#00105A] font-medium transition-colors"
+            >
+              + Add New Staff
+            </button>
+          </div>
           
-          {/* Technical Requirements */}
-          <div className="bg-[#f8fafc] p-4 rounded-lg border border-[#e5e7eb]">
-            <h4 className="font-medium text-[#00105A] mb-2 m-0">Technical Requirements:</h4>
-            <ul className="text-sm text-[#6b7280] space-y-1">
-              <li>• <strong>Role Categories:</strong> Management, Coaching Staff, Support Staff with hierarchical organization</li>
-              <li>• <strong>Cloudinary Integration:</strong> Professional headshot uploads with face detection optimization</li>
-              <li>• <strong>Contract Management:</strong> Start dates, contract expiry tracking, automatic renewals</li>
-              <li>• <strong>Qualification Tracking:</strong> Coaching licenses, certifications, professional development</li>
-              <li>• <strong>Career History:</strong> Previous roles, achievements, professional playing background</li>
-              <li>• <strong>Sanity CMS Integration:</strong> Staff profiles sync with main website team page</li>
-              <li>• <strong>Modal System:</strong> Follow established AdminModal pattern for profile editing</li>
-            </ul>
+          {/* Staff Grid by Type Sections */}
+          <div className="bg-white p-4 rounded-lg border border-[#e5e7eb]">
+            {renderStaffTypeSection('manager', 'Management Team')}
+            {renderStaffTypeSection('coach', 'Coaching Staff')}
+            {renderStaffTypeSection('staff', 'Support Staff')}
           </div>
         </div>
       </AdminCard>
+
+      {/* AdminModal Integration */}
+      <AdminModal
+        isOpen={modalState.isOpen}
+        onClose={closeModal}
+        entityType="staff"
+        mode={modalState.mode}
+        recordId={modalState.recordId}
+        onSuccess={handleModalSuccess}
+      />
     </div>
   );
 }

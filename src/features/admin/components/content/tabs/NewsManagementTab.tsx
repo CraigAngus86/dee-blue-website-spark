@@ -168,7 +168,7 @@ export function NewsManagementTab({ initialData }: NewsManagementTabProps) {
   return (
     <div className="space-y-6">
       {/* News Management */}
-      <AdminCard title="News Management (✅ Complete)">
+      <AdminCard title="News Management">
         <div className="space-y-4">
           <div className="bg-[#f8fafc] p-4 rounded-lg border border-[#e5e7eb]">
             

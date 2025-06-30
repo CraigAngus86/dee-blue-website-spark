@@ -160,7 +160,7 @@ export function MatchGalleryTab({ initialData }: MatchGalleryTabProps) {
   return (
     <div className="space-y-6">
       {/* Match Galleries Management */}
-      <AdminCard title="Match Galleries Management (✅ Complete)">
+      <AdminCard title="Match Galleries Management">
         <div className="space-y-4">
           <div className="bg-[#f8fafc] p-4 rounded-lg border border-[#e5e7eb]">
             

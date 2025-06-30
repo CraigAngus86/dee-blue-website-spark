@@ -24,11 +24,11 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { id: 'dashboard', name: 'Dashboard', icon: Home, href: '/admin', enabled: true },
   { id: 'content', name: 'Content Management', icon: FileText, href: '/admin/content', enabled: true, priority: '✅' },
-  { id: 'matches', name: 'Match Operations', icon: Trophy, href: '/admin/matches', enabled: true, priority: '🔥' },
+  { id: 'matches', name: 'Match Operations', icon: Trophy, href: '/admin/matches', enabled: true, priority: '📋' },
   { id: 'community', name: 'Community Management', icon: Users2, href: '/admin/community', enabled: true, priority: '✅' },
-  { id: 'commercial', name: 'Commercial Management', icon: Building2, href: '/admin/commercial', enabled: true, priority: '⚡' },
-  { id: 'team', name: 'Team Management', icon: UserCheck, href: '/admin/team', enabled: true, priority: '📅' },
-  { id: 'media', name: 'Media Management', icon: Image, href: '/admin/media', enabled: true, priority: '📅' },
+  { id: 'commercial', name: 'Commercial Management', icon: Building2, href: '/admin/commercial', enabled: true, priority: '📋' },
+  { id: 'team', name: 'Team Management', icon: UserCheck, href: '/admin/team', enabled: true, priority: '✅' },
+  { id: 'media', name: 'Media Management', icon: Image, href: '/admin/media', enabled: true, priority: '📋' },
   { id: 'technical', name: 'Technical Implementation', icon: Settings, href: '/admin/technical', enabled: true }
 ];
 

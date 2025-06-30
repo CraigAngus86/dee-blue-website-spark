@@ -6,7 +6,7 @@ import { X } from 'lucide-react';
 interface AdminModalProps {
   isOpen: boolean;
   onClose: () => void;
-  entityType: 'match' | 'fanSubmission' | 'news' | 'matchReport' | 'matchGallery' | 'poll' | 'businessEnquiry' | 'sponsor'; // ADDED sponsor
+  entityType: 'match' | 'fanSubmission' | 'news' | 'matchReport' | 'matchGallery' | 'poll' | 'businessEnquiry' | 'sponsor' | 'player' | 'staff'; // UPDATED: Added player and staff
   mode: 'add' | 'edit' | 'delete';
   recordId?: string;
   onSuccess?: () => void;
@@ -54,6 +54,12 @@ export function AdminModal({
       } else if (entityType === 'sponsor') {
         const { getSchemaForEntity } = await import('./schemas/sponsorSchema');
         baseSchema = getSchemaForEntity(entityType);
+      } else if (entityType === 'player') {
+        const { getSchemaForEntity } = await import('./schemas/playerSchema');
+        baseSchema = getSchemaForEntity(entityType);
+      } else if (entityType === 'staff') {
+        const { getSchemaForEntity } = await import('./schemas/staffSchema');
+        baseSchema = getSchemaForEntity(entityType);
       } else {
         console.warn(`No schema found for entity type: ${entityType}`);
         setSchema([]);
@@ -92,8 +98,8 @@ export function AdminModal({
         if (result.success) {
           dropdownData = result.data;
         }
-      } else if (entityType === 'news' || entityType === 'poll' || entityType === 'businessEnquiry') {
-        // News, polls, and business enquiries have static options, no dynamic loading needed
+      } else if (entityType === 'news' || entityType === 'poll' || entityType === 'businessEnquiry' || entityType === 'player' || entityType === 'staff') {
+        // News, polls, business enquiries, players, and staff have static options, no dynamic loading needed
         setSchema(baseSchema);
         return;
       }
@@ -211,6 +217,56 @@ export function AdminModal({
           console.error('Sponsor not found');
           setInitialData({});
         }
+      } else if (entityType === 'player') {
+        // Fetch specific player from Sanity
+        const response = await fetch(`/api/admin/players?id=${recordId}`);
+        const result = await response.json();
+        
+        if (result.success && result.players && result.players.length > 0) {
+          const playerData = result.players[0];
+          setInitialData({
+            firstName: playerData.firstName,
+            lastName: playerData.lastName,
+            nationality: playerData.nationality,
+            playerPosition: playerData.playerPosition,
+            isYouthProduct: playerData.isYouthProduct,
+            extendedBio: playerData.extendedBio, // Already converted to plain text by API
+            twitter: playerData.socialMedia?.twitter || '',
+            facebook: playerData.socialMedia?.facebook || '',
+            instagram: playerData.socialMedia?.instagram || '',
+            linkedin: playerData.socialMedia?.linkedin || '',
+            website: playerData.socialMedia?.website || ''
+            // Note: profileImage not included - file uploads are optional in edit mode
+          });
+        } else {
+          console.error('Player not found');
+          setInitialData({});
+        }
+      } else if (entityType === 'staff') {
+        // Fetch specific staff from Sanity
+        const response = await fetch(`/api/admin/staff?id=${recordId}`);
+        const result = await response.json();
+        
+        if (result.success && result.staff && result.staff.length > 0) {
+          const staffData = result.staff[0];
+          setInitialData({
+            firstName: staffData.firstName,
+            lastName: staffData.lastName,
+            nationality: staffData.nationality,
+            staffType: staffData.staffType,
+            staffRole: staffData.staffRole,
+            extendedBio: staffData.extendedBio, // Already converted to plain text by API
+            twitter: staffData.socialMedia?.twitter || '',
+            facebook: staffData.socialMedia?.facebook || '',
+            instagram: staffData.socialMedia?.instagram || '',
+            linkedin: staffData.socialMedia?.linkedin || '',
+            website: staffData.socialMedia?.website || ''
+            // Note: profileImage not included - file uploads are optional in edit mode
+          });
+        } else {
+          console.error('Staff member not found');
+          setInitialData({});
+        }
       } else if (entityType === 'news') {
         // ... existing news logic
       } else if (entityType === 'businessEnquiry') {
@@ -229,8 +285,8 @@ export function AdminModal({
   const handleSubmit = async (formData: any) => {
     setIsLoading(true);
     try {
-      if (entityType === 'sponsor') {
-        // Handle sponsor operations using FormData (for logo upload)
+      if (entityType === 'sponsor' || entityType === 'player' || entityType === 'staff') {
+        // Handle sponsor, player, and staff operations using FormData (for image upload)
         const apiFormData = new FormData();
         
         // Add all form fields to FormData
@@ -247,8 +303,12 @@ export function AdminModal({
           }
         });
 
+        const apiEndpoint = entityType === 'sponsor' ? '/api/admin/sponsors' :
+                           entityType === 'player' ? '/api/admin/players' :
+                           '/api/admin/staff';
+
         if (mode === 'delete') {
-          const response = await fetch(`/api/admin/sponsors?id=${recordId}`, {
+          const response = await fetch(`${apiEndpoint}?id=${recordId}`, {
             method: 'DELETE'
           });
           const result = await response.json();
@@ -260,7 +320,7 @@ export function AdminModal({
           console.log('Delete successful:', result.message);
           
         } else if (mode === 'add') {
-          const response = await fetch('/api/admin/sponsors', {
+          const response = await fetch(apiEndpoint, {
             method: 'POST',
             body: apiFormData
           });
@@ -273,10 +333,10 @@ export function AdminModal({
           console.log('Create successful:', result.message);
           
         } else if (mode === 'edit') {
-          // Add the sponsor ID for updates
+          // Add the record ID for updates
           apiFormData.append('id', recordId || '');
           
-          const response = await fetch('/api/admin/sponsors', {
+          const response = await fetch(apiEndpoint, {
             method: 'PUT',
             body: apiFormData
           });

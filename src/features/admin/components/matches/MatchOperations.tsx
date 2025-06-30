@@ -15,10 +15,7 @@ export function MatchOperations() {
               <h1 className="text-2xl font-bold text-[#00105A] mb-2 m-0">Match Operations</h1>
               <p className="text-[#6b7280] m-0">Manage match results, league tables, and team data</p>
             </div>
-            <div className="text-sm text-[#6b7280]">
-              <span className="font-medium">Priority:</span> 🔥 High Priority Updates
-            </div>
-          </div>
+                      </div>
         </header>
 
         <main className="p-8">
@@ -41,7 +38,7 @@ export function MatchOperations() {
                 value="teams-competitions"
                 className="data-[state=active]:bg-[#C5E7FF] data-[state=active]:text-[#00105A] font-medium"
               >
-                📅 Teams & Competitions
+                📋 Teams & Competitions
               </TabsTrigger>
             </TabsList>
 

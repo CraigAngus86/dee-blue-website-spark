@@ -14,9 +14,6 @@ export function CommunityManagement() {
               <h1 className="text-2xl font-bold text-[#00105A] mb-2 m-0">Community Management</h1>
               <p className="text-[#6b7280] m-0">Moderate fan submissions and manage community engagement</p>
             </div>
-            <div className="text-sm text-[#6b7280]">
-              <span className="font-medium">Priority:</span> ✅ Complete
-            </div>
           </div>
         </header>
         <main className="p-8">

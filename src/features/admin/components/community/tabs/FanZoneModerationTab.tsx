@@ -189,13 +189,13 @@ export function FanZoneModerationTab() {
   return (
     <div className="space-y-6">
       {/* Fan Photo Moderation */}
-      <AdminCard title="📷 Fan Photo Moderation (✅ Complete)">
+      <AdminCard title="Fan Photo Moderation">
         <div className="space-y-4">
           <div className="bg-[#f8fafc] p-4 rounded-lg border border-[#e5e7eb]">
             
             {/* Moderation Status Overview */}
             <div className="mb-6">
-              <h4 className="font-medium text-[#00105A] mb-4 m-0">📊 Moderation Status Overview:</h4>
+              <h4 className="font-medium text-[#00105A] mb-4 m-0">Moderation Status Overview:</h4>
               <div className="grid grid-cols-4 gap-4">
                 <div className="p-4 bg-white border border-[#e5e7eb] rounded-lg text-center">
                   <div className="text-2xl font-bold text-[#00105A]">{photoStatusCounts.pending}</div>
@@ -274,13 +274,13 @@ export function FanZoneModerationTab() {
 
             {/* Photo Review Grid */}
             <div className="mb-6">
-              <h4 className="font-medium text-[#00105A] mb-4 m-0">📸 Photo Review Grid:</h4>
+              <h4 className="font-medium text-[#00105A] mb-4 m-0">Photo Review Grid:</h4>
               {loadingPhotos ? (
                 <div className="text-center py-8 text-[#6b7280]">Loading fan photos...</div>
               ) : fanPhotos.length === 0 ? (
                 <div className="text-center py-8 text-[#6b7280]">No fan photos found for current filters</div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3">
                   {fanPhotos.map((photo) => (
                     <div key={photo._id} className="bg-white border border-[#e5e7eb] rounded-lg p-4">
                       <div className="aspect-square bg-[#f3f4f6] rounded mb-3 overflow-hidden">
@@ -338,13 +338,13 @@ export function FanZoneModerationTab() {
       </AdminCard>
 
       {/* Fan of the Month Manager */}
-      <AdminCard title="⭐ Fan of the Month Manager (✅ Complete)">
+      <AdminCard title="Fan of the Month Manager">
         <div className="space-y-4">
           <div className="bg-[#f8fafc] p-4 rounded-lg border border-[#e5e7eb]">
             
             {/* Category Overview */}
             <div className="mb-6">
-              <h4 className="font-medium text-[#00105A] mb-4 m-0">📊 Category Overview:</h4>
+              <h4 className="font-medium text-[#00105A] mb-4 m-0">Category Overview:</h4>
               <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
                 <div className="p-3 bg-white border border-[#e5e7eb] rounded-lg text-center">
                   <div className="text-lg font-bold text-[#00105A]">{categoryCounts.loyalLegend}</div>
@@ -418,7 +418,7 @@ export function FanZoneModerationTab() {
 
             {/* Fan Submission Review Cards */}
             <div className="space-y-4">
-              <h4 className="font-medium text-[#00105A] m-0">📝 Submission Review:</h4>
+              <h4 className="font-medium text-[#00105A] m-0">Submission Review:</h4>
               {loadingFanOfMonth ? (
                 <div className="text-center py-8 text-[#6b7280]">Loading fan of the month submissions...</div>
               ) : fanOfMonth.length === 0 ? (

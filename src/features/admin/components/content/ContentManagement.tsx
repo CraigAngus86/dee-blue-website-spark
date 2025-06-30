@@ -15,10 +15,7 @@ export function ContentManagement() {
               <h1 className="text-2xl font-bold text-[#00105A] mb-2 m-0">Content Management</h1>
               <p className="text-[#6b7280] m-0">Create and manage news articles, match galleries, and reports</p>
             </div>
-            <div className="text-sm text-[#6b7280]">
-              <span className="font-medium">Priority:</span> 🔥 High Frequency Tasks
-            </div>
-          </div>
+                      </div>
         </header>
         <main className="p-8">
           {/* Tab System */}

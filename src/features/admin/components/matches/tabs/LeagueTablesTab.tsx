@@ -204,7 +204,7 @@ export function LeagueTablesTab({ initialData }: LeagueTablesTabProps) {
 
   if (loading && !data) {
     return (
-      <AdminCard title="League Tables & BBC Scraper (✅ Complete)">
+      <AdminCard title="League Tables & BBC Scraper">
         <div className="p-8 text-center text-[#6b7280]">
           Loading league table data...
         </div>
@@ -217,7 +217,7 @@ export function LeagueTablesTab({ initialData }: LeagueTablesTabProps) {
 
   return (
     <div className="space-y-6">
-      <AdminCard title="League Tables & BBC Scraper (✅ Complete)">
+      <AdminCard title="League Tables & BBC Scraper">
         <div className="space-y-4">
           <div className="bg-[#f8fafc] p-4 rounded-lg border border-[#e5e7eb]">
             

@@ -154,7 +154,7 @@ export function MatchReportsTab({ initialData }: MatchReportsTabProps) {
   return (
     <div className="space-y-6">
       {/* Match Reports Management */}
-      <AdminCard title="Match Reports Management (✅ Complete)">
+      <AdminCard title="Match Reports Management">
         <div className="space-y-4">
           <div className="bg-[#f8fafc] p-4 rounded-lg border border-[#e5e7eb]">
             

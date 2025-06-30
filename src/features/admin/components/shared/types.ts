@@ -40,11 +40,21 @@ export interface FieldConfig {
   validation?: {
     wordCount?: { min: number; max: number };
     maxLength?: number;
-    minLength?: number;  // ADDED for minimum length validation
+    minLength?: number; // ADDED for minimum length validation
     fileTypes?: string[];
     maxSize?: number;
     maxFiles?: number;
-    pattern?: RegExp;    // ADDED for regex pattern validation
-    message?: string;    // ADDED for custom validation messages
+    pattern?: RegExp; // ADDED for regex pattern validation
+    message?: string; // ADDED for custom validation messages
   };
+}
+
+// UPDATED: Added 'player' and 'staff' entity types
+export interface AdminModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  entityType: 'match' | 'fanSubmission' | 'news' | 'matchReport' | 'matchGallery' | 'poll' | 'businessEnquiry' | 'sponsor' | 'player' | 'staff';
+  mode: 'add' | 'edit' | 'delete';
+  recordId?: string;
+  onSuccess?: () => void;
 }

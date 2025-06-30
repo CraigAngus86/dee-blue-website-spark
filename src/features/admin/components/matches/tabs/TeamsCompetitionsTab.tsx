@@ -5,13 +5,13 @@ export function TeamsCompetitionsTab() {
   return (
     <div className="space-y-6">
       {/* Teams & Competitions Management */}
-      <AdminCard title="👕 Teams & Competitions Management (📅 Low Priority) - Season setup, occasional updates">
+      <AdminCard title="Teams & Competitions Management (📋 WIP)">
         <div className="space-y-4">
           <div className="bg-[#f8fafc] p-4 rounded-lg border border-[#e5e7eb]">
             
             {/* Management Overview */}
             <div className="mb-6">
-              <h4 className="font-medium text-[#00105A] mb-4 m-0">📊 Management Overview:</h4>
+              <h4 className="font-medium text-[#00105A] mb-4 m-0">Management Overview:</h4>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="p-4 bg-white border border-[#e5e7eb] rounded-lg text-center">
                   <div className="text-2xl font-bold text-[#00105A]">37</div>
@@ -67,7 +67,7 @@ export function TeamsCompetitionsTab() {
 
             {/* Teams Management Table */}
             <div className="mb-6">
-              <h4 className="font-medium text-[#00105A] mb-4 m-0">🏟️ Teams Database:</h4>
+              <h4 className="font-medium text-[#00105A] mb-4 m-0">Teams Database:</h4>
               <div className="rounded-lg border border-[#e5e7eb] bg-white">
                 <div className="overflow-auto">
                   <table className="w-full caption-bottom text-sm">
@@ -176,7 +176,7 @@ export function TeamsCompetitionsTab() {
 
             {/* Team Editor Modal Wireframe */}
             <div className="mb-6">
-              <h4 className="font-medium text-[#00105A] mb-4 m-0">✏️ Team Editor Interface (Modal):</h4>
+              <h4 className="font-medium text-[#00105A] mb-4 m-0">Team Editor Interface (Modal):</h4>
               <div className="bg-white p-4 rounded-lg border border-[#e5e7eb]">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                   <div>
@@ -261,7 +261,7 @@ export function TeamsCompetitionsTab() {
               
               {/* Competitions */}
               <div className="bg-white p-4 rounded-lg border border-[#e5e7eb]">
-                <h4 className="font-medium text-[#00105A] mb-4 m-0">🏆 Competitions:</h4>
+                <h4 className="font-medium text-[#00105A] mb-4 m-0">Competitions:</h4>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center p-3 bg-[#f9fafb] rounded border border-[#e5e7eb]">
                     <div>
@@ -292,12 +292,12 @@ export function TeamsCompetitionsTab() {
 
               {/* Seasons */}
               <div className="bg-white p-4 rounded-lg border border-[#e5e7eb]">
-                <h4 className="font-medium text-[#00105A] mb-4 m-0">📅 Seasons:</h4>
+                <h4 className="font-medium text-[#00105A] mb-4 m-0">Seasons:</h4>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center p-3 bg-[#FFD700] bg-opacity-20 rounded border-2 border-[#FFD700]">
                     <div>
                       <div className="font-medium text-[#374151]">2024/25</div>
-                      <div className="text-sm text-[#6b7280]">⭐ Current Season</div>
+                      <div className="text-sm text-[#6b7280]">Current Season</div>
                     </div>
                     <button className="text-[#00105A] hover:text-[#FFD700] text-sm font-medium">Edit</button>
                   </div>

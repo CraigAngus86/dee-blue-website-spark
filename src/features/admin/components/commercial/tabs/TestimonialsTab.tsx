@@ -5,7 +5,7 @@ export function TestimonialsTab() {
   return (
     <div className="space-y-6">
       {/* Testimonials Management */}
-      <AdminCard title="💬 Testimonials & Success Stories (📅 Low Priority) - Partner testimonials, package content">
+      <AdminCard title="Testimonials & Success Stories (📋 WIP)">
         <div className="space-y-4">
           <div className="bg-[#f8fafc] p-4 rounded-lg border border-[#e5e7eb]">
             

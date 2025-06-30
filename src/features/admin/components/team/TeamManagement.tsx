@@ -14,9 +14,7 @@ export function TeamManagement() {
               <h1 className="text-2xl font-bold text-[#00105A] mb-2 m-0">Team Management</h1>
               <p className="text-[#6b7280] m-0">Manage player and staff profiles</p>
             </div>
-            <div className="text-sm text-[#6b7280]">
-              <span className="font-medium">Priority:</span> 📅 Low Frequency Updates
-            </div>
+            
           </div>
         </header>
         <main className="p-8">
@@ -27,13 +25,13 @@ export function TeamManagement() {
                 value="player-management"
                 className="data-[state=active]:bg-[#C5E7FF] data-[state=active]:text-[#00105A] font-medium"
               >
-                📅 Player Management
+                ✅ Player Management
               </TabsTrigger>
               <TabsTrigger
                 value="staff-management"
                 className="data-[state=active]:bg-[#C5E7FF] data-[state=active]:text-[#00105A] font-medium"
               >
-                �� Staff Management
+                ✅ Staff Management
               </TabsTrigger>
             </TabsList>
             <TabsContent value="player-management" className="mt-6">

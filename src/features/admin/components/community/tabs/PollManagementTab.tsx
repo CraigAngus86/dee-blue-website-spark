@@ -235,7 +235,7 @@ export function PollManagementTab() {
 
   return (
     <div className="space-y-6">
-      <AdminCard title="📊 Poll Creation & Management (📅 Low Priority) - Monthly engagement campaigns">
+      <AdminCard title="Poll Creation & Management">
         <div className="space-y-4">
           <div className="bg-[#f8fafc] p-4 rounded-lg border border-[#e5e7eb]">
             
