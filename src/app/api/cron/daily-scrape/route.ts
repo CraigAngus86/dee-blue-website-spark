@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function POST(request: NextRequest) {
+// Main scraping logic (shared between GET and POST)
+async function runDailyScrape() {
   try {
     console.log('🚀 Daily scrape cron started at', new Date().toISOString());
     
@@ -15,11 +16,11 @@ export async function POST(request: NextRequest) {
     
     if (!scrapeResult.success) {
       console.error('❌ Scrape failed:', scrapeResult.error);
-      return NextResponse.json({
+      return {
         success: false,
         step: 'scrape',
         error: scrapeResult.error
-      }, { status: 500 });
+      };
     }
     
     console.log('✅ Scrape successful:', scrapeResult.recordsProcessed, 'teams processed');
@@ -31,11 +32,11 @@ export async function POST(request: NextRequest) {
     
     if (!dataResult.success) {
       console.error('❌ Failed to fetch staging data:', dataResult.error);
-      return NextResponse.json({
+      return {
         success: false,
         step: 'fetch_staging',
         error: dataResult.error
-      }, { status: 500 });
+      };
     }
     
     // Step 3: Validate staging data
@@ -44,16 +45,14 @@ export async function POST(request: NextRequest) {
     
     if (validationIssues.length > 0) {
       console.warn('⚠️ Validation issues found:', validationIssues);
-      
-      // TODO: Send email notification to admin
       console.log('📧 Email notification would be sent here for validation issues');
       
-      return NextResponse.json({
+      return {
         success: false,
         step: 'validation',
         issues: validationIssues,
         message: 'Validation failed - admin intervention required'
-      });
+      };
     }
     
     console.log('✅ Validation passed - applying to live table');
@@ -69,33 +68,55 @@ export async function POST(request: NextRequest) {
     
     if (!applyResult.success) {
       console.error('❌ Apply failed:', applyResult.error);
-      return NextResponse.json({
+      return {
         success: false,
         step: 'apply',
         error: applyResult.error
-      }, { status: 500 });
+      };
     }
     
     console.log('✅ Daily scrape completed successfully');
     
-    return NextResponse.json({
+    return {
       success: true,
       message: 'Daily scrape completed successfully',
       teamsProcessed: scrapeResult.recordsProcessed,
       timestamp: new Date().toISOString()
-    });
+    };
     
   } catch (error) {
     console.error('❌ Daily scrape cron error:', error);
-    return NextResponse.json({
+    return {
       success: false,
       step: 'unknown',
       error: error instanceof Error ? error.message : 'Internal server error'
-    }, { status: 500 });
+    };
   }
 }
 
-// Validation function (copied from LeagueTablesTab logic)
+// POST endpoint (for manual testing)
+export async function POST(request: NextRequest) {
+  const result = await runDailyScrape();
+  
+  if (!result.success) {
+    return NextResponse.json(result, { status: 500 });
+  }
+  
+  return NextResponse.json(result);
+}
+
+// GET endpoint (for Vercel cron scheduler)
+export async function GET() {
+  const result = await runDailyScrape();
+  
+  if (!result.success) {
+    return NextResponse.json(result, { status: 500 });
+  }
+  
+  return NextResponse.json(result);
+}
+
+// Validation function
 function validateStagingData(stagingData: any[]): string[] {
   const issues: string[] = [];
   
@@ -124,13 +145,4 @@ function validateStagingData(stagingData: any[]): string[] {
   });
   
   return issues;
-}
-
-// GET endpoint for manual testing
-export async function GET() {
-  return NextResponse.json({
-    message: 'Daily scrape cron endpoint',
-    schedule: '7pm GMT/BST daily',
-    manual_test: 'POST to this endpoint to run manually'
-  });
 }
