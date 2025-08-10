@@ -11,8 +11,8 @@
   :root {
     /* Legacy tokens (kept for compatibility) → remapped to Baynounah */
     --primary: 0 0 0;            /* #000000  (Baynounah black) */
-    --primary-dark: 0 0 0;       /* keep black for dark variant */
-    --primary-light: 0 0 0;      /* keep black for light variant */
+    --primary-dark: 0 0 0;
+    --primary-light: 0 0 0;
 
     --secondary: 214 214 214;    /* #D6D6D6  (Neutral silver) */
     --secondary-dark: 190 190 190;
@@ -30,7 +30,7 @@
     --gray: 148 163 184;         /* #94A3B8 */
     --dark-gray: 71 85 105;      /* #475569 */
     --near-black: 30 41 59;      /* #1E293B */
-    --black: 15 23 42;           /* legacy near-navy; leave for safety */
+    --black: 15 23 42;           /* legacy near-navy; left for safety */
 
     /* Baynounah brand tokens (new) */
     --brand-gold: 252 199 67;    /* #FCC743 */
@@ -50,11 +50,11 @@
     --animation-standard: 250ms;
     --animation-deliberate: 400ms;
 
-    /* Elevation */
-    --shadow-sm: 0px 1px 2px rgba(0,0,0,0.08);
-    --shadow-md: 0px 4px 6px -1px rgba(0,0,0,0.10), 0px 2px 4px -1px rgba(0,0,0,0.06);
-    --shadow-lg: 0px 10px 15px -3px rgba(0,0,0,0.10), 0px 4px 6px -2px rgba(0,0,0,0.05);
-    --shadow-xl: 0px 20px 25px -5px rgba(0,0,0,0.10), 0px 10px 10px -5px rgba(0,0,0,0.05);
+    /* Elevation (stronger for premium feel) */
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.10);
+    --shadow-md: 0 8px 20px rgba(0,0,0,0.12);
+    --shadow-lg: 0 16px 32px rgba(0,0,0,0.14);
+    --shadow-xl: 0 24px 44px rgba(0,0,0,0.16);
 
     /* shadcn-style vars (used by components) */
     --background: 0 0% 100%;
@@ -103,20 +103,20 @@
    Base element styles
    ----------------------------- */
 body {
-  @apply bg-white text-brand-black font-body text-base; /* clean: white bg, black text, Open Sans */
+  @apply bg-white text-brand-black font-body text-base;
 }
 
 /* Headings: Bebas Neue for H1/H2, Open Sans for H3–H6 */
-h1, h2 {
+h1, h2, h3 {
   @apply font-heading font-bold tracking-tighter;
   line-height: 1.1;
 }
-h3, h4, h5, h6 {
+h4, h5, h6 {
   @apply font-body font-semibold;
   line-height: 1.25;
 }
 
-/* Keep your size utilities */
+/* Sizes (driven by Tailwind theme – kept as-is) */
 h1 { @apply text-h1 mb-6; }
 h2 { @apply text-h2 mb-5; }
 h3 { @apply text-h3 mb-4; }

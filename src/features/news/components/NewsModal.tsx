@@ -1,6 +1,8 @@
 "use client";
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Facebook, Linkedin, Mail, Copy } from 'lucide-react';
+import { format } from 'date-fns';
 import { NewsArticle } from '../types';
 import { PortableText } from '@portabletext/react';
 import portableTextComponents from './portable-text/PortableTextComponents';
@@ -14,311 +16,317 @@ interface NewsModalProps {
 
 // X (Twitter) Logo Component
 const XLogo = ({ size = 18 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
   </svg>
 );
 
-const NewsModal: React.FC<NewsModalProps> = ({
-  article,
-  isOpen,
-  onClose
-}) => {
-  
+const SITE_NAME = "Baynounah SC";
+
+// Map category values to display text (align with cards)
+const categoryDisplay: Record<string, string> = {
+  matchReport: 'Match Report',
+  clubNews: 'Club News',
+  teamNews: 'Team News',
+  communityNews: 'Community News',
+  commercialNews: 'Commercial News',
+  matchGallery: 'Match Gallery'
+};
+
+const NewsModal: React.FC<NewsModalProps> = ({ article, isOpen, onClose }) => {
+  const [heroImgError, setHeroImgError] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  // Mount flag for portal (avoids SSR mismatch)
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // Prevent background scrolling when modal is open
   useEffect(() => {
-    if (isOpen) {
-      // Save current scroll position
-      const scrollY = window.scrollY;
-      document.body.style.position = 'fixed';
-      document.body.style.top = `-${scrollY}px`;
-      document.body.style.width = '100%';
-      document.body.style.overflow = 'hidden';
-      
-      return () => {
-        // Restore scroll position when modal closes
-        document.body.style.position = '';
-        document.body.style.top = '';
-        document.body.style.width = '';
-        document.body.style.overflow = '';
-        window.scrollTo(0, scrollY);
-      };
-    }
+    if (!isOpen) return;
+
+    const scrollY = window.scrollY;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = '100%';
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      document.body.style.overflow = '';
+      window.scrollTo(0, scrollY);
+    };
   }, [isOpen]);
-  
-  if (!isOpen || !article) return null;
-  
-  // Map category values to display text
-  const categoryDisplay = {
-    matchReport: 'Match Report',
-    clubNews: 'Club News',
-    teamNews: 'Team News',
-    communityNews: 'Community News',
-    commercialNews: 'Commercial News',
-    matchGallery: 'Match Gallery'
-  };
-  
-  // Format date for display
-  const formattedDate = article.publishedAt 
-    ? new Date(article.publishedAt).toLocaleDateString('en-US', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-      })
+
+  // Build a canonical article URL (avoid sharing modal/list state)
+  const articleUrl = useMemo(() => {
+    if (!article) return typeof window !== 'undefined' ? window.location.origin : '';
+    const origin = typeof window !== 'undefined' ? window.location.origin : '';
+    const rawSlug =
+      typeof (article as any).slug === 'string'
+        ? (article as any).slug
+        : (article as any).slug?.current || '';
+    // Adjust path if your route differs
+    return rawSlug ? `${origin}/news/${encodeURIComponent(rawSlug)}` : origin;
+  }, [article]);
+
+  if (!mounted || !isOpen || !article) return null;
+
+  const formattedDate = article.publishedAt
+    ? format(new Date(article.publishedAt), "d MMMM yyyy")
     : '';
-  
-  // Get content type for Cloudinary transforms
+
+  // Cloudinary content type
   const contentType = getContentType(article.category);
-    
-  // Social sharing functions
+
+  // Social sharing
   const shareOnX = () => {
-    const url = window.location.href;
-    const text = `${article.title} | Banks o' Dee FC`;
-    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+    const text = `${article.title} | ${SITE_NAME}`;
+    window.open(
+      `https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(articleUrl)}`,
+      '_blank',
+      'noopener,noreferrer'
+    );
   };
-  
+
   const shareOnFacebook = () => {
-    const url = window.location.href;
-    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+    window.open(
+      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(articleUrl)}`,
+      '_blank',
+      'noopener,noreferrer'
+    );
   };
-  
+
   const shareOnLinkedin = () => {
-    const url = window.location.href;
     const title = article.title;
-    window.open(`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`, '_blank');
+    window.open(
+      `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(articleUrl)}&title=${encodeURIComponent(title)}`,
+      '_blank',
+      'noopener,noreferrer'
+    );
   };
-  
+
   const shareByEmail = () => {
-    const url = window.location.href;
-    const subject = article.title;
-    const body = `I thought you might be interested in this article from Banks o' Dee FC: ${article.title}\n\n${url}`;
+    const subject = `${article.title} | ${SITE_NAME}`;
+    const body = `I thought you might be interested in this article from ${SITE_NAME}: ${article.title}\n\n${articleUrl}`;
     window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
   };
-  
-  const copyLink = () => {
-    navigator.clipboard.writeText(window.location.href);
-    alert('Link copied to clipboard!');
+
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(articleUrl);
+      // Hook your toast/snackbar here if you have one
+    } catch {
+      // noop
+    }
   };
-  
-  return (
-    <div className="fixed inset-0 z-[9999] overflow-y-auto bg-black/50 flex items-center justify-center">
-      <div className="relative max-w-5xl w-full max-h-[95vh] bg-white rounded-lg shadow-xl overflow-hidden">
-        {/* Light grey header bar with social buttons and close button */}
-        <div className="absolute top-0 left-0 right-0 h-12 bg-[#f5f7fb] z-40 flex justify-between items-center px-4">
-          {/* Social sharing buttons - with proper X logo */}
-          <div className="flex space-x-2">
-            <button 
-              onClick={shareOnX}
-              className="w-8 h-8 flex items-center justify-center rounded-md text-[#00105A] hover:bg-[#C5E7FF] hover:text-[#00105A] transition-all duration-200"
-              aria-label="Share on X"
+
+  // Header height variable (adjust in :root to match your nav).
+  const headerPx = '72px'; // fallback if --header-h not set
+
+  const modal = (
+    <div
+      className="fixed inset-0 z-[200] bg-black/50"
+      /* OPTIONAL: click outside to close */
+      /* onClick={onClose} */
+      aria-modal="true"
+      role="dialog"
+      aria-label="Article"
+    >
+      {/* Dialog container under the header, centered horizontally */}
+      <div
+        className="absolute left-1/2 -translate-x-1/2 w-full px-4 sm:px-6 md:px-8 z-[210]"
+        style={{
+          marginTop: `calc(var(--header-h, ${headerPx}) + 16px)`,
+          marginBottom: '16px',
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div
+          className="relative mx-auto max-w-5xl max-h-[calc(100vh-32px-var(--header-h,72px))] bg-white rounded-lg shadow-xl overflow-hidden"
+          style={{ boxShadow: 'var(--shadow-xl)' }}
+        >
+          {/* Light header bar with share + close */}
+          <div className="absolute top-0 left-0 right-0 h-12 bg-white border-b border-[rgb(var(--neutral-silver))] z-40 flex justify-between items-center px-3 sm:px-4">
+            {/* Social sharing buttons */}
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={shareOnX}
+                className="w-8 h-8 flex items-center justify-center rounded-md text-black hover:bg-[rgba(252,199,67,0.18)] transition-colors"
+                aria-label="Share on X"
+              >
+                <XLogo size={18} />
+              </button>
+              <button
+                onClick={shareOnFacebook}
+                className="w-8 h-8 flex items-center justify-center rounded-md text-black hover:bg-[rgba(252,199,67,0.18)] transition-colors"
+                aria-label="Share on Facebook"
+              >
+                <Facebook size={18} />
+              </button>
+              <button
+                onClick={shareOnLinkedin}
+                className="w-8 h-8 flex items-center justify-center rounded-md text-black hover:bg-[rgba(252,199,67,0.18)] transition-colors"
+                aria-label="Share on LinkedIn"
+              >
+                <Linkedin size={18} />
+              </button>
+              <button
+                onClick={shareByEmail}
+                className="w-8 h-8 flex items-center justify-center rounded-md text-black hover:bg-[rgba(252,199,67,0.18)] transition-colors"
+                aria-label="Share by Email"
+              >
+                <Mail size={18} />
+              </button>
+              <button
+                onClick={copyLink}
+                className="w-8 h-8 flex items-center justify-center rounded-md text-black hover:bg-[rgba(252,199,67,0.18)] transition-colors"
+                aria-label="Copy link"
+              >
+                <Copy size={18} />
+              </button>
+            </div>
+
+            {/* Close */}
+            <button
+              className="text-black hover:text-[rgb(var(--brand-gold))] transition-colors"
+              onClick={onClose}
+              aria-label="Close"
             >
-              <XLogo size={18} />
-            </button>
-            <button 
-              onClick={shareOnFacebook}
-              className="w-8 h-8 flex items-center justify-center rounded-md text-[#00105A] hover:bg-[#C5E7FF] hover:text-[#00105A] transition-all duration-200"
-              aria-label="Share on Facebook"
-            >
-              <Facebook size={18} />
-            </button>
-            <button 
-              onClick={shareOnLinkedin}
-              className="w-8 h-8 flex items-center justify-center rounded-md text-[#00105A] hover:bg-[#C5E7FF] hover:text-[#00105A] transition-all duration-200"
-              aria-label="Share on LinkedIn"
-            >
-              <Linkedin size={18} />
-            </button>
-            <button 
-              onClick={shareByEmail}
-              className="w-8 h-8 flex items-center justify-center rounded-md text-[#00105A] hover:bg-[#C5E7FF] hover:text-[#00105A] transition-all duration-200"
-              aria-label="Share by Email"
-            >
-              <Mail size={18} />
-            </button>
-            <button 
-              onClick={copyLink}
-              className="w-8 h-8 flex items-center justify-center rounded-md text-[#00105A] hover:bg-[#C5E7FF] hover:text-[#00105A] transition-all duration-200"
-              aria-label="Copy link"
-            >
-              <Copy size={18} />
+              <X size={22} />
             </button>
           </div>
-          
-          {/* Close button - enhanced hover state */}
-          <button 
-            className="text-[#00105A] hover:text-[#FFD700] transition-colors duration-200"
-            onClick={onClose}
-          >
-            <X size={22} />
-            <span className="sr-only">Close</span>
-          </button>
-        </div>
-        
-        {/* Article content in a scrollable container */}
-        <div className="overflow-y-auto max-h-[95vh] pt-12">
-          {/* Main image with overlay */}
-          <div className="relative w-full aspect-[16/9]">
-            {article.mainImage ? (
-              <img 
-                src={getCloudinaryImageUrl(article.mainImage, { 
-                  variant: 'modal',
-                  contentType,
-                  width: 1200
-                })}
-                alt={article.title}
-                className="w-full h-full"
-                onError={(e) => {
-                  console.error(`Failed to load modal image for ${article.title}`);
-                  // Set fallback in case of error
-                  const target = e.target as HTMLImageElement;
-                  target.onerror = null; // Prevent infinite loop
-                  const fallbackDiv = document.createElement('div');
-                  fallbackDiv.className = 'w-full h-full bg-[#00105A] flex items-center justify-center';
-                  fallbackDiv.innerHTML = '<div class="w-1/3 h-1/3 opacity-50 text-white flex items-center justify-center">Banks o\' Dee FC</div>';
-                  if (target.parentNode) {
-                    target.parentNode.replaceChild(fallbackDiv, target);
-                  }
-                }}
-              />
-            ) : (
-              <div className="w-full h-full bg-[#00105A] flex items-center justify-center">
-                <div className="w-1/3 h-1/3 opacity-50 text-white flex items-center justify-center">
-                  Banks o' Dee FC
+
+          {/* Scrollable content area */}
+          <div className="overflow-y-auto max-h-[calc(100vh-32px-var(--header-h,72px))] pt-12">
+            {/* Hero image */}
+            <div className="relative w-full aspect-[16/9] bg-[rgb(var(--light-gray))]">
+              {article.mainImage && !heroImgError ? (
+                <img
+                  src={getCloudinaryImageUrl(article.mainImage, {
+                    variant: 'modal',
+                    contentType,
+                    width: 1200
+                  })}
+                  alt={article.title}
+                  className="w-full h-full object-cover"
+                  onError={() => setHeroImgError(true)}
+                />
+              ) : (
+                <div className="w-full h-full bg-black/80 flex items-center justify-center">
+                  <span className="text-white/70 text-sm">{SITE_NAME}</span>
+                </div>
+              )}
+
+              {/* Readability gradient + gold warmth */}
+              <div className="absolute inset-0">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/25 to-transparent pointer-events-none" />
+                <div className="absolute inset-0 pointer-events-none mix-blend-overlay opacity-70 bg-[radial-gradient(ellipse_at_center,rgba(252,199,67,0)_45%,rgba(252,199,67,0.12)_75%,rgba(252,199,67,0.20)_90%,rgba(252,199,67,0.24)_100%)]" />
+              </div>
+
+              {/* Title overlay */}
+              <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                <h1 className="text-xl md:text-4xl lg:text-5xl font-bold mb-3 leading-tight">
+                  {article.title}
+                </h1>
+                <div className="flex items-center flex-wrap gap-2">
+                  <span className="inline-block px-3 py-1 text-xs font-bold bg-black text-[rgb(var(--brand-gold))] rounded">
+                    {categoryDisplay[article.category] || article.category}
+                  </span>
+                  <span className="text-sm text-white/85">{formattedDate}</span>
                 </div>
               </div>
-            )}
-            {/* FIXED: Much lighter gradient overlay for better readability */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#00105A]/60 via-[#00105A]/30 to-transparent"></div>
-            
-            {/* Title overlay */}
-            <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-              <h1 className="text-xl md:text-4xl lg:text-5xl font-bold mb-3 leading-tight">
-                {article.title}
-              </h1>
-              <div className="flex items-center flex-wrap gap-2">
-                <span className="inline-block px-3 py-1 text-xs font-bold bg-[#C5E7FF] text-[#00105A] rounded">
-                  {categoryDisplay[article.category] || article.category}
-                </span>
-                <span className="text-sm text-white/80">{formattedDate}</span>
-              </div>
             </div>
-          </div>
-          
-          {/* Article content */}
-          <div className="px-6 py-8 bg-white">
-            {/* Excerpt with special styling */}
-            {article.excerpt && (
-              <div className="mb-8 text-lg font-medium text-[#4b5563] border-l-4 border-[#00105A] pl-4 py-2 bg-[#f5f7fb]">
-                {article.excerpt}
+
+            {/* Article content */}
+            <div className="px-6 py-8 bg-white">
+              {/* Excerpt callout */}
+              {article.excerpt && (
+                <div className="mb-8 text-lg font-medium text-[rgb(var(--dark-gray))] border-l-4 border-[rgb(var(--brand-gold))] pl-4 py-2 bg-[rgb(var(--light-gray))]">
+                  {article.excerpt}
+                </div>
+              )}
+
+              {/* Author */}
+              {article.author && (
+                <div className="mb-6 text-sm font-medium text-[rgb(var(--gray))]">
+                  By {article.author}
+                </div>
+              )}
+
+              {/* Body */}
+              <div className="prose max-w-none">
+                {Array.isArray(article.body) && article.body.length > 0 ? (
+                  <PortableText value={article.body} components={portableTextComponents} />
+                ) : typeof article.body === 'string' && article.body ? (
+                  <p className="text-[rgb(var(--near-black))]">{article.body}</p>
+                ) : (
+                  <div>
+                    <p className="text-[rgb(var(--near-black))]">
+                      {SITE_NAME} article content will appear here once loaded.
+                    </p>
+                    <p className="mt-4 text-[rgb(var(--warning))]">
+                      Note: Full article content is being loaded.
+                    </p>
+                  </div>
+                )}
               </div>
-            )}
-            
-            {/* Author if available */}
-            {article.author && (
-              <div className="mb-6 text-sm font-medium text-[#6b7280]">
-                By {article.author}
-              </div>
-            )}
-            
-            {/* Main content - Updated to use PortableText with custom components */}
-            <div className="prose max-w-none">
-              {Array.isArray(article.body) && article.body.length > 0 ? (
-                <PortableText 
-                  value={article.body} 
-                  components={portableTextComponents}
-                />
-              ) : typeof article.body === 'string' && article.body ? (
-                <p className="text-[#1f2937]">{article.body}</p>
-              ) : (
-                <div>
-                  <p className="text-[#1f2937]">Banks o' Dee FC is excited to announce summer trials for our expanding youth academy program. The trials will take place at our Spain Park facility, which features our FIFA-standard 3G artificial pitch.</p>
-                  <p className="mt-4 text-[#f59e0b]">Note: Full article content is being loaded. The website is currently being updated to display rich text content correctly.</p>
+
+              {/* Related players */}
+              {article.relatedPlayers && article.relatedPlayers.length > 0 && (
+                <div className="mt-8 pt-6 border-t border-[rgb(var(--light-gray))]">
+                  <h3 className="text-xl font-bold mb-4">Featured Players</h3>
+                  <div className="flex flex-wrap gap-4">
+                    {article.relatedPlayers.map(player => (
+                      <div key={player.id} className="flex items-center space-x-2 bg-[rgb(var(--light-gray))] p-2 rounded">
+                        <div className="w-12 h-12 rounded-full overflow-hidden bg-black/80 text-white flex items-center justify-center">
+                          <span className="text-xs">{player.name.charAt(0)}</span>
+                        </div>
+                        <span className="font-medium">{player.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Gallery */}
+              {article.gallery && article.gallery.images && article.gallery.images.length > 0 && (
+                <div className="mt-8 pt-6 border-t border-[rgb(var(--light-gray))]">
+                  <h3 className="text-xl font-bold mb-4">Photo Gallery</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {article.gallery.images.map((image, index) => (
+                      <div key={index} className="relative aspect-square rounded-md overflow-hidden shadow-md bg-[rgb(var(--light-gray))]">
+                        <img
+                          src={getCloudinaryImageUrl(image, {
+                            variant: 'square',
+                            contentType,
+                            width: 400
+                          })}
+                          alt={image.alt || `Image ${index + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                        {image.caption && (
+                          <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white p-2 text-sm">
+                            {image.caption}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
-            
-            {/* Related players section if available */}
-            {article.relatedPlayers && article.relatedPlayers.length > 0 && (
-              <div className="mt-8 pt-6 border-t border-[#f5f7fb]">
-                <h3 className="text-xl font-bold mb-4">Featured Players</h3>
-                <div className="flex flex-wrap gap-4">
-                  {article.relatedPlayers.map(player => (
-                    <div key={player.id} className="flex items-center space-x-2 bg-[#f5f7fb] p-2 rounded">
-                      {player.profileImage ? (
-                        <div className="w-12 h-12 rounded-full overflow-hidden">
-                          <img 
-                            src={getCloudinaryImageUrl(player.profileImage, { 
-                              variant: 'square',
-                              contentType: 'player',
-                              width: 100
-                            })}
-                            alt={player.name}
-                            className="w-full h-full"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.onerror = null;
-                              const fallbackDiv = document.createElement('div');
-                              fallbackDiv.className = 'w-12 h-12 rounded-full bg-[#00105A] flex items-center justify-center';
-                              fallbackDiv.innerHTML = `<span class="text-white text-xs">${player.name.charAt(0)}</span>`;
-                              if (target.parentNode) {
-                                target.parentNode.replaceChild(fallbackDiv, target);
-                              }
-                            }}
-                          />
-                        </div>
-                      ) : (
-                        <div className="w-12 h-12 rounded-full bg-[#00105A] flex items-center justify-center">
-                          <span className="text-white text-xs">{player.name.charAt(0)}</span>
-                        </div>
-                      )}
-                      <span className="font-medium">{player.name}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-            
-            {/* Gallery if available */}
-            {article.gallery && article.gallery.images && article.gallery.images.length > 0 && (
-              <div className="mt-8 pt-6 border-t border-[#f5f7fb]">
-                <h3 className="text-xl font-bold mb-4">Photo Gallery</h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {article.gallery.images.map((image, index) => (
-                    <div key={index} className="relative aspect-square rounded-md overflow-hidden shadow-md">
-                      <img 
-                        src={getCloudinaryImageUrl(image, { 
-                          variant: 'square',
-                          contentType,
-                          width: 400
-                        })}
-                        alt={image.alt || `Image ${index + 1}`}
-                        className="w-full h-full"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.onerror = null;
-                          const fallbackDiv = document.createElement('div');
-                          fallbackDiv.className = 'w-full h-full bg-[#f5f7fb] flex items-center justify-center';
-                          fallbackDiv.innerHTML = '<span class="text-[#6b7280]">Image not available</span>';
-                          if (target.parentNode) {
-                            target.parentNode.replaceChild(fallbackDiv, target);
-                          }
-                        }}
-                      />
-                      {image.caption && (
-                        <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white p-2 text-sm">
-                          {image.caption}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
         </div>
+
       </div>
     </div>
   );
+
+  return createPortal(modal, document.body);
 };
 
 export default NewsModal;

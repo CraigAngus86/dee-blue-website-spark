@@ -1,25 +1,31 @@
 import { Metadata } from "next";
+import type { CSSProperties } from "react";
+
 import Section from "@/components/ui/layout/Section";
 import { FanZoneSection } from "@/features/fanzone";
-import { SponsorsSection, getSponsorsForHomepage, type SanitySponsors } from "@/features/sponsors";
+import { SponsorsSection, getSponsorsForHomepage } from "@/features/sponsors";
 import GradientSeparator from "@/components/ui/separators/GradientSeparator";
-import FadeIn from "@/components/ui/animations/FadeIn";
 import MatchCenter from "@/components/ui/sections/MatchCenter";
 import PlayersSection from "@/features/team/components/PlayersSection";
+
 import { fetchSanityData } from "@/lib/sanity/sanityClient";
-import { getHomepageUpcomingMatches, getHomepageRecentMatches, getHomepageLeagueTable } from "@/features/matches/hooks/useHomeMatchData";
+import {
+  getHomepageUpcomingMatches,
+  getHomepageRecentMatches,
+  getHomepageLeagueTable,
+} from "@/features/matches/hooks/useHomeMatchData";
 import { HomeHeroSection, OverlappingNewsCards } from "@/features/home";
 import { getTeamData } from "@/features/team/services/getTeamData";
 import { selectRandomPlayersByPosition } from "@/features/team/services/playerSelection";
 import { getActivePoll } from "@/lib/supabase/polls";
 
-// Set the revalidation time to ensure fresh data
-export const revalidate = 10; // Revalidate every 10 seconds
+// Revalidate frequently for fresh homepage content
+export const revalidate = 10;
 
 export const metadata: Metadata = {
-  title: "Home | Banks o' Dee FC",
+  title: "Home | Baynounah Sports Club",
   description:
-    "Welcome to the official website of Banks o' Dee Football Club",
+    "Official website of Baynounah SC — Be Part of the Journey. News, fixtures, results, academy and more.",
 };
 
 // Fetch all news articles for homepage ordered by date
@@ -35,7 +41,6 @@ async function getNewsArticles(limit = 11) {
     author,
     body
   }`;
-  
   try {
     const news = await fetchSanityData(query, {}, false);
     return news || [];
@@ -57,7 +62,6 @@ async function getMatchGalleries() {
     photos,
     photographer
   }`;
-  
   try {
     const galleries = await fetchSanityData(query, {}, false);
     return galleries || [];
@@ -76,7 +80,6 @@ async function getFanOfMonth() {
     supporterSince,
     submittedAt
   }`;
-  
   try {
     const fanOfMonth = await fetchSanityData(query, {}, false);
     return fanOfMonth || null;
@@ -93,7 +96,6 @@ async function getGalleryPhotos() {
     context,
     submittedAt
   }`;
-  
   try {
     const galleryPhotos = await fetchSanityData(query, {}, false);
     return galleryPhotos || [];
@@ -106,28 +108,25 @@ async function getGalleryPhotos() {
 async function getRandomPlayers() {
   try {
     const { people, error } = await getTeamData();
-    
     if (error) {
       console.error("Error fetching team data:", error);
       return [];
     }
-    
-    // Select random players by position
-    const randomPlayers = selectRandomPlayersByPosition(people);
-    return randomPlayers;
+    return selectRandomPlayersByPosition(people);
   } catch (error) {
     console.error("Error selecting random players:", error);
     return [];
   }
 }
 
-// Mobile News Link Component
+// Mobile "See all News" link
 const MobileNewsLink = () => (
   <div className="block md:hidden bg-white py-6">
     <div className="container mx-auto px-4 text-center">
-      <a 
-        href="/news" 
-        className="inline-flex items-center justify-center px-6 py-3 bg-[#C5E7FF] text-[#00105A] rounded-lg font-semibold hover:bg-[#00105A] hover:text-white transition-all duration-200 shadow-sm hover:shadow-md"
+      <a
+        href="/news"
+        className="inline-flex items-center justify-center px-6 py-3 rounded-lg font-semibold shadow-sm hover:shadow-md transition-all duration-200
+                   border border-[rgb(var(--medium-gray))] text-near-black hover:bg-[rgb(var(--light-gray))]"
       >
         See all News
       </a>
@@ -136,16 +135,20 @@ const MobileNewsLink = () => (
 );
 
 export default async function HomePage() {
-  // Fetch both news articles and match galleries in parallel
+  // Fetch news + galleries in parallel
   const [newsArticles, matchGalleries] = await Promise.all([
-    getNewsArticles(20), // Fetch more to ensure we have enough mixed content
-    getMatchGalleries()
+    getNewsArticles(20),
+    getMatchGalleries(),
   ]);
 
-  // COPY EXACT NewsGrid pattern for normalization
+  // Normalize content to one list
   const allContent = [
-    ...newsArticles.map(article => ({ ...article, id: article._id, contentType: "article" })),
-    ...matchGalleries.map(gallery => ({
+    ...newsArticles.map((article) => ({
+      ...article,
+      id: article._id,
+      contentType: "article" as const,
+    })),
+    ...matchGalleries.map((gallery) => ({
       id: gallery._id,
       _id: gallery._id,
       title: gallery.title,
@@ -154,29 +157,29 @@ export default async function HomePage() {
       mainImage: gallery.coverImage,
       excerpt: `Match Day photos now available for ${gallery.title}!`,
       category: "matchGallery",
-      contentType: "gallery",
+      contentType: "gallery" as const,
       body: [],
-      author: gallery.photographer || 'Club Photographer'
-    }))
+      author: gallery.photographer || "Club Photographer",
+    })),
   ];
 
-  // Sort by date (most recent first)
+  // Sort by date (newest first)
   const sortedContent = [...allContent].sort((a, b) => {
     const dateA = a.publishedAt ? new Date(a.publishedAt).getTime() : 0;
     const dateB = b.publishedAt ? new Date(b.publishedAt).getTime() : 0;
     return dateB - dateA;
   });
 
-  // Fetch all other data in parallel
+  // Fetch other data in parallel
   const [
-    upcomingMatches, 
+    upcomingMatches,
     recentMatches,
     leagueTable,
     sponsors,
     fanOfMonth,
     galleryPhotos,
     randomPlayers,
-    activePoll
+    activePoll,
   ] = await Promise.all([
     getHomepageUpcomingMatches(5),
     getHomepageRecentMatches(5),
@@ -185,85 +188,75 @@ export default async function HomePage() {
     getFanOfMonth(),
     getGalleryPhotos(),
     getRandomPlayers(),
-    getActivePoll()
+    getActivePoll(),
   ]);
-  
-  // Apply same slicing logic to mixed content:
-  // Mobile: 5 items for hero, 0 for cards
-  // Desktop: 3 items for hero, 6 for cards (with overlap)
+
+  // Mixed content for hero/cards
   const heroItems = sortedContent.slice(0, 5);
   const cardsItems = sortedContent.slice(3, 9);
-  
-  // Convert to the format expected by components
+
+  // Neutral card shadow variables
   const cardShadowStyle = {
-    "--card-shadow": "0 10px 25px -5px rgba(0, 16, 90, 0.1), 0 8px 10px -6px rgba(0, 16, 90, 0.05)",
-    "--card-hover-shadow": "0 20px 25px -5px rgba(0, 16, 90, 0.15), 0 10px 10px -5px rgba(0, 16, 90, 0.1)"
-  } as React.CSSProperties;
-  
+    "--card-shadow":
+      "0 10px 25px -5px rgba(0,0,0,0.10), 0 8px 10px -6px rgba(0,0,0,0.06)",
+    "--card-hover-shadow":
+      "0 20px 25px -5px rgba(0,0,0,0.15), 0 10px 10px -5px rgba(0,0,0,0.10)",
+  } as CSSProperties;
+
   return (
     <div className="min-h-screen flex flex-col" style={cardShadowStyle}>
-      {/* Hero Section - now handles 5 items on mobile, 3 on desktop (mixed articles + galleries) */}
+      {/* Hero */}
       <HomeHeroSection articles={heroItems} />
-      
-      {/* Mobile News Link - only shows on mobile when cards are hidden */}
+
+      {/* Mobile CTA to News */}
       <MobileNewsLink />
-      
-      {/* News Cards Section - hidden on mobile, visible on desktop (mixed articles + galleries) */}
+
+      {/* News cards (desktop) */}
       <div className="hidden md:block">
         <OverlappingNewsCards articles={cardsItems} />
       </div>
-      
-      {/* Reduced Gradient Separator */}
+
       <GradientSeparator className="py-6" />
-      
-      {/* Match Center Section - Consistent Spacing */}
-      <Section 
+
+      {/* Match Center */}
+      <Section
         background="transparent"
         spacing="md"
-        className="bg-[#f5f7fb]"
-      > 
-        <MatchCenter 
-          upcomingMatches={upcomingMatches} 
-          recentResults={recentMatches} 
-          leagueTable={leagueTable} 
+        className="bg-[rgb(var(--light-gray))]"
+      >
+        <MatchCenter
+          upcomingMatches={upcomingMatches}
+          recentResults={recentMatches}
+          leagueTable={leagueTable}
         />
       </Section>
-      
-      {/* Reduced Gradient Separator */}
+
       <GradientSeparator className="py-6" />
-      
-      {/* Fan Zone Section - Using Section Component for Consistency */}
-      <Section 
-        background="transparent"
-        spacing="md"
-      >
-        <FanZoneSection 
-          fanOfMonth={fanOfMonth} 
-          galleryPhotos={galleryPhotos} 
+
+      {/* Fan Zone */}
+      <Section background="transparent" spacing="md">
+        <FanZoneSection
+          fanOfMonth={fanOfMonth}
+          galleryPhotos={galleryPhotos}
           activePoll={activePoll}
         />
       </Section>
-      
-      {/* Reduced Gradient Separator */}
+
       <GradientSeparator className="py-6" />
-      
-      {/* Players Section - NEW Barcelona-style Cards */}
+
+      {/* Players */}
       <Section
         background="transparent"
         spacing="md"
-        className="bg-[#f5f7fb]"
+        className="bg-[rgb(var(--light-gray))]"
       >
         <PlayersSection players={randomPlayers} />
       </Section>
-      
-      {/* Reduced Gradient Separator */}
+
       <GradientSeparator className="py-6" />
-      
-      {/* Sponsors Section - NEW Barcelona-style with Sanity Data */}
-      <Section
-        background="transparent"
-        spacing="md"
-      >
+
+      {/* Sponsors */}
+      <Section background="transparent" spacing="md">
         <SponsorsSection sponsors={sponsors} />
       </Section>
     </div>

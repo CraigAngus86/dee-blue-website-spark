@@ -1,10 +1,11 @@
 "use client";
-import React from 'react';
-import { NewsArticle } from '@/features/news/types';
-import { formatDistanceToNow } from 'date-fns';
-import { ChevronRight } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import CloudinaryImage from '@/components/ui/cloudinary/CloudinaryImage';
+
+import React from "react";
+import { NewsArticle } from "@/features/news/types";
+import { format } from "date-fns";
+import { ChevronRight } from "lucide-react";
+import { cn } from "@/lib/utils";
+import CloudinaryImage from "@/components/ui/cloudinary/CloudinaryImage";
 
 interface NewsCardProps {
   article: NewsArticle;
@@ -12,77 +13,110 @@ interface NewsCardProps {
   className?: string;
 }
 
-const NewsCard: React.FC<NewsCardProps> = ({ article, onClick, className }) => {
-  const timeAgo = article.publishedAt 
-    ? formatDistanceToNow(new Date(article.publishedAt), { addSuffix: false })
-    : '';
-  
-  const categoryDisplay: Record<string, string> = {
-    matchReport: 'MATCH REPORT',
-    clubNews: 'CLUB NEWS',
-    teamNews: 'TEAM NEWS',
-    commercialNews: 'COMMERCIAL NEWS',
-    matchGallery: 'MATCH GALLERY'
+const categoryLabel = (raw?: string) => {
+  if (!raw) return "NEWS";
+  const map: Record<string, string> = {
+    matchReport: "MATCH REPORT",
+    clubNews: "CLUB NEWS",
+    teamNews: "TEAM NEWS",
+    commercialNews: "COMMERCIAL NEWS",
+    matchGallery: "MATCH GALLERY",
   };
-  
-  const handleClick = () => {
-    if (onClick) {
-      onClick(article);
+  return (map[raw] ?? raw).toUpperCase();
+};
+
+const NewsCard: React.FC<NewsCardProps> = ({ article, onClick, className }) => {
+  // Match hero’s explicit date format (e.g., 20 September 2025)
+  const published = article.publishedAt
+    ? format(new Date(article.publishedAt), "d MMMM yyyy")
+    : null;
+
+  const handleClick = () => onClick?.(article);
+
+  const handleKeyDown: React.KeyboardEventHandler<HTMLDivElement> = (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onClick?.(article);
     }
   };
-  
+
   return (
-    <div 
+    <article
       className={cn(
-        "bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer h-full flex flex-col",
-        "transform hover:scale-[1.02]",
+        "bg-white rounded-lg shadow-md transition-all duration-300 h-full flex flex-col",
+        "hover:shadow-lg hover:-translate-y-[2px]",
+        "focus-within:ring-2 focus-within:ring-[#FCC743] focus-within:ring-offset-2 focus-within:ring-offset-white",
         className
       )}
-      onClick={handleClick}
     >
-      {/* Updated to use aspect ratio container with CloudinaryImage */}
+      {/* Media */}
       <div className="relative w-full aspect-[16/9] overflow-hidden rounded-t-lg">
         {article.mainImage ? (
-          <>
-            <CloudinaryImage
-              image={article.mainImage}
-              variant="card"
-              alt={article.mainImage?.alt || article.title}
-              category={article.category}
-              className="transition-transform duration-300 hover:scale-105"
-            />
-          </>
+          <CloudinaryImage
+            image={article.mainImage}
+            variant="card"
+            alt={article.mainImage?.alt || article.title}
+            category={article.category}
+            className="transition-transform duration-300" /* no image zoom */
+          />
         ) : (
-          <div className="w-full h-full bg-gray-200"></div>
+          <div className="w-full h-full bg-gray-100" />
         )}
-        
-        <div className="absolute inset-0 bg-gradient-to-t from-[#00105A]/40 via-transparent to-transparent"></div>
-        
-        <div className="absolute left-4 top-4 bg-[#00105A] text-white text-xs font-bold py-1 px-3 rounded">
-          {categoryDisplay[article.category] || article.category}
+
+        {/* Neutral black gradient (no navy) */}
+        {article.mainImage && (
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-transparent" />
+        )}
+
+        {/* Category chip: gold on black */}
+        <div className="absolute left-4 top-4">
+          <span
+            className={cn(
+              "inline-block rounded-full bg-black text-[#FCC743]",
+              "px-3 py-1 text-[11px] font-semibold tracking-wider"
+            )}
+          >
+            {categoryLabel(article.category)}
+          </span>
         </div>
       </div>
-      
-      <div className="flex flex-col flex-grow p-5">
-        <h3 className="text-xl font-bold mb-2 text-[#00105A]">
-          {article.title}
-        </h3>
-        
+
+      {/* Content (clickable area for keyboard/mouse) */}
+      <div
+        role="button"
+        tabIndex={0}
+        aria-label={`Open ${article.title}`}
+        onClick={handleClick}
+        onKeyDown={handleKeyDown}
+        className={cn(
+          "flex flex-col flex-grow p-5 outline-none rounded-b-lg",
+          "focus-visible:ring-2 focus-visible:ring-[#FCC743] focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+        )}
+      >
+        {/* Title (Bebas via global h3) */}
+        <h3 className="mb-2 text-black">{article.title}</h3>
+
+        {/* Subheader / excerpt (one size smaller) */}
         {article.excerpt && (
-          <p className="text-[#6b7280] mb-4 flex-grow text-sm leading-relaxed">
+          <p className="text-sm text-gray-600 mb-4 leading-relaxed">
             {article.excerpt}
           </p>
         )}
-        
-        <div className="flex items-center justify-between text-sm text-[#6b7280] mt-auto">
-          <span>{timeAgo} ago</span>
-          <div className="flex items-center text-[#00105A] font-medium">
-            Read More
-            <ChevronRight className="w-4 h-4 ml-1" />
+
+        {/* Footer */}
+        <div className="mt-auto">
+          {/* Strong gold divider (no opacity, thicker) */}
+          <div className="h-[1px] bg-[#FCC743] mb-3" />
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-gray-600">{published ?? "Just now"}</span>
+            <span className="group inline-flex items-center font-medium text-black hover:text-[#FCC743] transition-colors">
+              Read more
+              <ChevronRight className="w-4 h-4 ml-1" aria-hidden="true" />
+            </span>
           </div>
         </div>
       </div>
-    </div>
+    </article>
   );
 };
 

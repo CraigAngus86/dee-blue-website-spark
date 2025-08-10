@@ -1,104 +1,153 @@
 "use client";
-import React, { useState } from 'react';
-import { NewsArticle } from '@/features/news/types';
-import { NewsCard, NewsModal } from '@/features/news/components';
-import { MatchGalleryModal } from '@/features/galleries';
-import { cn } from '@/lib/utils';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { NewsArticle } from "@/features/news/types";
+import { NewsCard, NewsModal } from "@/features/news/components";
+import { MatchGalleryModal } from "@/features/galleries";
+import { cn } from "@/lib/utils";
 
 interface OverlappingNewsCardsProps {
   articles: (NewsArticle & { contentType?: string })[];
   className?: string;
 }
 
+const STAGGER_MS = 400; // slower spacing between each card fade-up
+
 const OverlappingNewsCards: React.FC<OverlappingNewsCardsProps> = ({
   articles,
-  className
+  className,
 }) => {
   const [selectedArticle, setSelectedArticle] = useState<NewsArticle | null>(null);
   const [selectedGalleryId, setSelectedGalleryId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  
-  if (!articles || articles.length === 0) {
-    return null;
-  }
-  
-  // Function to handle clicks on content (articles or galleries)
-  const handleContentClick = async (content: NewsArticle & { contentType?: string }) => {
-    try {
-      setIsLoading(true);
-      
-      if (content.contentType === 'gallery') {
-        // Handle gallery click - store gallery ID for modal
-        setSelectedGalleryId(content.id);
-      } else {
-        // Handle article click - fetch complete article if needed
-        if (Array.isArray(content.body) && content.body.length > 0) {
-          // Article already has complete data
-          setSelectedArticle(content);
-        } else {
-          // Fetch the complete article data by slug using the existing endpoint
-          const response = await fetch(`/api/sanity-test/news?slug=${encodeURIComponent(content.slug)}`);
-          
-          if (!response.ok) {
-            throw new Error('Failed to fetch article');
-          }
-          
-          const data = await response.json();
-          
-          if (data.success && data.data) {
-            // Set the complete article
-            setSelectedArticle(data.data);
-          } else {
-            // If fetch fails, use the original article data
-            console.warn('Failed to fetch complete article, using limited data');
-            setSelectedArticle(content);
-          }
-        }
-      }
-    } catch (error) {
-      console.error('Error handling content click:', error);
-      // If there's an error, still show the modal with original data
-      if (content.contentType === 'gallery') {
-        setSelectedGalleryId(content.id);
-      } else {
-        setSelectedArticle(content);
-      }
-    } finally {
-      setIsLoading(false);
+
+  const gridRef = useRef<HTMLDivElement | null>(null);
+  const [mounted, setMounted] = useState(false);   // hydration gate
+  const [visible, setVisible] = useState(false);   // trigger reveal
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Reveal if already scrolled, or on first scroll/wheel/touchstart
+  useEffect(() => {
+    if (typeof window === "undefined" || visible) return;
+
+    if (window.scrollY > 0) {
+      setVisible(true);
+      return;
     }
-  };
-  
+
+    const onFirst = () => setVisible(true);
+
+    window.addEventListener("scroll", onFirst, { passive: true, once: true, capture: true });
+    window.addEventListener("wheel", onFirst as any, { passive: true, once: true, capture: true });
+    window.addEventListener("touchstart", onFirst as any, { passive: true, once: true, capture: true });
+
+    return () => {
+      window.removeEventListener("scroll", onFirst, { capture: true } as any);
+      window.removeEventListener("wheel", onFirst as any, { capture: true } as any);
+      window.removeEventListener("touchstart", onFirst as any, { capture: true } as any);
+    };
+  }, [visible]);
+
+  if (!articles || articles.length === 0) return null;
+
+  const handleContentClick = useCallback(
+    async (content: NewsArticle & { contentType?: string }) => {
+      try {
+        setIsLoading(true);
+
+        if (content.contentType === "gallery") {
+          setSelectedGalleryId(content.id);
+          return;
+        }
+
+        if (Array.isArray(content.body) && content.body.length > 0) {
+          setSelectedArticle(content);
+          return;
+        }
+
+        const response = await fetch(`/api/sanity-test/news?slug=${encodeURIComponent(content.slug)}`);
+        if (!response.ok) throw new Error("Failed to fetch article");
+
+        const data = await response.json();
+        if (data.success && data.data) {
+          setSelectedArticle(data.data);
+        } else {
+          setSelectedArticle(content);
+        }
+      } catch (error) {
+        console.error("Error handling content click:", error);
+        if (content.contentType === "gallery") setSelectedGalleryId(content.id);
+        else setSelectedArticle(content);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    []
+  );
+
+  const delays = useMemo(() => articles.map((_, i) => i), [articles]);
+
   return (
-    <div className="bg-white py-16 relative">
-      {/* Dotted pattern background */}
-      <div className="absolute inset-0 opacity-5" aria-hidden="true">
-        <div className="absolute inset-0" 
-          style={{ 
-            backgroundImage: 'radial-gradient(#00105A 1px, transparent 2px)',
-            backgroundSize: '20px 20px'
-          }}>
-        </div>
+    <section
+      className="bg-white py-12 sm:py-14 md:py-16 relative z-30"
+      aria-label="Latest stories and galleries"
+    >
+      {/* Subtle gold grid bg */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.06]" aria-hidden="true">
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage:
+              "linear-gradient(to right, rgba(252,199,67,0.5) 1px, transparent 1px), linear-gradient(to bottom, rgba(252,199,67,0.5) 1px, transparent 1px)",
+            backgroundSize: "24px 24px",
+          }}
+        />
       </div>
-      
-      {/* Content with negative margin */}
-      <div className={cn(
-        "container mx-auto px-4 relative z-10",
-        "-mt-20 sm:-mt-24 md:-mt-32 lg:-mt-40", // Exact negative margins from reference
-        className
-      )}>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
-          {articles.map(content => (
-            <div key={content.id} className="h-full">
+
+      {/* Overlap offset under the hero */}
+      <div
+        className={cn(
+          "container mx-auto px-4 relative z-30",
+          "-mt-16 sm:-mt-20 md:-mt-28 lg:-mt-32",
+          className
+        )}
+      >
+        <div
+          ref={gridRef}
+          className="fade-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6"
+          data-mounted={mounted ? "true" : "false"}
+          data-visible={visible ? "true" : "false"}
+          style={{ visibility: mounted ? "visible" : "hidden" }}
+        >
+          {articles.map((content, i) => (
+            <div
+              key={content.id}
+              className={cn(
+                "fade-card group h-full rounded-lg overflow-hidden outline-none",
+                "ring-1 ring-[rgb(var(--medium-gray))] ring-offset-0",
+                "transition-transform duration-200", // only transform, not opacity
+                "hover:-translate-y-0.5 hover:shadow-[var(--card-shadow)]",
+                "focus-within:ring-2 focus-within:ring-[#FCC743]"
+              )}
+              style={
+                {
+                  transitionDelay: `calc(var(--stagger, ${delays[i]}) * ${STAGGER_MS}ms)`,
+                  ["--stagger" as any]: delays[i],
+                } as React.CSSProperties
+              }
+            >
               <NewsCard
                 article={content}
                 onClick={handleContentClick}
-                className="rounded-lg overflow-hidden"
+                className="h-full group-hover:ring-2 group-hover:ring-[#FCC743]"
               />
             </div>
           ))}
         </div>
       </div>
-      
+
       {/* News Modal */}
       {selectedArticle && (
         <NewsModal
@@ -107,7 +156,7 @@ const OverlappingNewsCards: React.FC<OverlappingNewsCardsProps> = ({
           onClose={() => setSelectedArticle(null)}
         />
       )}
-      
+
       {/* Gallery Modal */}
       {selectedGalleryId && (
         <MatchGalleryModal
@@ -116,22 +165,72 @@ const OverlappingNewsCards: React.FC<OverlappingNewsCardsProps> = ({
           onClose={() => setSelectedGalleryId(null)}
         />
       )}
-      
+
       {/* Loading indicator */}
       {isLoading && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white p-4 rounded-lg shadow-lg text-[#00105A]">
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-[300]"
+          role="status"
+          aria-live="polite"
+          aria-busy="true"
+        >
+          <div className="bg-white px-4 py-3 rounded-lg shadow-lg text-black">
             <div className="flex items-center space-x-2">
-              <svg className="animate-spin h-5 w-5 text-[#00105A]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <svg
+                className="animate-spin h-5 w-5 text-[#FCC743]"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 714 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 714 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
               </svg>
-              <span>Loading {selectedGalleryId ? 'gallery' : 'article'}...</span>
+              <span className="text-sm">
+                Loading {selectedGalleryId ? "gallery" : "article"}…
+              </span>
             </div>
           </div>
         </div>
       )}
-    </div>
+
+      {/* Animation styles */}
+      <style jsx>{`
+        /* Start hidden SSR to avoid flash */
+        .fade-card {
+          opacity: 0;
+          transform: translateY(12px);
+          transition: none; /* no transition before hydration */
+          will-change: opacity, transform;
+          backface-visibility: hidden;
+          transform: translateZ(0);
+        }
+
+        /* After hydration, set up the transition (still hidden) */
+        .fade-grid[data-mounted="true"] .fade-card {
+          transition: opacity 900ms ease-out, transform 900ms ease-out;
+        }
+
+        /* Only when revealed do we animate in */
+        .fade-grid[data-mounted="true"][data-visible="true"] .fade-card {
+          opacity: 1;
+          transform: translateY(0);
+        }
+
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+          .fade-card {
+            opacity: 1 !important;
+            transform: none !important;
+            transition: none !important;
+          }
+        }
+      `}</style>
+    </section>
   );
 };
 
