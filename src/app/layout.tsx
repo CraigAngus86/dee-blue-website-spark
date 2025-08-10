@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Montserrat } from "next/font/google";
+import { Bebas_Neue, Open_Sans } from "next/font/google";
 import Script from "next/script";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -7,26 +7,55 @@ import { Providers } from "./providers";
 import { getHeaderSponsors } from "@/features/sponsors/utils/sanityQueries";
 import "@/styles/globals.css";
 
-// Font configuration
-const inter = Inter({
+// Font configuration (Baynounah)
+const bebas = Bebas_Neue({
+  weight: "400",
   subsets: ["latin"],
-  variable: '--font-inter',
-  display: 'swap',
+  variable: "--font-heading",
+  display: "swap",
 });
 
-const montserrat = Montserrat({
+const openSans = Open_Sans({
   subsets: ["latin"],
-  variable: '--font-montserrat',
-  display: 'swap',
+  variable: "--font-body",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
   title: {
-    default: "Banks o' Dee Football Club",
-    template: "%s | Banks o' Dee FC",
+    default: "Baynounah Sports Club",
+    template: "%s | Baynounah SC",
   },
-  description: "Official website of Banks o' Dee Football Club - Latest news, fixtures, results and more from Spain Park.",
-  keywords: ["Banks o' Dee", "football", "soccer", "Aberdeen", "Highland League", "Spain Park"],
+  description:
+    "Baynounah Sports Club — Be Part of the Journey. Academy-first, community-driven football in Abu Dhabi.",
+  keywords: [
+    "Baynounah SC",
+    "Baynounah Sports Club",
+    "Abu Dhabi football",
+    "UAE football",
+    "football academy",
+    "fixtures",
+    "results",
+    "news",
+  ],
+  openGraph: {
+    title: "Baynounah Sports Club",
+    description:
+      "Be Part of the Journey — academy excellence, community, and ambition in Abu Dhabi.",
+    url: "https://www.baynounahsc.ae",
+    siteName: "Baynounah SC",
+    images: ["/og.jpg"], // we'll add/update this asset next
+    locale: "en_AE",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Baynounah Sports Club",
+    description:
+      "Be Part of the Journey — academy excellence, community, and ambition in Abu Dhabi.",
+    images: ["/og.jpg"],
+  },
+  icons: { icon: "/favicon.ico" }, // keep existing favicon for now
 };
 
 export default async function RootLayout({
@@ -34,30 +63,44 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Fetch sponsors server-side (same approach as main page)
+  // Fetch sponsors server-side
   const headerSponsors = await getHeaderSponsors();
 
   return (
-    <html lang="en" className={`${inter.variable} ${montserrat.variable}`}>
+    <html lang="en" className={`${openSans.variable} ${bebas.variable}`}>
       <head>
-        {/* Google Analytics */}
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-JEX30K4HHZ"
-          strategy="afterInteractive"
+        {/* JSON-LD: Organization */}
+        <script
+          type="application/ld+json"
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SportsOrganization",
+              name: "Baynounah Sports Club",
+              url: "https://www.baynounahsc.ae",
+              logo: "/favicon.ico",
+              sameAs: [
+                "https://x.com/baynounahsc",
+                "https://www.facebook.com/BaynounahSC/",
+                "https://www.instagram.com/baynounahsc/",
+                "https://www.youtube.com/channel/UCXiba2uCfhFI_PYJiiExavA"
+              ],
+              email: "support@baynounahsc.ae",
+              telephone: "+971566975370",
+              address: {
+                "@type": "PostalAddress",
+                addressLocality: "Abu Dhabi",
+                addressCountry: "AE"
+              }
+            })
+          }}
         />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-JEX30K4HHZ');
-          `}
-        </Script>
       </head>
       <body className="antialiased flex flex-col min-h-screen">
         <Providers>
           <Header sponsors={headerSponsors} />
-          <main className="flex-grow pt-16">
+          <main id="main" className="flex-grow pt-16">
             {children}
           </main>
           <Footer />

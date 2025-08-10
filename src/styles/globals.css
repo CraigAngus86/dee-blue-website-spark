@@ -4,55 +4,59 @@
 @tailwind components;
 @tailwind utilities;
 
+/* -----------------------------
+   Base tokens (CSS variables)
+   ----------------------------- */
 @layer base {
   :root {
-    /* Base colors */
-    --primary: 0 16 90; /* #00105A */
-    --primary-dark: 0 12 66; /* #000C42 */
-    --primary-light: 0 28 140; /* #001C8C */
-    
-    --secondary: 197 231 255; /* #C5E7FF */
-    --secondary-dark: 156 203 235; /* #9CCBEB */
-    --secondary-light: 229 244 255; /* #E5F4FF */
-    
-    --accent: 255 215 0; /* #FFD700 */
-    --accent-dark: 230 194 0; /* #E6C200 */
-    --accent-light: 255 223 51; /* #FFDF33 */
-    
-    /* Neutral colors */
-    --white: 255 255 255; /* #FFFFFF */
-    --light-gray: 244 247 251; /* #F4F7FB */
-    --medium-gray: 226 232 240; /* #E2E8F0 */
-    --gray: 148 163 184; /* #94A3B8 */
-    --dark-gray: 71 85 105; /* #475569 */
-    --near-black: 30 41 59; /* #1E293B */
-    --black: 15 23 42; /* #0F172A */
-    
-    /* Semantic colors */
+    /* Legacy tokens (kept for compatibility) → remapped to Baynounah */
+    --primary: 0 0 0;            /* #000000  (Baynounah black) */
+    --primary-dark: 0 0 0;       /* keep black for dark variant */
+    --primary-light: 0 0 0;      /* keep black for light variant */
+
+    --secondary: 214 214 214;    /* #D6D6D6  (Neutral silver) */
+    --secondary-dark: 190 190 190;
+    --secondary-light: 235 235 235;
+
+    /* Accent = Baynounah Gold */
+    --accent: 252 199 67;        /* #FCC743 */
+    --accent-dark: 224 176 59;   /* slightly darker gold */
+    --accent-light: 255 215 120; /* lighter gold */
+
+    /* Neutrals (kept) */
+    --white: 255 255 255;        /* #FFFFFF */
+    --light-gray: 244 247 251;   /* #F4F7FB */
+    --medium-gray: 226 232 240;  /* #E2E8F0 */
+    --gray: 148 163 184;         /* #94A3B8 */
+    --dark-gray: 71 85 105;      /* #475569 */
+    --near-black: 30 41 59;      /* #1E293B */
+    --black: 15 23 42;           /* legacy near-navy; leave for safety */
+
+    /* Baynounah brand tokens (new) */
+    --brand-gold: 252 199 67;    /* #FCC743 */
+    --brand-black: 0 0 0;        /* #000000 */
+    --heritage-red: 177 25 25;   /* #B11919 */
+    --heritage-green: 60 165 18; /* #3CA512 */
+    --neutral-silver: 214 214 214; /* #D6D6D6 */
+
+    /* Semantic */
     --success: 16 185 129; /* #10B981 */
     --warning: 245 158 11; /* #F59E0B */
-    --error: 239 68 68; /* #EF4444 */
-    --info: 59 130 246; /* #3B82F6 */
-    
-    /* Animation speeds - standardized for consistency */
+    --error: 239 68 68;    /* #EF4444 */
+    --info: 59 130 246;    /* #3B82F6 */
+
+    /* Motion */
     --animation-quick: 200ms;
     --animation-standard: 250ms;
     --animation-deliberate: 400ms;
-    
-    /* Elevation/shadows - enhanced for better depth */
-    --shadow-sm: 0px 1px 2px rgba(15, 23, 42, 0.1);
-    --shadow-md: 0px 4px 6px -1px rgba(15, 23, 42, 0.1), 0px 2px 4px -1px rgba(15, 23, 42, 0.06);
-    --shadow-lg: 0px 10px 15px -3px rgba(15, 23, 42, 0.1), 0px 4px 6px -2px rgba(15, 23, 42, 0.05);
-    --shadow-xl: 0px 20px 25px -5px rgba(15, 23, 42, 0.1), 0px 10px 10px -5px rgba(15, 23, 42, 0.04);
-    
-    /* Common border radius values */
-    --radius-sm: 0.125rem;
-    --radius-md: 0.25rem;
-    --radius-lg: 0.375rem;
-    --radius-xl: 0.5rem;
-    --radius-2xl: 1rem;
-    
-    /* UI state variables for light mode */
+
+    /* Elevation */
+    --shadow-sm: 0px 1px 2px rgba(0,0,0,0.08);
+    --shadow-md: 0px 4px 6px -1px rgba(0,0,0,0.10), 0px 2px 4px -1px rgba(0,0,0,0.06);
+    --shadow-lg: 0px 10px 15px -3px rgba(0,0,0,0.10), 0px 4px 6px -2px rgba(0,0,0,0.05);
+    --shadow-xl: 0px 20px 25px -5px rgba(0,0,0,0.10), 0px 10px 10px -5px rgba(0,0,0,0.05);
+
+    /* shadcn-style vars (used by components) */
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
@@ -68,9 +72,8 @@
     --ring: 222.2 84% 4.9%;
     --radius: 0.5rem;
   }
-  
+
   .dark {
-    /* UI state variables for dark mode */
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
     --card: 222.2 84% 4.9%;
@@ -87,43 +90,33 @@
   }
 }
 
-/* Custom animations */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
+/* -----------------------------
+   Animations
+   ----------------------------- */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes scaleIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
+@keyframes slideOutRight { from { transform: translateX(0); } to { transform: translateX(100%); } }
 
-@keyframes slideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-
-@keyframes scaleIn {
-  from { transform: scale(0.95); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
-
-@keyframes slideInRight {
-  from { transform: translateX(100%); }
-  to { transform: translateX(0); }
-}
-
-@keyframes slideOutRight {
-  from { transform: translateX(0); }
-  to { transform: translateX(100%); }
-}
-
-/* Base styles */
+/* -----------------------------
+   Base element styles
+   ----------------------------- */
 body {
-  @apply bg-white text-near-black font-inter text-base;
+  @apply bg-white text-brand-black font-body text-base; /* clean: white bg, black text, Open Sans */
 }
 
-/* Typography baseline with consistent spacing */
-h1, h2, h3, h4, h5, h6 {
-  @apply font-montserrat font-bold;
-  line-height: 1.2;
+/* Headings: Bebas Neue for H1/H2, Open Sans for H3–H6 */
+h1, h2 {
+  @apply font-heading font-bold tracking-tighter;
+  line-height: 1.1;
+}
+h3, h4, h5, h6 {
+  @apply font-body font-semibold;
+  line-height: 1.25;
 }
 
+/* Keep your size utilities */
 h1 { @apply text-h1 mb-6; }
 h2 { @apply text-h2 mb-5; }
 h3 { @apply text-h3 mb-4; }
@@ -131,143 +124,92 @@ h4 { @apply text-h4 mb-3; }
 h5 { @apply text-h5 mb-2; }
 h6 { @apply text-h6 mb-2; }
 
-p { @apply mb-4 leading-relaxed; }
+p  { @apply mb-4 leading-relaxed; }
 
-/* Enhanced link styles with consistent transitions */
+/* Links: black text, gold underline on hover */
 .link {
-  @apply relative inline-block font-medium text-primary;
+  @apply relative inline-block font-medium text-brand-black;
   transition: color var(--animation-quick) ease-out;
 }
-
 .link:after {
   content: '';
-  @apply absolute w-full scale-x-0 h-0.5 bottom-0 left-0 bg-accent;
+  @apply absolute w-full scale-x-0 h-0.5 bottom-0 left-0;
+  background: rgb(var(--brand-gold));
   transform-origin: bottom right;
   transition: transform var(--animation-standard) ease-out;
 }
+.link:hover { color: rgb(var(--brand-black)); }
+.link:hover:after { transform: scaleX(1); transform-origin: bottom left; }
 
-.link:hover {
-  @apply text-primary-light;
+/* Section spacing */
+.section { @apply py-12; }
+@media (min-width: 768px) { .section { @apply py-16; } }
+@media (min-width: 1024px) { .section { @apply py-24; } }
+
+/* Optional section underline helper */
+.section-underline { position: relative; display: inline-block; }
+.section-underline::after {
+  content: "";
+  display: block;
+  height: 3px;
+  width: 64px;
+  background: rgb(var(--brand-gold));
+  margin-top: 10px;
 }
 
-.link:hover:after {
-  transform: scaleX(1);
-  transform-origin: bottom left;
-}
-
-/* Section spacing consistency */
-.section {
-  @apply py-12;
-}
-
-@media (min-width: 768px) {
-  .section {
-    @apply py-16;
-  }
-}
-
-@media (min-width: 1024px) {
-  .section {
-    @apply py-24;
-  }
-}
-
-/* For image treatment - duotone effect */
-.duotone {
-  position: relative;
-}
-
+/* Subtle black→gold duotone overlay helper */
+.duotone { position: relative; }
 .duotone::before {
   content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(to right, rgba(0, 16, 90, 0.3), rgba(197, 231, 255, 0.3));
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    to right,
+    rgba(0,0,0,0.35),
+    rgba(252,199,67,0.18)
+  );
   mix-blend-mode: color;
   pointer-events: none;
   z-index: 1;
 }
 
-/* Utility classes */
-.animate-fade-in {
-  animation: fadeIn var(--animation-standard) ease-out forwards;
-}
+/* Utilities */
+.animate-fade-in { animation: fadeIn var(--animation-standard) ease-out forwards; }
+.animate-slide-up { animation: slideUp var(--animation-standard) ease-out forwards; }
+.animate-scale-in { animation: scaleIn var(--animation-standard) ease-out forwards; }
+.animate-slide-in-right { animation: slideInRight var(--animation-standard) ease-out forwards; }
+.animate-slide-out-right { animation: slideOutRight var(--animation-standard) ease-out forwards; }
 
-.animate-slide-up {
-  animation: slideUp var(--animation-standard) ease-out forwards;
-}
+.hover-scale { transition: transform var(--animation-quick) ease-out; }
+.hover-scale:hover { transform: scale(1.03); }
 
-.animate-scale-in {
-  animation: scaleIn var(--animation-standard) ease-out forwards;
-}
+/* Scrollbar (hidden but functional) */
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+.scrollbar-hide::-webkit-scrollbar { display: none; }
 
-.animate-slide-in-right {
-  animation: slideInRight var(--animation-standard) ease-out forwards;
-}
-
-.animate-slide-out-right {
-  animation: slideOutRight var(--animation-standard) ease-out forwards;
-}
-
-/* Enhanced hover effects for interactive elements */
-.hover-scale {
-  transition: transform var(--animation-quick) ease-out;
-}
-
-.hover-scale:hover {
-  transform: scale(1.03);
-}
-
-/* Hide scrollbars but maintain functionality */
-.scrollbar-hide {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
-}
-
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;  /* Chrome, Safari and Opera */
-}
-
-/* Override Tailwind gray colors with our custom gray */
-.bg-gray-50, .bg-gray-100, .bg-gray-200, .hover\:bg-gray-100:hover, .hover\:bg-gray-200:hover {
-  background-color: #f5f7fb !important;
-}
-
-.border-gray-100, .border-gray-200, .border-gray-300 {
-  border-color: #f5f7fb !important;
-}
-
-/* Custom Mapbox styling for Banks o' Dee branding */
-.mapboxgl-map {
-  background: #00105A !important;
-}
-
+/* -----------------------------
+   Mapbox (neutral + brand)
+   ----------------------------- */
+.mapboxgl-map { background: #ffffff !important; }
 .mapboxgl-ctrl-group {
   background: #ffffff !important;
-  border: 1px solid #C5E7FF !important;
+  border: 1px solid rgb(var(--neutral-silver)) !important;
   border-radius: 0.5rem !important;
-  box-shadow: 0 4px 6px -1px rgba(0, 16, 90, 0.1) !important;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.08) !important;
 }
-
 .mapboxgl-ctrl-group button {
   background: #ffffff !important;
   border: none !important;
-  color: #00105A !important;
+  color: rgb(var(--brand-black)) !important;
 }
-
 .mapboxgl-ctrl-group button:hover {
-  background: #C5E7FF !important;
-  color: #00105A !important;
+  background: rgba(252,199,67,0.15) !important; /* gold tint */
+  color: rgb(var(--brand-black)) !important;
 }
-
 .mapboxgl-popup-content {
   border-radius: 0.75rem !important;
-  box-shadow: 0 10px 25px -5px rgba(0, 16, 90, 0.1) !important;
-  border: 1px solid #C5E7FF !important;
+  box-shadow: 0 10px 25px -5px rgba(0,0,0,0.10) !important;
+  border: 1px solid rgb(var(--neutral-silver)) !important;
 }
-
 .mapboxgl-popup-tip {
-  border-top-color: #C5E7FF !important;
+  border-top-color: rgb(var(--neutral-silver)) !important;
 }
