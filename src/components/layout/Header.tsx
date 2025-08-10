@@ -36,10 +36,11 @@ const Header = ({ sponsors = [] }: HeaderProps) => {
   };
 
   const navigation = [
+    { name: "About the Club", href: "/about" },
     { name: "News", href: "/news" },
     { name: "Team & Management", href: "/team" },
     { name: "Match Centre", href: "/matches" },
-    { name: "Spain Park", href: "/stadium" },
+    { name: "The Academy", href: "/academy" },
     { name: "Commercial", href: "/commercial" },
   ];
 
@@ -61,8 +62,8 @@ const Header = ({ sponsors = [] }: HeaderProps) => {
     >
       {/* Container for overlapping design */}
       <div className="relative">
-        {/* Sponsor Bar - Always show gradient */}
-        <div className="bg-gradient-to-r from-[#00105A] from-55% via-[#C5E7FF] via-70% to-[#C5E7FF] h-[30px]">
+        {/* Sponsor Bar - Black to Gold gradient */}
+        <div className="bg-gradient-to-r from-[#000000] from-55% via-[#FCC743] via-70% to-[#FCC743] h-[30px]">
           <div className="container mx-auto px-2 h-full">
             <div className="flex items-center justify-end h-full">
               
@@ -113,8 +114,8 @@ const Header = ({ sponsors = [] }: HeaderProps) => {
           </div>
         </div>
 
-        {/* Rest of header remains the same... */}
-        <div className="bg-[#00105A] text-white h-[38px]">
+        {/* Main Header - Charcoal Black */}
+        <div className="bg-[#000000] text-white h-[38px]">
           <div className="container mx-auto h-full">
             
             <div className="hidden md:flex items-center h-full w-full">
@@ -123,14 +124,14 @@ const Header = ({ sponsors = [] }: HeaderProps) => {
               <nav 
                 role="navigation" 
                 aria-label="Main Navigation"
-                className="flex items-center justify-between flex-1 px-10 lg:px-20 xl:px-[140px]"
+                className="flex items-center justify-between flex-1 px-4 lg:px-8 xl:px-16"
               >
                 {navigation.map((item) => (
                   <Link
                     key={item.name}
                     href={item.href}
-                    className={`font-semibold hover:text-[#C5E7FF] transition-all duration-200 text-base whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-[#C5E7FF] focus:ring-opacity-50 rounded-sm px-1 py-1 ${
-                      pathname === item.href ? "text-[#C5E7FF] font-bold border-b-2 border-[#C5E7FF]" : "hover:scale-105"
+                    className={`font-sans font-semibold text-[#FCC743] hover:text-white transition-all duration-200 text-sm lg:text-base whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-[#FCC743] focus:ring-opacity-50 rounded-sm px-1 py-1 ${
+                      pathname === item.href ? "text-white font-bold border-b-2 border-[#FCC743]" : "hover:scale-105"
                     }`}
                   >
                     {item.name}
@@ -140,8 +141,8 @@ const Header = ({ sponsors = [] }: HeaderProps) => {
 
               <div className="flex">
                 <Link 
-                  href="/tickets" 
-                  className="bg-[#FFD700] hover:bg-[#00105A] hover:border-2 hover:border-[#FFD700] text-[#00105A] hover:text-[#FFD700] font-bold py-1.5 px-4 rounded-md flex items-center transition-all duration-200 text-sm whitespace-nowrap shadow-md hover:shadow-lg hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#FFD700] focus:ring-opacity-50"
+                  href="#" 
+                  className="bg-[#FCC743] hover:bg-[#000000] hover:border-2 hover:border-[#FCC743] text-[#000000] hover:text-[#FCC743] font-sans font-bold py-1.5 px-4 rounded-md flex items-center transition-all duration-200 text-sm whitespace-nowrap shadow-md hover:shadow-lg hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#FCC743] focus:ring-opacity-50"
                 >
                   <span>Buy Tickets</span>
                   <ArrowRight size={16} className="ml-2" />
@@ -152,7 +153,7 @@ const Header = ({ sponsors = [] }: HeaderProps) => {
             <div className="flex md:hidden items-center justify-end h-full w-full px-4">
               <button
                 onClick={toggleMenu}
-                className="text-white p-2 focus:outline-none focus:ring-2 focus:ring-[#C5E7FF] focus:ring-opacity-50 rounded z-30"
+                className="text-white p-2 focus:outline-none focus:ring-2 focus:ring-[#FCC743] focus:ring-opacity-50 rounded z-30"
                 aria-label={isMenuOpen ? "Close menu" : "Open menu"}
               >
                 {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
@@ -165,20 +166,20 @@ const Header = ({ sponsors = [] }: HeaderProps) => {
         <div className="absolute top-0 left-4 z-20 h-full flex items-center">
           <Link href="/" className="flex items-center group">
             <Image
-              src={buildSponsorLogoUrl('BOD_Logo_White_square_joicd1', 'mainLogo')}
-              alt="Banks o' Dee FC"
+              src={buildSponsorLogoUrl('Baynounah_SC_Logo_idok3c', 'mainLogo')}
+              alt="Baynounah Sports Club"
               width={64}
               height={64}
               className="h-16 w-16 object-contain drop-shadow-2xl transition-transform duration-200 group-hover:scale-105"
             />
-            <span className="font-montserrat font-bold text-xl ml-4 text-white hidden sm:block drop-shadow-2xl tracking-wide">
-              Banks o&apos; Dee FC
+            <span className="font-sans font-bold text-xl ml-4 text-[#FCC743] hidden sm:block drop-shadow-2xl tracking-wide" style={{fontFamily: 'Bebas Neue, sans-serif'}}>
+              Baynounah Sports Club
             </span>
           </Link>
         </div>
 
         {isMenuOpen && (
-          <div className="absolute left-0 right-0 top-full bg-[#00105A] z-40 md:hidden shadow-lg">
+          <div className="absolute left-0 right-0 top-full bg-[#000000] z-40 md:hidden shadow-lg">
             <nav 
               className="flex flex-col p-4" 
               role="navigation" 
@@ -188,16 +189,16 @@ const Header = ({ sponsors = [] }: HeaderProps) => {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`text-white text-lg py-3 border-b border-[#1a237e] hover:text-[#C5E7FF] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5E7FF] focus:ring-opacity-50 rounded-sm px-2 ${
-                    pathname === item.href ? "font-bold text-[#C5E7FF]" : ""
+                  className={`font-sans text-[#FCC743] hover:text-white text-lg py-3 border-b border-[#333333] transition-colors focus:outline-none focus:ring-2 focus:ring-[#FCC743] focus:ring-opacity-50 rounded-sm px-2 ${
+                    pathname === item.href ? "font-bold text-white border-b-2 border-[#FCC743]" : ""
                   }`}
                 >
                   {item.name}
                 </Link>
               ))}
               <Link 
-                href="/tickets" 
-                className="bg-[#FFD700] hover:bg-[#00105A] hover:border-2 hover:border-[#FFD700] text-[#00105A] hover:text-[#FFD700] font-bold py-3 px-4 mt-4 rounded-md flex items-center justify-center transition-all duration-200 text-base shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#FFD700] focus:ring-opacity-50"
+                href="#" 
+                className="bg-[#FCC743] hover:bg-[#000000] hover:border-2 hover:border-[#FCC743] text-[#000000] hover:text-[#FCC743] font-sans font-bold py-3 px-4 mt-4 rounded-md flex items-center justify-center transition-all duration-200 text-base shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#FCC743] focus:ring-opacity-50"
               >
                 <span>Buy Tickets</span>
                 <ArrowRight size={18} className="ml-2" />
