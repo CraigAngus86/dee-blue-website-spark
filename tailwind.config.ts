@@ -13,18 +13,18 @@ export default {
     container: {
       center: true,
       padding: "2rem",
-      screens: {
-        "2xl": "1400px",
-      },
+      screens: { "2xl": "1400px" },
     },
     extend: {
       colors: {
-        // existing tokens (kept so pages don’t break)
+        // shadcn tokens (keep)
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+
+        // legacy rgb tokens (kept for compatibility)
         primary: {
           DEFAULT: "rgb(var(--primary))",
           dark: "rgb(var(--primary-dark))",
@@ -40,18 +40,23 @@ export default {
           dark: "rgb(var(--accent-dark))",
           light: "rgb(var(--accent-light))",
         },
+
+        // neutrals via vars
         white: "rgb(var(--white))",
         "light-gray": "rgb(var(--light-gray))",
         "medium-gray": "rgb(var(--medium-gray))",
         gray: "rgb(var(--gray))",
         "dark-gray": "rgb(var(--dark-gray))",
         "near-black": "rgb(var(--near-black))",
-        black: "rgb(var(--black))",
+        black: "rgb(var(--brand-black))",
+
+        // status
         success: "rgb(var(--success))",
         warning: "rgb(var(--warning))",
         error: "rgb(var(--error))",
         info: "rgb(var(--info))",
 
+        // shadcn extras (keep)
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
@@ -71,19 +76,34 @@ export default {
           ring: "hsl(var(--sidebar-ring))",
         },
 
-        // Baynounah brand tokens (additive, safe)
+        // Baynounah brand via CSS vars (no hex)
         brand: {
-          gold: "#FCC743",
-          black: "#000000",
+          gold: "rgb(var(--brand-gold))",
+          black: "rgb(var(--brand-black))",
         },
         heritage: {
-          red: "#B11919",
-          green: "#3CA512",
+          red: "rgb(var(--heritage-red))",
+          green: "rgb(var(--heritage-green))",
         },
         neutral: {
-          white: "#FFFFFF",
-          silver: "#D6D6D6",
+          white: "rgb(var(--white))",
+          silver: "rgb(var(--neutral-silver))",
         },
+
+        // New semantic mappings for components
+        surface: {
+          1: "rgb(var(--surface-1))",
+          2: "rgb(var(--surface-2))",
+        },
+        text: {
+          strong: "rgb(var(--text-strong))",
+          muted: "rgb(var(--text-muted))",
+        },
+        link: {
+          DEFAULT: "rgb(var(--link))",
+          hover: "rgb(var(--link-hover))",
+        },
+        separator: "rgb(var(--separator))",
       },
 
       boxShadow: {
@@ -94,11 +114,8 @@ export default {
       },
 
       fontFamily: {
-        // keep existing (in case some components use them)
         montserrat: ["var(--font-montserrat)", "sans-serif"],
         inter: ["var(--font-inter)", "sans-serif"],
-
-        // Baynounah: Bebas Neue (heading), Open Sans (body)
         heading: ["var(--font-heading)", "ui-sans-serif", "system-ui"],
         body: ["var(--font-body)", "ui-sans-serif", "system-ui"],
       },
@@ -106,7 +123,7 @@ export default {
       fontSize: {
         display: ["3rem", { lineHeight: "1.1" }],
         h1: ["2.25rem", { lineHeight: "1.2" }],
-        h2: ["1.875rem", { lineHeight: "1.2" }],
+        h2: ["1.875rem", { lineHeight: "1.2" }], // section titles baseline
         h3: ["1.5rem", { lineHeight: "1.2" }],
         h4: ["1.25rem", { lineHeight: "1.2" }],
         h5: ["1.125rem", { lineHeight: "1.2" }],
@@ -132,34 +149,13 @@ export default {
       },
 
       keyframes: {
-        "accordion-down": {
-          from: { height: "0" },
-          to: { height: "var(--radix-accordion-content-height)" },
-        },
-        "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: "0" },
-        },
-        fadeIn: {
-          from: { opacity: "0" },
-          to: { opacity: "1" },
-        },
-        slideUp: {
-          from: { transform: "translateY(20px)", opacity: "0" },
-          to: { transform: "translateY(0)", opacity: "1" },
-        },
-        scaleIn: {
-          from: { transform: "scale(0.95)", opacity: "0" },
-          to: { transform: "scale(1)", opacity: "1" },
-        },
-        slideInRight: {
-          from: { transform: "translateX(100%)" },
-          to: { transform: "translateX(0)" },
-        },
-        slideOutRight: {
-          from: { transform: "translateX(0)" },
-          to: { transform: "translateX(100%)" },
-        },
+        "accordion-down": { from: { height: "0" }, to: { height: "var(--radix-accordion-content-height)" } },
+        "accordion-up": { from: { height: "var(--radix-accordion-content-height)" }, to: { height: "0" } },
+        fadeIn: { from: { opacity: "0" }, to: { opacity: "1" } },
+        slideUp: { from: { transform: "translateY(20px)", opacity: "0" }, to: { transform: "translateY(0)", opacity: "1" } },
+        scaleIn: { from: { transform: "scale(0.95)", opacity: "0" }, to: { transform: "scale(1)", opacity: "1" } },
+        slideInRight: { from: { transform: "translateX(100%)" }, to: { transform: "translateX(0)" } },
+        slideOutRight: { from: { transform: "translateX(0)" }, to: { transform: "translateX(100%)" } },
       },
     },
   },

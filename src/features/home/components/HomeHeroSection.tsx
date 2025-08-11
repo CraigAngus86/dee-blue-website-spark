@@ -180,19 +180,53 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
           </div>
         ))}
 
-        {/* Overlays */}
-        <div className="absolute inset-0 pointer-events-none z-10">
-          <div className="absolute inset-0 bg-black/60" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-          <div
-            className="
-              absolute inset-0
-              bg-[radial-gradient(ellipse_at_center,rgba(252,199,67,0)_45%,rgba(252,199,67,0.16)_70%,rgba(252,199,67,0.28)_85%,rgba(252,199,67,0.36)_100%)]
-              mix-blend-overlay
-              opacity-90
-            "
-          />
-        </div>
+        {/* Overlays — replace the whole block with this */}
+<div className="absolute inset-0 pointer-events-none z-10">
+  {/* Mobile: stronger */}
+  <div
+    className="absolute inset-0 md:hidden"
+    style={{
+      backgroundImage: `
+        /* bottom-up black scrim */
+        linear-gradient(
+          to top,
+          rgba(0,0,0,0.82) 0%,
+          rgba(0,0,0,0.56) 40%,
+          rgba(0,0,0,0.24) 72%,
+          rgba(0,0,0,0.00) 96%
+        ),
+        /* subtle brand gold vignette */
+        radial-gradient(
+          85% 65% at 70% 85%,
+          rgba(var(--brand-gold-rgb, 252,199,67), 0.10) 0%,
+          rgba(var(--brand-gold-rgb, 252,199,67), 0.00) 70%
+        )
+      `,
+      backgroundBlendMode: 'multiply, overlay',
+    }}
+  />
+  {/* Desktop: softer */}
+  <div
+    className="absolute inset-0 hidden md:block"
+    style={{
+      backgroundImage: `
+        linear-gradient(
+          to top,
+          rgba(0,0,0,0.82) 15%,
+          rgba(0,0,0,0.42) 50%,
+          rgba(0,0,0,0.18) 60%,
+          rgba(0,0,0,0.00) 90%
+        ),
+        radial-gradient(
+          80% 60% at 70% 85%,
+          rgba(var(--brand-gold-rgb, 252,199,67), 0.08) 0%,
+          rgba(var(--brand-gold-rgb, 252,199,67), 0.00) 70%
+        )
+      `,
+      backgroundBlendMode: 'multiply, overlay',
+    }}
+  />
+</div>
 
         {/* Clickable overlay for content */}
         <div
@@ -204,9 +238,15 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
             <Reveal delayMs={120}>
               <div className="mt-40 w-full text-center px-4">
                 <div className="max-w-6xl mx-auto">
-                  <h1 className="mb-4 text-white text-6xl md:text-8xl lg:text-10xl">
-                    {content.title}
-                  </h1>
+                  <h1
+  className="mb-4 text-white leading-[1.0] [text-wrap:balance] tracking-[0.0125em]
+             [font-size:clamp(1.7rem,6vw,2.6rem)]
+             md:[font-size:clamp(2.2rem,4.5vw,4rem)]
+             xl:[font-size:clamp(2.6rem,5.5vw,7.5rem)]
+             2xl:[font-size:clamp(2.6rem,5vw,8.25rem)]"
+>
+  {content.title}
+</h1>
                   <div className="w-24 h-[3px] bg-[#FCC743] mx-auto mb-4" />
                   <div className="flex items-center justify-center text-sm text-white/85 mb-4">
                     <span>{formattedDate}</span>

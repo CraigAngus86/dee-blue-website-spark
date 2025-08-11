@@ -1,8 +1,9 @@
 "use client";
-import React from 'react';
-import Link from 'next/link';
-import { MobileMatchCard } from './MobileMatchCard';
-import { MobileLeagueTable } from './MobileLeagueTable';
+import React, { useMemo } from "react";
+import Link from "next/link";
+import { ChevronRight } from "lucide-react";
+import { MobileMatchCard } from "./MobileMatchCard";
+import { MobileLeagueTable } from "./MobileLeagueTable";
 
 interface MatchInfo {
   id: string;
@@ -36,7 +37,11 @@ interface MobileMatchSectionProps {
     won: number;
     drawn: number;
     lost: number;
-    form: ('W' | 'L' | 'D')[];
+    form: ("W" | "L" | "D")[];
+    goalDifference?: number;
+    competitionName?: string;
+    seasonName?: string;
+    clubName?: string;
   };
   leagueTable?: any[];
   onGalleryClick?: (galleryId: string) => void;
@@ -44,128 +49,127 @@ interface MobileMatchSectionProps {
   onTicketClick?: (ticketUrl: string) => void;
 }
 
-export function MobileMatchSection({ 
-  recentMatches = [], 
-  upcomingMatches = [], 
+export function MobileMatchSection({
+  recentMatches = [],
+  upcomingMatches = [],
   leagueData,
   leagueTable = [],
   onGalleryClick,
   onReportClick,
-  onTicketClick
+  onTicketClick,
 }: MobileMatchSectionProps) {
-  
-  // Get the last result (most recent completed match)
-  let lastResult = null;
-  try {
-    if (Array.isArray(recentMatches) && recentMatches.length > 0) {
-      lastResult = recentMatches.find(match => 
-        match && 
-        typeof match === 'object' &&
-        (match.status === 'completed' || match.home_score !== undefined)
+  // Most recent completed match (newest first)
+  const lastResult = useMemo(() => {
+    try {
+      const completed = (recentMatches || []).filter(
+        (m) => m && (m.status === "completed" || m.home_score !== undefined)
       );
+      completed.sort((a, b) => {
+        const da = a?.match_date ? new Date(a.match_date).getTime() : 0;
+        const db = b?.match_date ? new Date(b.match_date).getTime() : 0;
+        return db - da; // newest first
+      });
+      return completed[0] || null;
+    } catch {
+      return null;
     }
-  } catch (error) {
-    console.error('Error finding last result:', error);
-    lastResult = null;
-  }
+  }, [recentMatches]);
 
-  // Get upcoming matches - first is "next", second is "upcoming"
-  let nextMatch = null;
-  let upcomingMatch = null;
-  try {
-    if (Array.isArray(upcomingMatches) && upcomingMatches.length > 0) {
-      const filteredUpcoming = upcomingMatches.filter(match => 
-        match && 
-        typeof match === 'object' &&
-        match.status !== 'completed' && 
-        match.home_score === undefined
-      );
-      
-      nextMatch = filteredUpcoming[0] || null;
-      upcomingMatch = filteredUpcoming[1] || null;
+  // Next & upcoming matches (soonest first)
+  const { nextMatch, upcomingMatch } = useMemo(() => {
+    try {
+      const filtered = (upcomingMatches || [])
+        .filter((m) => m && m.status !== "completed" && m.home_score === undefined)
+        .sort((a, b) => {
+          const da = a?.match_date ? new Date(a.match_date).getTime() : Number.MAX_SAFE_INTEGER;
+          const db = b?.match_date ? new Date(b.match_date).getTime() : Number.MAX_SAFE_INTEGER;
+          return da - db; // soonest first
+        });
+
+      return {
+        nextMatch: filtered[0] || null,
+        upcomingMatch: filtered[1] || null,
+      };
+    } catch {
+      return { nextMatch: null, upcomingMatch: null };
     }
-  } catch (error) {
-    console.error('Error finding upcoming matches:', error);
-    nextMatch = null;
-    upcomingMatch = null;
-  }
+  }, [upcomingMatches]);
 
   return (
     <div className="w-full space-y-6">
       {/* Match Cards Section */}
       <div className="space-y-4">
-        {/* 1. Last Result Card */}
+        {/* 1) Final Result (centered contents) */}
         {lastResult ? (
-          <div>
-            <MobileMatchCard
-              match={lastResult}
-              matchType="LAST RESULT"
-              onGalleryClick={onGalleryClick}
-              onReportClick={onReportClick}
-              onTicketClick={onTicketClick}
-            />
-          </div>
+          <MobileMatchCard
+            match={lastResult}
+            matchType="FINAL RESULT"
+            onGalleryClick={onGalleryClick}
+            onReportClick={onReportClick}
+            onTicketClick={onTicketClick}
+          />
         ) : (
-          <div className="bg-white rounded-lg shadow-sm p-4 border border-[#e5e7eb]">
-            <div className="text-center text-[#6b7280]">
+          <div className="bg-white rounded-lg shadow-sm p-4 border border-separator">
+            <div className="text-center text-text-muted">
               <p className="text-sm">No recent results to display</p>
             </div>
           </div>
         )}
 
-        {/* 2. Next Match Card */}
+        {/* 2) Next Match */}
         {nextMatch ? (
-          <div>
-            <MobileMatchCard
-              match={nextMatch}
-              matchType="NEXT MATCH"
-              onGalleryClick={onGalleryClick}
-              onReportClick={onReportClick}
-              onTicketClick={onTicketClick}
-            />
-          </div>
+          <MobileMatchCard
+            match={nextMatch}
+            matchType="NEXT MATCH"
+            onGalleryClick={onGalleryClick}
+            onReportClick={onReportClick}
+            onTicketClick={onTicketClick}
+          />
         ) : (
-          <div className="bg-white rounded-lg shadow-sm p-4 border border-[#e5e7eb]">
-            <div className="text-center text-[#6b7280]">
+          <div className="bg-white rounded-lg shadow-sm p-4 border border-separator">
+            <div className="text-center text-text-muted">
               <p className="text-sm">No next match to display</p>
             </div>
           </div>
         )}
 
-        {/* 3. Upcoming Match Card */}
+        {/* 3) Upcoming Match */}
         {upcomingMatch ? (
-          <div>
-            <MobileMatchCard
-              match={upcomingMatch}
-              matchType="UPCOMING MATCH"
-              onGalleryClick={onGalleryClick}
-              onReportClick={onReportClick}
-              onTicketClick={onTicketClick}
-            />
-          </div>
+          <MobileMatchCard
+            match={upcomingMatch}
+            matchType="UPCOMING MATCH"
+            onGalleryClick={onGalleryClick}
+            onReportClick={onReportClick}
+            onTicketClick={onTicketClick}
+          />
         ) : (
-          <div className="bg-white rounded-lg shadow-sm p-4 border border-[#e5e7eb]">
-            <div className="text-center text-[#6b7280]">
+          <div className="bg-white rounded-lg shadow-sm p-4 border border-separator">
+            <div className="text-center text-text-muted">
               <p className="text-sm">No additional upcoming matches</p>
             </div>
           </div>
         )}
 
-        {/* 4. View All Matches Link */}
-        <div className="text-center pt-2">
-          <Link 
-            href="/matches" 
-            className="text-[#00105A] hover:text-[#FFD700] transition-colors font-medium"
+        {/* 4) View All Matches (centered) */}
+        <div className="pt-2 text-center">
+          <Link
+            href="/matches"
+            className="inline-flex items-center gap-2 text-link hover:text-link-hover transition-colors font-medium
+                       focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40
+                       focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+            aria-label="View all matches"
           >
-            View All Matches →
+            <span>View All Matches</span>
+            <ChevronRight className="h-4 w-4" aria-hidden="true" />
           </Link>
         </div>
       </div>
 
-      {/* League Table Section */}
-      <div>
-        <MobileLeagueTable 
+      {/* League Table Section (divider, then pass through) */}
+      <div className="pt-4 border-t border-separator text-center">
+        <MobileLeagueTable
           leagueTable={leagueTable}
+          /* Legacy prop kept for compatibility */
           banksODeePosition={leagueData?.position || 0}
         />
       </div>

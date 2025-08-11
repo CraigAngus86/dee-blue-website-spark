@@ -1,10 +1,17 @@
 'use client';
-import React from 'react';
+
+import React, { useMemo } from 'react';
 import Link from 'next/link';
 import { Player } from '../types';
 import PlayerCard from './PlayerCard';
 import SectionHeader from '@/components/ui/sections/SectionHeader';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@/components/ui/carousel';
 
 interface PlayersSectionProps {
   players: Player[];
@@ -14,55 +21,83 @@ interface PlayersSectionProps {
 
 const PlayersSection: React.FC<PlayersSectionProps> = ({
   players,
-  title = "Our Squad",
-  subtitle = "Meet the players representing Banks o' Dee FC"
+  title = 'Our Squad',
+  subtitle = 'Meet the Baynounah SC squad',
 }) => {
-  const handlePlayerClick = (player: Player) => {
-    // TODO: Open PersonDetailsModal or navigate to player page
-    console.log('Player clicked:', player.firstName, player.lastName);
-  };
+  // Shuffle then cap at 6 (stable per prop change)
+  const featured = useMemo(() => {
+    const arr = Array.isArray(players) ? [...players] : [];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr.slice(0, Math.min(arr.length, 6));
+  }, [players]);
+
+  const hasPlayers = featured.length > 0;
 
   return (
-    <section className="py-20 bg-[#f5f7fb]">
+    <div>
       <div className="container mx-auto px-4">
-        <SectionHeader 
+        {/* Left-aligned + tight title spacing; constrain long subtitle width */}
+        <SectionHeader
           title={title}
           subtitle={subtitle}
+          align="left"
+          titleClassName="mb-0"
+          subtitleClassName="max-w-2xl md:max-w-3xl"
         />
-        
-        <div className="mt-16">
-          <Carousel className="w-full">
-            <CarouselContent className="-ml-6">
-              {players.map((player) => (
-                <CarouselItem 
-                  key={player._id} 
-                  className="pl-6 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4"
-                >
-                  <div className="w-full max-w-sm mx-auto">
-                    <PlayerCard 
-                      player={player}
-                      onClick={() => handlePlayerClick(player)}
-                    />
+
+        <div className="mt-8">
+          <Carousel className="w-full" opts={{ align: 'start', loop: false }}>
+            <CarouselContent className="-ml-2 md:-ml-3">
+              {hasPlayers ? (
+                featured.map((player, i) => (
+                  <CarouselItem
+                    key={player._id}
+                    className="pl-2 md:pl-3 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4"
+                  >
+                    <div className="w-full max-w-sm mx-auto">
+                      <PlayerCard player={player} priority={i === 0} />
+                    </div>
+                  </CarouselItem>
+                ))
+              ) : (
+                <CarouselItem className="pl-2 md:pl-3 basis-full">
+                  <div className="rounded-2xl border border-separator bg-white px-6 py-12 text-center text-text-muted">
+                    No players found.
                   </div>
                 </CarouselItem>
-              ))}
+              )}
             </CarouselContent>
-            <CarouselPrevious className="text-[#00105A] hover:text-[#FFD700] -left-4" />
-            <CarouselNext className="text-[#00105A] hover:text-[#FFD700] -right-4" />
+
+            {hasPlayers && (
+              <>
+                <CarouselPrevious
+                  aria-label="Previous players"
+                  className="-left-4 h-11 w-11 rounded-full bg-white text-black hover:text-brand-gold shadow-sm hover:shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
+                />
+                <CarouselNext
+                  aria-label="Next players"
+                  className="-right-4 h-11 w-11 rounded-full bg-white text-black hover:text-brand-gold shadow-sm hover:shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
+                />
+              </>
+            )}
           </Carousel>
         </div>
-        
-        {/* Simple CTA */}
-        <div className="mt-12 text-center">
-          <Link 
-            href="/team" 
-            className="text-[#00105A] hover:text-[#FFD700] font-medium transition-colors text-lg"
-          >
-            View Full Squad →
-          </Link>
-        </div>
+
+        {hasPlayers && (
+          <div className="mt-8 text-center">
+            <Link
+              href="/team"
+              className="text-black hover:text-brand-gold font-medium transition-colors text-lg"
+            >
+              View Full Squad →
+            </Link>
+          </div>
+        )}
       </div>
-    </section>
+    </div>
   );
 };
 

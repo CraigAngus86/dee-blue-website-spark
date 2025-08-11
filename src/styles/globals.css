@@ -39,18 +39,27 @@
     --heritage-green: 60 165 18; /* #3CA512 */
     --neutral-silver: 214 214 214; /* #D6D6D6 */
 
-    /* Semantic */
+    /* Status / feedback */
     --success: 16 185 129; /* #10B981 */
     --warning: 245 158 11; /* #F59E0B */
     --error: 239 68 68;    /* #EF4444 */
     --info: 59 130 246;    /* #3B82F6 */
+
+    /* Semantic (new, for growth) */
+    --surface-1: 255 255 255; /* cards / page surface */
+    --surface-2: 244 247 251; /* raised / alt surface */
+    --text-strong: 0 0 0;     /* primary text on light bg */
+    --text-muted: 71 85 105;  /* subdued text */
+    --link: 0 0 0;            /* default link (black) */
+    --link-hover: 252 199 67; /* gold hover */
+    --separator: 226 232 240; /* dividers/borders */
 
     /* Motion */
     --animation-quick: 200ms;
     --animation-standard: 250ms;
     --animation-deliberate: 400ms;
 
-    /* Elevation (stronger for premium feel) */
+    /* Elevation (premium feel) */
     --shadow-sm: 0 2px 8px rgba(0,0,0,0.10);
     --shadow-md: 0 8px 20px rgba(0,0,0,0.12);
     --shadow-lg: 0 16px 32px rgba(0,0,0,0.14);
@@ -74,6 +83,7 @@
   }
 
   .dark {
+    /* shadcn dark */
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
     --card: 222.2 84% 4.9%;
@@ -87,6 +97,15 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
+
+    /* semantic dark (optional tuning later) */
+    --surface-1: 30 41 59;   /* slate-800-ish */
+    --surface-2: 51 65 85;   /* slate-700-ish */
+    --text-strong: 255 255 255;
+    --text-muted: 203 213 225;  /* slate-300-ish */
+    --link: 255 255 255;
+    --link-hover: 252 199 67;
+    --separator: 71 85 105;  /* slate-600-ish */
   }
 }
 
@@ -99,11 +118,21 @@
 @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
 @keyframes slideOutRight { from { transform: translateX(0); } to { transform: translateX(100%); } }
 
+/* Utility classes for animations */
+.animate-fade-in { animation: fadeIn var(--animation-standard) ease-out forwards; }
+.animate-slide-up { animation: slideUp var(--animation-standard) ease-out forwards; }
+.animate-scale-in { animation: scaleIn var(--animation-standard) ease-out forwards; }
+.animate-slide-in-right { animation: slideInRight var(--animation-standard) ease-out forwards; }
+.animate-slide-out-right { animation: slideOutRight var(--animation-standard) ease-out forwards; }
+
 /* -----------------------------
    Base element styles
    ----------------------------- */
 body {
-  @apply bg-white text-brand-black font-body text-base;
+  /* Token-first so theme tweaks propagate site-wide */
+  background: rgb(var(--surface-1));
+  color: rgb(var(--text-strong));
+  @apply font-body text-base;
 }
 
 /* Headings: Bebas Neue for H1/H2, Open Sans for H3–H6 */
@@ -116,7 +145,7 @@ h4, h5, h6 {
   line-height: 1.25;
 }
 
-/* Sizes (driven by Tailwind theme – kept as-is) */
+/* Sizes (driven by Tailwind theme) */
 h1 { @apply text-h1 mb-6; }
 h2 { @apply text-h2 mb-5; }
 h3 { @apply text-h3 mb-4; }
@@ -126,9 +155,12 @@ h6 { @apply text-h6 mb-2; }
 
 p  { @apply mb-4 leading-relaxed; }
 
-/* Links: black text, gold underline on hover */
+/* -----------------------------
+   Links
+   ----------------------------- */
 .link {
-  @apply relative inline-block font-medium text-brand-black;
+  @apply relative inline-block font-medium;
+  color: rgb(var(--link));
   transition: color var(--animation-quick) ease-out;
 }
 .link:after {
@@ -138,10 +170,12 @@ p  { @apply mb-4 leading-relaxed; }
   transform-origin: bottom right;
   transition: transform var(--animation-standard) ease-out;
 }
-.link:hover { color: rgb(var(--brand-black)); }
+.link:hover { color: rgb(var(--link-hover)); }
 .link:hover:after { transform: scaleX(1); transform-origin: bottom left; }
 
-/* Section spacing */
+/* -----------------------------
+   Sections
+   ----------------------------- */
 .section { @apply py-12; }
 @media (min-width: 768px) { .section { @apply py-16; } }
 @media (min-width: 1024px) { .section { @apply py-24; } }
@@ -157,6 +191,9 @@ p  { @apply mb-4 leading-relaxed; }
   margin-top: 10px;
 }
 
+/* -----------------------------
+   Overlays / effects
+   ----------------------------- */
 /* Subtle black→gold duotone overlay helper */
 .duotone { position: relative; }
 .duotone::before {
@@ -164,21 +201,15 @@ p  { @apply mb-4 leading-relaxed; }
   position: absolute; inset: 0;
   background: linear-gradient(
     to right,
-    rgba(0,0,0,0.35),
-    rgba(252,199,67,0.18)
+    rgb(0 0 0 / 0.35),
+    rgb(var(--brand-gold) / 0.18)
   );
   mix-blend-mode: color;
   pointer-events: none;
   z-index: 1;
 }
 
-/* Utilities */
-.animate-fade-in { animation: fadeIn var(--animation-standard) ease-out forwards; }
-.animate-slide-up { animation: slideUp var(--animation-standard) ease-out forwards; }
-.animate-scale-in { animation: scaleIn var(--animation-standard) ease-out forwards; }
-.animate-slide-in-right { animation: slideInRight var(--animation-standard) ease-out forwards; }
-.animate-slide-out-right { animation: slideOutRight var(--animation-standard) ease-out forwards; }
-
+/* Scale hover */
 .hover-scale { transition: transform var(--animation-quick) ease-out; }
 .hover-scale:hover { transform: scale(1.03); }
 
@@ -187,22 +218,22 @@ p  { @apply mb-4 leading-relaxed; }
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 
 /* -----------------------------
-   Mapbox (neutral + brand)
+   Mapbox (neutral + brand) — tokenized
    ----------------------------- */
-.mapboxgl-map { background: #ffffff !important; }
+.mapboxgl-map { background: rgb(var(--white)) !important; }
 .mapboxgl-ctrl-group {
-  background: #ffffff !important;
+  background: rgb(var(--white)) !important;
   border: 1px solid rgb(var(--neutral-silver)) !important;
   border-radius: 0.5rem !important;
   box-shadow: 0 4px 6px -1px rgba(0,0,0,0.08) !important;
 }
 .mapboxgl-ctrl-group button {
-  background: #ffffff !important;
+  background: rgb(var(--white)) !important;
   border: none !important;
   color: rgb(var(--brand-black)) !important;
 }
 .mapboxgl-ctrl-group button:hover {
-  background: rgba(252,199,67,0.15) !important; /* gold tint */
+  background: rgb(var(--brand-gold) / 0.15) !important; /* gold tint */
   color: rgb(var(--brand-black)) !important;
 }
 .mapboxgl-popup-content {
@@ -210,6 +241,23 @@ p  { @apply mb-4 leading-relaxed; }
   box-shadow: 0 10px 25px -5px rgba(0,0,0,0.10) !important;
   border: 1px solid rgb(var(--neutral-silver)) !important;
 }
-.mapboxgl-popup-tip {
-  border-top-color: rgb(var(--neutral-silver)) !important;
+.mapboxgl-popup-tip { border-top-color: rgb(var(--neutral-silver)) !important; }
+
+/* -----------------------------
+   Component helpers (optional, future-proof)
+   ----------------------------- */
+/* SectionHeader baseline — apply in the component with className="section-header" if desired */
+.section-header {
+  @apply flex items-end justify-between;
 }
+.section-header__title {
+  @apply text-h2 font-heading font-bold text-black tracking-tightest;
+}
+.section-header__subtitle {
+  @apply text-sm text-text-muted;
+}
+
+/* Card header/footer helpers */
+.card-surface { background: rgb(var(--surface-1)); }
+.card-surface--raised { background: rgb(var(--surface-2)); }
+.card-divider { border-color: rgb(var(--separator)); }

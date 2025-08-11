@@ -1,9 +1,10 @@
 "use client";
-import React, { useRef, useState, useEffect } from 'react';
-import Link from 'next/link';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { MatchCard } from '../common/MatchCard';
-import { LeaguePositionSummary } from '../common/LeaguePositionSummary';
+import React, { useRef, useState, useEffect } from "react";
+import Link from "next/link";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { MatchCard } from "../common/MatchCard";
+import { LeaguePositionSummary } from "../common/LeaguePositionSummary";
+import SectionHeader from "@/components/ui/sections/SectionHeader";
 
 interface MatchInfo {
   id: string;
@@ -37,7 +38,12 @@ interface MatchCarouselProps {
     won: number;
     drawn: number;
     lost: number;
-    form: ('W' | 'L' | 'D')[];
+    form: ("W" | "L" | "D")[];
+    // Optional extras (for League header/KPIs)
+    goalDifference?: number;
+    competitionName?: string; // Supabase: competition_name
+    seasonName?: string;      // Supabase: season_name
+    clubName?: string;        // Supabase: team_name
   };
   showHeader?: boolean;
   onGalleryClick?: (galleryId: string) => void;
@@ -45,139 +51,131 @@ interface MatchCarouselProps {
   onTicketClick?: (ticketUrl: string) => void;
 }
 
-export function MatchCarousel({ 
-  recentMatches = [], 
-  upcomingMatches = [], 
+const CARD_W = 360; // must match Tailwind width classes below
+const GAP_PX = 24;  // space-x-6 (1.5rem)
+
+export function MatchCarousel({
+  recentMatches = [],
+  upcomingMatches = [],
   leagueData,
   showHeader = false,
   onGalleryClick,
   onReportClick,
-  onTicketClick
+  onTicketClick,
 }: MatchCarouselProps) {
   const carouselRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
   const [hasInitiallyCentered, setHasInitiallyCentered] = useState(false);
 
-  // Organize matches with proper ordering (oldest to newest results, then next match, then upcoming)
-  const getOrganizedMatches = () => {
+  // Organize matches (results → next → upcoming)
+  const { matches: organizedMatches, nextMatchIndex } = React.useMemo(() => {
     try {
-      // Get recent matches (completed matches)
-      let sortedRecent = [...recentMatches]
-        .filter(match => !!match && (match.status === 'completed' || match.home_score !== undefined))
+      const sortedRecent = [...recentMatches]
+        .filter((m) => !!m && (m.status === "completed" || m.home_score !== undefined))
         .sort((a, b) => {
           if (!a.match_date || !b.match_date) return 0;
-          // Sort by match date DESCENDING (newest first)
           return new Date(b.match_date).getTime() - new Date(a.match_date).getTime();
         })
-        .slice(0, 3).reverse();
+        .slice(0, 3)
+        .reverse();
 
-      // Get upcoming matches (not completed matches)
       const sortedUpcoming = [...upcomingMatches]
-        .filter(match => !!match && match.status !== 'completed' && match.home_score === undefined)
+        .filter((m) => !!m && m.status !== "completed" && m.home_score === undefined)
         .sort((a, b) => {
           if (!a.match_date || !b.match_date) return 0;
-          // Sort by match date ascending (nearest future match first)
           return new Date(a.match_date).getTime() - new Date(b.match_date).getTime();
         });
 
-      // The next match is the first upcoming match
       const nextMatch = sortedUpcoming.length > 0 ? [sortedUpcoming[0]] : [];
-
-      // Additional upcoming matches (up to 3)
       const additionalUpcoming = sortedUpcoming.slice(1, 4);
 
-      // Combine in order: older results, most recent result, next match, upcoming matches
       return {
         matches: [...sortedRecent, ...nextMatch, ...additionalUpcoming],
-        nextMatchIndex: sortedRecent.length // Index of the next match in the combined array
+        nextMatchIndex: sortedRecent.length,
       };
-    } catch (error) {
+    } catch {
       return { matches: [], nextMatchIndex: -1 };
     }
-  };
+  }, [recentMatches, upcomingMatches]);
 
-  const { matches: organizedMatches, nextMatchIndex } = getOrganizedMatches();
-
-  // Get the match type for displaying badges
-  const getMatchType = (match: MatchInfo, index: number) => {
-    if (match.status === 'completed' || match.home_score !== undefined) {
-      return 'FINAL RESULT';
-    }
-
-    // If this is the next match (right after the recent matches)
-    if (index === nextMatchIndex) {
-      return 'NEXT MATCH';
-    }
-
-    return 'UPCOMING MATCH';
-  };
-
-  // Handle carousel navigation
   const handleScrollLeft = () => {
     if (carouselRef.current) {
-      carouselRef.current.scrollBy({ left: -380, behavior: 'smooth' });
+      carouselRef.current.scrollBy({ left: -(CARD_W + GAP_PX), behavior: "smooth" });
     }
   };
 
   const handleScrollRight = () => {
     if (carouselRef.current) {
-      carouselRef.current.scrollBy({ left: 380, behavior: 'smooth' });
+      carouselRef.current.scrollBy({ left: CARD_W + GAP_PX, behavior: "smooth" });
     }
   };
 
-  // Check if we can scroll in either direction
   const checkScrollState = () => {
     if (carouselRef.current) {
       setCanScrollLeft(carouselRef.current.scrollLeft > 0);
       setCanScrollRight(
-        carouselRef.current.scrollLeft < 
-        carouselRef.current.scrollWidth - carouselRef.current.clientWidth
+        carouselRef.current.scrollLeft <
+          carouselRef.current.scrollWidth - carouselRef.current.clientWidth
       );
     }
   };
 
-  // Center the next match card on initial load ONLY
+  // Keyboard nav on the scroller
+  const handleKeyNav: React.KeyboardEventHandler<HTMLDivElement> = (e) => {
+    if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      handleScrollLeft();
+    } else if (e.key === "ArrowRight") {
+      e.preventDefault();
+      handleScrollRight();
+    }
+  };
+
+  // Center the next match card on initial load ONLY (respect reduced motion)
   useEffect(() => {
     if (carouselRef.current && nextMatchIndex >= 0 && !hasInitiallyCentered) {
-      const cardWidth = 360; // Width of each card
-      const spacing = 24;    // space-x-6 = 1.5rem = 24px
-      const scrollTo = nextMatchIndex * (cardWidth + spacing);
-
-      // Get the container width to center the card
+      const scrollTo = nextMatchIndex * (CARD_W + GAP_PX);
       const containerWidth = carouselRef.current.offsetWidth;
-      const centerOffset = (containerWidth - cardWidth) / 2;
+      const centerOffset = (containerWidth - CARD_W) / 2;
 
-      // Scroll to center the next match card
-      setTimeout(() => {
+      const id = window.setTimeout(() => {
+        const prefersReduced =
+          window.matchMedia &&
+          window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        if (prefersReduced) {
+          setHasInitiallyCentered(true);
+          return;
+        }
+
         if (carouselRef.current) {
           carouselRef.current.scrollLeft = Math.max(0, scrollTo - centerOffset);
           checkScrollState();
           setHasInitiallyCentered(true);
         }
       }, 100);
+
+      return () => window.clearTimeout(id);
     }
   }, [nextMatchIndex, organizedMatches, hasInitiallyCentered]);
 
-  // Add event listeners for scroll and resize
   useEffect(() => {
-    const carouselElement = carouselRef.current;
-    if (carouselElement) {
-      carouselElement.addEventListener('scroll', checkScrollState);
-      window.addEventListener('resize', checkScrollState);
-
-      return () => {
-        carouselElement.removeEventListener('scroll', checkScrollState);
-        window.removeEventListener('resize', checkScrollState);
-      };
-    }
+    const el = carouselRef.current;
+    if (!el) return;
+    el.addEventListener("scroll", checkScrollState, { passive: true });
+    window.addEventListener("resize", checkScrollState);
+    checkScrollState();
+    return () => {
+      el.removeEventListener("scroll", checkScrollState);
+      window.removeEventListener("resize", checkScrollState);
+    };
   }, []);
 
-  // If we have no matches, show placeholder
   if (organizedMatches.length === 0) {
     return (
-      <div className="w-full bg-[#ffffff] rounded-md shadow p-8 flex items-center justify-center">
-        <p className="text-[#6b7280]">No upcoming or recent matches to display</p>
+      <div className="w-full bg-white rounded-md shadow-sm p-8 flex items-center justify-center border border-separator">
+        <p className="text-text-muted">No upcoming or recent matches to display</p>
       </div>
     );
   }
@@ -185,50 +183,75 @@ export function MatchCarousel({
   return (
     <div>
       {showHeader && (
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center">
-            <div className="w-1.5 h-10 bg-[#00105A] mr-3"></div>
-            <h2 className="text-2xl font-bold text-[#00105A]">Match Centre</h2>
-          </div>
-          <Link 
-            href="/matches" 
-            className="text-[#00105A] hover:text-[#FFD700] transition-colors flex items-center gap-2"
-          >
-            <span className="text-sm font-medium">View All Matches</span>
-            <ChevronRight className="h-4 w-4" />
-          </Link>
-        </div>
+        <SectionHeader
+          title="Match Centre"
+          rightSlot={
+            <Link
+              href="/matches"
+              className="text-link hover:text-link-hover transition-colors inline-flex items-center gap-2
+                         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40
+                         focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+              aria-label="View all matches"
+            >
+              <span className="text-sm font-medium">View All Matches</span>
+              <ChevronRight className="h-4 w-4" />
+            </Link>
+          }
+        />
       )}
 
-      <div className="relative w-full overflow-hidden">
+      <div
+        className="relative w-full overflow-hidden"
+        role="region"
+        aria-roledescription="carousel"
+        aria-label="Match carousel"
+      >
         {/* Left navigation arrow */}
         <button
+          type="button"
           onClick={handleScrollLeft}
-          className={`absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-[#ffffff] rounded-full shadow-md p-2 focus:outline-none
-            ${canScrollLeft ? 'opacity-100' : 'opacity-50 cursor-not-allowed'}`}
+          className={`absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white border border-separator rounded-full shadow-sm p-2
+                      hover:bg-[rgb(var(--light-gray))] focus-visible:outline-none focus-visible:ring-2
+                      focus-visible:ring-accent/40 focus-visible:ring-offset-2 focus-visible:ring-offset-white
+                      ${canScrollLeft ? "opacity-100" : "opacity-40 cursor-not-allowed pointer-events-none"}`}
           disabled={!canScrollLeft}
+          aria-disabled={!canScrollLeft}
+          aria-controls="match-carousel-track"
           aria-label="Previous matches"
         >
-          <ChevronLeft className="h-5 w-5 text-[#00105A]" />
+          <ChevronLeft className="h-5 w-5 text-text-strong" />
         </button>
 
         {/* Match carousel */}
-        <div 
-          ref={carouselRef} 
-          className="flex space-x-6 overflow-x-auto hide-scrollbar pb-6 pt-2 px-4"
-          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        <div
+          ref={carouselRef}
+          id="match-carousel-track"
+          className="flex space-x-6 overflow-x-auto scrollbar-hide pb-6 pt-2 px-4"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          aria-label="Match carousel items"
+          tabIndex={0}
+          onKeyDown={handleKeyNav}
         >
           {organizedMatches.map((match, index) => {
-            const matchType = getMatchType(match, index);
+            const isResult =
+              match.status === "completed" || match.home_score !== undefined;
+            const matchType =
+              isResult && index < nextMatchIndex
+                ? "FINAL RESULT"
+                : index === nextMatchIndex
+                ? "NEXT MATCH"
+                : "UPCOMING MATCH";
 
             return (
               <div
-                key={match.id || index} 
+                key={match.id ?? `${match.match_date}-${index}`}
                 className="min-w-[360px] w-[360px] flex-shrink-0"
               >
-                <MatchCard 
+                <MatchCard
                   match={match}
-                  matchType={matchType as 'FINAL RESULT' | 'NEXT MATCH' | 'UPCOMING MATCH'}
+                  matchType={
+                    matchType as "FINAL RESULT" | "NEXT MATCH" | "UPCOMING MATCH"
+                  }
                   isCurrentMatch={index === nextMatchIndex}
                   onGalleryClick={onGalleryClick}
                   onReportClick={onReportClick}
@@ -241,19 +264,29 @@ export function MatchCarousel({
 
         {/* Right navigation arrow */}
         <button
+          type="button"
           onClick={handleScrollRight}
-          className={`absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-[#ffffff] rounded-full shadow-md p-2 focus:outline-none
-            ${canScrollRight ? 'opacity-100' : 'opacity-50 cursor-not-allowed'}`}
+          className={`absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white border border-separator rounded-full shadow-sm p-2
+                      hover:bg-[rgb(var(--light-gray))] focus-visible:outline-none focus-visible:ring-2
+                      focus-visible:ring-accent/40 focus-visible:ring-offset-2 focus-visible:ring-offset-white
+                      ${canScrollRight ? "opacity-100" : "opacity-40 cursor-not-allowed pointer-events-none"}`}
           disabled={!canScrollRight}
+          aria-disabled={!canScrollRight}
+          aria-controls="match-carousel-track"
           aria-label="Next matches"
         >
-          <ChevronRight className="h-5 w-5 text-[#00105A]" />
+          <ChevronRight className="h-5 w-5 text-text-strong" />
         </button>
       </div>
 
       {/* League table summary section */}
       {leagueData && (
-        <div className="mt-8">
+        <div
+          className="mt-8 pt-6 border-t border-separator"
+          role="region"
+          aria-label="League table summary"
+          aria-live="polite"
+        >
           <LeaguePositionSummary
             position={leagueData.position}
             played={leagueData.played}
@@ -262,6 +295,10 @@ export function MatchCarousel({
             lost={leagueData.lost}
             points={leagueData.points}
             form={leagueData.form}
+            goalDifference={leagueData.goalDifference ?? 0}
+            competitionName={leagueData.competitionName}
+            seasonName={leagueData.seasonName}
+            clubName={leagueData.clubName ?? "Baynounah SC"}
           />
         </div>
       )}

@@ -1,65 +1,78 @@
 "use client";
-import React from 'react';
+import React from "react";
+
 interface TeamLogoProps {
   logoUrl?: string;
   teamName: string;
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
   className?: string;
 }
-export function TeamLogo({ logoUrl, teamName, size = 'md', className = '' }: TeamLogoProps) {
-  // Sizes for different display contexts
-  const sizes = {
-    sm: { width: 32, height: 32 },
-    md: { width: 64, height: 64 },
-    lg: { width: 96, height: 96 }
+
+export function TeamLogo({
+  logoUrl,
+  teamName,
+  size = "md",
+  className = "",
+}: TeamLogoProps) {
+  const [errored, setErrored] = React.useState(false);
+
+  // Deterministic size classes (Tailwind-safe)
+  const SIZE_CLASSES: Record<NonNullable<TeamLogoProps["size"]>, string> = {
+    sm: "w-8 h-8",
+    md: "w-16 h-16",
+    lg: "w-24 h-24",
   };
-  const { width, height } = sizes[size];
-  
-  // Get team initials for fallback
-  const getTeamInitials = (name: string): string => {
+
+  const INITIALS_TEXT: Record<NonNullable<TeamLogoProps["size"]>, string> = {
+    sm: "text-sm",
+    md: "text-lg",
+    lg: "text-xl",
+  };
+
+  // Better initials: up to two letters (first character of first two words)
+  const getTeamInitials = (name?: string): string => {
     if (!name) return "?";
-    return name.substring(0, 1).toUpperCase();
+    const words = name.trim().split(/\s+/).filter(Boolean);
+    const firstTwo = words.slice(0, 2).map((w) => w[0]);
+    const joined = firstTwo.join("").toUpperCase();
+    return joined || name.substring(0, 1).toUpperCase();
   };
-  
-  // Function to build the full Cloudinary URL from the logo ID if needed
-  const getFullLogoUrl = (logoId: string) => {
-    // Check if it's already a full URL
-    if (logoId.startsWith('http')) return logoId;
-    
-    // Otherwise build Cloudinary URL
-    const cloudName = 'dlkpaw2a0';
-    return `https://res.cloudinary.com/${cloudName}/image/upload/${logoId}`;
+
+  // Build Cloudinary URL only if a public ID is provided; otherwise pass through
+  const getFullLogoUrl = (id?: string): string => {
+    if (!id) return "";
+    if (/^https?:\/\//i.test(id)) return id;
+    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_NAME || "dlkpaw2a0";
+    // auto format/quality for perf
+    return `https://res.cloudinary.com/${cloudName}/image/upload/f_auto,q_auto/${id}`;
   };
-  
-  // The URL to use
-  const imageUrl = logoUrl ? getFullLogoUrl(logoUrl) : '';
-  
+
+  const src = logoUrl ? getFullLogoUrl(logoUrl) : "";
+  const showImage = Boolean(src) && !errored;
+  const initials = getTeamInitials(teamName);
+
   return (
-    <div className={`w-${width/4} h-${height/4} flex items-center justify-center mx-auto ${className}`}>
-      {imageUrl ? (
-        <img 
-          src={imageUrl}
-          alt={`${teamName} logo`} 
-          className="w-full h-full object-contain" 
-          onError={(e) => {
-            // On error, replace with team initial
-            const target = e.target as HTMLImageElement;
-            target.onerror = null; // Prevent infinite loop
-            target.style.display = 'none';
-            // Create a span with the initial
-            const parent = target.parentElement;
-            if (parent) {
-              const span = document.createElement('span');
-              span.className = 'text-[#4b5563] font-semibold text-xl';
-              span.textContent = getTeamInitials(teamName);
-              parent.appendChild(span);
-            }
-          }}
+    <div
+      className={`${SIZE_CLASSES[size]} flex items-center justify-center mx-auto ${className}`}
+      aria-label={`${teamName} logo`}
+    >
+      {showImage ? (
+        <img
+          src={src}
+          alt={`${teamName} logo`}
+          className="w-full h-full object-contain"
+          loading="lazy"
+          decoding="async"
+          draggable={false}
+          referrerPolicy="no-referrer"
+          onError={() => setErrored(true)}
         />
       ) : (
-        <span className="text-[#4b5563] font-semibold text-xl">
-          {getTeamInitials(teamName)}
-        </span>
+        <div className="w-full h-full rounded-md bg-light-gray border border-separator flex items-center justify-center">
+          <span className={`font-heading font-semibold text-text-strong ${INITIALS_TEXT[size]}`}>
+            {initials}
+          </span>
+        </div>
       )}
     </div>
   );
