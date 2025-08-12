@@ -268,7 +268,7 @@ function FanZoneDesktop({
           <div className="relative p-6">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h4 className="text-h5 font-heading text-black tracking-tightest">
+                <h4 className="text-h3 font-heading text-black tracking-tightest">
                   Join Our Community
                 </h4>
                 <p className="text-small text-dark-gray mt-1">
