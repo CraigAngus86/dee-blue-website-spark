@@ -91,26 +91,27 @@ const OverlappingNewsCards: React.FC<OverlappingNewsCardsProps> = ({
 
   return (
     <section
-      className="bg-white py-12 sm:py-14 md:py-16 relative z-30"
+      className="section--white bg-[rgb(var(--white))] py-12 sm:py-14 md:py-16 relative z-30"
       aria-label="Latest stories and galleries"
     >
-      {/* Subtle gold grid bg */}
+      {/* Subtle gold grid bg, tokenized */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.06]" aria-hidden="true">
         <div
           className="absolute inset-0"
           style={{
             backgroundImage:
-              "linear-gradient(to right, rgba(252,199,67,0.5) 1px, transparent 1px), linear-gradient(to bottom, rgba(252,199,67,0.5) 1px, transparent 1px)",
+              "linear-gradient(to right, rgb(var(--brand-gold)/0.5) 1px, transparent 1px), linear-gradient(to bottom, rgb(var(--brand-gold)/0.5) 1px, transparent 1px)",
             backgroundSize: "24px 24px",
           }}
         />
       </div>
 
-      {/* Overlap offset under the hero */}
+      {/* Overlap offset under the hero — raised higher */}
       <div
         className={cn(
           "container mx-auto px-4 relative z-30",
-          "-mt-16 sm:-mt-20 md:-mt-28 lg:-mt-32",
+          // increased negative margins to pull cards further into the hero
+          "-mt-32 sm:-mt-40 md:-mt-56 lg:-mt-64",
           className
         )}
       >
@@ -126,10 +127,10 @@ const OverlappingNewsCards: React.FC<OverlappingNewsCardsProps> = ({
               key={content.id}
               className={cn(
                 "fade-card group h-full rounded-lg overflow-hidden outline-none",
-                "ring-1 ring-[rgb(var(--medium-gray))] ring-offset-0",
+                "ring-1 ring-[rgb(var(--brand-black)/0.12)] ring-offset-0",
                 "transition-transform duration-200", // only transform, not opacity
                 "hover:-translate-y-0.5 hover:shadow-[var(--card-shadow)]",
-                "focus-within:ring-2 focus-within:ring-[#FCC743]"
+                "focus-within:ring-2 focus-within:ring-[rgb(var(--brand-gold))]"
               )}
               style={
                 {
@@ -141,7 +142,7 @@ const OverlappingNewsCards: React.FC<OverlappingNewsCardsProps> = ({
               <NewsCard
                 article={content}
                 onClick={handleContentClick}
-                className="h-full group-hover:ring-2 group-hover:ring-[#FCC743]"
+                className="h-full group-hover:ring-2 group-hover:ring-[rgb(var(--brand-gold))]"
               />
             </div>
           ))}
@@ -166,18 +167,18 @@ const OverlappingNewsCards: React.FC<OverlappingNewsCardsProps> = ({
         />
       )}
 
-      {/* Loading indicator */}
+      {/* Loading indicator (tokenized) */}
       {isLoading && (
         <div
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-[300]"
+          className="fixed inset-0 bg-[rgb(var(--brand-black))]/50 flex items-center justify-center z-[300]"
           role="status"
           aria-live="polite"
           aria-busy="true"
         >
-          <div className="bg-white px-4 py-3 rounded-lg shadow-lg text-black">
+          <div className="bg-[rgb(var(--white))] px-4 py-3 rounded-lg shadow-lg text-[rgb(var(--brand-black))]">
             <div className="flex items-center space-x-2">
               <svg
-                className="animate-spin h-5 w-5 text-[#FCC743]"
+                className="animate-spin h-5 w-5 text-[rgb(var(--brand-gold))]"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"

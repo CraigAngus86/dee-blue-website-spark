@@ -35,8 +35,8 @@ const normalizeName = (s?: string) =>
   (s ?? "")
     .toLowerCase()
     .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "") // strip diacritics
-    .replace(/[^a-z]/g, ""); // letters only
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z]/g, "");
 
 const pick = (obj: any, keys: string[]): any =>
   keys.map((k) => obj?.[k]).find((v) => v !== undefined && v !== null);
@@ -89,7 +89,7 @@ export function MobileLeagueTable({
     } catch {
       raw = [];
     }
-    
+
     return raw.map(normalizeRow).filter(Boolean) as LeagueTableTeam[];
   }, [leagueTable]);
 
@@ -108,40 +108,40 @@ export function MobileLeagueTable({
   const bayIndex = useMemo(() => {
     const i = rows.findIndex((t) => {
       const normalized = normalizeName(t?.team_name);
-      return normalized.includes('baynounah');
+      return normalized.includes("baynounah");
     });
-    
+
     if (i >= 0) {
       return i;
     }
-    
+
     // Fallback to legacy prop (1-based → 0-based)
     if (banksODeePosition && banksODeePosition > 0) {
       return banksODeePosition - 1;
     }
-    
+
     return 0;
   }, [rows, banksODeePosition]);
 
   // 3-team window around focus with alphabetical sorting for pre-season
   const displayTeams = useMemo(() => {
     if (rows.length === 0) return [];
-    
-    // If all teams have 0 points/matches (pre-season), sort alphabetically
-    const allZeroPoints = rows.every(team => (team.points ?? 0) === 0 && (team.matches_played ?? 0) === 0);
-    
+
+    const allZeroPoints = rows.every(
+      (team) => (team.points ?? 0) === 0 && (team.matches_played ?? 0) === 0
+    );
+
     let sortedRows = rows;
     if (allZeroPoints) {
       sortedRows = [...rows].sort((a, b) => a.team_name.localeCompare(b.team_name));
     }
-    
-    // Find Baynounah in the sorted list
-    const sortedBayIndex = sortedRows.findIndex((t) => 
-      normalizeName(t?.team_name).includes('baynounah')
+
+    const sortedBayIndex = sortedRows.findIndex((t) =>
+      normalizeName(t?.team_name).includes("baynounah")
     );
-    
+
     const effectiveBayIndex = sortedBayIndex >= 0 ? sortedBayIndex : bayIndex;
-    
+
     if (sortedRows.length <= 3) return sortedRows;
 
     const clamp = (n: number, min: number, max: number) =>
@@ -157,25 +157,18 @@ export function MobileLeagueTable({
 
   return (
     <section aria-label="League table (mobile)" className="w-full">
-      {/* Header with gold accent */}
+      {/* Header with 4px gold accent and Bebas 400 (+0.02em) */}
       <div className="mb-2 flex items-center justify-between">
         <div className="flex items-start gap-2 md:gap-3">
-          <div className="w-1.5 h-10 bg-accent shrink-0" style={{ backgroundColor: '#FCC743' }} />
-          <h2 className="text-h2 font-heading font-bold tracking-tightest text-text-strong leading-none">
+          <div className="w-1 h-10 bg-[rgb(var(--brand-gold))] shrink-0" />
+          <h2
+            className="text-h2 font-heading font-normal text-text-strong leading-none"
+            style={{ letterSpacing: "0.02em" }}
+          >
             League Table
           </h2>
         </div>
-        <Link
-          href="/matches?tab=table"
-          className="text-link hover:text-link-hover transition-colors inline-flex items-center gap-2
-                     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40
-                     focus-visible:ring-offset-2 focus-visible:ring-offset-white"
-          aria-label="View full league table"
-        >
-          <span className="text-sm font-medium">View Full Table</span>
-          <ChevronRight className="h-4 w-4" />
-        </Link>
-      </div>
+        </div>
 
       {/* Context line */}
       {contextLine && (
@@ -183,9 +176,9 @@ export function MobileLeagueTable({
       )}
 
       {/* League table card */}
-      <div className="bg-white rounded-lg shadow-sm border border-separator overflow-hidden">
+      <div className="bg-[rgb(var(--white))] rounded-lg shadow-sm border border-separator overflow-hidden">
         {/* Table header */}
-        <div className="flex items-center px-3 py-2 border-b border-separator bg-white">
+        <div className="flex items-center px-3 py-2 border-b border-separator bg-[rgb(var(--white))]">
           <div className="w-8 flex-shrink-0 text-center">
             <span className="text-[11px] font-semibold text-text-muted uppercase">POS</span>
           </div>
@@ -203,7 +196,7 @@ export function MobileLeagueTable({
         {/* Table rows */}
         {hasData && displayTeams.length > 0 ? (
           displayTeams.map((team, i) => {
-            const isBay = normalizeName(team.team_name).includes('baynounah');
+            const isBay = normalizeName(team.team_name).includes("baynounah");
             const posVal = team.position ?? "—";
             const playedVal = team.matches_played ?? 0;
             const pointsVal = team.points ?? 0;
@@ -213,7 +206,7 @@ export function MobileLeagueTable({
                 key={`${team.team_name}-${team.position ?? "x"}-${i}`}
                 className={`flex items-center px-3 py-3 ${
                   i !== displayTeams.length - 1 ? "border-b border-separator" : ""
-                } ${isBay ? "bg-accent/5" : "bg-white"}`}
+                } ${isBay ? "bg-accent/5" : "bg-[rgb(var(--white))]"}`}
               >
                 {/* Position */}
                 <div className="w-8 flex-shrink-0 text-center">
@@ -263,16 +256,16 @@ export function MobileLeagueTable({
       {/* Footer link */}
       <div className="text-center pt-4">
         <Link
-            href="/matches"
-            className="inline-flex items-center gap-2 text-link hover:text-link-hover transition-colors font-medium
-                       focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40
-                       focus-visible:ring-offset-2 focus-visible:ring-offset-white"
-            aria-label="View Full Table"
-          >
-            <span>View Full Table</span>
-            <ChevronRight className="h-4 w-4" aria-hidden="true" />
-          </Link>
-        </div>
+          href="/matches"
+          className="inline-flex items-center gap-2 text-link hover:text-link-hover transition-colors font-medium
+                     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))] focus-visible:ring-offset-2
+                     focus-visible:ring-offset-[rgb(var(--white))]"
+          aria-label="View Full Table"
+        >
+          <span>View Full Table</span>
+          <ChevronRight className="h-4 w-4" aria-hidden="true" />
+        </Link>
+      </div>
     </section>
   );
 }

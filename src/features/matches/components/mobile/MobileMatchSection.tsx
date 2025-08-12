@@ -109,7 +109,7 @@ export function MobileMatchSection({
             onTicketClick={onTicketClick}
           />
         ) : (
-          <div className="bg-white rounded-lg shadow-sm p-4 border border-separator">
+          <div className="bg-[rgb(var(--white))] rounded-lg shadow-sm p-4 border border-separator">
             <div className="text-center text-text-muted">
               <p className="text-sm">No recent results to display</p>
             </div>
@@ -126,7 +126,7 @@ export function MobileMatchSection({
             onTicketClick={onTicketClick}
           />
         ) : (
-          <div className="bg-white rounded-lg shadow-sm p-4 border border-separator">
+          <div className="bg-[rgb(var(--white))] rounded-lg shadow-sm p-4 border border-separator">
             <div className="text-center text-text-muted">
               <p className="text-sm">No next match to display</p>
             </div>
@@ -143,7 +143,7 @@ export function MobileMatchSection({
             onTicketClick={onTicketClick}
           />
         ) : (
-          <div className="bg-white rounded-lg shadow-sm p-4 border border-separator">
+          <div className="bg-[rgb(var(--white))] rounded-lg shadow-sm p-4 border border-separator">
             <div className="text-center text-text-muted">
               <p className="text-sm">No additional upcoming matches</p>
             </div>
@@ -156,7 +156,7 @@ export function MobileMatchSection({
             href="/matches"
             className="inline-flex items-center gap-2 text-link hover:text-link-hover transition-colors font-medium
                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40
-                       focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+                       focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--white))]"
             aria-label="View all matches"
           >
             <span>View All Matches</span>

@@ -28,7 +28,7 @@ export default function SponsorsSection({ sponsors }: SponsorsSectionProps) {
         href={href}
         target="_blank"
         rel="noopener noreferrer nofollow sponsored"
-        className="block transition-opacity hover:opacity-85 focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-black))] focus-visible:ring-offset-2"
+        className="block transition-opacity hover:opacity-85 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-white"
         aria-label={`Visit ${title}`}
         title={title}
       >
@@ -49,14 +49,14 @@ export default function SponsorsSection({ sponsors }: SponsorsSectionProps) {
           subtitle="Partner with Baynounah SC to elevate football in the Western Region."
           align="center"
           showAccentBar={false}
-          className="justify-center"          // ← force center (overrides justify-between)
+          className="justify-center"
           titleClassName="mb-0"
           subtitleClassName="max-w-2xl mx-auto"
         />
         <div className="mt-6 text-center">
           <Link
             href="/commercial"
-            className="inline-block rounded-lg px-6 py-3 font-semibold text-black bg-brand-gold hover:opacity-90 transition"
+            className="inline-block rounded-lg px-6 py-3 font-semibold text-black bg-brand-gold border-2 border-brand-gold hover:bg-brand-black hover:text-brand-gold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-white"
           >
             Become a Partner
           </Link>
@@ -72,7 +72,7 @@ export default function SponsorsSection({ sponsors }: SponsorsSectionProps) {
         title="Our Partners"
         align="center"
         showAccentBar={false}
-        className="justify-center"            // ← force center
+        className="justify-center"
         titleClassName="mb-0"
       />
 
@@ -152,7 +152,7 @@ export default function SponsorsSection({ sponsors }: SponsorsSectionProps) {
       <div className="text-center mt-6">
         <Link
           href="/commercial"
-          className="inline-block rounded-lg px-6 py-3 font-semibold text-black bg-brand-gold hover:opacity-90 transition"
+          className="inline-block rounded-lg px-6 py-3 font-semibold text-black bg-brand-gold border-2 border-brand-gold hover:bg-brand-black hover:text-brand-gold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-white"
         >
           Partner With Us
         </Link>

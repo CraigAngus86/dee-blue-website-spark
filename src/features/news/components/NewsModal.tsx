@@ -1,12 +1,12 @@
 "use client";
-import React, { useEffect, useState, useMemo } from 'react';
-import { createPortal } from 'react-dom';
-import { X, Facebook, Linkedin, Mail, Copy } from 'lucide-react';
-import { format } from 'date-fns';
-import { NewsArticle } from '../types';
-import { PortableText } from '@portabletext/react';
-import portableTextComponents from './portable-text/PortableTextComponents';
-import { getCloudinaryImageUrl, getContentType } from '@/lib/cloudinary/imageTransforms';
+import React, { useEffect, useState, useMemo, useCallback } from "react";
+import { createPortal } from "react-dom";
+import { X, Facebook, Linkedin, Mail, Copy } from "lucide-react";
+import { format } from "date-fns";
+import { NewsArticle } from "../types";
+import { PortableText } from "@portabletext/react";
+import portableTextComponents from "./portable-text/PortableTextComponents";
+import { getCloudinaryImageUrl, getContentType } from "@/lib/cloudinary/imageTransforms";
 
 interface NewsModalProps {
   article: NewsArticle | null;
@@ -22,177 +22,150 @@ const XLogo = ({ size = 18 }: { size?: number }) => (
 );
 
 const SITE_NAME = "Baynounah SC";
+const headerPx = "72px"; // fallback if --header-h not set
 
-// Map category values to display text (align with cards)
 const categoryDisplay: Record<string, string> = {
-  matchReport: 'Match Report',
-  clubNews: 'Club News',
-  teamNews: 'Team News',
-  communityNews: 'Community News',
-  commercialNews: 'Commercial News',
-  matchGallery: 'Match Gallery'
+  matchReport: "Match Report",
+  clubNews: "Club News",
+  teamNews: "Team News",
+  communityNews: "Community News",
+  commercialNews: "Commercial News",
+  matchGallery: "Match Gallery",
 };
 
 const NewsModal: React.FC<NewsModalProps> = ({ article, isOpen, onClose }) => {
   const [heroImgError, setHeroImgError] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  // Mount flag for portal (avoids SSR mismatch)
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => setMounted(true), []);
 
-  // Prevent background scrolling when modal is open
+  // lock scroll under modal
   useEffect(() => {
     if (!isOpen) return;
-
     const scrollY = window.scrollY;
-    document.body.style.position = 'fixed';
+    document.body.style.position = "fixed";
     document.body.style.top = `-${scrollY}px`;
-    document.body.style.width = '100%';
-    document.body.style.overflow = 'hidden';
-
+    document.body.style.width = "100%";
+    document.body.style.overflow = "hidden";
     return () => {
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.width = '';
-      document.body.style.overflow = '';
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
+      document.body.style.overflow = "";
       window.scrollTo(0, scrollY);
     };
   }, [isOpen]);
 
-  // Build a canonical article URL (avoid sharing modal/list state)
+  // ESC to close
+  const onEsc = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    },
+    [onClose]
+  );
+  useEffect(() => {
+    if (!isOpen) return;
+    window.addEventListener("keydown", onEsc);
+    return () => window.removeEventListener("keydown", onEsc);
+  }, [isOpen, onEsc]);
+
+  // canonical URL
   const articleUrl = useMemo(() => {
-    if (!article) return typeof window !== 'undefined' ? window.location.origin : '';
-    const origin = typeof window !== 'undefined' ? window.location.origin : '';
+    if (!article) return typeof window !== "undefined" ? window.location.origin : "";
+    const origin = typeof window !== "undefined" ? window.location.origin : "";
     const rawSlug =
-      typeof (article as any).slug === 'string'
+      typeof (article as any).slug === "string"
         ? (article as any).slug
-        : (article as any).slug?.current || '';
-    // Adjust path if your route differs
+        : (article as any).slug?.current || "";
     return rawSlug ? `${origin}/news/${encodeURIComponent(rawSlug)}` : origin;
   }, [article]);
 
   if (!mounted || !isOpen || !article) return null;
 
-  const formattedDate = article.publishedAt
-    ? format(new Date(article.publishedAt), "d MMMM yyyy")
-    : '';
-
-  // Cloudinary content type
+  const formattedDate = article.publishedAt ? format(new Date(article.publishedAt), "d MMMM yyyy") : "";
   const contentType = getContentType(article.category);
 
-  // Social sharing
+  // share handlers
   const shareOnX = () => {
     const text = `${article.title} | ${SITE_NAME}`;
     window.open(
       `https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(articleUrl)}`,
-      '_blank',
-      'noopener,noreferrer'
+      "_blank",
+      "noopener,noreferrer"
     );
   };
-
   const shareOnFacebook = () => {
     window.open(
       `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(articleUrl)}`,
-      '_blank',
-      'noopener,noreferrer'
+      "_blank",
+      "noopener,noreferrer"
     );
   };
-
   const shareOnLinkedin = () => {
     const title = article.title;
     window.open(
       `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(articleUrl)}&title=${encodeURIComponent(title)}`,
-      '_blank',
-      'noopener,noreferrer'
+      "_blank",
+      "noopener,noreferrer"
     );
   };
-
   const shareByEmail = () => {
     const subject = `${article.title} | ${SITE_NAME}`;
     const body = `I thought you might be interested in this article from ${SITE_NAME}: ${article.title}\n\n${articleUrl}`;
-    window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
+    window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, "_blank");
   };
-
   const copyLink = async () => {
     try {
       await navigator.clipboard.writeText(articleUrl);
-      // Hook your toast/snackbar here if you have one
     } catch {
-      // noop
+      /* noop */
     }
   };
 
-  // Header height variable (adjust in :root to match your nav).
-  const headerPx = '72px'; // fallback if --header-h not set
-
   const modal = (
     <div
-      className="fixed inset-0 z-[200] bg-black/50"
-      /* OPTIONAL: click outside to close */
-      /* onClick={onClose} */
+      className="fixed inset-0 z-[200] bg-[rgb(var(--brand-black)/0.50)]"
       aria-modal="true"
       role="dialog"
       aria-label="Article"
+      // onClick={onClose} // enable if you want click-away
     >
-      {/* Dialog container under the header, centered horizontally */}
       <div
         className="absolute left-1/2 -translate-x-1/2 w-full px-4 sm:px-6 md:px-8 z-[210]"
         style={{
           marginTop: `calc(var(--header-h, ${headerPx}) + 16px)`,
-          marginBottom: '16px',
+          marginBottom: "16px",
         }}
         onClick={(e) => e.stopPropagation()}
       >
         <div
-          className="relative mx-auto max-w-5xl max-h-[calc(100vh-32px-var(--header-h,72px))] bg-white rounded-lg shadow-xl overflow-hidden"
-          style={{ boxShadow: 'var(--shadow-xl)' }}
+          className="relative mx-auto max-w-5xl max-h-[calc(100vh-32px-var(--header-h,72px))] bg-[rgb(var(--white))] rounded-lg overflow-hidden"
+          style={{ boxShadow: "var(--shadow-xl)" }}
         >
-          {/* Light header bar with share + close */}
-          <div className="absolute top-0 left-0 right-0 h-12 bg-white border-b border-[rgb(var(--neutral-silver))] z-40 flex justify-between items-center px-3 sm:px-4">
-            {/* Social sharing buttons */}
+          {/* Title bar — warm grey to match spec */}
+          <div className="absolute top-0 left-0 right-0 h-12 bg-[rgb(var(--warm-gray))] border-b border-[rgb(var(--neutral-silver))] z-40 flex justify-between items-center px-3 sm:px-4">
             <div className="flex items-center gap-1.5">
-              <button
-                onClick={shareOnX}
-                className="w-8 h-8 flex items-center justify-center rounded-md text-black hover:bg-[rgba(252,199,67,0.18)] transition-colors"
-                aria-label="Share on X"
-              >
-                <XLogo size={18} />
-              </button>
-              <button
-                onClick={shareOnFacebook}
-                className="w-8 h-8 flex items-center justify-center rounded-md text-black hover:bg-[rgba(252,199,67,0.18)] transition-colors"
-                aria-label="Share on Facebook"
-              >
-                <Facebook size={18} />
-              </button>
-              <button
-                onClick={shareOnLinkedin}
-                className="w-8 h-8 flex items-center justify-center rounded-md text-black hover:bg-[rgba(252,199,67,0.18)] transition-colors"
-                aria-label="Share on LinkedIn"
-              >
-                <Linkedin size={18} />
-              </button>
-              <button
-                onClick={shareByEmail}
-                className="w-8 h-8 flex items-center justify-center rounded-md text-black hover:bg-[rgba(252,199,67,0.18)] transition-colors"
-                aria-label="Share by Email"
-              >
-                <Mail size={18} />
-              </button>
-              <button
-                onClick={copyLink}
-                className="w-8 h-8 flex items-center justify-center rounded-md text-black hover:bg-[rgba(252,199,67,0.18)] transition-colors"
-                aria-label="Copy link"
-              >
-                <Copy size={18} />
-              </button>
+              {[
+                { onClick: shareOnX, label: "Share on X", Icon: XLogo },
+                { onClick: shareOnFacebook, label: "Share on Facebook", Icon: Facebook },
+                { onClick: shareOnLinkedin, label: "Share on LinkedIn", Icon: Linkedin },
+                { onClick: shareByEmail, label: "Share by Email", Icon: Mail },
+                { onClick: copyLink, label: "Copy link", Icon: Copy },
+              ].map(({ onClick, label, Icon }, idx) => (
+                <button
+                  key={idx}
+                  onClick={onClick}
+                  className="w-8 h-8 flex items-center justify-center rounded-md text-[rgb(var(--brand-black))] hover:bg-[rgb(var(--brand-gold)/0.18)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--warm-gray))]"
+                  aria-label={label}
+                >
+                  {/* @ts-ignore */}
+                  <Icon size={18} />
+                </button>
+              ))}
             </div>
 
-            {/* Close */}
             <button
-              className="text-black hover:text-[rgb(var(--brand-gold))] transition-colors"
+              className="text-[rgb(var(--brand-black))] hover:text-[rgb(var(--brand-gold))] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--warm-gray))]"
               onClick={onClose}
               aria-label="Close"
             >
@@ -202,57 +175,75 @@ const NewsModal: React.FC<NewsModalProps> = ({ article, isOpen, onClose }) => {
 
           {/* Scrollable content area */}
           <div className="overflow-y-auto max-h-[calc(100vh-32px-var(--header-h,72px))] pt-12">
-            {/* Hero image */}
-            <div className="relative w-full aspect-[16/9] bg-[rgb(var(--light-gray))]">
+            {/* Hero image with overlay identical to homepage hero */}
+            <div className="relative w-full aspect-[16/9] bg-[rgb(var(--warm-gray))]">
               {article.mainImage && !heroImgError ? (
                 <img
                   src={getCloudinaryImageUrl(article.mainImage, {
-                    variant: 'modal',
+                    variant: "modal",
                     contentType,
-                    width: 1200
+                    width: 1200,
                   })}
                   alt={article.title}
                   className="w-full h-full object-cover"
                   onError={() => setHeroImgError(true)}
                 />
               ) : (
-                <div className="w-full h-full bg-black/80 flex items-center justify-center">
-                  <span className="text-white/70 text-sm">{SITE_NAME}</span>
+                <div className="w-full h-full bg-[rgb(var(--brand-black)/0.80)] flex items-center justify-center">
+                  <span className="text-[rgb(var(--white)/0.70)] text-sm">{SITE_NAME}</span>
                 </div>
               )}
 
-              {/* Readability gradient + gold warmth */}
-              <div className="absolute inset-0">
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/25 to-transparent pointer-events-none" />
-                <div className="absolute inset-0 pointer-events-none mix-blend-overlay opacity-70 bg-[radial-gradient(ellipse_at_center,rgba(252,199,67,0)_45%,rgba(252,199,67,0.12)_75%,rgba(252,199,67,0.20)_90%,rgba(252,199,67,0.24)_100%)]" />
+              {/* Overlay — same as HomeHeroSection (desktop recipe) */}
+              <div className="absolute inset-0 pointer-events-none z-10">
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    backgroundImage: `
+                      linear-gradient(
+                        to top,
+                        rgba(0,0,0,0.82) 15%,
+                        rgba(0,0,0,0.42) 50%,
+                        rgba(0,0,0,0.18) 60%,
+                        rgba(0,0,0,0.00) 90%
+                      ),
+                      radial-gradient(
+                        80% 60% at 70% 85%,
+                        rgb(var(--brand-gold)/0.08) 0%,
+                        rgb(var(--brand-gold)/0.00) 70%
+                      )
+                    `,
+                    backgroundBlendMode: "multiply, overlay",
+                  }}
+                />
               </div>
 
-              {/* Title overlay */}
-              <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                <h1 className="text-xl md:text-4xl lg:text-5xl font-bold mb-3 leading-tight">
+              {/* Title overlay (inherits Bebas 400 + 0.02em from globals) */}
+              <div className="absolute bottom-0 left-0 right-0 p-6 text-[rgb(var(--white))] z-20">
+                <h1 className="text-xl md:text-4xl lg:text-5xl mb-3 leading-tight">
                   {article.title}
                 </h1>
                 <div className="flex items-center flex-wrap gap-2">
-                  <span className="inline-block px-3 py-1 text-xs font-bold bg-black text-[rgb(var(--brand-gold))] rounded">
+                  <span className="inline-block px-3 py-1 text-xs font-semibold tracking-wider bg-[rgb(var(--brand-black))] text-[rgb(var(--brand-gold))] rounded">
                     {categoryDisplay[article.category] || article.category}
                   </span>
-                  <span className="text-sm text-white/85">{formattedDate}</span>
+                  <span className="text-sm text-[rgb(var(--white)/0.85)]">{formattedDate}</span>
                 </div>
               </div>
             </div>
 
             {/* Article content */}
-            <div className="px-6 py-8 bg-white">
+            <div className="px-6 py-8 bg-[rgb(var(--white))] text-[rgb(var(--brand-black))]">
               {/* Excerpt callout */}
               {article.excerpt && (
-                <div className="mb-8 text-lg font-medium text-[rgb(var(--dark-gray))] border-l-4 border-[rgb(var(--brand-gold))] pl-4 py-2 bg-[rgb(var(--light-gray))]">
+                <div className="mb-8 text-lg font-medium text-[rgb(var(--brand-black)/0.72)] border-l-4 border-[rgb(var(--brand-gold))] pl-4 py-2 bg-[rgb(var(--warm-gray))]">
                   {article.excerpt}
                 </div>
               )}
 
               {/* Author */}
               {article.author && (
-                <div className="mb-6 text-sm font-medium text-[rgb(var(--gray))]">
+                <div className="mb-6 text-sm font-medium text-[rgb(var(--brand-black)/0.60)]">
                   By {article.author}
                 </div>
               )}
@@ -261,28 +252,26 @@ const NewsModal: React.FC<NewsModalProps> = ({ article, isOpen, onClose }) => {
               <div className="prose max-w-none">
                 {Array.isArray(article.body) && article.body.length > 0 ? (
                   <PortableText value={article.body} components={portableTextComponents} />
-                ) : typeof article.body === 'string' && article.body ? (
-                  <p className="text-[rgb(var(--near-black))]">{article.body}</p>
+                ) : typeof article.body === "string" && article.body ? (
+                  <p>{article.body}</p>
                 ) : (
                   <div>
-                    <p className="text-[rgb(var(--near-black))]">
-                      {SITE_NAME} article content will appear here once loaded.
-                    </p>
-                    <p className="mt-4 text-[rgb(var(--warning))]">
-                      Note: Full article content is being loaded.
-                    </p>
+                    <p>{SITE_NAME} article content will appear here once loaded.</p>
                   </div>
                 )}
               </div>
 
               {/* Related players */}
               {article.relatedPlayers && article.relatedPlayers.length > 0 && (
-                <div className="mt-8 pt-6 border-t border-[rgb(var(--light-gray))]">
-                  <h3 className="text-xl font-bold mb-4">Featured Players</h3>
+                <div className="mt-8 pt-6 border-t border-[rgb(var(--neutral-silver))]">
+                  <h3 className="text-xl mb-4">Featured Players</h3>
                   <div className="flex flex-wrap gap-4">
-                    {article.relatedPlayers.map(player => (
-                      <div key={player.id} className="flex items-center space-x-2 bg-[rgb(var(--light-gray))] p-2 rounded">
-                        <div className="w-12 h-12 rounded-full overflow-hidden bg-black/80 text-white flex items-center justify-center">
+                    {article.relatedPlayers.map((player) => (
+                      <div
+                        key={player.id}
+                        className="flex items-center space-x-2 bg-[rgb(var(--warm-gray))] p-2 rounded"
+                      >
+                        <div className="w-12 h-12 rounded-full overflow-hidden bg-[rgb(var(--brand-black)/0.80)] text-[rgb(var(--white))] flex items-center justify-center">
                           <span className="text-xs">{player.name.charAt(0)}</span>
                         </div>
                         <span className="font-medium">{player.name}</span>
@@ -294,22 +283,25 @@ const NewsModal: React.FC<NewsModalProps> = ({ article, isOpen, onClose }) => {
 
               {/* Gallery */}
               {article.gallery && article.gallery.images && article.gallery.images.length > 0 && (
-                <div className="mt-8 pt-6 border-t border-[rgb(var(--light-gray))]">
-                  <h3 className="text-xl font-bold mb-4">Photo Gallery</h3>
+                <div className="mt-8 pt-6 border-t border-[rgb(var(--neutral-silver))]">
+                  <h3 className="text-xl mb-4">Photo Gallery</h3>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     {article.gallery.images.map((image, index) => (
-                      <div key={index} className="relative aspect-square rounded-md overflow-hidden shadow-md bg-[rgb(var(--light-gray))]">
+                      <div
+                        key={index}
+                        className="relative aspect-square rounded-md overflow-hidden shadow-md bg-[rgb(var(--warm-gray))]"
+                      >
                         <img
                           src={getCloudinaryImageUrl(image, {
-                            variant: 'square',
+                            variant: "square",
                             contentType,
-                            width: 400
+                            width: 400,
                           })}
                           alt={image.alt || `Image ${index + 1}`}
                           className="w-full h-full object-cover"
                         />
                         {image.caption && (
-                          <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white p-2 text-sm">
+                          <div className="absolute bottom-0 left-0 right-0 bg-[rgb(var(--brand-black)/0.70)] text-[rgb(var(--white))] p-2 text-sm">
                             {image.caption}
                           </div>
                         )}
@@ -320,8 +312,8 @@ const NewsModal: React.FC<NewsModalProps> = ({ article, isOpen, onClose }) => {
               )}
             </div>
           </div>
-        </div>
 
+        </div>
       </div>
     </div>
   );

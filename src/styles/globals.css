@@ -23,29 +23,26 @@
     --accent-dark: 224 176 59;   /* slightly darker gold */
     --accent-light: 255 215 120; /* lighter gold */
 
-    /* Neutrals (kept) */
+    /* Neutrals (legacy cool grey kept but not for alternation) */
     --white: 255 255 255;        /* #FFFFFF */
-    --light-gray: 244 247 251;   /* #F4F7FB */
+    --light-gray: 244 247 251;   /* #F4F7FB (cool) — avoid for section alt */
     --medium-gray: 226 232 240;  /* #E2E8F0 */
     --gray: 148 163 184;         /* #94A3B8 */
     --dark-gray: 71 85 105;      /* #475569 */
-    --near-black: 30 41 59;      /* #1E293B */
+    --near-black: 30 41 59;      /* #1E293B (deprecated for text) */
     --black: 15 23 42;           /* legacy near-navy; left for safety */
 
-    /* Baynounah brand tokens (new) */
+    /* Baynounah brand tokens (canonical) */
     --brand-gold: 252 199 67;    /* #FCC743 */
     --brand-black: 0 0 0;        /* #000000 */
     --heritage-red: 177 25 25;   /* #B11919 */
     --heritage-green: 60 165 18; /* #3CA512 */
     --neutral-silver: 214 214 214; /* #D6D6D6 */
 
-    /* Status / feedback */
-    --success: 16 185 129; /* #10B981 */
-    --warning: 245 158 11; /* #F59E0B */
-    --error: 239 68 68;    /* #EF4444 */
-    --info: 59 130 246;    /* #3B82F6 */
+    /* Warm grey for section alternation (new, use this) */
+    --warm-gray: 248 246 242;    /* #F8F6F2 */
 
-    /* Semantic (new, for growth) */
+    /* Semantic */
     --surface-1: 255 255 255; /* cards / page surface */
     --surface-2: 244 247 251; /* raised / alt surface */
     --text-strong: 0 0 0;     /* primary text on light bg */
@@ -131,29 +128,39 @@
 body {
   /* Token-first so theme tweaks propagate site-wide */
   background: rgb(var(--surface-1));
-  color: rgb(var(--text-strong));
+  color: rgb(var(--brand-black));
   @apply font-body text-base;
 }
 
-/* Headings: Bebas Neue for H1/H2, Open Sans for H3–H6 */
+/* Headings: Bebas Neue for H1/H2/H3 (regular, positive tracking) */
 h1, h2, h3 {
-  @apply font-heading font-bold tracking-tighter;
-  line-height: 1.1;
+  @apply font-heading;
+  font-weight: 400;           /* Bebas regular per spec */
+  letter-spacing: 0.02em;     /* positive tracking per spec */
+  line-height: 1.05;
 }
+/* Subheads: Open Sans for H4–H6 */
 h4, h5, h6 {
   @apply font-body font-semibold;
   line-height: 1.25;
 }
 
-/* Sizes (driven by Tailwind theme) */
-h1 { @apply text-h1 mb-6; }
-h2 { @apply text-h2 mb-5; }
-h3 { @apply text-h3 mb-4; }
+/* Sizes — keep Tailwind tokens if you have them */
+h1 { @apply text-h1 mb-6; }   /* expected ~80px on desktop */
+h2 { @apply text-h2 mb-5; }   /* ~60px */
+h3 { @apply text-h3 mb-4; }   /* ~48px */
 h4 { @apply text-h4 mb-3; }
 h5 { @apply text-h5 mb-2; }
 h6 { @apply text-h6 mb-2; }
 
 p  { @apply mb-4 leading-relaxed; }
+
+/* Captions/supporting text */
+small, .caption { font-size: 14px; color: rgb(var(--dark-gray)); }
+.tagline { font-size: 20px; font-weight: 500; }
+
+/* Heaters script (ensure it’s loaded via next/font or @font-face) */
+.heaters { font-family: 'Heaters', cursive; font-size: 32px; color: rgb(var(--brand-gold)); }
 
 /* -----------------------------
    Links
@@ -180,6 +187,19 @@ p  { @apply mb-4 leading-relaxed; }
 @media (min-width: 768px) { .section { @apply py-16; } }
 @media (min-width: 1024px) { .section { @apply py-24; } }
 
+/* Alternating background helpers (use these) */
+.section--white { background-color: rgb(var(--white)); }
+.section--warm  { background-color: rgb(var(--warm-gray)); }
+
+/* Standard section header with 4px gold accent */
+.section-head { position: relative; padding-left: 24px; margin-bottom: 40px; }
+.section-head::before {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 4px; background-color: rgb(var(--brand-gold)); border-radius: 2px;
+}
+.section-head h2 { margin-bottom: 8px; } /* inherits Bebas + 0.02em */
+.section-head .subtitle { font-size: 16px; color: rgb(var(--dark-gray)); }
+
 /* Optional section underline helper */
 .section-underline { position: relative; display: inline-block; }
 .section-underline::after {
@@ -194,7 +214,6 @@ p  { @apply mb-4 leading-relaxed; }
 /* -----------------------------
    Overlays / effects
    ----------------------------- */
-/* Subtle black→gold duotone overlay helper */
 .duotone { position: relative; }
 .duotone::before {
   content: '';
@@ -244,20 +263,12 @@ p  { @apply mb-4 leading-relaxed; }
 .mapboxgl-popup-tip { border-top-color: rgb(var(--neutral-silver)) !important; }
 
 /* -----------------------------
-   Component helpers (optional, future-proof)
+   Component helpers (optional)
    ----------------------------- */
-/* SectionHeader baseline — apply in the component with className="section-header" if desired */
-.section-header {
-  @apply flex items-end justify-between;
-}
-.section-header__title {
-  @apply text-h2 font-heading font-bold text-black tracking-tightest;
-}
-.section-header__subtitle {
-  @apply text-sm text-text-muted;
-}
+.section-header { @apply flex items-end justify-between; }
+.section-header__title { @apply text-h2 font-heading; font-weight: 400; letter-spacing: 0.02em; }
+.section-header__subtitle { @apply text-sm; color: rgb(var(--dark-gray)); }
 
-/* Card header/footer helpers */
-.card-surface { background: rgb(var(--surface-1)); }
-.card-surface--raised { background: rgb(var(--surface-2)); }
-.card-divider { border-color: rgb(var(--separator)); }
+/* Deprecation helpers to keep old classes from leaking brand consistency */
+.text-near-black { color: rgb(var(--brand-black)) !important; }
+.bg-near-black   { background-color: rgb(var(--brand-black)) !important; }

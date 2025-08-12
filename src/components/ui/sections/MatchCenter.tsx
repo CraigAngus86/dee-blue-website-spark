@@ -22,40 +22,37 @@ export default function MatchCenter({
   // Gallery modal states
   const [galleryModalOpen, setGalleryModalOpen] = useState(false);
   const [selectedGalleryId, setSelectedGalleryId] = useState<string | null>(null);
-  
+
   // News modal states
   const [newsModalOpen, setNewsModalOpen] = useState(false);
   const [selectedArticle, setSelectedArticle] = useState<any | null>(null);
   const [articleLoading, setArticleLoading] = useState(false);
-  
+
   // League table data fetching state
   const [fetchedLeagueTable, setFetchedLeagueTable] = useState<any[]>([]);
-  
+
   // Fetch league table data if not provided via props
   useEffect(() => {
     async function loadLeagueTable() {
-      // If leagueTable prop is provided and not empty, use it
       if (leagueTable && leagueTable.length > 0) {
         setFetchedLeagueTable(leagueTable);
         return;
       }
-      
-      // Otherwise fetch from database
       try {
         const season = await getCurrentSeason();
         const table = await getLeagueTable(season?.id);
         setFetchedLeagueTable(table || []);
       } catch (error) {
-        console.error('Error fetching league table:', error);
+        console.error("Error fetching league table:", error);
         setFetchedLeagueTable([]);
       }
     }
-    
     loadLeagueTable();
   }, [leagueTable]);
-  
+
   // Use fetched data if available, otherwise fall back to prop
-  const effectiveLeagueTable = fetchedLeagueTable.length > 0 ? fetchedLeagueTable : leagueTable;
+  const effectiveLeagueTable =
+    fetchedLeagueTable.length > 0 ? fetchedLeagueTable : leagueTable;
 
   // Build the league data once (find Baynounah, fallback to first row; zero-safe)
   const leagueData = useMemo(() => {
@@ -75,18 +72,18 @@ export default function MatchCenter({
         clubName: "Baynounah SC",
       };
     }
-    
+
     const found =
       rows.find((team) => {
         const name = team?.team_name?.toString().trim().toLowerCase();
         return name?.includes("baynounah");
       }) || rows[0];
-    
+
     const goalDiff =
       typeof found?.goal_difference === "number"
         ? found.goal_difference
         : (found?.goals_for ?? 0) - (found?.goals_against ?? 0);
-    
+
     return {
       position: found?.position ?? 0,
       played: found?.matches_played ?? 0,
@@ -139,7 +136,7 @@ export default function MatchCenter({
   return (
     <>
       <section
-        className="bg-white rounded-lg shadow-sm border border-separator"
+        className="bg-[rgb(var(--white))] rounded-lg shadow-sm border border-[rgb(var(--separator))]"
         aria-label="Match Centre"
         aria-busy={articleLoading ? "true" : undefined}
       >
@@ -151,7 +148,7 @@ export default function MatchCenter({
             rightSlot={
               <Link
                 href="/matches"
-                className="text-link hover:text-link-hover transition-colors inline-flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+                className="text-link hover:text-link-hover transition-colors inline-flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold)/0.40)] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--white))]"
                 aria-label="View all matches"
               >
                 <span className="text-sm font-medium">View All Matches</span>
@@ -207,11 +204,7 @@ export default function MatchCenter({
       />
 
       {/* News Modal */}
-      <NewsModal
-        article={selectedArticle}
-        isOpen={newsModalOpen}
-        onClose={handleNewsModalClose}
-      />
+      <NewsModal article={selectedArticle} isOpen={newsModalOpen} onClose={handleNewsModalClose} />
     </>
   );
 }

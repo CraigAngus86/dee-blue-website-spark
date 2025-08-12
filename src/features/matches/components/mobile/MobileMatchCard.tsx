@@ -27,7 +27,7 @@ interface MatchInfo {
 
 interface MobileMatchCardProps {
   match: MatchInfo;
-  matchType: "FINAL RESULT" | "NEXT MATCH" | "UPCOMING MATCH" | "LAST RESULT"; // keep LAST RESULT for legacy callers
+  matchType: "FINAL RESULT" | "NEXT MATCH" | "UPCOMING MATCH" | "LAST RESULT";
   onGalleryClick?: (galleryId: string) => void;
   onReportClick?: (reportId: string) => void;
   onTicketClick?: (ticketUrl: string) => void;
@@ -42,15 +42,13 @@ export function MobileMatchCard({
 }: MobileMatchCardProps) {
   const isNextMatch = matchType === "NEXT MATCH";
   const isFinalResult = matchType === "FINAL RESULT" || matchType === "LAST RESULT";
-  const isUpcoming = !isFinalResult; // NEXT or UPCOMING
+  const isUpcoming = !isFinalResult;
 
-  // Prefer short_name when available for tighter UI
   const competitionName =
     match.competition?.short_name ??
     match.competition?.name ??
     (typeof match.competition === "string" ? match.competition : "League");
 
-  // Date helpers
   const formatDate = (dateString?: string): string => {
     try {
       if (!dateString) return "TBA";
@@ -80,22 +78,24 @@ export function MobileMatchCard({
   const timeISO = dateISO && timeDisplay ? `${dateISO}T${timeDisplay}:00` : undefined;
 
   const btnBase =
-    "transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:ring-offset-2 focus-visible:ring-offset-white";
+    "transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--white))]";
   const enabled = "text-link hover:text-link-hover";
   const disabled = "text-text-muted cursor-default pointer-events-none opacity-50";
 
   return (
     <div
-      className={`w-full bg-white rounded-lg shadow-sm overflow-hidden ${
+      className={`w-full bg-[rgb(var(--white))] rounded-lg shadow-sm overflow-hidden ${
         isNextMatch ? "border border-accent" : "border border-separator"
       }`}
       role="article"
       aria-label={`${match?.home_team_name ?? "Home Team"} vs ${match?.away_team_name ?? "Away Team"}`}
     >
-      {/* 1) Header badge (centered). Accent only for NEXT MATCH */}
+      {/* 1) Header badge */}
       <div
         className={`px-4 py-2 text-center ${
-          isNextMatch ? "bg-accent text-white" : "bg-white border-b border-separator text-text-strong"
+          isNextMatch
+            ? "bg-[rgb(var(--brand-gold))] text-[rgb(var(--brand-black))]"
+            : "bg-[rgb(var(--white))] border-b border-separator text-text-strong"
         }`}
       >
         <span className="text-sm font-bold uppercase tracking-wide">
@@ -104,20 +104,16 @@ export function MobileMatchCard({
       </div>
 
       <div className="p-3 space-y-2">
-        {/* 2) Competition (centered, muted) */}
+        {/* 2) Competition */}
         <div className="text-center">
           <p className="text-sm text-text-muted font-medium truncate">{competitionName}</p>
         </div>
 
-        {/* 3) Logos & score (centered) */}
+        {/* 3) Logos & score */}
         <div className="flex items-center justify-between py-2">
           {/* Home Team */}
           <div className="flex flex-col items-center flex-1">
-            <TeamLogo
-              logoUrl={match.home_team_logo}
-              teamName={match.home_team_name}
-              size="md"
-            />
+            <TeamLogo logoUrl={match.home_team_logo} teamName={match.home_team_name} size="md" />
             <p className="text-sm text-text-strong mt-1 text-center font-semibold">
               {match.home_team_name}
             </p>
@@ -127,31 +123,27 @@ export function MobileMatchCard({
           <div className="flex-shrink-0 mx-3">
             {isFinalResult && match.home_score !== undefined && match.away_score !== undefined ? (
               <div className="text-center">
-                <div className="text-3xl font-heading font-bold text-text-strong">
+                <div className="text-3xl font-semibold text-text-strong">
                   {match.home_score} - {match.away_score}
                 </div>
               </div>
             ) : (
               <div className="text-center">
-                <div className="text-xl font-bold text-text-muted">VS</div>
+                <div className="text-xl font-semibold text-text-muted">VS</div>
               </div>
             )}
           </div>
 
           {/* Away Team */}
           <div className="flex flex-col items-center flex-1">
-            <TeamLogo
-              logoUrl={match.away_team_logo}
-              teamName={match.away_team_name}
-              size="md"
-            />
+            <TeamLogo logoUrl={match.away_team_logo} teamName={match.away_team_name} size="md" />
             <p className="text-sm text-text-strong mt-1 text-center font-semibold">
               {match.away_team_name}
             </p>
           </div>
         </div>
 
-        {/* 4) Venue (centered, muted) */}
+        {/* 4) Venue */}
         {match?.venue && (
           <div className="flex items-center justify-center text-sm text-text-muted">
             <MapPin className="h-4 w-4 mr-1" aria-hidden="true" />
@@ -159,7 +151,7 @@ export function MobileMatchCard({
           </div>
         )}
 
-        {/* 5) Date/Time (centered, muted) */}
+        {/* 5) Date/Time */}
         <div className="flex items-center justify-center text-sm text-text-muted">
           <Calendar className="h-4 w-4 mr-1" aria-hidden="true" />
           <span>
@@ -174,14 +166,15 @@ export function MobileMatchCard({
         </div>
       </div>
 
-      {/* 6) Actions (centered, tokenized) */}
-      <div className="px-4 py-1 border-t border-separator bg-light-gray flex justify-center">
+      {/* 6) Actions */}
+      <div className="px-4 py-1 border-t border-separator bg-[rgb(var(--warm-gray))] flex justify-center">
         <div className="flex space-x-8">
           {isUpcoming ? (
-            /* Tickets only for NEXT/UPCOMING */
             <button
               onClick={() => match.ticket_link && onTicketClick?.(match.ticket_link)}
-              className={`flex flex-col items-center p-1 rounded min-h-[44px] min-w-[44px] ${match.ticket_link ? enabled : disabled} ${btnBase}`}
+              className={`flex flex-col items-center p-1 rounded min-h-[44px] min-w-[44px] ${
+                match.ticket_link ? enabled : disabled
+              } ${btnBase}`}
               disabled={!match.ticket_link}
               aria-label="Buy tickets"
               type="button"
@@ -190,11 +183,12 @@ export function MobileMatchCard({
               <span className="text-xs mt-1 font-medium">Tickets</span>
             </button>
           ) : (
-            /* Gallery + Report for FINAL RESULT */
             <>
               <button
                 onClick={() => match.gallery_link && onGalleryClick?.(match.gallery_link)}
-                className={`flex flex-col items-center p-1 rounded min-h-[44px] min-w-[44px] ${match.gallery_link ? enabled : disabled} ${btnBase}`}
+                className={`flex flex-col items-center p-1 rounded min-h-[44px] min-w-[44px] ${
+                  match.gallery_link ? enabled : disabled
+                } ${btnBase}`}
                 disabled={!match.gallery_link}
                 aria-label="View gallery"
                 type="button"
@@ -205,7 +199,9 @@ export function MobileMatchCard({
 
               <button
                 onClick={() => match.match_report_link && onReportClick?.(match.match_report_link)}
-                className={`flex flex-col items-center p-1 rounded min-h-[44px] min-w-[44px] ${match.match_report_link ? enabled : disabled} ${btnBase}`}
+                className={`flex flex-col items-center p-1 rounded min-h-[44px] min-w-[44px] ${
+                  match.match_report_link ? enabled : disabled
+                } ${btnBase}`}
                 disabled={!match.match_report_link}
                 aria-label="Read report"
                 type="button"

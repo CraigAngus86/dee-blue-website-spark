@@ -1,3 +1,4 @@
+// PlayersSection.tsx
 'use client';
 
 import React, { useMemo } from 'react';
@@ -39,7 +40,7 @@ const PlayersSection: React.FC<PlayersSectionProps> = ({
   return (
     <div>
       <div className="container mx-auto px-4">
-        {/* Left-aligned + tight title spacing; constrain long subtitle width */}
+        {/* Standard section header (left aligned) */}
         <SectionHeader
           title={title}
           subtitle={subtitle}
@@ -64,7 +65,7 @@ const PlayersSection: React.FC<PlayersSectionProps> = ({
                 ))
               ) : (
                 <CarouselItem className="pl-2 md:pl-3 basis-full">
-                  <div className="rounded-2xl border border-separator bg-white px-6 py-12 text-center text-text-muted">
+                  <div className="rounded-2xl border border-separator bg-[rgb(var(--white))] px-6 py-12 text-center text-text-muted">
                     No players found.
                   </div>
                 </CarouselItem>
@@ -75,11 +76,11 @@ const PlayersSection: React.FC<PlayersSectionProps> = ({
               <>
                 <CarouselPrevious
                   aria-label="Previous players"
-                  className="-left-4 h-11 w-11 rounded-full bg-white text-black hover:text-brand-gold shadow-sm hover:shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
+                  className="-left-4 h-11 w-11 rounded-full bg-[rgb(var(--white))] text-[rgb(var(--brand-black))] hover:text-brand-gold shadow-sm hover:shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-black))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--white))]"
                 />
                 <CarouselNext
                   aria-label="Next players"
-                  className="-right-4 h-11 w-11 rounded-full bg-white text-black hover:text-brand-gold shadow-sm hover:shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
+                  className="-right-4 h-11 w-11 rounded-full bg-[rgb(var(--white))] text-[rgb(var(--brand-black))] hover:text-brand-gold shadow-sm hover:shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-black))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--white))]"
                 />
               </>
             )}
@@ -88,10 +89,7 @@ const PlayersSection: React.FC<PlayersSectionProps> = ({
 
         {hasPlayers && (
           <div className="mt-8 text-center">
-            <Link
-              href="/team"
-              className="text-black hover:text-brand-gold font-medium transition-colors text-lg"
-            >
+            <Link href="/team" className="link text-lg">
               View Full Squad →
             </Link>
           </div>

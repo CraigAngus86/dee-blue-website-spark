@@ -26,7 +26,6 @@ const categoryLabel = (raw?: string) => {
 };
 
 const NewsCard: React.FC<NewsCardProps> = ({ article, onClick, className }) => {
-  // Match hero’s explicit date format (e.g., 20 September 2025)
   const published = article.publishedAt
     ? format(new Date(article.publishedAt), "d MMMM yyyy")
     : null;
@@ -43,9 +42,11 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, onClick, className }) => {
   return (
     <article
       className={cn(
-        "bg-white rounded-lg shadow-md transition-all duration-300 h-full flex flex-col",
+        // Card base + brand tokens
+        "bg-[rgb(var(--white))] text-[rgb(var(--brand-black))] rounded-lg shadow-md transition-all duration-300 h-full flex flex-col",
         "hover:shadow-lg hover:-translate-y-[2px]",
-        "focus-within:ring-2 focus-within:ring-[#FCC743] focus-within:ring-offset-2 focus-within:ring-offset-white",
+        // Focus ring in brand gold with white offset for contrast
+        "focus-within:ring-2 focus-within:ring-[rgb(var(--brand-gold))] focus-within:ring-offset-2 focus-within:ring-offset-[rgb(var(--white))]",
         className
       )}
     >
@@ -57,23 +58,29 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, onClick, className }) => {
             variant="card"
             alt={article.mainImage?.alt || article.title}
             category={article.category}
-            className="transition-transform duration-300" /* no image zoom */
+            className="transition-transform duration-300"
           />
         ) : (
-          <div className="w-full h-full bg-gray-100" />
+          <div className="w-full h-full bg-[rgb(var(--white))]" />
         )}
 
-        {/* Neutral black gradient (no navy) */}
+        {/* Neutral black gradient (brand token) */}
         {article.mainImage && (
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-transparent" />
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(to top, rgb(var(--brand-black)/0.45) 0%, rgb(var(--brand-black)/0.10) 55%, transparent 85%)",
+            }}
+          />
         )}
 
-        {/* Category chip: gold on black */}
+        {/* Category chip: black bg + gold text (brand tokens) */}
         <div className="absolute left-4 top-4">
           <span
             className={cn(
-              "inline-block rounded-full bg-black text-[#FCC743]",
-              "px-3 py-1 text-[11px] font-semibold tracking-wider"
+              "inline-block rounded-full px-3 py-1 text-[11px] font-semibold tracking-wider",
+              "bg-[rgb(var(--brand-black))] text-[rgb(var(--brand-gold))]"
             )}
           >
             {categoryLabel(article.category)}
@@ -90,26 +97,28 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, onClick, className }) => {
         onKeyDown={handleKeyDown}
         className={cn(
           "flex flex-col flex-grow p-5 outline-none rounded-b-lg",
-          "focus-visible:ring-2 focus-visible:ring-[#FCC743] focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+          "focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--white))]"
         )}
       >
         {/* Title (Bebas via global h3) */}
-        <h3 className="mb-2 text-black">{article.title}</h3>
+        <h3 className="mb-2">{article.title}</h3>
 
-        {/* Subheader / excerpt (one size smaller) */}
+        {/* Subheader / excerpt */}
         {article.excerpt && (
-          <p className="text-sm text-gray-600 mb-4 leading-relaxed">
+          <p className="text-sm mb-4 leading-relaxed text-[rgb(var(--brand-black))/0.72]">
             {article.excerpt}
           </p>
         )}
 
         {/* Footer */}
         <div className="mt-auto">
-          {/* Strong gold divider (no opacity, thicker) */}
-          <div className="h-[1px] bg-[#FCC743] mb-3" />
+          {/* Strong gold divider */}
+          <div className="h-[1px] bg-[rgb(var(--brand-gold))] mb-3" />
           <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-600">{published ?? "Just now"}</span>
-            <span className="group inline-flex items-center font-medium text-black hover:text-[#FCC743] transition-colors">
+            <span className="text-[rgb(var(--brand-black))/0.65]">
+              {published ?? "Just now"}
+            </span>
+            <span className="group inline-flex items-center font-medium text-[rgb(var(--brand-black))] hover:text-[rgb(var(--brand-gold))] transition-colors">
               Read more
               <ChevronRight className="w-4 h-4 ml-1" aria-hidden="true" />
             </span>

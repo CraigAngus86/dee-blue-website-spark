@@ -8,47 +8,47 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-brand-black text-white pt-4" role="contentinfo">
+    <footer className="bg-[rgb(var(--brand-black))] text-white pt-2" role="contentinfo">
       <div className="container mx-auto px-4">
         {/* Main footer */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
           {/* Left: identity + social */}
           <div className="flex flex-col space-y-2 text-center md:text-left">
             {/* Mobile logo */}
-            <div className="flex justify-center md:hidden mb-2">
+            <div className="flex justify-center md:hidden">
               <Image
                 src={buildSponsorLogoUrl("Baynounah_SC_Logo_Gold_he8ayr", "mainLogo")}
                 alt="Baynounah Sports Club"
-                width={48}
-                height={48}
-                sizes="48px"
-                className="h-12 w-12 object-contain"
+                width={40}
+                height={40}
+                sizes="40px"
+                className="h-10 w-10 object-contain"
               />
             </div>
 
             {/* Desktop: logo + name */}
-            <div className="hidden md:flex items-center mb-1">
+            <div className="hidden md:flex items-center">
               <Image
                 src={buildSponsorLogoUrl("Baynounah_SC_Logo_Gold_he8ayr", "mainLogo")}
                 alt="Baynounah Sports Club"
-                width={44}
-                height={44}
-                sizes="44px"
-                className="h-11 w-11 object-contain"
+                width={40}
+                height={40}
+                sizes="40px"
+                className="h-10 w-10 object-contain"
               />
-              <div className="ml-3">
-                <h3 className="font-heading text-base mb-0 leading-none tracking-tight">
+              <div className="ml-2">
+                <h3 className="font-heading font-normal tracking-[0.02em] text-xl md:text-2xl leading-none m-0">
                   Baynounah Sports Club
                 </h3>
-                <p className="text-xs text-[rgb(var(--brand-gold))] mb-0 font-body">
+                <p className="text-[10px] text-[rgb(var(--brand-gold))] m-0 font-body">
                   Established 2019
                 </p>
               </div>
             </div>
 
             {/* Tagline + social */}
-            <div className="mb-2">
-              <p className="text-sm font-body text-[rgb(var(--brand-gold))] mb-2">
+            <div>
+              <p className="font-body text-xs text-[rgb(var(--brand-gold))] mb-1">
                 Be Part of the Journey
               </p>
 
@@ -59,9 +59,9 @@ const Footer = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="X (Twitter)"
-                  className="text-white/80 hover:text-[rgb(var(--brand-gold))] focus-visible:text-[rgb(var(--brand-gold))] rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))] motion-safe:transition-transform motion-safe:duration-200 hover:opacity-90 hover:scale-110"
+                  className="text-white/80 hover:text-[rgb(var(--brand-gold))] focus-visible:text-[rgb(var(--brand-gold))] rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))] transition-transform duration-200 hover:opacity-90 hover:scale-110"
                 >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                   </svg>
                 </a>
@@ -72,9 +72,9 @@ const Footer = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Facebook"
-                  className="text-white/80 hover:text-[rgb(var(--brand-gold))] focus-visible:text-[rgb(var(--brand-gold))] rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))] motion-safe:transition-transform motion-safe:duration-200 hover:opacity-90 hover:scale-110"
+                  className="text-white/80 hover:text-[rgb(var(--brand-gold))] focus-visible:text-[rgb(var(--brand-gold))] rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))] transition-transform duration-200 hover:opacity-90 hover:scale-110"
                 >
-                  <Facebook size={18} aria-hidden="true" />
+                  <Facebook size={16} aria-hidden="true" />
                 </a>
 
                 {/* Instagram */}
@@ -83,9 +83,9 @@ const Footer = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Instagram"
-                  className="text-white/80 hover:text-[rgb(var(--brand-gold))] focus-visible:text-[rgb(var(--brand-gold))] rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))] motion-safe:transition-transform motion-safe:duration-200 hover:opacity-90 hover:scale-110"
+                  className="text-white/80 hover:text-[rgb(var(--brand-gold))] focus-visible:text-[rgb(var(--brand-gold))] rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))] transition-transform duration-200 hover:opacity-90 hover:scale-110"
                 >
-                  <Instagram size={18} aria-hidden="true" />
+                  <Instagram size={16} aria-hidden="true" />
                 </a>
 
                 {/* YouTube */}
@@ -94,9 +94,9 @@ const Footer = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="YouTube"
-                  className="text-white/80 hover:text-[rgb(var(--brand-gold))] focus-visible:text-[rgb(var(--brand-gold))] rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))] motion-safe:transition-transform motion-safe:duration-200 hover:opacity-90 hover:scale-110"
+                  className="text-white/80 hover:text-[rgb(var(--brand-gold))] focus-visible:text-[rgb(var(--brand-gold))] rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))] transition-transform duration-200 hover:opacity-90 hover:scale-110"
                 >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                     <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
                   </svg>
                 </a>
@@ -106,11 +106,13 @@ const Footer = () => {
 
           {/* Right: contact */}
           <div className="flex flex-col space-y-2 text-center md:text-right md:ml-auto">
-            <h4 className="font-body font-semibold text-base mb-1">Get in Touch</h4>
+            <h3 className="font-heading font-normal tracking-[0.02em] text-lg md:text-xl mb-1">
+              Get in Touch
+            </h3>
 
-            <address className="not-italic space-y-1">
+            <address className="not-italic space-y-1.5">
               {/* Address → Google Maps */}
-              <div className="flex items-start text-sm justify-center md:justify-end">
+              <div className="flex items-start text-xs justify-center md:justify-end">
                 <MapPin
                   size={14}
                   className="mr-2 text-[rgb(var(--brand-gold))] flex-shrink-0 mt-0.5 md:order-2 md:ml-2 md:mr-0"
@@ -127,7 +129,7 @@ const Footer = () => {
               </div>
 
               {/* Phone */}
-              <div className="flex items-center text-sm justify-center md:justify-end">
+              <div className="flex items-center text-xs justify-center md:justify-end">
                 <Phone
                   size={14}
                   className="mr-2 text-[rgb(var(--brand-gold))] flex-shrink-0 md:order-2 md:ml-2 md:mr-0"
@@ -142,8 +144,7 @@ const Footer = () => {
               </div>
 
               {/* WhatsApp */}
-              <div className="flex items-center text-sm justify-center md:justify-end">
-                {/* Simple WhatsApp glyph */}
+              <div className="flex items-center text-xs justify-center md:justify-end">
                 <span
                   className="mr-2 text-[rgb(var(--brand-gold))] flex-shrink-0 md:order-2 md:ml-2 md:mr-0"
                   aria-hidden="true"
@@ -164,7 +165,7 @@ const Footer = () => {
               </div>
 
               {/* Email */}
-              <div className="flex items-center text-sm justify-center md:justify-end">
+              <div className="flex items-center text-xs justify-center md:justify-end">
                 <Mail
                   size={14}
                   className="mr-2 text-[rgb(var(--brand-gold))] flex-shrink-0 md:order-2 md:ml-2 md:mr-0"
@@ -182,42 +183,42 @@ const Footer = () => {
         </div>
 
         {/* Legal */}
-        <div className="border-t border-[rgb(var(--neutral-silver))]/20 pt-2 pb-1">
-          <div className="flex flex-col items-center text-center md:flex-row md:justify-between md:items-center text-xs text-white/60 gap-1">
-            <p className="mb-0 font-body">
+        <div className="border-top border-t border-[rgb(var(--neutral-silver))]/20 pt-1 pb-1">
+          <div className="flex flex-col items-center text-center md:flex-row md:justify-between md:items-center gap-1.5">
+            <p className="m-0 font-body text-[10px] text-white/60">
               &copy; {currentYear} Baynounah Sports Club. All rights reserved.
             </p>
 
             <nav aria-label="Footer">
-              <ul className="flex gap-3">
+              <ul className="flex gap-2">
                 <li>
                   <Link
                     href="/privacy"
-                    className="hover:text-[rgb(var(--brand-gold))] focus-visible:text-[rgb(var(--brand-gold))] font-body rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))] motion-safe:transition-colors"
+                    className="font-body text-[11px] text-white/70 hover:text-[rgb(var(--brand-gold))] focus-visible:text-[rgb(var(--brand-gold))] rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))] transition-colors"
                   >
-                    Privacy Policy
+                    Privacy
                   </Link>
                 </li>
                 <li>
                   <Link
                     href="/terms"
-                    className="hover:text-[rgb(var(--brand-gold))] focus-visible:text-[rgb(var(--brand-gold))] font-body rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))] motion-safe:transition-colors"
+                    className="font-body text-[11px] text-white/70 hover:text-[rgb(var(--brand-gold))] focus-visible:text-[rgb(var(--brand-gold))] rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))] transition-colors"
                   >
-                    Terms of Use
+                    Terms
                   </Link>
                 </li>
                 <li>
                   <Link
                     href="/cookies"
-                    className="hover:text-[rgb(var(--brand-gold))] focus-visible:text-[rgb(var(--brand-gold))] font-body rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))] motion-safe:transition-colors"
+                    className="font-body text-[11px] text-white/70 hover:text-[rgb(var(--brand-gold))] focus-visible:text-[rgb(var(--brand-gold))] rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))] transition-colors"
                   >
-                    Cookie Policy
+                    Cookies
                   </Link>
                 </li>
                 <li>
                   <Link
                     href="/admin"
-                    className="hover:text-[rgb(var(--brand-gold))] focus-visible:text-[rgb(var(--brand-gold))] font-body rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))] motion-safe:transition-colors"
+                    className="font-body text-[11px] text-white/70 hover:text-[rgb(var(--brand-gold))] focus-visible:text-[rgb(var(--brand-gold))] rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))] transition-colors"
                   >
                     Admin
                   </Link>

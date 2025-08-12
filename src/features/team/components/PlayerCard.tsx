@@ -1,3 +1,4 @@
+// PlayerCard.tsx
 'use client';
 
 import React from 'react';
@@ -44,8 +45,8 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, onClick, priority = fal
   };
 
   const container =
-    'relative aspect-[3/4] md:aspect-[4/5] rounded-2xl overflow-hidden group bg-white shadow-sm transition-shadow ' +
-    (onClick ? 'cursor-pointer motion-safe:hover:shadow-md' : '');
+    'relative aspect-[3/4] md:aspect-[4/5] rounded-2xl overflow-hidden group bg-[rgb(var(--white))] shadow-sm transition-shadow ' +
+    (onClick ? 'cursor-pointer motion-safe:hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--light-gray))]' : '');
 
   return (
     <div
@@ -71,10 +72,10 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, onClick, priority = fal
           name={fullName}
           size="homepage"
           className="w-full h-full object-cover object-top"
-            />
+          />
       </div>
 
-      {/* Correct overlay: bottom→top, dark 0–20%, fades by 40% (uses rgb(var(--brand-black) / α)) */}
+      {/* Gradient overlay — tokens only */}
       <div
         className="
           pointer-events-none absolute inset-0 z-10
@@ -88,7 +89,9 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, onClick, priority = fal
 
       {/* Default state — Name only, lifts on hover */}
       <div className="absolute inset-x-0 bottom-0 z-20 p-5 transform transition-transform duration-500 motion-safe:group-hover:-translate-y-12">
-        <h3 className="text-white text-lg md:text-xl font-bold leading-tight">{fullName}</h3>
+        <h3 className="text-[rgb(var(--white))] text-lg md:text-xl font-bold leading-tight">
+          {fullName}
+        </h3>
       </div>
 
       {/* Hover state — details + socials */}
@@ -97,7 +100,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, onClick, priority = fal
         <div className="w-full h-px bg-brand-gold mb-3" />
 
         {(position || nationality) && (
-          <div className="text-white/90 text-sm md:text-[15px] font-medium mb-3 leading-relaxed">
+          <div className="text-[rgb(var(--white)_/_0.9)] text-sm md:text-[15px] font-medium mb-3 leading-relaxed">
             {position}
             {position && nationality ? ' • ' : ''}
             {nationality}
@@ -108,7 +111,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, onClick, priority = fal
           <button
             onClick={hasTwitter ? (e) => handleSocialClick(social.twitter!, e) : undefined}
             aria-label="Twitter"
-            className={hasTwitter ? 'text-white hover:text-brand-gold transition-colors' : 'text-gray pointer-events-none opacity-50'}
+            className={hasTwitter ? 'text-[rgb(var(--white))] hover:text-brand-gold transition-colors' : 'text-gray pointer-events-none opacity-50'}
             disabled={!hasTwitter}
           >
             <Twitter size={20} />
@@ -116,7 +119,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, onClick, priority = fal
           <button
             onClick={hasFacebook ? (e) => handleSocialClick(social.facebook!, e) : undefined}
             aria-label="Facebook"
-            className={hasFacebook ? 'text-white hover:text-brand-gold transition-colors' : 'text-gray pointer-events-none opacity-50'}
+            className={hasFacebook ? 'text-[rgb(var(--white))] hover:text-brand-gold transition-colors' : 'text-gray pointer-events-none opacity-50'}
             disabled={!hasFacebook}
           >
             <Facebook size={20} />
@@ -124,7 +127,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, onClick, priority = fal
           <button
             onClick={hasInstagram ? (e) => handleSocialClick(social.instagram!, e) : undefined}
             aria-label="Instagram"
-            className={hasInstagram ? 'text-white hover:text-brand-gold transition-colors' : 'text-gray pointer-events-none opacity-50'}
+            className={hasInstagram ? 'text-[rgb(var(--white))] hover:text-brand-gold transition-colors' : 'text-gray pointer-events-none opacity-50'}
             disabled={!hasInstagram}
           >
             <Instagram size={20} />
@@ -132,7 +135,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, onClick, priority = fal
           <button
             onClick={hasLinkedin ? (e) => handleSocialClick(social.linkedin!, e) : undefined}
             aria-label="LinkedIn"
-            className={hasLinkedin ? 'text-white hover:text-brand-gold transition-colors' : 'text-gray pointer-events-none opacity-50'}
+            className={hasLinkedin ? 'text-[rgb(var(--white))] hover:text-brand-gold transition-colors' : 'text-gray pointer-events-none opacity-50'}
             disabled={!hasLinkedin}
           >
             <Linkedin size={20} />

@@ -1,12 +1,12 @@
 "use client";
-import React from 'react';
-import { format } from 'date-fns';
-import { NewsArticle } from '@/features/news/types';
-import { NewsModal } from '@/features/news/components';
-import { MatchGalleryModal } from '@/features/galleries';
-import { ArrowRight } from 'lucide-react';
-import HeroImage from './HeroImage';
-import Reveal from '@/components/ui/Reveal';
+import React from "react";
+import { format } from "date-fns";
+import { NewsArticle } from "@/features/news/types";
+import { NewsModal } from "@/features/news/components";
+import { MatchGalleryModal } from "@/features/galleries";
+import { ArrowRight } from "lucide-react";
+import HeroImage from "./HeroImage";
+import Reveal from "@/components/ui/Reveal";
 
 interface HomeHeroSectionProps {
   articles: (NewsArticle & { contentType?: string })[];
@@ -41,20 +41,20 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
       isMobile: false,
       touchStart: 0,
       touchEnd: 0,
-      isUserInteracting: false
+      isUserInteracting: false,
     };
   }
 
   componentDidMount() {
     this.updateMobileState();
-    window.addEventListener('resize', this.updateMobileState);
+    window.addEventListener("resize", this.updateMobileState);
     if (this.props.articles.length > 1) this.startAutoRotation();
   }
 
   componentWillUnmount() {
     if (this.rotationTimer) clearInterval(this.rotationTimer);
     if (this.interactionTimeout) clearTimeout(this.interactionTimeout);
-    window.removeEventListener('resize', this.updateMobileState);
+    window.removeEventListener("resize", this.updateMobileState);
   }
 
   startAutoRotation = () => {
@@ -124,22 +124,22 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
   handleContentClick = async (content: NewsArticle & { contentType?: string }) => {
     try {
       this.setState({ isLoading: true });
-      if (content.contentType === 'gallery') {
+      if (content.contentType === "gallery") {
         this.setState({ selectedGalleryId: content.id });
       } else {
         if (Array.isArray(content.body) && content.body.length > 0) {
           this.setState({ selectedArticle: content });
         } else {
           const response = await fetch(`/api/sanity-test/news?slug=${encodeURIComponent((content as any).slug)}`);
-          if (!response.ok) throw new Error('Failed to fetch article');
+          if (!response.ok) throw new Error("Failed to fetch article");
           const data = await response.json();
           if (data.success && data.data) this.setState({ selectedArticle: data.data });
           else this.setState({ selectedArticle: content });
         }
       }
     } catch (e) {
-      console.error('Error handling content click:', e);
-      if (content.contentType === 'gallery') this.setState({ selectedGalleryId: content.id });
+      console.error("Error handling content click:", e);
+      if (content.contentType === "gallery") this.setState({ selectedGalleryId: content.id });
       else this.setState({ selectedArticle: content });
     } finally {
       this.setState({ isLoading: false });
@@ -156,13 +156,11 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
     const content = visibleArticles[currentIndex];
     if (!content) return null;
 
-    const formattedDate = content.publishedAt
-      ? format(new Date(content.publishedAt), "d MMMM yyyy")
-      : "";
+    const formattedDate = content.publishedAt ? format(new Date(content.publishedAt), "d MMMM yyyy") : "";
 
     return (
       <div
-        className="relative z-20 w-full aspect-[4/3] md:aspect-[16/9] lg:aspect-[21/9] overflow-hidden bg-black"
+        className="relative z-20 w-full aspect-[4/3] md:aspect-[16/9] lg:aspect-[21/9] overflow-hidden bg-[rgb(var(--brand-black))]"
         onTouchStart={this.handleTouchStart}
         onTouchMove={this.handleTouchMove}
         onTouchEnd={this.handleTouchEnd}
@@ -171,7 +169,7 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
         {visibleArticles.map((slideContent, i) => (
           <div
             key={slideContent.id}
-            className={`absolute inset-0 transition-opacity duration-500 ${i === currentIndex ? 'opacity-100 z-0' : 'opacity-0 z-0'}`}
+            className={`absolute inset-0 transition-opacity duration-500 ${i === currentIndex ? "opacity-100 z-0" : "opacity-0 z-0"}`}
             aria-hidden={i !== currentIndex}
           >
             {slideContent.mainImage && (
@@ -180,91 +178,100 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
           </div>
         ))}
 
-        {/* Overlays — replace the whole block with this */}
-<div className="absolute inset-0 pointer-events-none z-10">
-  {/* Mobile: stronger */}
-  <div
-    className="absolute inset-0 md:hidden"
-    style={{
-      backgroundImage: `
-        /* bottom-up black scrim */
-        linear-gradient(
-          to top,
-          rgba(0,0,0,0.82) 0%,
-          rgba(0,0,0,0.56) 40%,
-          rgba(0,0,0,0.24) 72%,
-          rgba(0,0,0,0.00) 96%
-        ),
-        /* subtle brand gold vignette */
-        radial-gradient(
-          85% 65% at 70% 85%,
-          rgba(var(--brand-gold-rgb, 252,199,67), 0.10) 0%,
-          rgba(var(--brand-gold-rgb, 252,199,67), 0.00) 70%
-        )
-      `,
-      backgroundBlendMode: 'multiply, overlay',
-    }}
-  />
-  {/* Desktop: softer */}
-  <div
-    className="absolute inset-0 hidden md:block"
-    style={{
-      backgroundImage: `
-        linear-gradient(
-          to top,
-          rgba(0,0,0,0.82) 15%,
-          rgba(0,0,0,0.42) 50%,
-          rgba(0,0,0,0.18) 60%,
-          rgba(0,0,0,0.00) 90%
-        ),
-        radial-gradient(
-          80% 60% at 70% 85%,
-          rgba(var(--brand-gold-rgb, 252,199,67), 0.08) 0%,
-          rgba(var(--brand-gold-rgb, 252,199,67), 0.00) 70%
-        )
-      `,
-      backgroundBlendMode: 'multiply, overlay',
-    }}
-  />
-</div>
+        {/* Overlays */}
+        <div className="absolute inset-0 pointer-events-none z-10">
+          {/* Mobile: stronger */}
+          <div
+            className="absolute inset-0 md:hidden"
+            style={{
+              backgroundImage: `
+                linear-gradient(
+                  to top,
+                  rgba(0,0,0,0.82) 0%,
+                  rgba(0,0,0,0.56) 40%,
+                  rgba(0,0,0,0.24) 72%,
+                  rgba(0,0,0,0.00) 96%
+                ),
+                radial-gradient(
+                  85% 65% at 70% 85%,
+                  rgb(var(--brand-gold) / 0.10) 0%,
+                  rgb(var(--brand-gold) / 0.00) 70%
+                )
+              `,
+              backgroundBlendMode: "multiply, overlay",
+            }}
+          />
+          {/* Desktop: softer */}
+          <div
+            className="absolute inset-0 hidden md:block"
+            style={{
+              backgroundImage: `
+                linear-gradient(
+                  to top,
+                  rgba(0,0,0,0.82) 15%,
+                  rgba(0,0,0,0.42) 50%,
+                  rgba(0,0,0,0.18) 60%,
+                  rgba(0,0,0,0.00) 90%
+                ),
+                radial-gradient(
+                  80% 60% at 70% 85%,
+                  rgb(var(--brand-gold) / 0.08) 0%,
+                  rgb(var(--brand-gold) / 0.00) 70%
+                )
+              `,
+              backgroundBlendMode: "multiply, overlay",
+            }}
+          />
+        </div>
 
         {/* Clickable overlay for content */}
         <div
           className="absolute inset-0 z-20 cursor-pointer"
           onClick={() => this.handleContentClick(content)}
-          aria-label={`View ${content.contentType === 'gallery' ? 'gallery' : 'article'}: ${content.title}`}
+          aria-label={`View ${content.contentType === "gallery" ? "gallery" : "article"}: ${content.title}`}
         >
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <Reveal delayMs={120}>
               <div className="mt-40 w-full text-center px-4">
                 <div className="max-w-6xl mx-auto">
+                  {/* Title — Bebas 400 with 0.02em tracking via utility */}
                   <h1
-  className="mb-4 text-white leading-[1.0] [text-wrap:balance] tracking-[0.0125em]
-             [font-size:clamp(1.7rem,6vw,2.6rem)]
-             md:[font-size:clamp(2.2rem,4.5vw,4rem)]
-             xl:[font-size:clamp(2.6rem,5.5vw,7.5rem)]
-             2xl:[font-size:clamp(2.6rem,5vw,8.25rem)]"
->
-  {content.title}
-</h1>
-                  <div className="w-24 h-[3px] bg-[#FCC743] mx-auto mb-4" />
-                  <div className="flex items-center justify-center text-sm text-white/85 mb-4">
+                    className="mb-4 text-[rgb(var(--white))] leading-[1.0] [text-wrap:balance] tracking-[0.02em]
+                               [font-size:clamp(1.7rem,6vw,2.6rem)]
+                               md:[font-size:clamp(2.2rem,4.5vw,4rem)]
+                               xl:[font-size:clamp(2.6rem,5.5vw,7.5rem)]
+                               2xl:[font-size:clamp(2.6rem,5vw,8.25rem)]"
+                  >
+                    {content.title}
+                  </h1>
+
+                  {/* Gold rule */}
+                  <div className="w-24 h-[3px] bg-[rgb(var(--brand-gold))] mx-auto mb-4" />
+
+                  {/* Meta / CTA */}
+                  <div className="flex items-center justify-center text-sm text-[rgb(var(--white))]/85 mb-4">
                     <span>{formattedDate}</span>
                     <span className="mx-2">|</span>
-                    <span className="flex items-center hover:text-white transition-colors">
-                      {content.contentType === 'gallery' ? 'View Photos' : 'Read More'}
-                      <span className="inline-flex items-center justify-center w-5 h-5 ml-1.5 rounded-full bg-white/20 hover:bg-white/30 transition-colors">
+                    <span className="flex items-center hover:text-[rgb(var(--white))] transition-colors">
+                      {content.contentType === "gallery" ? "View Photos" : "Read More"}
+                      <span className="inline-flex items-center justify-center w-5 h-5 ml-1.5 rounded-full bg-[rgb(var(--white))]/20 hover:bg-[rgb(var(--white))]/30 transition-colors">
                         <ArrowRight className="w-3 h-3" />
                       </span>
                     </span>
                   </div>
+
+                  {/* Dots */}
                   {visibleArticles.length > 1 && (
                     <div className="flex flex-col items-center space-y-2">
                       <div className="flex justify-center space-x-2">
                         {visibleArticles.map((_, i) => (
                           <button
                             key={i}
-                            className={`w-2.5 h-2.5 rounded-full transition-all mx-1 ${i === currentIndex ? 'bg-white scale-125' : 'bg-white/40 hover:bg-white/60'}`}
+                            className={`w-2.5 h-2.5 rounded-full transition-all mx-1 ${
+                              i === currentIndex
+                                ? "bg-[rgb(var(--white))] scale-125"
+                                : "bg-[rgb(var(--white))]/40 hover:bg-[rgb(var(--white))]/60"
+                            }`}
                             onClick={(e) => {
                               e.stopPropagation();
                               this.goToSlide(i);
@@ -274,7 +281,7 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
                           />
                         ))}
                       </div>
-                      {isMobile && <p className="text-xs text-white/70 font-medium">Swipe to navigate</p>}
+                      {isMobile && <p className="text-xs text-[rgb(var(--white))]/70 font-medium">Swipe to navigate</p>}
                     </div>
                   )}
                 </div>
@@ -285,14 +292,23 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
 
         {/* Loading indicator */}
         {isLoading && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white p-4 rounded-lg shadow-lg text-black">
+          <div className="fixed inset-0 bg-[rgb(var(--brand-black))]/50 flex items-center justify-center z-50">
+            <div className="bg-[rgb(var(--white))] p-4 rounded-lg shadow-lg text-[rgb(var(--brand-black))]">
               <div className="flex items-center space-x-2">
-                <svg className="animate-spin h-5 w-5 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <svg
+                  className="animate-spin h-5 w-5 text-[rgb(var(--brand-black))]"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 714 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 714 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  />
                 </svg>
-                <span>Loading {content?.contentType === 'gallery' ? 'gallery' : 'article'}...</span>
+                <span>Loading {content?.contentType === "gallery" ? "gallery" : "article"}...</span>
               </div>
             </div>
           </div>

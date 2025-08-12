@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
 import { Bebas_Neue, Open_Sans } from "next/font/google";
-import Script from "next/script";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { Providers } from "./providers";
 import { getHeaderSponsors } from "@/features/sponsors/utils/sanityQueries";
 import "@/styles/globals.css";
 
-// Font configuration (Baynounah)
+// Fonts → CSS variables
 const bebas = Bebas_Neue({
   weight: "400",
   subsets: ["latin"],
@@ -44,7 +43,7 @@ export const metadata: Metadata = {
       "Be Part of the Journey — academy excellence, community, and ambition in Abu Dhabi.",
     url: "https://www.baynounahsc.ae",
     siteName: "Baynounah SC",
-    images: ["/og.jpg"], // we'll add/update this asset next
+    images: ["/og.jpg"],
     locale: "en_AE",
     type: "website",
   },
@@ -55,15 +54,12 @@ export const metadata: Metadata = {
       "Be Part of the Journey — academy excellence, community, and ambition in Abu Dhabi.",
     images: ["/og.jpg"],
   },
-  icons: { icon: "/favicon.ico" }, // keep existing favicon for now
+  icons: { icon: "/favicon.ico" },
 };
 
 export default async function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  // Fetch sponsors server-side
+}: Readonly<{ children: React.ReactNode }>) {
   const headerSponsors = await getHeaderSponsors();
 
   return (
@@ -84,20 +80,20 @@ export default async function RootLayout({
                 "https://x.com/baynounahsc",
                 "https://www.facebook.com/BaynounahSC/",
                 "https://www.instagram.com/baynounahsc/",
-                "https://www.youtube.com/channel/UCXiba2uCfhFI_PYJiiExavA"
+                "https://www.youtube.com/channel/UCXiba2uCfhFI_PYJiiExavA",
               ],
               email: "support@baynounahsc.ae",
               telephone: "+971566975370",
               address: {
                 "@type": "PostalAddress",
                 addressLocality: "Abu Dhabi",
-                addressCountry: "AE"
-              }
-            })
+                addressCountry: "AE",
+              },
+            }),
           }}
         />
       </head>
-      <body className="antialiased flex flex-col min-h-screen">
+      <body className="antialiased flex flex-col min-h-screen bg-[rgb(var(--surface-1))] text-[rgb(var(--brand-black))]">
         <Providers>
           <Header sponsors={headerSponsors} />
           <main id="main" className="flex-grow pt-16">

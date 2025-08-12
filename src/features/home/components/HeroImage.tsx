@@ -1,5 +1,5 @@
-import React from 'react';
-import CloudinaryImage from '@/components/ui/cloudinary/CloudinaryImage';
+import React from "react";
+import CloudinaryImage from "@/components/ui/cloudinary/CloudinaryImage";
 
 interface HeroImageProps {
   image: any;
@@ -9,9 +9,8 @@ interface HeroImageProps {
 
 /**
  * HeroImage
- * - Renders only the background image.
- * - No overlays here (those are handled in HomeHeroSection).
- * - Z-order kept low so section overlays/text sit above.
+ * - Background image only (no overlays; handled in HomeHeroSection).
+ * - Absolute positioning so hero overlays/text sit above.
  */
 const HeroImage: React.FC<HeroImageProps> = ({ image, title, category }) => {
   return (

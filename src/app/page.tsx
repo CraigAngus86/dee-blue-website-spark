@@ -119,14 +119,14 @@ async function getRandomPlayers() {
   }
 }
 
-// Mobile "See all News" link
+// Mobile "See all News" link (secondary button style)
 const MobileNewsLink = () => (
-  <div className="block md:hidden bg-white py-6">
+  <div className="block md:hidden bg-[rgb(var(--white))] py-6">
     <div className="container mx-auto px-4 text-center">
       <a
         href="/news"
         className="inline-flex items-center justify-center px-6 py-3 rounded-lg font-semibold shadow-sm hover:shadow-md transition-all duration-200
-                   border border-[rgb(var(--medium-gray))] text-near-black hover:bg-[rgb(var(--light-gray))]"
+                   border border-[rgb(var(--medium-gray))] text-[rgb(var(--brand-black))] hover:bg-[rgb(var(--warm-gray))]"
       >
         See all News
       </a>
@@ -212,18 +212,16 @@ export default async function HomePage() {
       <MobileNewsLink />
 
       {/* News cards (desktop) */}
-      <div className="hidden md:block">
-        <OverlappingNewsCards articles={cardsItems} />
-      </div>
+      <Section background="transparent" spacing="md" className="section--white">
+        <div className="hidden md:block">
+          <OverlappingNewsCards articles={cardsItems} />
+        </div>
+      </Section>
 
       <GradientSeparator className="py-6" />
 
       {/* Match Center */}
-      <Section
-        background="transparent"
-        spacing="md"
-        className="bg-[rgb(var(--light-gray))]"
-      >
+      <Section background="transparent" spacing="md" className="section--warm">
         <MatchCenter
           upcomingMatches={upcomingMatches}
           recentResults={recentMatches}
@@ -234,7 +232,7 @@ export default async function HomePage() {
       <GradientSeparator className="py-6" />
 
       {/* Fan Zone */}
-      <Section background="transparent" spacing="md">
+      <Section background="transparent" spacing="md" className="section--white">
         <FanZoneSection
           fanOfMonth={fanOfMonth}
           galleryPhotos={galleryPhotos}
@@ -245,18 +243,14 @@ export default async function HomePage() {
       <GradientSeparator className="py-6" />
 
       {/* Players */}
-      <Section
-        background="transparent"
-        spacing="md"
-        className="bg-[rgb(var(--light-gray))]"
-      >
+      <Section background="transparent" spacing="md" className="section--warm">
         <PlayersSection players={randomPlayers} />
       </Section>
 
       <GradientSeparator className="py-6" />
 
       {/* Sponsors */}
-      <Section background="transparent" spacing="md">
+      <Section background="transparent" spacing="md" className="section--white">
         <SponsorsSection sponsors={sponsors} />
       </Section>
     </div>

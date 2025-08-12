@@ -40,42 +40,27 @@ const Header = ({ sponsors = [] }: HeaderProps) => {
 
     const first = focusable[0];
     const last = focusable[focusable.length - 1];
-
-    // Save previously focused element (likely the trigger)
     const previouslyFocused = document.activeElement as HTMLElement | null;
 
-    // Move focus into the menu
     first?.focus();
 
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key !== "Tab") return;
       if (focusable.length === 0) return;
-
-      // Shift+Tab on first → wrap to last
       if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last?.focus();
-      }
-      // Tab on last → wrap to first
-      else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first?.focus();
+        e.preventDefault(); last?.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault(); first?.focus();
       }
     };
 
-    const onEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setIsMenuOpen(false);
-      }
-    };
+    const onEscape = (e: KeyboardEvent) => { if (e.key === "Escape") setIsMenuOpen(false); };
 
     document.addEventListener("keydown", onKeyDown);
     document.addEventListener("keydown", onEscape);
-
     return () => {
       document.removeEventListener("keydown", onKeyDown);
       document.removeEventListener("keydown", onEscape);
-      // Restore focus to the trigger
       (triggerRef.current || previouslyFocused)?.focus?.();
     };
   }, [isMenuOpen]);
@@ -84,13 +69,12 @@ const Header = ({ sponsors = [] }: HeaderProps) => {
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/");
 
   const navigation = [
-    { name: "About the Club", href: "/about" },
     { name: "News", href: "/news" },
     { name: "Team & Management", href: "/team" },
     { name: "Match Centre", href: "/matches" },
-    { name: "The Academy", href: "/academy" },
+    { name: "Club & Academy", href: "/academy" },
     { name: "Commercial", href: "/commercial" },
-  ];
+];
 
   const sortedSponsors = useMemo(() => {
     return [...sponsors].sort((a, b) => {
@@ -106,20 +90,20 @@ const Header = ({ sponsors = [] }: HeaderProps) => {
     <header
       className={`fixed top-0 left-0 w-full z-50 transition-shadow duration-300 ${
         isScrolled ? "shadow-md" : "shadow-sm"
-      } bg-white/0`}
+      }`}
       role="banner"
     >
       {/* Skip link */}
       <a
         href="#main"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-2 focus:z-[60] bg-[rgb(var(--brand-gold))] text-brand-black font-body px-3 py-2 rounded-md shadow md:text-sm"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-2 focus:z-[60] bg-[rgb(var(--brand-gold))] text-[rgb(var(--brand-black))] font-body px-3 py-2 rounded-md shadow md:text-sm"
       >
         Skip to content
       </a>
 
       <div className="relative">
-        {/* Sponsor bar */}
-        <div className="bg-gradient-to-r from-brand-black from-55% via-[rgb(var(--brand-gold))] via-70% to-[rgb(var(--brand-gold))] h-[30px]">
+        {/* Sponsor bar (brand gradient) */}
+        <div className="bg-gradient-to-r from-[rgb(var(--brand-black))] from-55% via-[rgb(var(--brand-gold))] via-70% to-[rgb(var(--brand-gold))] h-[30px]">
           <div className="container mx-auto px-2 h-full">
             <div className="flex items-center justify-end h-full">
               <div className="hidden md:flex items-center gap-2">
@@ -129,7 +113,7 @@ const Header = ({ sponsors = [] }: HeaderProps) => {
                     href={s?.website || "#"}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))] rounded-sm motion-safe:transition-transform motion-safe:duration-200 hover:opacity-90 hover:scale-105"
+                    className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))] rounded-sm transition-transform duration-200 hover:opacity-90 hover:scale-105"
                     title={s?.name}
                     prefetch={false}
                   >
@@ -151,7 +135,7 @@ const Header = ({ sponsors = [] }: HeaderProps) => {
                     href={principalSponsor?.website || "#"}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))] rounded-sm motion-safe:transition-transform motion-safe:duration-200 hover:opacity-90 hover:scale-105"
+                    className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))] rounded-sm transition-transform duration-200 hover:opacity-90 hover:scale-105"
                     title={principalSponsor?.name}
                     prefetch={false}
                   >
@@ -170,12 +154,14 @@ const Header = ({ sponsors = [] }: HeaderProps) => {
           </div>
         </div>
 
-        {/* Main header */}
-        <div className={`bg-brand-black text-white ${isScrolled ? "h-[34px]" : "h-[38px]"} motion-safe:transition-[height] motion-safe:duration-300`}>
+        {/* Main header bar */}
+        <div className={`bg-[rgb(var(--brand-black))] text-white ${isScrolled ? "h-[34px]" : "h-[38px]"} transition-[height] duration-300`}>
           <div className="container mx-auto h-full">
             <div className="hidden md:flex items-center h-full w-full">
+              {/* left spacer for absolute logo */}
               <div className="w-52 md:w-56 xl:w-64" aria-hidden="true" />
 
+              {/* Nav */}
               <nav role="navigation" aria-label="Main Navigation" className="flex items-center justify-between flex-1 px-4 lg:px-8 xl:px-16">
                 {navigation.map((item) => {
                   const active = isActive(item.href);
@@ -184,8 +170,10 @@ const Header = ({ sponsors = [] }: HeaderProps) => {
                       key={item.name}
                       href={item.href}
                       aria-current={active ? "page" : undefined}
-                      className={`font-body font-semibold text-[rgb(var(--brand-gold))] text-[15px] lg:text-base whitespace-nowrap px-1 py-1 rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))] motion-safe:transition-all motion-safe:duration-200 ${
-                        active ? "text-white font-bold border-b-2 border-[rgb(var(--brand-gold))]" : "hover:text-white hover:scale-105"
+                      className={`font-body text-base whitespace-nowrap px-1 py-1 rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))] transition-all duration-200 ${
+                        active
+                          ? "text-white font-semibold border-b-2 border-[rgb(var(--brand-gold))]"
+                          : "text-[rgb(var(--brand-gold))] hover:text-white hover:scale-105 font-medium"
                       }`}
                       prefetch
                     >
@@ -195,10 +183,13 @@ const Header = ({ sponsors = [] }: HeaderProps) => {
                 })}
               </nav>
 
+              {/* CTA */}
               <div className="flex">
                 <Link
                   href="#"
-                  className="bg-[rgb(var(--brand-gold))] text-brand-black hover:bg-brand-black hover:text-[rgb(var(--brand-gold))] hover:border-2 hover:border-[rgb(var(--brand-gold))] font-body font-bold py-1.5 px-4 rounded-md flex items-center text-sm whitespace-nowrap shadow hover:shadow-md motion-safe:transition-all motion-safe:duration-200"
+                  className="font-body text-sm whitespace-nowrap rounded-md flex items-center px-4 py-1.5 shadow transition-all duration-200
+                             bg-[rgb(var(--brand-gold))] text-[rgb(var(--brand-black))] border-2 border-[rgb(var(--brand-gold))]
+                             hover:bg-[rgb(var(--brand-black))] hover:text-[rgb(var(--brand-gold))] hover:border-[rgb(var(--brand-black))]"
                 >
                   <span>Buy Tickets</span>
                   <ArrowRight size={16} className="ml-2" aria-hidden="true" />
@@ -210,7 +201,7 @@ const Header = ({ sponsors = [] }: HeaderProps) => {
             <div className="flex md:hidden items-center justify-end h-full w-full px-4">
               <button
                 ref={triggerRef}
-                onClick={() => setIsMenuOpen((m) => !m)}
+                onClick={toggleMenu}
                 className="text-white p-2 rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))] z-30"
                 aria-label={isMenuOpen ? "Close menu" : "Open menu"}
                 aria-expanded={isMenuOpen}
@@ -224,17 +215,20 @@ const Header = ({ sponsors = [] }: HeaderProps) => {
 
         {/* Logo block */}
         <div className="absolute top-0 left-4 z-20 h-full flex items-center">
-          <Link href="/" className="group flex items-center rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))]">
+          <Link
+            href="/"
+            className="group flex items-center rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))]"
+          >
             <Image
               src={buildSponsorLogoUrl("Baynounah_SC_Logo_idok3c", "mainLogo")}
               alt="Baynounah Sports Club"
               width={64}
               height={64}
               sizes="64px"
-              className="h-16 w-16 object-contain motion-safe:transition-transform motion-safe:duration-200 group-hover:scale-105"
+              className="h-16 w-16 object-contain transition-transform duration-200 group-hover:scale-105"
               priority
             />
-            <span className="hidden sm:block ml-4 text-2xl md:text-3xl leading-none tracking-tight font-heading text-[rgb(var(--brand-gold))]">
+            <span className="hidden sm:block ml-4 text-2xl md:text-3xl leading-none font-heading text-[rgb(var(--brand-gold))]">
               Baynounah Sports Club
             </span>
           </Link>
@@ -248,7 +242,7 @@ const Header = ({ sponsors = [] }: HeaderProps) => {
             role="dialog"
             aria-modal="true"
             aria-label="Mobile Navigation"
-            className="absolute left-0 right-0 top-full bg-brand-black z-40 md:hidden shadow-md"
+            className="absolute left-0 right-0 top-full bg-[rgb(var(--brand-black))] z-40 md:hidden shadow-md"
           >
             <nav className="flex flex-col p-4" role="navigation" aria-label="Mobile Navigation Links">
               {navigation.map((item) => {
@@ -258,8 +252,10 @@ const Header = ({ sponsors = [] }: HeaderProps) => {
                     key={item.name}
                     href={item.href}
                     aria-current={active ? "page" : undefined}
-                    className={`font-body text-[rgb(var(--brand-gold))] text-lg py-3 border-b border-[#333333] rounded-sm px-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))] motion-safe:transition-colors ${
-                      active ? "font-bold text-white border-b-2 border-[rgb(var(--brand-gold))]" : "hover:text-white"
+                    className={`font-body text-lg py-3 border-b border-[#333333] rounded-sm px-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))] transition-colors ${
+                      active
+                        ? "font-semibold text-white border-b-2 border-[rgb(var(--brand-gold))]"
+                        : "text-[rgb(var(--brand-gold))] hover:text-white"
                     }`}
                     prefetch
                     onClick={() => setIsMenuOpen(false)}
@@ -270,7 +266,9 @@ const Header = ({ sponsors = [] }: HeaderProps) => {
               })}
               <Link
                 href="#"
-                className="bg-[rgb(var(--brand-gold))] text-brand-black hover:bg-brand-black hover:text-[rgb(var(--brand-gold))] hover:border-2 hover:border-[rgb(var(--brand-gold))] font-body font-bold py-3 px-4 mt-4 rounded-md flex items-center justify-center text-base shadow hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))] motion-safe:transition-all"
+                className="mt-4 font-body text-base rounded-md flex items-center justify-center px-4 py-3 shadow transition-all
+                           bg-[rgb(var(--brand-gold))] text-[rgb(var(--brand-black))] border-2 border-[rgb(var(--brand-gold))]
+                           hover:bg-[rgb(var(--brand-black))] hover:text-[rgb(var(--brand-gold))] hover:border-[rgb(var(--brand-black))]"
                 onClick={() => setIsMenuOpen(false)}
               >
                 <span>Buy Tickets</span>

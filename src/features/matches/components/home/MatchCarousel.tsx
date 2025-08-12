@@ -39,11 +39,10 @@ interface MatchCarouselProps {
     drawn: number;
     lost: number;
     form: ("W" | "L" | "D")[];
-    // Optional extras (for League header/KPIs)
     goalDifference?: number;
-    competitionName?: string; // Supabase: competition_name
-    seasonName?: string;      // Supabase: season_name
-    clubName?: string;        // Supabase: team_name
+    competitionName?: string;
+    seasonName?: string;
+    clubName?: string;
   };
   showHeader?: boolean;
   onGalleryClick?: (galleryId: string) => void;
@@ -174,7 +173,7 @@ export function MatchCarousel({
 
   if (organizedMatches.length === 0) {
     return (
-      <div className="w-full bg-white rounded-md shadow-sm p-8 flex items-center justify-center border border-separator">
+      <div className="w-full bg-[rgb(var(--white))] rounded-md shadow-sm p-8 flex items-center justify-center border border-[rgb(var(--separator))]">
         <p className="text-text-muted">No upcoming or recent matches to display</p>
       </div>
     );
@@ -188,9 +187,7 @@ export function MatchCarousel({
           rightSlot={
             <Link
               href="/matches"
-              className="text-link hover:text-link-hover transition-colors inline-flex items-center gap-2
-                         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40
-                         focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+              className="text-link hover:text-link-hover transition-colors inline-flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold)/0.40)] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--white))]"
               aria-label="View all matches"
             >
               <span className="text-sm font-medium">View All Matches</span>
@@ -210,10 +207,9 @@ export function MatchCarousel({
         <button
           type="button"
           onClick={handleScrollLeft}
-          className={`absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white border border-separator rounded-full shadow-sm p-2
-                      hover:bg-[rgb(var(--light-gray))] focus-visible:outline-none focus-visible:ring-2
-                      focus-visible:ring-accent/40 focus-visible:ring-offset-2 focus-visible:ring-offset-white
-                      ${canScrollLeft ? "opacity-100" : "opacity-40 cursor-not-allowed pointer-events-none"}`}
+          className={`absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-[rgb(var(--white))] border border-[rgb(var(--separator))] rounded-full shadow-sm p-2 hover:bg-[rgb(var(--warm-gray))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold)/0.40)] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--white))] ${
+            canScrollLeft ? "opacity-100" : "opacity-40 cursor-not-allowed pointer-events-none"
+          }`}
           disabled={!canScrollLeft}
           aria-disabled={!canScrollLeft}
           aria-controls="match-carousel-track"
@@ -266,10 +262,9 @@ export function MatchCarousel({
         <button
           type="button"
           onClick={handleScrollRight}
-          className={`absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white border border-separator rounded-full shadow-sm p-2
-                      hover:bg-[rgb(var(--light-gray))] focus-visible:outline-none focus-visible:ring-2
-                      focus-visible:ring-accent/40 focus-visible:ring-offset-2 focus-visible:ring-offset-white
-                      ${canScrollRight ? "opacity-100" : "opacity-40 cursor-not-allowed pointer-events-none"}`}
+          className={`absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-[rgb(var(--white))] border border-[rgb(var(--separator))] rounded-full shadow-sm p-2 hover:bg-[rgb(var(--warm-gray))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold)/0.40)] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--white))] ${
+            canScrollRight ? "opacity-100" : "opacity-40 cursor-not-allowed pointer-events-none"
+          }`}
           disabled={!canScrollRight}
           aria-disabled={!canScrollRight}
           aria-controls="match-carousel-track"
@@ -282,7 +277,7 @@ export function MatchCarousel({
       {/* League table summary section */}
       {leagueData && (
         <div
-          className="mt-8 pt-6 border-t border-separator"
+          className="mt-8 pt-6 border-t border-[rgb(var(--separator))]"
           role="region"
           aria-label="League table summary"
           aria-live="polite"

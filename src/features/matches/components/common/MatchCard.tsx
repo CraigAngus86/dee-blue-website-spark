@@ -84,28 +84,28 @@ export const MatchCard = React.memo(function MatchCard({
   };
 
   const btnBase =
-    "transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:ring-offset-2 focus-visible:ring-offset-white";
+    "transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold)/0.40)] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--white))]";
   const enabled = "text-link hover:text-link-hover";
   const disabled = "text-text-muted cursor-default pointer-events-none opacity-50";
 
   return (
     <div
       className={`w-full rounded-lg overflow-hidden shadow-sm transition-all duration-300 hover:shadow-md
-        ${isNextMatch ? "border-accent border" : "border border-separator"}`}
+        ${isNextMatch ? "border-[rgb(var(--brand-gold))] border" : "border border-[rgb(var(--separator))]"}`}
       role="article"
       aria-label={`${match?.home_team_name ?? "Home Team"} vs ${match?.away_team_name ?? "Away Team"}`}
     >
       {/* Card surface */}
-      <div className="h-full bg-white">
+      <div className="h-full bg-[rgb(var(--white))]">
         {/* Header */}
         <div
           className={`px-4 py-3 text-center ${
-            isNextMatch ? "bg-accent" : "bg-white border-b border-separator"
+            isNextMatch ? "bg-[rgb(var(--brand-gold))]" : "bg-[rgb(var(--white))] border-b border-[rgb(var(--separator))]"
           }`}
         >
           <div
             className={`text-sm font-semibold uppercase tracking-wide ${
-              isNextMatch ? "text-white" : "text-text-strong"
+              isNextMatch ? "text-[rgb(var(--brand-black))]" : "text-text-strong"
             }`}
           >
             {matchType}
@@ -113,7 +113,7 @@ export const MatchCard = React.memo(function MatchCard({
         </div>
 
         {/* Competition */}
-        <div className="px-4 py-2 text-center border-b border-separator">
+        <div className="px-4 py-2 text-center border-b border-[rgb(var(--separator))]">
           <div className="text-xs text-text-muted font-medium truncate">{competitionName}</div>
         </div>
 
@@ -132,11 +132,11 @@ export const MatchCard = React.memo(function MatchCard({
             {/* Middle */}
             <div className="text-center w-2/12">
               {isResult ? (
-                <div className="text-2xl font-bold font-heading text-text-strong">
+                <div className="text-2xl font-semibold text-text-strong">
                   {(match?.home_score ?? 0)} - {(match?.away_score ?? 0)}
                 </div>
               ) : (
-                <div className="text-2xl font-bold text-text-muted">VS</div>
+                <div className="text-2xl font-semibold text-text-muted">VS</div>
               )}
             </div>
 
@@ -160,7 +160,7 @@ export const MatchCard = React.memo(function MatchCard({
         </div>
 
         {/* Footer: date, time, actions */}
-        <div className="px-4 py-3 border-t border-separator bg-light-gray flex justify-between items-center">
+        <div className="px-4 py-3 border-t border-[rgb(var(--separator))] bg-[rgb(var(--warm-gray))] flex justify-between items-center">
           {/* Date + time */}
           <div className="flex items-center text-text-muted text-xs">
             <Calendar className="h-3 w-3 mr-1" aria-hidden="true" />
@@ -178,7 +178,7 @@ export const MatchCard = React.memo(function MatchCard({
           {/* Actions */}
           <div className="flex space-x-2">
             {isUpcoming ? (
-              // Ticket for upcoming
+              /* Ticket for upcoming */
               <button
                 type="button"
                 onClick={handleTicketClick}
@@ -204,7 +204,7 @@ export const MatchCard = React.memo(function MatchCard({
                 <span className="sr-only">Buy Tickets</span>
               </button>
             ) : (
-              // Report + Gallery for results
+              /* Report + Gallery for results */
               <>
                 <button
                   type="button"
@@ -250,7 +250,7 @@ export const MatchCard = React.memo(function MatchCard({
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeWidth={2}
-                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2z"
                     />
                   </svg>
                   <span className="sr-only">Photo Gallery</span>

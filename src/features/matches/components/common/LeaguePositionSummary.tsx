@@ -12,14 +12,12 @@ interface LeaguePositionSummaryProps {
   lost: number;
   points: number;
   form?: ("W" | "D" | "L")[];
-  /** Optional extras */
-  goalDifference?: number;     // from Supabase: goal_difference (or compute GF-GA upstream)
-  competitionName?: string;    // from Supabase: competition_name
-  seasonName?: string;         // from Supabase: season_name
-  clubName?: string;           // default: Baynounah SC
+  goalDifference?: number;
+  competitionName?: string;
+  seasonName?: string;
+  clubName?: string;
 }
 
-/** Token-first, zero-safe, consistent with Match Centre. */
 export function LeaguePositionSummary({
   position,
   played,
@@ -40,16 +38,14 @@ export function LeaguePositionSummary({
 
   return (
     <section aria-label="League table summary" className="w-full">
-      {/* Header (same pattern as Match Centre) */}
+      {/* Header */}
       <div className="mb-2">
         <SectionHeader
           title="League Table"
           rightSlot={
             <Link
               href="/matches?tab=table"
-              className="text-link hover:text-link-hover transition-colors inline-flex items-center gap-2
-                         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40
-                         focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+              className="text-link hover:text-link-hover transition-colors inline-flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold)/0.40)] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--white))]"
               aria-label="View full league table"
             >
               <span className="text-sm font-medium">View Full Table</span>
@@ -59,25 +55,31 @@ export function LeaguePositionSummary({
         />
       </div>
 
-      {/* Context subheader (muted, optional) */}
+      {/* Context subheader (optional) */}
       {contextLine && (
         <div className="mb-4 text-xs text-text-muted">{contextLine}</div>
       )}
 
       {/* Card surface */}
-      <div className="bg-white border border-separator rounded-lg shadow-sm p-6">
+      <div className="bg-[rgb(var(--white))] border border-[rgb(var(--separator))] rounded-lg shadow-sm p-6">
         <div className="grid grid-cols-12 items-center gap-4">
           {/* Position + Team */}
           <div className="col-span-12 md:col-span-4 flex items-center">
             <div
               className={`h-12 w-12 rounded-full flex items-center justify-center mr-3
-                          ${hasRank ? "bg-accent text-white" : "bg-light-gray text-text-muted"}`}
+                ${
+                  hasRank
+                    ? "bg-[rgb(var(--brand-gold))] text-[rgb(var(--brand-black))]"
+                    : "bg-[rgb(var(--warm-gray))] text-[rgb(var(--brand-black)/0.65)]"
+                }`}
               aria-label={hasRank ? `Position ${position}` : "Position not yet ranked"}
             >
-              <span className="font-heading text-lg font-bold">{posDisplay}</span>
+              {/* Numeral in body font for clarity/consistency (no Bebas/bold) */}
+              <span className="text-lg font-semibold">{posDisplay}</span>
             </div>
             <div className="min-w-0">
-              <div className="font-heading text-h3 leading-none text-text-strong truncate">
+              {/* Club name – treat as label (body font), not heading typography */}
+              <div className="text-base md:text-lg font-semibold text-text-strong truncate">
                 {clubName}
               </div>
               <div className="text-xs text-text-muted mt-1">
@@ -86,7 +88,7 @@ export function LeaguePositionSummary({
             </div>
           </div>
 
-          {/* KPI tiles: P / W / D / L / GD / PTS (PTS emphasized) */}
+          {/* KPI tiles: P / W / D / L / GD / PTS */}
           <div className="col-span-12 md:col-span-5">
             <div className="grid grid-cols-6 gap-2">
               {[
@@ -99,12 +101,12 @@ export function LeaguePositionSummary({
               ].map(({ label, value, strong }) => (
                 <div
                   key={label}
-                  className="border border-separator rounded-md py-2 text-center bg-white"
+                  className="border border-[rgb(var(--separator))] rounded-md py-2 text-center bg-[rgb(var(--white))]"
                 >
                   <div className="text-xs text-text-muted">{label}</div>
                   <div
                     className={`${
-                      strong ? "text-2xl font-heading" : "text-lg"
+                      strong ? "text-2xl" : "text-lg"
                     } font-semibold text-text-strong`}
                   >
                     {Number.isFinite(Number(value)) ? Number(value) : 0}
@@ -122,13 +124,13 @@ export function LeaguePositionSummary({
                   formSafe.map((result, i) => (
                     <span
                       key={`${result}-${i}`}
-                      className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium text-white
+                      className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium
                         ${
                           result === "W"
-                            ? "bg-success"
+                            ? "bg-[rgb(var(--heritage-green))] text-[rgb(var(--white))]"
                             : result === "D"
-                            ? "bg-warning"
-                            : "bg-error"
+                            ? "bg-[rgb(var(--brand-gold))] text-[rgb(var(--brand-black))]"
+                            : "bg-[rgb(var(--heritage-red))] text-[rgb(var(--white))]"
                         }`}
                       aria-label={result === "W" ? "Win" : result === "D" ? "Draw" : "Loss"}
                     >
@@ -136,7 +138,9 @@ export function LeaguePositionSummary({
                     </span>
                   ))
                 ) : (
-                  <span className="text-xs text-text-muted">Form will appear after matchday 1</span>
+                  <span className="text-xs text-text-muted">
+                    Form will appear after matchday 1
+                  </span>
                 )}
               </div>
               <div className="text-xs text-text-muted uppercase mt-1">Form</div>
