@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { submitVote, checkIfUserVoted, getActivePoll } from '@/lib/supabase/polls';
+import { Vote } from 'lucide-react';
 
 interface PollCardMobileProps {
   activePoll?: any;
@@ -21,7 +22,7 @@ export default function PollCardMobile({ activePoll: initialPoll }: PollCardMobi
     }
   }, [activePoll]);
 
-  // Map category values to display names - IDENTICAL TO DESKTOP
+  // Map category values to display names
   const getCategoryDisplayName = (category: string) => {
     const categoryMap: { [key: string]: string } = {
       'competitions': 'Competition Excitement',
@@ -34,7 +35,7 @@ export default function PollCardMobile({ activePoll: initialPoll }: PollCardMobi
     return categoryMap[category] || 'Community Poll';
   };
 
-  // Format vote count with proper grammar - IDENTICAL TO DESKTOP
+  // Format vote count with proper grammar
   const formatVoteCount = (count: number) => {
     if (count === 0) return '0 votes';
     if (count === 1) return '1 vote';
@@ -93,62 +94,62 @@ export default function PollCardMobile({ activePoll: initialPoll }: PollCardMobi
     });
   };
 
-  // No active poll state - MOBILE OPTIMIZED
+  // No active poll state - Baynounah branded
   if (!activePoll) {
     return (
-      <div className="bg-white rounded-lg shadow-md hover:shadow-xl border border-[#f3f4f6] flex flex-col transition-all duration-300 hover:-translate-y-1">
-        {/* Header - MOBILE SIZING */}
-        <div className="p-6 flex items-center min-h-[80px]">
+      <div className="bg-white rounded-lg shadow-md hover:shadow-xl border border-separator flex flex-col transition-all duration-300 hover:-translate-y-1">
+        {/* Header - Baynounah styling */}
+        <div className="p-6 flex items-center min-h-[80px] border-b border-separator">
           <div className="flex items-center">
-            <span className="text-[2rem] font-bold text-[#00105A] mr-2">#</span>
+            <div className="w-1 h-10 bg-brand-gold rounded-sm mr-4" />
             <div>
-              <h3 className="text-[1.125rem] font-semibold text-[#00105A] leading-none m-0">JoinTheConversation</h3>
-              <p className="text-[0.875rem] font-medium text-[#6b7280] leading-none m-0 mt-1">Community Poll</p>
+              <h3 className="text-h4 font-heading text-brand-black leading-none m-0" style={{letterSpacing: '0.02em'}}>Community Poll</h3>
+              <p className="text-small text-text-muted leading-none m-0 mt-1">Join the Conversation</p>
             </div>
           </div>
         </div>
         
-        {/* No Poll Message - MOBILE PADDING */}
+        {/* No Poll Message */}
         <div className="flex-1 flex items-center justify-center px-6 py-12">
           <div className="text-center">
-            <div className="w-16 h-16 bg-gradient-to-br from-[#C5E7FF] to-[#00105A] rounded-full flex items-center justify-center text-[1.5rem] mb-4 shadow-lg mx-auto">
-              🗳️
+            <div className="w-16 h-16 bg-gradient-to-br from-brand-gold to-brand-gold/70 rounded-full flex items-center justify-center mb-4 shadow-lg mx-auto">
+              <Vote className="w-8 h-8 text-brand-black" />
             </div>
-            <h4 className="text-[#00105A] text-lg font-semibold mb-2">No active polls right now</h4>
-            <p className="text-[#6b7280] text-sm">Check back soon for our next community question!</p>
+            <h4 className="text-brand-black text-lg font-semibold mb-2">No active polls right now</h4>
+            <p className="text-text-muted text-sm">Check back soon for our next community question!</p>
           </div>
         </div>
 
-        {/* Footer - MOBILE SPACING */}
-        <div className="flex justify-between items-center text-xs text-[#6b7280] px-6 pb-6 pt-4 border-t border-[#f3f4f6]">
+        {/* Footer */}
+        <div className="flex justify-between items-center text-xs text-text-muted px-6 pb-6 pt-4 border-t border-separator">
           <span>Next poll coming soon</span>
-          <span className="text-[#6b7280] cursor-default">View Past Polls</span>
+          <span className="text-text-muted cursor-default">View Past Polls</span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md hover:shadow-xl border border-[#f3f4f6] flex flex-col transition-all duration-300 hover:-translate-y-1">
-      {/* Header with Large Hashtag - MOBILE SIZING */}
-      <div className="p-6 min-h-[80px] flex items-center">
+    <div className="bg-white rounded-lg shadow-md hover:shadow-xl border border-separator flex flex-col transition-all duration-300 hover:-translate-y-1">
+      {/* Header - Baynounah branded */}
+      <div className="p-6 min-h-[80px] flex items-center border-b border-separator">
         <div className="flex items-center">
-          <span className="text-[2rem] font-bold text-[#00105A] mr-2">#</span>
+          <div className="w-1 h-10 bg-brand-gold rounded-sm mr-4" />
           <div>
-            <h3 className="text-[1.125rem] font-semibold text-[#00105A] leading-none m-0">JoinTheConversation</h3>
-            <p className="text-[0.875rem] font-medium text-[#6b7280] leading-none m-0 mt-1">{getCategoryDisplayName(activePoll.category)}</p>
+            <h3 className="text-h4 font-heading text-brand-black leading-none m-0" style={{letterSpacing: '0.02em'}}>Community Poll</h3>
+            <p className="text-small text-text-muted leading-none m-0 mt-1">{getCategoryDisplayName(activePoll.category)}</p>
           </div>
         </div>
       </div>
       
-      {/* Poll Content - FLEXIBLE HEIGHT */}
+      {/* Poll Content */}
       <div className="flex-1 px-6 pb-6">
         {!showPastPolls ? (
           // Current Poll Display
           <div className="h-full flex flex-col">
-            {/* Question Panel with Navy Background - MOBILE PADDING */}
-            <div className="mb-6 bg-[#00105A] rounded-lg px-4 py-4">
-              <p className="text-[1rem] font-medium text-white leading-snug m-0">
+            {/* Question Panel with Black Background */}
+            <div className="mb-6 bg-brand-black rounded-lg px-4 py-4 mt-6">
+              <p className="text-base font-medium text-white leading-snug m-0">
                 {activePoll.question}
               </p>
             </div>
@@ -156,7 +157,7 @@ export default function PollCardMobile({ activePoll: initialPoll }: PollCardMobi
             {/* Options or Results */}
             <div className="flex-1">
               {!showResults ? (
-                // Voting Interface - MOBILE TOUCH TARGETS
+                // Voting Interface - Baynounah branded
                 <div className="space-y-4">
                   {activePoll.options?.map((option: any, index: number) => {
                     const isSubmittingThis = isSubmitting && submittingOptionId === option.id;
@@ -166,17 +167,17 @@ export default function PollCardMobile({ activePoll: initialPoll }: PollCardMobi
                         key={option.id}
                         onClick={() => handleVote(option.id)}
                         disabled={isSubmitting}
-                        className="w-full px-4 py-4 text-left border-2 border-[#00105A] rounded-lg hover:bg-[#C5E7FF] transition-all duration-200 disabled:opacity-50 relative min-h-[48px] flex items-center"
+                        className="w-full px-4 py-4 text-left border-2 border-brand-black rounded-lg hover:bg-brand-gold hover:border-brand-gold transition-all duration-200 disabled:opacity-50 relative min-h-[48px] flex items-center"
                       >
                         <span className="inline-flex items-center w-full">
-                          <span className="w-8 h-8 border border-[#00105A] rounded-sm mr-4 flex items-center justify-center text-sm font-semibold flex-shrink-0">
-                            {String.fromCharCode(65 + index)} {/* A, B, C, D, E */}
+                          <span className="w-8 h-8 border border-brand-black rounded-sm mr-4 flex items-center justify-center text-sm font-semibold flex-shrink-0">
+                            {String.fromCharCode(65 + index)}
                           </span>
-                          <span className="flex-1 text-[1rem]">{option.option_text}</span>
+                          <span className="flex-1 text-base">{option.option_text}</span>
                         </span>
                         {isSubmittingThis && (
                           <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-                            <div className="w-5 h-5 border-2 border-[#00105A] border-t-transparent rounded-full animate-spin"></div>
+                            <div className="w-5 h-5 border-2 border-brand-black border-t-transparent rounded-full animate-spin"></div>
                           </div>
                         )}
                       </button>
@@ -184,10 +185,10 @@ export default function PollCardMobile({ activePoll: initialPoll }: PollCardMobi
                   })}
                 </div>
               ) : (
-                // Results Display - MOBILE SPACING
-                <div className="space-y-4 animate-in fade-in duration-500">
+                // Results Display - Baynounah styled
+                <div className="space-y-4 animate-fade-in">
                   <div className="text-center mb-6">
-                    <p className="text-[1.25rem] font-semibold text-[#00105A] m-0">
+                    <p className="text-h5 font-body text-brand-black m-0">
                       {formatVoteCount(activePoll.total_votes || 0)}
                     </p>
                   </div>
@@ -201,18 +202,18 @@ export default function PollCardMobile({ activePoll: initialPoll }: PollCardMobi
                     return (
                       <div key={option.id} className="mb-4">
                         <div className="flex justify-between items-center mb-2">
-                          <span className="text-[1rem] font-medium text-[#00105A] flex items-center">
-                            <span className="w-6 h-6 bg-[#C5E7FF] rounded-sm mr-3 flex items-center justify-center text-sm font-semibold">
+                          <span className="text-base font-medium text-brand-black flex items-center">
+                            <span className="w-6 h-6 bg-brand-gold rounded-sm mr-3 flex items-center justify-center text-sm font-semibold text-brand-black">
                               {String.fromCharCode(65 + index)}
                             </span>
                             <span className="flex-1">{option.option_text}</span>
-                            {isUserVote && <span className="ml-2 text-[#FFD700]">✓</span>}
+                            {isUserVote && <span className="ml-2 text-brand-gold">✓</span>}
                           </span>
-                          <span className="text-[1rem] text-[#6b7280] ml-2">{percentage}%</span>
+                          <span className="text-base text-text-muted ml-2">{percentage}%</span>
                         </div>
-                        <div className="w-full bg-[#f3f4f6] rounded-full h-3">
+                        <div className="w-full bg-surface-2 rounded-full h-3">
                           <div
-                            className="bg-[#00105A] h-3 rounded-full transition-all duration-1000 ease-out"
+                            className="bg-brand-gold h-3 rounded-full transition-all duration-1000 ease-out"
                             style={{ width: `${percentage}%` }}
                           ></div>
                         </div>
@@ -227,15 +228,15 @@ export default function PollCardMobile({ activePoll: initialPoll }: PollCardMobi
           // Past Polls Display (placeholder for now)
           <div className="h-full flex items-center justify-center py-12">
             <div className="text-center">
-              <h4 className="text-lg font-semibold text-[#00105A] mb-4">Past Polls</h4>
-              <p className="text-[#6b7280]">Past polls functionality coming soon...</p>
+              <h4 className="text-lg font-semibold text-brand-black mb-4">Past Polls</h4>
+              <p className="text-text-muted">Past polls functionality coming soon...</p>
             </div>
           </div>
         )}
       </div>
       
-      {/* Footer - MOBILE SPACING */}
-      <div className="flex justify-between items-center text-sm text-[#6b7280] px-6 pb-6 pt-4 border-t border-[#f3f4f6]">
+      {/* Footer */}
+      <div className="flex justify-between items-center text-sm text-text-muted px-6 pb-6 pt-4 border-t border-separator">
         <span>
           {activePoll.status === 'active' 
             ? `Voting closes: ${formatEndDate(activePoll.end_date)}`
@@ -244,7 +245,7 @@ export default function PollCardMobile({ activePoll: initialPoll }: PollCardMobi
         </span>
         <button 
           onClick={() => setShowPastPolls(!showPastPolls)}
-          className="text-[#6b7280] cursor-default"
+          className="text-text-muted cursor-pointer hover:text-brand-black transition-colors"
         >
           {showPastPolls ? 'Current Poll' : 'View Past Polls'}
         </button>

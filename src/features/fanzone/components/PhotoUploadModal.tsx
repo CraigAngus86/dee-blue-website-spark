@@ -88,7 +88,6 @@ export function PhotoUploadModal({ isOpen, onClose }: PhotoUploadModalProps) {
       newErrors.email = 'Please enter a valid email';
     }
     if (!selectedPhoto) newErrors.photo = 'Please select a photo to upload';
-    // REMOVED: Context word count requirement - now optional
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -143,7 +142,7 @@ export function PhotoUploadModal({ isOpen, onClose }: PhotoUploadModalProps) {
       setErrors({});
       onClose();
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('Photo upload error:', error);
       alert(error.message || 'Sorry, there was an error uploading your photo. Please try again.');
     } finally {
@@ -154,14 +153,14 @@ export function PhotoUploadModal({ isOpen, onClose }: PhotoUploadModalProps) {
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50 flex items-center justify-center">
       <div className="relative max-w-4xl w-full max-h-[95vh] bg-white rounded-lg shadow-xl overflow-hidden">
-        {/* Header bar */}
-        <div className="absolute top-0 left-0 right-0 h-12 bg-[#f5f7fb] z-40 flex justify-between items-center px-4">
+        {/* Header bar - Baynounah branded */}
+        <div className="absolute top-0 left-0 right-0 h-12 bg-surface-2 z-40 flex justify-between items-center px-4">
           <div className="flex items-center">
-            <h2 className="text-sm font-medium text-[#00105A]">Share Your Matchday Photo</h2>
+            <h2 className="text-sm font-medium text-text-strong">Share Your Matchday Photo</h2>
           </div>
           
           <button 
-            className="text-[#00105A] hover:text-[#FFD700] transition-colors"
+            className="text-text-strong hover:text-brand-gold transition-colors"
             onClick={onClose}
           >
             <X size={22} />
@@ -174,9 +173,9 @@ export function PhotoUploadModal({ isOpen, onClose }: PhotoUploadModalProps) {
           <form onSubmit={handleSubmit} className="p-6">
             
             {/* Photo Guidelines */}
-            <div className="mb-6 p-4 bg-[#f9fafb] rounded-lg border border-[#e5e7eb]">
-              <h3 className="text-sm font-medium text-[#00105A] mb-2">Photo Guidelines:</h3>
-              <ul className="text-sm text-[#6b7280] space-y-1">
+            <div className="mb-6 p-4 bg-surface-2 rounded-lg border border-separator">
+              <h3 className="text-sm font-medium text-text-strong mb-2">Photo Guidelines:</h3>
+              <ul className="text-sm text-text-muted space-y-1">
                 <li>• High resolution preferred</li>
                 <li>• Good lighting and clear subjects</li>
                 <li>• Club-related content only</li>
@@ -186,14 +185,14 @@ export function PhotoUploadModal({ isOpen, onClose }: PhotoUploadModalProps) {
 
             {/* Photo Upload */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-[#00105A] mb-2">
-                Your Photo <span className="text-red-500">*</span>
+              <label className="block text-sm font-medium text-text-strong mb-2">
+                Your Photo <span className="text-error">*</span>
               </label>
               <div className={`border-2 border-dashed rounded-lg p-6 text-center ${
-                errors.photo ? 'border-red-500' : 'border-[#e5e7eb]'
+                errors.photo ? 'border-error' : 'border-separator'
               }`}>
-                <Upload className="mx-auto h-12 w-12 text-[#6b7280] mb-4" />
-                <div className="text-sm text-[#6b7280] mb-2">
+                <Upload className="mx-auto h-12 w-12 text-text-muted mb-4" />
+                <div className="text-sm text-text-muted mb-2">
                   Drag and drop photo here, or click to browse
                 </div>
                 <input
@@ -205,20 +204,20 @@ export function PhotoUploadModal({ isOpen, onClose }: PhotoUploadModalProps) {
                 />
                 <label
                   htmlFor="photo-upload"
-                  className="inline-block bg-[#C5E7FF] text-[#00105A] px-4 py-2 rounded cursor-pointer hover:bg-[#b3deff] transition-colors"
+                  className="inline-block bg-brand-gold text-brand-black px-4 py-2 rounded cursor-pointer hover:bg-brand-black hover:text-brand-gold border-2 border-brand-gold hover:border-brand-black transition-all duration-200"
                 >
                   Choose Photo
                 </label>
-                <div className="text-xs text-[#6b7280] mt-2">
+                <div className="text-xs text-text-muted mt-2">
                   Maximum 5MB. JPG or PNG format.
                 </div>
               </div>
-              {errors.photo && <p className="text-red-500 text-sm mt-1">{errors.photo}</p>}
+              {errors.photo && <p className="text-error text-sm mt-1">{errors.photo}</p>}
 
               {/* Selected photo preview */}
               {selectedPhoto && (
                 <div className="mt-4">
-                  <div className="text-sm font-medium text-[#00105A] mb-2">Selected Photo:</div>
+                  <div className="text-sm font-medium text-text-strong mb-2">Selected Photo:</div>
                   <div className="relative inline-block">
                     <img
                       src={URL.createObjectURL(selectedPhoto)}
@@ -228,12 +227,12 @@ export function PhotoUploadModal({ isOpen, onClose }: PhotoUploadModalProps) {
                     <button
                       type="button"
                       onClick={removePhoto}
-                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                      className="absolute -top-2 -right-2 bg-error text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
                     >
                       ×
                     </button>
                   </div>
-                  <div className="text-xs text-[#6b7280] mt-1">{selectedPhoto.name}</div>
+                  <div className="text-xs text-text-muted mt-1">{selectedPhoto.name}</div>
                 </div>
               )}
             </div>
@@ -241,8 +240,8 @@ export function PhotoUploadModal({ isOpen, onClose }: PhotoUploadModalProps) {
             {/* Personal Information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <div>
-                <label className="block text-sm font-medium text-[#00105A] mb-2">
-                  Your Name <span className="text-red-500">*</span>
+                <label className="block text-sm font-medium text-text-strong mb-2">
+                  Your Name <span className="text-error">*</span>
                 </label>
                 <input
                   type="text"
@@ -251,17 +250,17 @@ export function PhotoUploadModal({ isOpen, onClose }: PhotoUploadModalProps) {
                   onChange={handleInputChange}
                   className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-1 ${
                     errors.fanName 
-                      ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-                      : 'border-[#e5e7eb] focus:border-[#00105A] focus:ring-[#00105A]'
+                      ? 'border-error focus:border-error focus:ring-error' 
+                      : 'border-separator focus:border-brand-gold focus:ring-brand-gold'
                   }`}
                   placeholder="Enter your name"
                 />
-                {errors.fanName && <p className="text-red-500 text-sm mt-1">{errors.fanName}</p>}
+                {errors.fanName && <p className="text-error text-sm mt-1">{errors.fanName}</p>}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[#00105A] mb-2">
-                  Email <span className="text-red-500">*</span>
+                <label className="block text-sm font-medium text-text-strong mb-2">
+                  Email <span className="text-error">*</span>
                 </label>
                 <input
                   type="email"
@@ -270,32 +269,32 @@ export function PhotoUploadModal({ isOpen, onClose }: PhotoUploadModalProps) {
                   onChange={handleInputChange}
                   className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-1 ${
                     errors.email 
-                      ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-                      : 'border-[#e5e7eb] focus:border-[#00105A] focus:ring-[#00105A]'
+                      ? 'border-error focus:border-error focus:ring-error' 
+                      : 'border-separator focus:border-brand-gold focus:ring-brand-gold'
                   }`}
                   placeholder="your.email@example.com"
                 />
-                {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                {errors.email && <p className="text-error text-sm mt-1">{errors.email}</p>}
               </div>
             </div>
 
-            {/* Photo Context - NOW OPTIONAL */}
+            {/* Photo Context - OPTIONAL */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-[#00105A] mb-2">
-                Photo Context <span className="text-[#6b7280]">(Optional)</span>
+              <label className="block text-sm font-medium text-text-strong mb-2">
+                Photo Context <span className="text-text-muted">(Optional)</span>
               </label>
               <textarea
                 name="context"
                 value={formData.context}
                 onChange={handleInputChange}
                 rows={3}
-                className="w-full px-3 py-2 border border-[#e5e7eb] rounded focus:outline-none focus:ring-1 focus:border-[#00105A] focus:ring-[#00105A] resize-none"
-                placeholder="e.g., 'Match vs Huntly, celebrating goal in 85th minute'"
+                className="w-full px-3 py-2 border border-separator rounded focus:outline-none focus:ring-1 focus:border-brand-gold focus:ring-brand-gold resize-none"
+                placeholder="e.g., 'Match vs Al Ain, celebrating goal in 85th minute'"
               />
-              <p className="text-[#6b7280] text-sm mt-1">Briefly describe when/where this photo was taken</p>
+              <p className="text-text-muted text-sm mt-1">Briefly describe when/where this photo was taken</p>
             </div>
 
-            {/* Social Media Permissions - SIMPLIFIED */}
+            {/* Social Media Permissions - Baynounah branded */}
             <div className="mb-6">
               <label className="flex items-start space-x-3">
                 <input
@@ -303,32 +302,32 @@ export function PhotoUploadModal({ isOpen, onClose }: PhotoUploadModalProps) {
                   name="socialPermissions"
                   checked={formData.socialPermissions}
                   onChange={handleInputChange}
-                  className="mt-1 text-[#00105A] focus:ring-[#00105A]"
+                  className="mt-1 text-brand-gold focus:ring-brand-gold accent-brand-gold"
                 />
                 <div className="text-sm">
-                  <div className="font-medium text-[#00105A]">Allow Banks o' Dee FC to share this content on social media</div>
-                  <div className="text-[#6b7280]">Permission for the club to use this photo on official social media channels</div>
+                  <div className="font-medium text-text-strong">Allow Baynounah SC to share this content on social media</div>
+                  <div className="text-text-muted">Permission for the club to use this photo on official social media channels</div>
                 </div>
               </label>
             </div>
 
-            {/* Submit Button */}
+            {/* Submit Button - Baynounah branded */}
             <div className="flex justify-end space-x-4">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-6 py-2 border border-[#e5e7eb] text-[#6b7280] rounded hover:bg-[#f9fafb] transition-colors"
+                className="px-6 py-2 border border-separator text-text-muted rounded hover:bg-surface-2 transition-colors"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-6 py-2 bg-[#FFD700] text-[#00105A] rounded font-semibold hover:bg-[#f3d54a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                className="px-6 py-2 bg-brand-gold text-brand-black border-2 border-brand-gold rounded font-semibold hover:bg-brand-black hover:text-brand-gold hover:border-brand-black transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
               >
                 {isSubmitting ? (
                   <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-[#00105A] border-t-transparent"></div>
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-brand-black border-t-transparent"></div>
                     <span>Uploading...</span>
                   </>
                 ) : (

@@ -4,6 +4,7 @@ import FanSubmissionModal from './FanSubmissionModal';
 import PhotoUploadModal from './PhotoUploadModal';
 import PollCardMobile from './PollCardMobile';
 import FanGalleryModalMobile from './FanGalleryModalMobile';
+import { Camera, Star } from 'lucide-react';
 
 interface FanZoneMobileProps {
   fanOfMonth?: any;
@@ -57,7 +58,7 @@ export default function FanZoneMobile({
     setSelectedPhotoUrl(null);
   };
 
-  // Helper functions - SAME AS BEFORE
+  // Helper functions
   const getStoryExcerpt = (story: string, maxWords = 40) => {
     if (!story) return '';
     const words = story.split(' ');
@@ -70,7 +71,7 @@ export default function FanZoneMobile({
     return category.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   };
 
-  // EXACT SAME buildCloudinaryUrl as main gallery
+  // Cloudinary URL builder
   const buildCloudinaryUrl = (publicId: string, type: 'gallery' | 'fanOfMonth' | 'fanPhoto' = 'gallery') => {
     const baseUrl = 'https://res.cloudinary.com/dlkpaw2a0/image/upload/';
     
@@ -93,21 +94,21 @@ export default function FanZoneMobile({
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Section Header - SAME AS BEFORE */}
+      {/* Section Header - Baynounah branded */}
       <div className="flex items-start mb-8">
-        <div className="w-1 h-8 bg-[#00105A] mr-4 mt-1"></div>
+        <div className="w-1 h-8 bg-brand-gold mr-4 mt-1 rounded-sm"></div>
         <div>
-          <h2 className="text-[1.875rem] font-bold text-[#00105A] mb-1">Fan Zone</h2>
-          <p className="text-[1rem] text-[#6b7280]">Celebrating the Banks o' Dee supporters</p>
+          <h2 className="text-h2 font-heading text-brand-black mb-1" style={{letterSpacing: '0.02em'}}>Fan Zone</h2>
+          <p className="text-base text-text-muted">Celebrating the Baynounah SC supporters</p>
         </div>
       </div>
 
       <div className="space-y-6">
         
-        {/* Fan of the Month - SAME AS BEFORE */}
-        <div className="bg-white rounded-lg shadow-md hover:shadow-xl border border-[#f3f4f6] overflow-hidden transition-all duration-300 hover:-translate-y-1">
-          <div className="p-6 border-b border-[#f3f4f6] flex items-center">
-            <h3 className="text-[1.125rem] font-semibold text-[#00105A]">Fan of the Month</h3>
+        {/* Fan of the Month - Baynounah branded */}
+        <div className="bg-white rounded-lg shadow-md hover:shadow-xl border border-separator overflow-hidden transition-all duration-300 hover:-translate-y-1">
+          <div className="p-6 border-b border-separator flex items-center">
+            <h3 className="text-h4 font-heading text-brand-black" style={{letterSpacing: '0.02em'}}>Fan of the Month</h3>
           </div>
           
           {fanOfMonth ? (
@@ -120,21 +121,21 @@ export default function FanZoneMobile({
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full min-h-[300px] bg-gradient-to-br from-[#00105A] to-[#C5E7FF]"></div>
+                  <div className="w-full min-h-[300px] bg-gradient-to-br from-brand-gold to-brand-black"></div>
                 )}
               </div>
               
-              <div className="absolute inset-0 bg-gradient-to-t from-[rgba(0,16,90,0.85)] via-[rgba(0,16,90,0.4)] to-[rgba(0,16,90,0.2)] transition-opacity duration-300"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent"></div>
               
               <div className="absolute bottom-0 left-0 right-0 p-6 text-white z-10">
                 <div className="mb-4">
                   <h4 className="text-2xl font-bold mb-3">{fanOfMonth.fanName}</h4>
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="bg-[#FFD700] text-[#00105A] px-3 py-1 rounded-full text-sm font-medium">
+                    <div className="bg-brand-gold text-brand-black px-3 py-1 rounded-full text-sm font-medium">
                       {formatCategory(fanOfMonth.category)}
                     </div>
                     {fanOfMonth.supporterSince && (
-                      <span className="text-[#C5E7FF] text-sm">Supporter since {fanOfMonth.supporterSince}</span>
+                      <span className="text-white/90 text-sm">Supporter since {fanOfMonth.supporterSince}</span>
                     )}
                   </div>
                 </div>
@@ -146,18 +147,18 @@ export default function FanZoneMobile({
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center text-center py-12">
-              <div className="w-20 h-20 bg-gradient-to-br from-[#C5E7FF] to-[#00105A] rounded-full flex items-center justify-center text-[2rem] mb-4 shadow-lg transition-all duration-300 hover:scale-110">
-                ⭐
+              <div className="w-20 h-20 bg-gradient-to-br from-brand-gold to-brand-gold/70 rounded-full flex items-center justify-center mb-4 shadow-lg transition-all duration-300 hover:scale-110">
+                <Star className="w-10 h-10 text-brand-black" />
               </div>
-              <h4 className="text-[#00105A] text-lg font-semibold mb-3">Become our first featured fan</h4>
-              <p className="text-[#6b7280] text-sm leading-relaxed max-w-xs">Share your Banks o' Dee story and be featured on our website</p>
+              <h4 className="text-brand-black text-lg font-semibold mb-3">Become our first featured fan</h4>
+              <p className="text-text-muted text-sm leading-relaxed max-w-xs">Share your Baynounah story and be featured on our website</p>
             </div>
           )}
           
-          <div className="p-6 border-t border-[#f3f4f6] text-center">
+          <div className="p-6 border-t border-separator text-center">
             <button 
               onClick={handleSubmitStoryClick}
-              className="bg-[#C5E7FF] text-[#00105A] hover:bg-[#00105A] hover:text-white px-4 py-2 rounded font-medium transition-all duration-300 inline-flex items-center gap-2 shadow-md hover:shadow-lg"
+              className="bg-brand-gold text-brand-black hover:bg-brand-black hover:text-brand-gold border-2 border-brand-gold hover:border-brand-black px-4 py-2 rounded font-medium transition-all duration-300 inline-flex items-center gap-2 shadow-md hover:shadow-lg"
             >
               Submit Your Story
             </button>
@@ -167,11 +168,11 @@ export default function FanZoneMobile({
         {/* Mobile Poll Card */}
         <PollCardMobile activePoll={activePoll} />
 
-        {/* Fan Gallery Section - REMOVED HINT TEXT, KEPT MAG GLASSES */}
+        {/* Fan Gallery Section - Baynounah branded */}
         <div>
           <div className="flex items-start mb-6">
-            <div className="w-1 h-6 bg-[#00105A] mr-4 mt-1"></div>
-            <h3 className="text-[1.125rem] font-semibold text-[#00105A]">Fan Gallery</h3>
+            <div className="w-1 h-6 bg-brand-gold mr-4 mt-1 rounded-sm"></div>
+            <h3 className="text-h4 font-heading text-brand-black" style={{letterSpacing: '0.02em'}}>Fan Gallery</h3>
           </div>
           
           <div className="grid grid-cols-2 gap-4 mb-4">
@@ -180,7 +181,7 @@ export default function FanZoneMobile({
                 <div 
                   key={index}
                   onClick={() => handleGalleryPhotoClick(photo)}
-                  className="aspect-[5/4] bg-[#f8f9fa] rounded-lg relative overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-2 cursor-pointer border border-[#f3f4f6] group active:scale-95"
+                  className="aspect-[5/4] bg-surface-2 rounded-lg relative overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-2 cursor-pointer border border-separator group active:scale-95"
                 >
                   {photo.photo?.public_id ? (
                     <img 
@@ -189,19 +190,19 @@ export default function FanZoneMobile({
                       className="w-full h-full object-cover transition-transform duration-300 group-active:scale-110"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-[#6b7280] text-xl">
-                      📸
+                    <div className="w-full h-full flex items-center justify-center text-text-muted">
+                      <Camera className="w-8 h-8" />
                     </div>
                   )}
                   
-                  {/* Always visible caption */}
-                  <div className="absolute bottom-2 left-2 bg-[rgba(0,16,90,0.8)] text-white px-2 py-1 rounded text-xs transition-all duration-300">
+                  {/* Caption with Baynounah black background */}
+                  <div className="absolute bottom-2 left-2 bg-brand-black/80 text-white px-2 py-1 rounded text-xs transition-all duration-300">
                     By {photo.fanName}
                   </div>
                   
-                  {/* Subtle zoom icon - always visible */}
+                  {/* Subtle zoom icon */}
                   <div className="absolute top-2 right-2 w-6 h-6 bg-white/90 rounded-full flex items-center justify-center">
-                    <span className="text-[#00105A] text-xs">🔍</span>
+                    <span className="text-brand-black text-xs">🔍</span>
                   </div>
                 </div>
               ))
@@ -209,10 +210,10 @@ export default function FanZoneMobile({
               [1, 2, 3, 4].map((num) => (
                 <div 
                   key={num}
-                  className="aspect-[5/4] bg-[#f8f9fa] rounded-lg flex items-center justify-center text-[#6b7280] text-sm text-center relative overflow-hidden shadow-md border border-[#f3f4f6]"
+                  className="aspect-[5/4] bg-surface-2 rounded-lg flex items-center justify-center text-text-muted text-sm text-center relative overflow-hidden shadow-md border border-separator"
                 >
-                  <span className="text-xl">📸</span>
-                  <div className="absolute bottom-2 left-2 bg-[rgba(0,16,90,0.8)] text-white px-2 py-1 rounded text-xs">
+                  <Camera className="w-8 h-8 opacity-50" />
+                  <div className="absolute bottom-2 left-2 bg-brand-black/80 text-white px-2 py-1 rounded text-xs">
                     Photo {num}
                   </div>
                 </div>
@@ -221,21 +222,21 @@ export default function FanZoneMobile({
           </div>
           
           <div className="text-center">
-            <p className="text-[#6b7280] text-sm mb-3">Share your match day photos and be featured on our website</p>
+            <p className="text-text-muted text-sm mb-3">Share your match day photos and be featured on our website</p>
             <button 
               onClick={handleUploadPhotoClick}
-              className="bg-[#C5E7FF] text-[#00105A] hover:bg-[#00105A] hover:text-white px-4 py-2 rounded font-medium transition-all duration-300 inline-flex items-center gap-2 shadow-md hover:shadow-lg"
+              className="bg-brand-gold text-brand-black hover:bg-brand-black hover:text-brand-gold border-2 border-brand-gold hover:border-brand-black px-4 py-2 rounded font-medium transition-all duration-300 inline-flex items-center gap-2 shadow-md hover:shadow-lg"
             >
-              <span>📷</span>
+              <Camera className="w-4 h-4" />
               Upload Photo
             </button>
           </div>
         </div>
 
-        {/* Social Media Section */}
-        <div className="text-center py-6 bg-[#f9fafb] rounded-lg border border-[#f3f4f6] shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
-          <div className="text-[1.25rem] font-semibold text-[#00105A] mb-1">#BanksODeeFC</div>
-          <p className="text-[#6b7280] text-sm">Join the conversation on social media</p>
+        {/* Social Media Section - Baynounah branded */}
+        <div className="text-center py-6 bg-surface-2 rounded-lg border border-separator shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
+          <div className="text-h5 font-heading text-brand-black mb-1" style={{letterSpacing: '0.02em'}}>#BaynounahSC</div>
+          <p className="text-text-muted text-sm">Join the conversation on social media</p>
         </div>
       </div>
 
@@ -250,7 +251,6 @@ export default function FanZoneMobile({
         onClose={handleClosePhotoUploadModal}
       />
 
-      {/* FIXED: Modal now gets pre-built URL using same Cloudinary approach */}
       <FanGalleryModalMobile
         photo={selectedPhoto}
         photoUrl={selectedPhotoUrl}

@@ -9,13 +9,12 @@ interface FanGalleryModalMobileProps {
   onClose: () => void;
 }
 
-export default function FanGalleryModalMobile({ 
-  photo, 
+export default function FanGalleryModalMobile({
+  photo,
   photoUrl,
-  isOpen, 
-  onClose 
+  isOpen,
+  onClose
 }: FanGalleryModalMobileProps) {
-  
   // Prevent background scrolling when modal is open
   useEffect(() => {
     if (isOpen) {
@@ -40,8 +39,8 @@ export default function FanGalleryModalMobile({
   return (
     <div className="fixed inset-0 z-[9999] bg-black/90 flex items-center justify-center p-4 md:hidden">
       {/* Close button - top right corner */}
-      <button 
-        className="absolute top-6 right-6 text-white hover:text-[#FFD700] transition-colors duration-200 z-10"
+      <button
+        className="absolute top-6 right-6 text-white hover:text-brand-gold transition-colors duration-200 z-10"
         onClick={onClose}
         aria-label="Close photo"
       >
@@ -50,7 +49,7 @@ export default function FanGalleryModalMobile({
       
       {/* Just the photo - no text, no caption */}
       <div className="relative w-full h-full flex items-center justify-center">
-        <img 
+        <img
           src={photoUrl}
           alt={`Photo by ${photo.fanName}`}
           className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
@@ -58,8 +57,8 @@ export default function FanGalleryModalMobile({
       </div>
       
       {/* Tap anywhere to close */}
-      <div 
-        className="absolute inset-0 -z-10" 
+      <div
+        className="absolute inset-0 -z-10"
         onClick={onClose}
         aria-label="Close photo"
       />

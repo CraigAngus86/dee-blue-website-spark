@@ -94,7 +94,7 @@ export function FanSubmissionModal({ isOpen, onClose }: FanSubmissionModalProps)
     setSelectedPhotos(prev => prev.filter((_, i) => i !== index));
   };
 
-  // Form validation - UPDATED WORD COUNT RANGE
+  // Form validation - 20-60 word range
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     
@@ -106,7 +106,7 @@ export function FanSubmissionModal({ isOpen, onClose }: FanSubmissionModalProps)
     if (!formData.category) newErrors.category = 'Please select a category';
     if (!formData.story.trim()) newErrors.story = 'Your story is required';
     
-    // NEW: 20-60 word range validation
+    // 20-60 word range validation
     const wordCount = countWords(formData.story);
     if (wordCount < 20) {
       newErrors.story = 'Please write at least 20 words';
@@ -173,7 +173,7 @@ export function FanSubmissionModal({ isOpen, onClose }: FanSubmissionModalProps)
       setErrors({});
       onClose();
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('Submission error:', error);
       alert(error.message || 'Sorry, there was an error submitting your story. Please try again.');
     } finally {
@@ -186,14 +186,14 @@ export function FanSubmissionModal({ isOpen, onClose }: FanSubmissionModalProps)
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50 flex items-center justify-center">
       <div className="relative max-w-4xl w-full max-h-[95vh] bg-white rounded-lg shadow-xl overflow-hidden">
-        {/* Header bar */}
-        <div className="absolute top-0 left-0 right-0 h-12 bg-[#f5f7fb] z-40 flex justify-between items-center px-4">
+        {/* Header bar - Baynounah branded */}
+        <div className="absolute top-0 left-0 right-0 h-12 bg-surface-2 z-40 flex justify-between items-center px-4">
           <div className="flex items-center">
-            <h2 className="text-sm font-medium text-[#00105A]">Become Fan of the Month</h2>
+            <h2 className="text-sm font-medium text-text-strong">Become Fan of the Month</h2>
           </div>
           
           <button 
-            className="text-[#00105A] hover:text-[#FFD700] transition-colors"
+            className="text-text-strong hover:text-brand-gold transition-colors"
             onClick={onClose}
           >
             <X size={22} />
@@ -207,35 +207,35 @@ export function FanSubmissionModal({ isOpen, onClose }: FanSubmissionModalProps)
             
             {/* Category Selection */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-[#00105A] mb-3">
-                Category <span className="text-red-500">*</span>
+              <label className="block text-sm font-medium text-text-strong mb-3">
+                Category <span className="text-error">*</span>
               </label>
               <div className="grid grid-cols-1 gap-3">
                 {categories.map(category => (
-                  <label key={category.value} className="flex items-start space-x-3 p-3 border border-[#e5e7eb] rounded-lg hover:bg-[#f9fafb] cursor-pointer">
+                  <label key={category.value} className="flex items-start space-x-3 p-3 border border-separator rounded-lg hover:bg-surface-2 cursor-pointer">
                     <input
                       type="radio"
                       name="category"
                       value={category.value}
                       checked={formData.category === category.value}
                       onChange={handleInputChange}
-                      className="mt-1 text-[#00105A] focus:ring-[#00105A]"
+                      className="mt-1 text-brand-gold focus:ring-brand-gold accent-brand-gold"
                     />
                     <div>
-                      <div className="font-medium text-[#00105A]">{category.label}</div>
-                      <div className="text-sm text-[#6b7280]">{category.description}</div>
+                      <div className="font-medium text-text-strong">{category.label}</div>
+                      <div className="text-sm text-text-muted">{category.description}</div>
                     </div>
                   </label>
                 ))}
               </div>
-              {errors.category && <p className="text-red-500 text-sm mt-1">{errors.category}</p>}
+              {errors.category && <p className="text-error text-sm mt-1">{errors.category}</p>}
             </div>
 
             {/* Personal Information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <div>
-                <label className="block text-sm font-medium text-[#00105A] mb-2">
-                  Your Name <span className="text-red-500">*</span>
+                <label className="block text-sm font-medium text-text-strong mb-2">
+                  Your Name <span className="text-error">*</span>
                 </label>
                 <input
                   type="text"
@@ -244,17 +244,17 @@ export function FanSubmissionModal({ isOpen, onClose }: FanSubmissionModalProps)
                   onChange={handleInputChange}
                   className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-1 ${
                     errors.fanName 
-                      ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-                      : 'border-[#e5e7eb] focus:border-[#00105A] focus:ring-[#00105A]'
+                      ? 'border-error focus:border-error focus:ring-error' 
+                      : 'border-separator focus:border-brand-gold focus:ring-brand-gold'
                   }`}
                   placeholder="Enter your name"
                 />
-                {errors.fanName && <p className="text-red-500 text-sm mt-1">{errors.fanName}</p>}
+                {errors.fanName && <p className="text-error text-sm mt-1">{errors.fanName}</p>}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[#00105A] mb-2">
-                  Email <span className="text-red-500">*</span>
+                <label className="block text-sm font-medium text-text-strong mb-2">
+                  Email <span className="text-error">*</span>
                 </label>
                 <input
                   type="email"
@@ -263,18 +263,18 @@ export function FanSubmissionModal({ isOpen, onClose }: FanSubmissionModalProps)
                   onChange={handleInputChange}
                   className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-1 ${
                     errors.email 
-                      ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-                      : 'border-[#e5e7eb] focus:border-[#00105A] focus:ring-[#00105A]'
+                      ? 'border-error focus:border-error focus:ring-error' 
+                      : 'border-separator focus:border-brand-gold focus:ring-brand-gold'
                   }`}
                   placeholder="your.email@example.com"
                 />
-                {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                {errors.email && <p className="text-error text-sm mt-1">{errors.email}</p>}
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <div>
-                <label className="block text-sm font-medium text-[#00105A] mb-2">
+                <label className="block text-sm font-medium text-text-strong mb-2">
                   Phone (Optional)
                 </label>
                 <input
@@ -282,13 +282,13 @@ export function FanSubmissionModal({ isOpen, onClose }: FanSubmissionModalProps)
                   name="phone"
                   value={formData.phone}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded focus:outline-none focus:border-[#00105A] focus:ring-1 focus:ring-[#00105A]"
+                  className="w-full px-3 py-2 border border-separator rounded focus:outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold"
                   placeholder="Your phone number"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[#00105A] mb-2">
+                <label className="block text-sm font-medium text-text-strong mb-2">
                   Supporter Since (Optional)
                 </label>
                 <input
@@ -298,16 +298,16 @@ export function FanSubmissionModal({ isOpen, onClose }: FanSubmissionModalProps)
                   onChange={handleInputChange}
                   min="1902"
                   max={new Date().getFullYear()}
-                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded focus:outline-none focus:border-[#00105A] focus:ring-1 focus:ring-[#00105A]"
+                  className="w-full px-3 py-2 border border-separator rounded focus:outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold"
                   placeholder="e.g. 1995"
                 />
               </div>
             </div>
 
-            {/* Story - UPDATED WORD COUNT REQUIREMENTS */}
+            {/* Story - Updated branding */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-[#00105A] mb-2">
-                Your Banks o' Dee Story <span className="text-red-500">*</span>
+              <label className="block text-sm font-medium text-text-strong mb-2">
+                Your Baynounah Story <span className="text-error">*</span>
               </label>
               <textarea
                 name="story"
@@ -316,21 +316,21 @@ export function FanSubmissionModal({ isOpen, onClose }: FanSubmissionModalProps)
                 rows={6}
                 className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-1 resize-none ${
                   errors.story 
-                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-                    : 'border-[#e5e7eb] focus:border-[#00105A] focus:ring-[#00105A]'
+                    ? 'border-error focus:border-error focus:ring-error' 
+                    : 'border-separator focus:border-brand-gold focus:ring-brand-gold'
                 }`}
-                placeholder="Tell us your Banks o' Dee story... (20-60 words)"
+                placeholder="Tell us your Baynounah story... (20-60 words)"
               />
               <div className="flex justify-between text-sm mt-1">
                 {errors.story ? (
-                  <p className="text-red-500">{errors.story}</p>
+                  <p className="text-error">{errors.story}</p>
                 ) : (
-                  <p className="text-[#6b7280]">20-60 words</p>
+                  <p className="text-text-muted">20-60 words</p>
                 )}
                 <p className={`${
-                  wordCount < 20 ? 'text-red-500' : 
-                  wordCount > 60 ? 'text-red-500' : 
-                  'text-[#6b7280]'
+                  wordCount < 20 ? 'text-error' : 
+                  wordCount > 60 ? 'text-error' : 
+                  'text-text-muted'
                 }`}>
                   {wordCount} words
                 </p>
@@ -339,12 +339,12 @@ export function FanSubmissionModal({ isOpen, onClose }: FanSubmissionModalProps)
 
             {/* Photo Upload */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-[#00105A] mb-2">
+              <label className="block text-sm font-medium text-text-strong mb-2">
                 Photos (Optional)
               </label>
-              <div className="border-2 border-dashed border-[#e5e7eb] rounded-lg p-6 text-center">
-                <Upload className="mx-auto h-12 w-12 text-[#6b7280] mb-4" />
-                <div className="text-sm text-[#6b7280] mb-2">
+              <div className="border-2 border-dashed border-separator rounded-lg p-6 text-center">
+                <Upload className="mx-auto h-12 w-12 text-text-muted mb-4" />
+                <div className="text-sm text-text-muted mb-2">
                   Drag and drop photos here, or click to browse
                 </div>
                 <input
@@ -357,11 +357,11 @@ export function FanSubmissionModal({ isOpen, onClose }: FanSubmissionModalProps)
                 />
                 <label
                   htmlFor="photo-upload"
-                  className="inline-block bg-[#C5E7FF] text-[#00105A] px-4 py-2 rounded cursor-pointer hover:bg-[#b3deff] transition-colors"
+                  className="inline-block bg-brand-gold text-brand-black px-4 py-2 rounded cursor-pointer hover:bg-brand-black hover:text-brand-gold border-2 border-brand-gold hover:border-brand-black transition-all duration-200"
                 >
                   Choose Photos
                 </label>
-                <div className="text-xs text-[#6b7280] mt-2">
+                <div className="text-xs text-text-muted mt-2">
                   Maximum 5 photos, 5MB each. JPG or PNG format.
                 </div>
               </div>
@@ -369,7 +369,7 @@ export function FanSubmissionModal({ isOpen, onClose }: FanSubmissionModalProps)
               {/* Selected photos preview */}
               {selectedPhotos.length > 0 && (
                 <div className="mt-4">
-                  <div className="text-sm font-medium text-[#00105A] mb-2">
+                  <div className="text-sm font-medium text-text-strong mb-2">
                     Selected Photos ({selectedPhotos.length}/5)
                   </div>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
@@ -383,7 +383,7 @@ export function FanSubmissionModal({ isOpen, onClose }: FanSubmissionModalProps)
                         <button
                           type="button"
                           onClick={() => removePhoto(index)}
-                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                          className="absolute -top-2 -right-2 bg-error text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
                         >
                           ×
                         </button>
@@ -394,7 +394,7 @@ export function FanSubmissionModal({ isOpen, onClose }: FanSubmissionModalProps)
               )}
             </div>
 
-            {/* Permissions - STANDARDIZED WORDING */}
+            {/* Permissions - Updated branding */}
             <div className="mb-6">
               <label className="flex items-start space-x-3">
                 <input
@@ -402,34 +402,34 @@ export function FanSubmissionModal({ isOpen, onClose }: FanSubmissionModalProps)
                   name="socialPermissions"
                   checked={formData.socialPermissions}
                   onChange={handleInputChange}
-                  className="mt-1 text-[#00105A] focus:ring-[#00105A]"
+                  className="mt-1 text-brand-gold focus:ring-brand-gold accent-brand-gold"
                 />
                 <div className="text-sm">
-                  <div className="font-medium text-[#00105A]">Allow Banks o' Dee FC to share this content on social media</div>
-                  <div className="text-[#6b7280]">
+                  <div className="font-medium text-text-strong">Allow Baynounah SC to share this content on social media</div>
+                  <div className="text-text-muted">
                     Permission for the club to use this story and photos on official social media channels
                   </div>
                 </div>
               </label>
             </div>
 
-            {/* Submit Button */}
+            {/* Submit Button - Baynounah branded */}
             <div className="flex justify-end space-x-4">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-6 py-2 border border-[#e5e7eb] text-[#6b7280] rounded hover:bg-[#f9fafb] transition-colors"
+                className="px-6 py-2 border border-separator text-text-muted rounded hover:bg-surface-2 transition-colors"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-6 py-2 bg-[#FFD700] text-[#00105A] rounded font-semibold hover:bg-[#f3d54a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                className="px-6 py-2 bg-brand-gold text-brand-black border-2 border-brand-gold rounded font-semibold hover:bg-brand-black hover:text-brand-gold hover:border-brand-black transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
               >
                 {isSubmitting ? (
                   <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-[#00105A] border-t-transparent"></div>
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-brand-black border-t-transparent"></div>
                     <span>Submitting...</span>
                   </>
                 ) : (
