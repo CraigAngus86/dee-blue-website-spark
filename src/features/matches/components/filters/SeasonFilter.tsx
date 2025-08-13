@@ -9,23 +9,24 @@ export function SeasonFilter() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
-  
+
   const selectedSeason = searchParams.get('season') || '';
-  
+
   // Set default season if none selected
   useEffect(() => {
     if (!selectedSeason) {
       handleSeasonChange(DEFAULT_SEASON);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedSeason]);
-  
+
   const handleSeasonChange = (value: string) => {
     console.log('Changing season to:', value);
     const params = new URLSearchParams(searchParams.toString());
     params.set('season', value);
     router.push(`${pathname}?${params.toString()}`);
   };
-  
+
   return (
     <FilterDropdown
       options={seasons}

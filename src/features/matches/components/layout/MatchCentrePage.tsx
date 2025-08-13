@@ -16,16 +16,19 @@ interface MatchCentrePageProps {
 export function MatchCentrePage({ activeTab, children }: MatchCentrePageProps) {
   const searchParams = useSearchParams();
   const tab = searchParams.get('tab') || activeTab;
-  
+
   return (
-    <div className="bg-gray-100 min-h-screen pb-8">
+    <div className="min-h-screen pb-8 bg-[rgb(var(--white))]">
       <MatchCentreHero />
-      
+
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8">
-        <div className="bg-white rounded-lg shadow-sm p-4 mb-8">
+        <div
+          className="bg-white rounded-xl p-6 mb-8 border border-[rgb(var(--medium-gray))]"
+          style={{ boxShadow: 'var(--shadow-sm)' }}
+        >
           <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-4">
             <TabNavigation />
-            
+
             <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 mt-4 md:mt-0">
               <SeasonFilter />
               {(tab === 'fixtures' || tab === 'results') && (
@@ -36,7 +39,7 @@ export function MatchCentrePage({ activeTab, children }: MatchCentrePageProps) {
               )}
             </div>
           </div>
-          
+
           <div>{children}</div>
         </div>
       </div>

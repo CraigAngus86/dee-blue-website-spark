@@ -9,14 +9,8 @@ export const seasons = [
 // Competitions (using correct short_names from the database)
 export const competitions = [
   { value: 'all', label: 'All Competitions' }, // DEFAULT
-  { value: 'Aberdeenshire Cup', label: 'Aberdeenshire Cup' },
-  { value: 'Aberdeenshire Shield', label: 'Aberdeenshire Shield' },
-  { value: 'FA Cup', label: 'Scottish FA Cup' },
-  { value: 'Friendly', label: 'Friendly' },
-  { value: 'Highland Football League', label: 'Highland Football League' },
-  { value: 'Highland League Cup', label: 'Highland League Cup' },
-  { value: 'Premier Sports Cup', label: 'Premier Sports Cup' },
-  { value: 'SPFL Trust Trophy', label: 'SPFL Trust Trophy' }
+  { value: 'UAE Second Division', label: 'UAE Second Division' },
+  { value: 'Friendly', label: 'Friendly' }
 ];
 
 // Months (calendar order)

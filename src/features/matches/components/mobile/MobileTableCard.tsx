@@ -22,15 +22,12 @@ interface MobileTableCardProps {
   tableData: LeagueTableTeam[];
 }
 
-export function MobileTableCard({ 
-  tableData = []
-}: MobileTableCardProps) {
-  
+export function MobileTableCard({ tableData = [] }: MobileTableCardProps) {
   if (tableData.length === 0) {
     return (
       <div className="w-full">
-        <div className="bg-white rounded-lg shadow-sm p-4 border border-[#e5e7eb]">
-          <div className="text-center text-[#6b7280]">
+        <div className="bg-[rgb(var(--white))] rounded-lg shadow-sm p-4 border border-[rgb(var(--medium-gray))]">
+          <div className="text-center text-[rgb(var(--dark-gray))]">
             <p className="text-sm">League table not available</p>
           </div>
         </div>
@@ -40,95 +37,104 @@ export function MobileTableCard({
 
   return (
     <div className="w-full">
-      {/* Mobile League Table - Same design as MobileLeagueTable but all teams */}
-      <div className="bg-white rounded-lg shadow-sm border border-[#e5e7eb] overflow-hidden">
+      {/* Mobile League Table */}
+      <div className="bg-[rgb(var(--white))] rounded-lg shadow-sm border border-[rgb(var(--medium-gray))] overflow-hidden">
         {/* Table Header */}
-        <div className="flex items-center bg-[#00105A] text-white p-3">
+        <div className="flex items-center bg-[rgb(var(--brand-black))] text-[rgb(var(--white))] p-3">
           {/* POS */}
           <div className="flex-shrink-0 w-8 text-center">
             <span className="text-xs font-bold uppercase">POS</span>
           </div>
-          
+
           {/* TEAM */}
           <div className="flex-1 mx-3">
             <span className="text-xs font-bold uppercase">TEAM</span>
           </div>
-          
+
           {/* P (Played) */}
           <div className="flex-shrink-0 w-8 text-center">
             <span className="text-xs font-bold uppercase">P</span>
           </div>
-          
+
           {/* PTS */}
           <div className="flex-shrink-0 w-12 text-center">
             <span className="text-xs font-bold uppercase">PTS</span>
           </div>
         </div>
-        
-        {/* Table Data - All Teams with Position-Based Coloring */}
+
+        {/* Table Data with position-based colouring */}
         {tableData.map((team, index) => {
-          const isBanksODee = team.team_name?.toLowerCase().includes("banks o' dee");
-          const isFirstPosition = team.position === 1;
-          const isLastPosition = team.position === tableData.length;
-          
-          // UPDATED: Standardized position-based coloring (same as desktop)
-          let rowBg = '';
-          if (isBanksODee) {
-            rowBg = 'bg-[#f0f7ff]'; // Light blue for Banks o' Dee
-          } else if (isFirstPosition) {
-            rowBg = 'bg-[#f0fdf4]'; // Green for 1st position
-          } else if (isLastPosition) {
-            rowBg = 'bg-[#fef2f2]'; // Red for 18th position
-          } else {
-            rowBg = 'bg-white'; // White for all others
-          }
-          
+          const name = team.team_name || '';
+          const isBaynounah = name.toLowerCase().includes('baynounah');
+
+          // Promotion (1 & 2), Demotion (14 & 15)
+          const isPromotion = team.position === 1 || team.position === 2;
+          const isDemotion = team.position === 14 || team.position === 15;
+
+          // Row background priority:
+          // 1) Baynounah highlighted (warm gray)
+          // 2) Promotion (green tint)
+          // 3) Demotion (red tint)
+          // 4) Default white
+          let rowBg = 'bg-[rgb(var(--white))]';
+          if (isBaynounah) rowBg = 'bg-[rgb(var(--warm-gray))]';
+          else if (isPromotion) rowBg = 'bg-green-50';
+          else if (isDemotion) rowBg = 'bg-red-50';
+
           return (
-            <div 
+            <div
               key={team.position}
               className={`flex items-center p-3 ${
-                index !== tableData.length - 1 ? 'border-b border-[#e5e7eb]' : ''
+                index !== tableData.length - 1 ? 'border-b border-[rgb(var(--medium-gray))]' : ''
               } ${rowBg}`}
             >
               {/* Position */}
               <div className="flex-shrink-0 w-8 text-center">
-                <span className={`text-sm font-bold ${
-                  isBanksODee ? 'text-[#00105A]' : 'text-[#6b7280]'
-                }`}>
+                <span
+                  className={`text-sm font-bold ${
+                    isBaynounah ? 'text-[rgb(var(--brand-black))]' : 'text-[rgb(var(--dark-gray))]'
+                  }`}
+                >
                   {team.position}
                 </span>
               </div>
-              
+
               {/* Logo + Team Name */}
               <div className="flex items-center flex-1 mx-3">
                 <div className="flex-shrink-0 mr-2">
-                  <TeamLogo 
-                    logoUrl={team.team_logo} 
+                  <TeamLogo
+                    logoUrl={team.team_logo}
                     teamName={team.team_short_name || team.team_name}
                     size="sm"
                   />
                 </div>
-                <span className={`text-sm font-medium truncate ${
-                  isBanksODee ? 'text-[#00105A]' : 'text-[#374151]'
-                }`}>
+                <span
+                  className={`text-sm font-medium truncate ${
+                    isBaynounah ? 'text-[rgb(var(--brand-black))]' : 'text-[rgb(var(--brand-black))]'
+                  }`}
+                >
                   {team.team_short_name || team.team_name}
                 </span>
               </div>
-              
+
               {/* Played */}
               <div className="flex-shrink-0 w-8 text-center">
-                <span className={`text-sm font-medium ${
-                  isBanksODee ? 'text-[#00105A]' : 'text-[#6b7280]'
-                }`}>
+                <span
+                  className={`text-sm font-medium ${
+                    isBaynounah ? 'text-[rgb(var(--brand-black))]' : 'text-[rgb(var(--dark-gray))]'
+                  }`}
+                >
                   {team.matches_played}
                 </span>
               </div>
-              
+
               {/* Points */}
               <div className="flex-shrink-0 w-12 text-center">
-                <span className={`text-sm font-bold ${
-                  isBanksODee ? 'text-[#00105A]' : 'text-[#6b7280]'
-                }`}>
+                <span
+                  className={`text-sm font-bold ${
+                    isBaynounah ? 'text-[rgb(var(--brand-black))]' : 'text-[rgb(var(--dark-gray))]'
+                  }`}
+                >
                   {team.points}
                 </span>
               </div>
