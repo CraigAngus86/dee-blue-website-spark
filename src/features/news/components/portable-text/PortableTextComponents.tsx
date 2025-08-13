@@ -1,28 +1,24 @@
-import React from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { PortableTextComponents } from '@portabletext/react';
+import React from "react";
+import Link from "next/link";
+import { PortableTextComponents } from "@portabletext/react";
 
 export const portableTextComponents: PortableTextComponents = {
   types: {
     image: ({ value }) => {
-      // Handle image blocks
       const { asset, alt, caption } = value;
-      if (!asset || !asset.url) {
-        return null;
-      }
-      
+      if (!asset || !asset.url) return null;
+
       return (
         <figure className="my-8 relative">
-          <div className="overflow-hidden rounded-lg shadow-md">
-            <img 
-              src={asset.url} 
-              alt={alt || 'News image'} 
+          <div className="overflow-hidden rounded-lg shadow-md border border-[rgb(var(--medium-gray))]">
+            <img
+              src={asset.url}
+              alt={alt || "News image"}
               className="w-full h-auto"
             />
           </div>
           {caption && (
-            <figcaption className="text-sm text-gray-600 mt-2 italic text-center">
+            <figcaption className="text-sm font-body text-[rgb(var(--dark-gray))] mt-2 italic text-center">
               {caption}
             </figcaption>
           )}
@@ -33,42 +29,75 @@ export const portableTextComponents: PortableTextComponents = {
   marks: {
     link: ({ children, value }) => {
       const { href } = value;
-      const isInternal = href.startsWith('/');
-      
-      const rel = isInternal ? undefined : 'noreferrer noopener';
-      const target = isInternal ? undefined : '_blank';
-      
+      const isInternal = href.startsWith("/");
+      const rel = isInternal ? undefined : "noreferrer noopener";
+      const target = isInternal ? undefined : "_blank";
+
       return (
-        <Link href={href} rel={rel} target={target} className="text-[#00105A] underline hover:text-[#C5E7FF]">
+        <Link href={href} rel={rel} target={target} className="link">
           {children}
         </Link>
       );
     },
-    strong: ({ children }) => <strong className="font-bold">{children}</strong>,
-    em: ({ children }) => <em className="italic">{children}</em>,
+    strong: ({ children }) => (
+      <strong className="font-body font-bold">{children}</strong>
+    ),
+    em: ({ children }) => (
+      <em className="font-body italic">{children}</em>
+    ),
     code: ({ children }) => (
-      <code className="px-1 py-0.5 rounded bg-gray-100 font-mono text-sm">{children}</code>
+      <code className="px-1 py-0.5 rounded bg-[rgb(var(--light-gray))] font-mono text-sm">
+        {children}
+      </code>
     ),
   },
   block: {
-    h1: ({ children }) => <h1 className="text-3xl font-bold my-4 text-[#00105A] font-montserrat">{children}</h1>,
-    h2: ({ children }) => <h2 className="text-2xl font-bold my-3 text-[#00105A] font-montserrat">{children}</h2>,
-    h3: ({ children }) => <h3 className="text-xl font-bold my-2 text-[#00105A] font-montserrat">{children}</h3>,
-    h4: ({ children }) => <h4 className="text-lg font-bold my-2 text-[#00105A] font-montserrat">{children}</h4>,
-    normal: ({ children }) => <p className="my-4 text-gray-800">{children}</p>,
+    h1: ({ children }) => (
+      <h1 className="text-h1 font-heading tracking-[0.02em] text-[rgb(var(--brand-black))] mb-6">
+        {children}
+      </h1>
+    ),
+    h2: ({ children }) => (
+      <h2 className="text-h2 font-heading tracking-[0.02em] text-[rgb(var(--brand-black))] mb-5">
+        {children}
+      </h2>
+    ),
+    h3: ({ children }) => (
+      <h3 className="text-h3 font-heading tracking-[0.02em] text-[rgb(var(--brand-black))] mb-4">
+        {children}
+      </h3>
+    ),
+    h4: ({ children }) => (
+      <h4 className="text-h4 font-body font-semibold text-[rgb(var(--brand-black))] mb-3">
+        {children}
+      </h4>
+    ),
+    normal: ({ children }) => (
+      <p className="font-body text-base text-[rgb(var(--brand-black))] mb-4 leading-relaxed">
+        {children}
+      </p>
+    ),
     blockquote: ({ children }) => (
-      <blockquote className="border-l-4 border-[#00105A] pl-4 italic my-6 text-gray-700">
+      <blockquote className="border-l-4 border-[rgb(var(--brand-gold))] pl-4 italic my-6 font-body text-[rgb(var(--dark-gray))]">
         {children}
       </blockquote>
     ),
   },
   list: {
-    bullet: ({ children }) => <ul className="list-disc pl-5 my-4 space-y-2">{children}</ul>,
-    number: ({ children }) => <ol className="list-decimal pl-5 my-4 space-y-2">{children}</ol>,
+    bullet: ({ children }) => (
+      <ul className="list-disc pl-5 my-4 space-y-2">{children}</ul>
+    ),
+    number: ({ children }) => (
+      <ol className="list-decimal pl-5 my-4 space-y-2">{children}</ol>
+    ),
   },
   listItem: {
-    bullet: ({ children }) => <li className="text-gray-800">{children}</li>,
-    number: ({ children }) => <li className="text-gray-800">{children}</li>,
+    bullet: ({ children }) => (
+      <li className="font-body text-[rgb(var(--brand-black))]">{children}</li>
+    ),
+    number: ({ children }) => (
+      <li className="font-body text-[rgb(var(--brand-black))]">{children}</li>
+    ),
   },
 };
 

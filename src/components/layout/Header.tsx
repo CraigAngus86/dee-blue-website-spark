@@ -187,7 +187,7 @@ const Header = ({ sponsors = [] }: HeaderProps) => {
               <div className="flex">
                 <Link
                   href="#"
-                  className="font-body text-sm whitespace-nowrap rounded-md flex items-center px-4 py-1.5 shadow transition-all duration-200
+                  className="font-body text-sm whitespace-nowrap rounded-md flex items-center px-4 py-1.45 shadow transition-all duration-200
                              bg-[rgb(var(--brand-gold))] text-[rgb(var(--brand-black))] border-2 border-[rgb(var(--brand-gold))]
                              hover:bg-[rgb(var(--brand-black))] hover:text-[rgb(var(--brand-gold))] hover:border-[rgb(var(--brand-black))]"
                 >

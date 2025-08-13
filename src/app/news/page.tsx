@@ -3,26 +3,26 @@ import { fetchSanityData } from "@/lib/sanity/sanityClient";
 import { NewsGrid } from "@/features/news/components";
 import { NewsHero } from "@/features/news/components/NewsHero";
 
-// Set the revalidation time to ensure fresh data
-export const revalidate = 10; // Revalidate every 10 seconds
+// Revalidate to keep content fresh
+export const revalidate = 10;
 
 export const metadata: Metadata = {
-  title: "News | Banks o' Dee FC",
-  description: "Latest news, match reports, and updates from Banks o' Dee Football Club",
+  title: "News | Baynounah SC",
+  description:
+    "Latest Baynounah SC news, match reports, and club updates — be part of the journey.",
 };
 
 // Fetch all news articles
 async function getAllNews() {
-  // FIXED: Updated query to preserve full structure including body
   const query = `*[_type == "newsArticle" && !(_id in path("drafts.**"))] | order(publishedAt desc) {
     _id,
     title,
     "slug": slug.current,
     publishedAt, matchDate,
-    mainImage, // Keep full Cloudinary structure
+    mainImage,
     excerpt,
     category,
-    body, // Include the body content
+    body,
     author,
     "matchId": matchId,
     "relatedMatchId": relatedMatchId,
@@ -36,13 +36,10 @@ async function getAllNews() {
     },
     gallery
   }`;
-  
+
   try {
     const news = await fetchSanityData(query, {}, false);
-    console.log('First article body type:', news && news.length > 0 ? typeof news[0].body : 'No articles');
-    if (news && news.length > 0 && news[0].body) {
-      console.log('First article body sample:', JSON.stringify(news[0].body).substring(0, 100) + '...');
-    }
+    // (Keep any debugging logs you need locally)
     return news || [];
   } catch (error) {
     console.error("Error fetching news:", error);
@@ -52,15 +49,14 @@ async function getAllNews() {
 
 // Fetch match galleries
 async function getMatchGalleries() {
-  // Note: Update this query based on your actual Sanity schema for galleries
   const query = `*[_type == "matchGallery" && !(_id in path("drafts.**"))] | order(publishedAt desc) {
     _id,
     title,
     publishedAt, matchDate,
-    coverImage, // Keep full structure
+    coverImage,
     "match": match->title
   }`;
-  
+
   try {
     const galleries = await fetchSanityData(query, {}, false);
     return galleries || [];
@@ -71,34 +67,27 @@ async function getMatchGalleries() {
 }
 
 export default async function NewsPage() {
-  // Add a cache-busting timestamp to force fetch
-  const timestamp = Date.now();
-  
-  // Fetch all news articles and galleries in parallel
   const [newsArticles, matchGalleries] = await Promise.all([
     getAllNews(),
-    getMatchGalleries()
+    getMatchGalleries(),
   ]);
-  
-  // Process articles - preserve the full structure
-  const processedArticles = newsArticles.map(article => ({
+
+  const processedArticles = newsArticles.map((article: any) => ({
     ...article,
     id: article._id,
-    // No transformation needed - keep original structure
   }));
-  
+
   return (
     <main className="min-h-screen">
-      {/* Hero Section */}
+      {/* Hero Section (uses global heading + brand tokens) */}
       <NewsHero />
-      
-      {/* News Grid */}
-      <div className="container mx-auto px-4 py-8">
-        <NewsGrid
-          articles={processedArticles}
-          galleries={matchGalleries}
-        />
-      </div>
+
+      {/* News Grid Section — standardized spacing + warm gray alternation per global.css */}
+      <section className="section section--white">
+        <div className="container mx-auto px-4">
+          <NewsGrid articles={processedArticles} galleries={matchGalleries} />
+        </div>
+      </section>
     </main>
   );
 }

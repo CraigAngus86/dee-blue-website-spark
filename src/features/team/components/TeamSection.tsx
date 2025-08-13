@@ -9,19 +9,19 @@ interface TeamSectionProps {
   onProfileClick: (person: Person) => void;
 }
 
-export function TeamSection({ 
-  title, 
-  people, 
+export function TeamSection({
+  title,
+  people,
   className = '',
-  onProfileClick
+  onProfileClick,
 }: TeamSectionProps) {
   if (people.length === 0) {
     return null;
   }
-  
-  // Format section title
+
+  // Format section title (kept exactly as your logic)
   const formatTitle = (rawTitle: string) => {
-    switch(rawTitle.toLowerCase()) {
+    switch (rawTitle.toLowerCase()) {
       case 'management':
         return 'MANAGEMENT & STAFF';
       case 'goalkeeper':
@@ -36,17 +36,19 @@ export function TeamSection({
         return rawTitle.toUpperCase();
     }
   };
-  
+
   const formattedTitle = formatTitle(title);
-  
+
   return (
     <section className={`py-8 ${className}`}>
-      <h2 className="text-3xl font-bold text-center text-[#00105a] mb-8">{formattedTitle}</h2>
-      
+      <h2 className="text-h2 font-heading tracking-[0.02em] text-center text-[rgb(var(--brand-black))] mb-8">
+        {formattedTitle}
+      </h2>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {people.map((person) => (
-          <PersonCard 
-            key={person._id} 
+          <PersonCard
+            key={person._id}
             person={person}
             onProfileClick={onProfileClick}
           />
