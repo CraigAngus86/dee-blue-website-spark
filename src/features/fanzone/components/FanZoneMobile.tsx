@@ -4,7 +4,7 @@ import FanSubmissionModal from './FanSubmissionModal';
 import PhotoUploadModal from './PhotoUploadModal';
 import PollCardMobile from './PollCardMobile';
 import FanGalleryModalMobile from './FanGalleryModalMobile';
-import { Camera, Star } from 'lucide-react';
+import { Camera, Star, Search } from 'lucide-react';
 
 interface FanZoneMobileProps {
   fanOfMonth?: any;
@@ -94,7 +94,7 @@ export default function FanZoneMobile({
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Section Header - Baynounah branded */}
+      {/* Section Header - Consistent with desktop */}
       <div className="flex items-start mb-8">
         <div className="w-1 h-8 bg-brand-gold mr-4 mt-1 rounded-sm"></div>
         <div>
@@ -105,138 +105,195 @@ export default function FanZoneMobile({
 
       <div className="space-y-6">
         
-        {/* Fan of the Month - Baynounah branded */}
-        <div className="bg-white rounded-lg shadow-md hover:shadow-xl border border-separator overflow-hidden transition-all duration-300 hover:-translate-y-1">
-          <div className="p-6 border-b border-separator flex items-center">
-            <h3 className="text-h4 font-heading text-brand-black" style={{letterSpacing: '0.02em'}}>Fan of the Month</h3>
+        {/* Fan of the Month - UPDATED with consistent header */}
+        <div className="bg-white rounded-xl border border-separator shadow-sm hover:shadow-md overflow-hidden transition-all duration-300 hover:-translate-y-1">
+          {/* FIXED: Consistent Card Header with gold accent - 72px for mobile */}
+          <div className="h-[72px] flex items-center justify-between px-4 border-b border-separator bg-gradient-to-r from-white to-[#F8F6F3]">
+            <div className="flex items-center">
+              <div className="w-1 h-8 bg-brand-gold rounded-sm mr-3" />
+              <div>
+                <h3 className="text-h5 font-heading text-brand-black tracking-tightest leading-none m-0">
+                  Fan of the Month
+                </h3>
+                <p className="text-xs text-text-muted leading-none m-0 mt-1">
+                  Featured Supporter
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={handleSubmitStoryClick}
+              className="text-xs px-3 py-1.5 bg-brand-gold text-brand-black border border-brand-gold rounded hover:bg-brand-black hover:text-brand-gold hover:border-brand-black transition-all duration-200"
+            >
+              Submit
+            </button>
           </div>
           
           {fanOfMonth ? (
             <div className="relative">
-              <div className="relative min-h-[300px] transition-transform duration-300 hover:scale-105">
+              <div className="relative h-[280px] overflow-hidden">
                 {fanOfMonth.photos?.[0]?.public_id ? (
                   <img 
                     src={buildCloudinaryUrl(fanOfMonth.photos[0].public_id, 'fanOfMonth')}
                     alt={`${fanOfMonth.fanName}`}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                   />
                 ) : (
-                  <div className="w-full min-h-[300px] bg-gradient-to-br from-brand-gold to-brand-black"></div>
+                  <div className="w-full h-full bg-gradient-to-br from-light-gray to-medium-gray" />
                 )}
               </div>
               
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent"></div>
+              {/* Enhanced gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
               
-              <div className="absolute bottom-0 left-0 right-0 p-6 text-white z-10">
-                <div className="mb-4">
-                  <h4 className="text-2xl font-bold mb-3">{fanOfMonth.fanName}</h4>
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="bg-brand-gold text-brand-black px-3 py-1 rounded-full text-sm font-medium">
-                      {formatCategory(fanOfMonth.category)}
-                    </div>
-                    {fanOfMonth.supporterSince && (
-                      <span className="text-white/90 text-sm">Supporter since {fanOfMonth.supporterSince}</span>
-                    )}
-                  </div>
+              <div className="absolute bottom-0 left-0 right-0 p-4 text-white z-10">
+                <h4 className="text-xl font-bold mb-2 drop-shadow-lg">{fanOfMonth.fanName}</h4>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="inline-flex items-center rounded-full bg-brand-gold text-brand-black text-xs font-semibold px-2 py-0.5 shadow-md">
+                    {formatCategory(fanOfMonth.category)}
+                  </span>
+                  {fanOfMonth.supporterSince && (
+                    <span className="text-white/90 text-xs drop-shadow">
+                      Since {fanOfMonth.supporterSince}
+                    </span>
+                  )}
                 </div>
-                
-                <p className="text-white text-sm leading-relaxed">
+                <p className="text-white text-xs leading-relaxed drop-shadow">
                   {getStoryExcerpt(fanOfMonth.story)}
                 </p>
               </div>
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center text-center py-12">
-              <div className="w-20 h-20 bg-gradient-to-br from-brand-gold to-brand-gold/70 rounded-full flex items-center justify-center mb-4 shadow-lg transition-all duration-300 hover:scale-110">
-                <Star className="w-10 h-10 text-brand-black" />
+            <div className="flex flex-col items-center justify-center text-center py-12 px-4">
+              <div className="w-16 h-16 bg-gradient-to-br from-brand-gold to-brand-gold/70 rounded-full flex items-center justify-center mb-3 shadow-lg animate-pulse">
+                <Star className="w-8 h-8 text-brand-black" />
               </div>
-              <h4 className="text-brand-black text-lg font-semibold mb-3">Become our first featured fan</h4>
-              <p className="text-text-muted text-sm leading-relaxed max-w-xs">Share your Baynounah story and be featured on our website</p>
+              <h4 className="text-brand-black text-base font-semibold mb-2">
+                Become our first featured fan
+              </h4>
+              <p className="text-text-muted text-sm leading-relaxed max-w-xs">
+                Share your Baynounah story and be featured on our website
+              </p>
             </div>
           )}
-          
-          <div className="p-6 border-t border-separator text-center">
-            <button 
-              onClick={handleSubmitStoryClick}
-              className="bg-brand-gold text-brand-black hover:bg-brand-black hover:text-brand-gold border-2 border-brand-gold hover:border-brand-black px-4 py-2 rounded font-medium transition-all duration-300 inline-flex items-center gap-2 shadow-md hover:shadow-lg"
-            >
-              Submit Your Story
-            </button>
-          </div>
         </div>
 
-        {/* Mobile Poll Card */}
+        {/* Mobile Poll Card - Already updated in PollCardMobile */}
         <PollCardMobile activePoll={activePoll} />
 
-        {/* Fan Gallery Section - Baynounah branded */}
+        {/* Fan Gallery Section - UPDATED header consistency */}
         <div>
-          <div className="flex items-start mb-6">
-            <div className="w-1 h-6 bg-brand-gold mr-4 mt-1 rounded-sm"></div>
-            <h3 className="text-h4 font-heading text-brand-black" style={{letterSpacing: '0.02em'}}>Fan Gallery</h3>
+          {/* Gallery Header - Consistent with desktop pattern */}
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-start">
+              <div className="w-1 h-6 bg-brand-gold mr-3 mt-1 rounded-sm"></div>
+              <h3 className="text-h5 font-heading text-brand-black tracking-tightest">Fan Gallery</h3>
+            </div>
+            <button 
+              onClick={handleUploadPhotoClick}
+              className="inline-flex items-center gap-1 text-xs px-3 py-1.5 bg-brand-gold text-brand-black border border-brand-gold rounded hover:bg-brand-black hover:text-brand-gold hover:border-brand-black transition-all duration-200"
+            >
+              <Camera className="w-3 h-3" />
+              Upload
+            </button>
           </div>
           
-          <div className="grid grid-cols-2 gap-4 mb-4">
+          <div className="grid grid-cols-2 gap-3 mb-4">
             {galleryPhotos.length > 0 ? (
               galleryPhotos.slice(0, 4).map((photo, index) => (
                 <div 
                   key={index}
                   onClick={() => handleGalleryPhotoClick(photo)}
-                  className="aspect-[5/4] bg-surface-2 rounded-lg relative overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-2 cursor-pointer border border-separator group active:scale-95"
+                  className="group relative aspect-[5/4] bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer border border-separator active:scale-95"
                 >
                   {photo.photo?.public_id ? (
-                    <img 
-                      src={buildCloudinaryUrl(photo.photo.public_id, 'gallery')}
-                      alt={photo.context || `Photo by ${photo.fanName}`}
-                      className="w-full h-full object-cover transition-transform duration-300 group-active:scale-110"
-                    />
+                    <>
+                      <img 
+                        src={buildCloudinaryUrl(photo.photo.public_id, 'gallery')}
+                        alt={photo.context || `Photo by ${photo.fanName}`}
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    </>
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-text-muted">
-                      <Camera className="w-8 h-8" />
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-light-gray to-medium-gray text-text-muted">
+                      <Camera className="w-6 h-6 opacity-50" />
                     </div>
                   )}
                   
-                  {/* Caption with Baynounah black background */}
-                  <div className="absolute bottom-2 left-2 bg-brand-black/80 text-white px-2 py-1 rounded text-xs transition-all duration-300">
-                    By {photo.fanName}
+                  {/* Caption with consistent branding */}
+                  <div className="absolute bottom-1 left-1 bg-black/80 backdrop-blur-sm text-white px-2 py-0.5 rounded text-[10px] font-medium">
+                    By {photo.fanName || "Fan"}
                   </div>
                   
-                  {/* Subtle zoom icon */}
-                  <div className="absolute top-2 right-2 w-6 h-6 bg-white/90 rounded-full flex items-center justify-center">
-                    <span className="text-brand-black text-xs">🔍</span>
+                  {/* Zoom indicator */}
+                  <div className="absolute top-1 right-1 w-5 h-5 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Search className="w-3 h-3 text-brand-black" />
                   </div>
                 </div>
               ))
             ) : (
-              [1, 2, 3, 4].map((num) => (
+              Array.from({ length: 4 }, (_, i) => (
                 <div 
-                  key={num}
-                  className="aspect-[5/4] bg-surface-2 rounded-lg flex items-center justify-center text-text-muted text-sm text-center relative overflow-hidden shadow-md border border-separator"
+                  key={i}
+                  className="relative aspect-[5/4] bg-gradient-to-br from-white to-[#F8F6F3] rounded-lg flex items-center justify-center text-text-muted shadow-sm border border-separator"
                 >
-                  <Camera className="w-8 h-8 opacity-50" />
-                  <div className="absolute bottom-2 left-2 bg-brand-black/80 text-white px-2 py-1 rounded text-xs">
-                    Photo {num}
-                  </div>
+                  <Camera className="w-6 h-6 opacity-30" />
                 </div>
               ))
             )}
           </div>
           
           <div className="text-center">
-            <p className="text-text-muted text-sm mb-3">Share your match day photos and be featured on our website</p>
-            <button 
-              onClick={handleUploadPhotoClick}
-              className="bg-brand-gold text-brand-black hover:bg-brand-black hover:text-brand-gold border-2 border-brand-gold hover:border-brand-black px-4 py-2 rounded font-medium transition-all duration-300 inline-flex items-center gap-2 shadow-md hover:shadow-lg"
-            >
-              <Camera className="w-4 h-4" />
-              Upload Photo
-            </button>
+            <p className="text-text-muted text-xs mb-3">
+              Share your match day photos and be featured
+            </p>
           </div>
         </div>
 
-        {/* Social Media Section - Baynounah branded */}
-        <div className="text-center py-6 bg-surface-2 rounded-lg border border-separator shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
-          <div className="text-h5 font-heading text-brand-black mb-1" style={{letterSpacing: '0.02em'}}>#BaynounahSC</div>
-          <p className="text-text-muted text-sm">Join the conversation on social media</p>
+        {/* Social Media Section - Enhanced consistency */}
+        <div className="relative overflow-hidden rounded-xl border-2 border-separator hover:border-brand-gold shadow-sm transition-all duration-300 group" 
+             style={{background: 'linear-gradient(135deg, #FFFFFF 0%, #F8F6F3 100%)'}}>
+          
+          {/* Subtle pattern overlay */}
+          <div className="absolute inset-0 opacity-[0.02]">
+            <div className="absolute inset-0" style={{
+              backgroundImage: `repeating-linear-gradient(45deg, transparent, transparent 35px, #FCC743 35px, #FCC743 36px)`,
+            }} />
+          </div>
+          
+          <div className="relative p-4">
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <h4 className="text-base font-heading text-brand-black tracking-tightest">
+                  Join Our Community
+                </h4>
+                <p className="text-xs text-text-muted mt-0.5">
+                  Be part of the Baynounah family
+                </p>
+              </div>
+              
+              {/* Live indicator */}
+              <div className="flex items-center gap-1">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-gold opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-gold"></span>
+                </span>
+                <span className="text-[10px] font-medium text-text-muted">
+                  LIVE
+                </span>
+              </div>
+            </div>
+            
+            {/* Hashtags */}
+            <div className="flex gap-2 justify-center">
+              <span className="px-2 py-1 bg-black text-white text-[10px] font-medium rounded-full shadow-sm">
+                #BaynounahSC
+              </span>
+              <span className="px-2 py-1 bg-brand-gold text-black text-[10px] font-medium rounded-full shadow-sm">
+                #BePartOfTheJourney
+              </span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -260,3 +317,5 @@ export default function FanZoneMobile({
     </div>
   );
 }
+
+  //
