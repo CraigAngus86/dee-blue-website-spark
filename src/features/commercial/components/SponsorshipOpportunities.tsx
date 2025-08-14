@@ -2,134 +2,130 @@
 import React from 'react';
 
 interface SponsorshipOpportunitiesProps {
-  onSponsorshipClick: (sponsorshipType: string) => void;
   onDiscussOptions: () => void;
 }
 
-export function SponsorshipOpportunities({ onSponsorshipClick, onDiscussOptions }: SponsorshipOpportunitiesProps) {
-  const sponsorshipPackages = [
+export function SponsorshipOpportunities({ onDiscussOptions }: SponsorshipOpportunitiesProps) {
+  const partnershipTiers = [
     {
-      title: "Perimeter Sponsorship Boards",
-      pricing: "£1,750-£3,000 (3 seasons)",
-      imageId: "boards_mw4zjd",
-      description: "Premium pitch-side advertising offering season-long visibility to all match attendees and in match photography.",
+      title: "Principal Partnership",
+      pricing: "250,000 AED per season",
+      duration: "1 - 3 seasons",
+      featured: true,
       features: [
-        "10ft or 20ft board options available",
-        "Professional design consultation included", 
-        "Pre-agreed number of free match tickets",
-        "Exposure during all home matches",
-        "Visible in match photography and social content"
+        "First Team Main Shirt branding",
+        "Team & Staff Uniform integration", 
+        "Academy Kits branding across 300+ families",
+        "Digital Co-Branding opportunities",
+        "Hospitality Access for key matches",
+        "Media Coverage and PR support",
+        "Perimeter boards option available",
+        "Social media integration across all platforms"
       ]
     },
     {
-      title: "Player Sponsorship",
-      pricing: "£500 per season",
-      imageId: "player_sponsor_gei2s0",
-      description: "Connect your brand with one of our first-team players throughout the season with digital and social integration.",
+      title: "Main Partner", 
+      pricing: "100,000 AED per season",
+      duration: "1 - 3 seasons", 
+      featured: false,
       features: [
-        "Company logo on player's web profile",
-        "Logo inclusion on all player social media",
-        "Meet and greet arranged during season",
-        "Pre-agreed number of free match tickets",
-        "Player appearance opportunities"
+        "First Team Back of Shirt placement",
+        "First Team Shorts branding",
+        "Training Kits integration",
+        "Social Media Integration",
+        "Match Day Activation opportunities",
+        "Networking Opportunities",
+        "Perimeter boards option available",
+        "Digital platform integration"
       ]
     },
     {
-      title: "Kit & Equipment Branding",
-      pricing: "Contact for pricing",
-      imageId: "kit_sponsor_u5hwqg",
-      description: "Brand visibility on training gear, equipment, and match day materials with photography and content rights.",
+      title: "Official Partner",
+      pricing: "50,000 AED per season", 
+      duration: "1 - 3 seasons",
+      featured: false,
       features: [
-        "Logo placement on training equipment",
-        "Match day materials branding options",
-        "Photography rights for promotional use",
-        "Social media content opportunities",
-        "Flexible branding placement options"
+        "Training Kits branding",
+        "Player Sponsorship opportunities",
+        "Match Day Activation",
+        "Networking Opportunities", 
+        "Social Media Integration",
+        "Community engagement programs",
+        "Perimeter boards option available",
+        "Academy event participation"
       ]
     }
   ];
 
-  const getImageUrl = (publicId: string) => {
-    const baseUrl = "https://res.cloudinary.com/dlkpaw2a0/image/upload";
-    const transformation = "c_fill,g_auto:subject,ar_16:9,q_auto:good,f_auto,w_400,h_225";
-    return `${baseUrl}/${transformation}/${publicId}`;
-  };
-
   return (
-    <section className="py-16 bg-white">
+    <section className="section section--white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#00105A] mb-6 font-montserrat">
-            Sponsorship Opportunities
+          <h2 className="font-heading text-h2 tracking-[0.02em] text-brand-black mb-6">
+            Partnership Opportunities
           </h2>
-          <div className="w-24 h-1 bg-[#FFD700] mx-auto mb-6"></div>
-          <p className="text-lg text-[#4b5563] max-w-3xl mx-auto leading-relaxed">
-            Connect your brand with Banks o' Dee FC through our range of non-matchday sponsorship packages 
-            designed to provide year-round exposure and brand association.
+          <div className="w-24 h-1 bg-brand-gold mx-auto mb-6"></div>
+          <p className="font-body text-lg text-text-muted max-w-3xl mx-auto leading-relaxed">
+            Choose the partnership level that aligns with your business goals. From principal shirt 
+            sponsorship to targeted community engagement, we offer flexible opportunities to grow with us.
           </p>
         </div>
 
-        {/* Sponsorship Packages Grid */}
+        {/* Partnership Tiers Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {sponsorshipPackages.map((pkg, index) => (
+          {partnershipTiers.map((tier, index) => (
             <div 
               key={index}
-              className="bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group hover:-translate-y-2 h-full flex flex-col"
+              className={`rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group hover:-translate-y-2 ${
+                tier.featured 
+                  ? 'bg-gradient-to-br from-brand-gold to-accent-light border-2 border-brand-gold' 
+                  : 'bg-surface-1 border border-separator'
+              }`}
             >
-              {/* Package Image with Navy Overlay */}
-              <div className="relative h-48 overflow-hidden flex-shrink-0">
-                <img 
-                  src={getImageUrl(pkg.imageId)}
-                  alt={pkg.title}
-                  className="w-full h-full object-cover"
-                />
-                {/* Navy Overlay */}
-                <div className="absolute inset-0 bg-[#00105A]/60"></div>
-                {/* Title Overlay */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-white font-bold text-lg text-center p-4">
-                    {pkg.title}
-                  </div>
+              {/* Tier Header */}
+              <div className={`p-6 text-center ${tier.featured ? 'text-brand-black' : 'bg-surface-2'}`}>
+                <h3 className="font-heading text-h3 tracking-[0.02em] text-brand-black mb-2">
+                  {tier.title}
+                </h3>
+                <div className="font-body text-2xl font-semibold text-brand-black mb-1">
+                  {tier.pricing}
+                </div>
+                <div className="font-body text-sm text-text-muted">
+                  {tier.duration}
                 </div>
               </div>
 
-              {/* Package Content */}
+              {/* Features List */}
               <div className="p-6 flex-grow flex flex-col">
-                <h3 className="text-xl font-bold text-[#00105A] mb-2 font-montserrat">
-                  {pkg.title}
-                </h3>
-                <p className="text-lg font-semibold text-[#C5E7FF] mb-4">
-                  {pkg.pricing}
-                </p>
-                <p className="text-[#6b7280] mb-6 leading-relaxed">
-                  {pkg.description}
-                </p>
-
-                {/* Features List */}
-                <ul className="space-y-2 flex-grow">
-                  {pkg.features.map((feature, idx) => (
+                <ul className="space-y-3 flex-grow mb-6">
+                  {tier.features.map((feature, idx) => (
                     <li key={idx} className="flex items-start">
-                      <span className="text-[#FFD700] font-bold mr-2 flex-shrink-0">✓</span>
-                      <span className="text-[#4b5563] text-sm">{feature}</span>
+                      <span className={`font-bold mr-3 flex-shrink-0 mt-0.5 ${
+                        tier.featured ? 'text-brand-black' : 'text-brand-gold'
+                      }`}>✓</span>
+                      <span className="font-body text-sm text-text-strong leading-relaxed">{feature}</span>
                     </li>
                   ))}
                 </ul>
+
+
               </div>
             </div>
           ))}
         </div>
 
-        {/* Single Bottom CTA */}
+        {/* Bottom CTA */}
         <div className="text-center mt-12">
-          <p className="text-lg text-[#4b5563] mb-6">
-            Looking to explore our sponsorship opportunities further? Our commercial team is here to help.
+          <p className="font-body text-lg text-text-muted mb-6">
+            Looking for a custom partnership solution? Let's discuss how we can create 
+            the perfect opportunity for your business.
           </p>
           <button 
             onClick={onDiscussOptions}
-            className="bg-[#FFD700] text-[#00105A] hover:bg-[#f1c40f] px-8 py-4 rounded-lg font-bold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+            className="bg-brand-gold text-brand-black hover:bg-accent-dark px-8 py-4 rounded-lg font-body font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl"
           >
-            Discuss Sponsorship Options
+            Discuss Custom Partnership
           </button>
         </div>
       </div>

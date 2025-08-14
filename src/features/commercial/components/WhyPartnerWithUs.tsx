@@ -1,6 +1,6 @@
 "use client";
 import React from 'react';
-import { Eye, Building2, Users, Globe } from 'lucide-react';
+import { Trophy, Rocket, Heart, Smartphone } from 'lucide-react';
 
 interface WhyPartnerWithUsProps {
   onPartnershipClick: () => void;
@@ -9,62 +9,62 @@ interface WhyPartnerWithUsProps {
 export function WhyPartnerWithUs({ onPartnershipClick }: WhyPartnerWithUsProps) {
   const valuePillars = [
     {
-      icon: <Eye className="w-8 h-8" />,
-      title: "Local Visibility",
-      description: "Connect with our passionate fanbase at Spain Park, with a capacity of just under 1,000 attendees and ongoing activities daily thanks to our Banks o' Dee Sports Club."
+      icon: <Trophy className="w-8 h-8" />,
+      title: "Sporting Platform",
+      description: "Partner with Abu Dhabi's capital club, established in 2019 with FIFA certification and home at the prestigious ERTH Stadium, representing the heart of UAE football."
     },
     {
-      icon: <Building2 className="w-8 h-8" />,
-      title: "Premium Facilities", 
-      description: "Showcase your brand at our state-of-the-art Spain Park stadium with modern facilities and professional presentation standards."
+      icon: <Rocket className="w-8 h-8" />,
+      title: "Early Access",
+      description: "Be a first mover and support our growth potential. Join us now as we build something special and raise our profile across the region and beyond."
     },
     {
-      icon: <Users className="w-8 h-8" />,
-      title: "Community Engagement",
-      description: "Associate with a club deeply rooted in the community, supporting local initiatives while building authentic connections with supporters."
+      icon: <Heart className="w-8 h-8" />,
+      title: "Heritage & Community",
+      description: "Connect with Sheikh Zayed's beloved Baynounah region heritage while engaging with our 300+ academy families who form the authentic heart of our community."
     },
     {
-      icon: <Globe className="w-8 h-8" />,
-      title: "Digital Presence",
-      description: "Reach over 5,000 weekly visitors through our website and active social media presence, extending your brand reach beyond matchday."
+      icon: <Smartphone className="w-8 h-8" />,
+      title: "Digital Growth",
+      description: "Partner with our developing digital platform for increased brand exposure through our integrated digital fan model and co-branding opportunities."
     }
   ];
 
   return (
-    <section id="why-partner" className="py-16 bg-[#f9fafb]">
+    <section id="why-partner" className="section section--warm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header - Merged Content */}
+        {/* Section Header */}
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#00105A] mb-6 font-montserrat">
-            Why Partner With Banks o' Dee FC
+          <h2 className="font-heading text-h2 tracking-[0.02em] text-brand-black mb-6">
+            Why Partner With Baynounah Sports Club
           </h2>
-          <div className="w-24 h-1 bg-[#FFD700] mx-auto mb-6"></div>
-          <p className="text-lg text-[#4b5563] max-w-4xl mx-auto leading-relaxed">
-            Elevate your brand through a strategic partnership with Banks o' Dee FC in Aberdeen—Scotland's energy capital. 
-            We deliver professional standards with authentic community connection, providing outstanding exposure and cost-effective 
-            access to a thriving local market. Partner with us for genuine connections that drive sustainable business growth.
+          <div className="w-24 h-1 bg-brand-gold mx-auto mb-6"></div>
+          <p className="font-body text-lg text-text-muted max-w-4xl mx-auto leading-relaxed">
+            Join us at the perfect time to be part of our journey. As Abu Dhabi's emerging football force, 
+            we offer authentic community connections, heritage storytelling, and growth potential that 
+            established clubs simply cannot provide. The time to invest with us is now.
           </p>
         </div>
 
         {/* Value Pillars Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           {valuePillars.map((pillar, index) => (
-            <div 
+            <div
               key={index}
-              className="bg-white rounded-lg p-8 shadow-md hover:shadow-xl transition-all duration-300 text-center group hover:-translate-y-2"
+              className="bg-surface-1 rounded-lg p-8 shadow-md hover:shadow-xl transition-all duration-300 text-center group hover:-translate-y-2"
             >
               {/* Icon */}
-              <div className="w-16 h-16 bg-[#C5E7FF] rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-[#FFD700] transition-colors duration-300">
-                <div className="text-[#00105A]">
+              <div className="w-16 h-16 bg-surface-2 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-brand-gold transition-colors duration-300">
+                <div className="text-brand-black">
                   {pillar.icon}
                 </div>
               </div>
               
               {/* Content */}
-              <h3 className="text-xl font-semibold text-[#00105A] mb-4 font-montserrat">
+              <h3 className="font-heading text-xl tracking-[0.02em] text-brand-black mb-4">
                 {pillar.title}
               </h3>
-              <p className="text-[#6b7280] leading-relaxed">
+              <p className="font-body text-text-muted leading-relaxed">
                 {pillar.description}
               </p>
             </div>
@@ -73,12 +73,12 @@ export function WhyPartnerWithUs({ onPartnershipClick }: WhyPartnerWithUsProps) 
 
         {/* Single CTA */}
         <div className="text-center">
-          <p className="text-[#6b7280] mb-6">
-            Looking to explore our partnership opportunities further? Our commercial team is here to help.
+          <p className="font-body text-text-muted mb-6">
+            Ready to be part of our journey? Our commercial team is here to help you find the perfect partnership opportunity.
           </p>
-          <button 
+          <button
             onClick={onPartnershipClick}
-            className="bg-[#FFD700] text-[#00105A] hover:bg-[#f1c40f] px-8 py-4 rounded-lg font-bold text-lg transition-all duration-200 shadow-lg hover:shadow-xl"
+            className="bg-brand-gold text-brand-black hover:bg-accent-dark px-8 py-4 rounded-lg font-body font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl"
           >
             Discuss Partnership Options
           </button>

@@ -19,12 +19,10 @@ export function NewsHero({
       {/* Hero background image */}
       <div
         className="absolute inset-0 bg-cover bg-center opacity-50 z-0"
-        style={{
-          backgroundImage: `url(${imageUrl})`,
-        }}
+        style={{ backgroundImage: `url(${imageUrl})` }}
       />
-      {/* Overlay tint using brand gold/black blend */}
-      <div className="absolute inset-0 bg-black opacity-30 z-10"></div>
+      {/* Overlay tint (match spec) */}
+      <div className="absolute inset-0 bg-black opacity-30 z-10" />
 
       {/* Hero content */}
       <div className="relative z-20 h-full flex flex-col justify-center items-center text-center px-4 max-w-4xl mx-auto">
@@ -32,10 +30,19 @@ export function NewsHero({
           {title}
         </h1>
         {subtitle && (
-          <p className="font-body text-lg md:text-xl text-white/90 max-w-2xl">
+          <p className="font-body text-xl md:text-2xl text-white/90 max-w-3xl leading-relaxed">
             {subtitle}
           </p>
         )}
+
+        {/* Heritage accent (standardised across heroes) */}
+        <div className="mt-6 flex items-center space-x-4">
+          <div className="h-px bg-gradient-to-r from-transparent via-brand-gold to-transparent w-16" />
+          <div className="text-brand-gold font-body text-sm tracking-wider">
+            HERITAGE • EXCELLENCE • COMMUNITY
+          </div>
+          <div className="h-px bg-gradient-to-r from-transparent via-brand-gold to-transparent w-16" />
+        </div>
       </div>
     </div>
   );

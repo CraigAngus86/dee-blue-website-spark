@@ -29,7 +29,7 @@ export function MatchCentreHero({
         style={{ backgroundImage: `url(${imageUrl})` }}
       />
       {/* Overlay tint */}
-      <div className="absolute inset-0 bg-black opacity-30 z-10" />
+      <div className="absolute inset-0 bg-black opacity-50 z-10" />
 
       {/* Hero content */}
       <div className="relative z-20 h-full flex flex-col justify-center items-center text-center px-4 max-w-4xl mx-auto">
