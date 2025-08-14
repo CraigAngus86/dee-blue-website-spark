@@ -98,12 +98,12 @@ export default function PollCardMobile({ activePoll: initialPoll }: PollCardMobi
   if (!activePoll) {
     return (
       <div className="bg-white rounded-xl border border-separator shadow-sm hover:shadow-md flex flex-col transition-all duration-300 hover:-translate-y-1 overflow-hidden">
-        {/* Header - Consistent 72px height for mobile */}
-        <div className="h-[72px] flex items-center justify-between px-4 border-b border-separator bg-gradient-to-r from-white to-[#F8F6F3]">
+        {/* Header - Consistent 72px height for mobile with WARM GRAY */}
+        <div className="h-[72px] flex items-center justify-between px-4 border-b border-separator bg-gradient-to-r from-white to-[#F8F6F2]">
           <div className="flex items-center">
             <div className="w-1 h-8 bg-brand-gold rounded-sm mr-3" />
             <div>
-              <h3 className="text-h5 font-heading text-brand-black tracking-tightest leading-none m-0">
+              <h3 className="text-h5 font-heading text-brand-black leading-none m-0" style={{letterSpacing: '0.02em'}}>
                 Community Poll
               </h3>
               <p className="text-xs text-text-muted leading-none m-0 mt-1">
@@ -135,12 +135,12 @@ export default function PollCardMobile({ activePoll: initialPoll }: PollCardMobi
 
   return (
     <div className="bg-white rounded-xl border border-separator shadow-sm hover:shadow-md flex flex-col transition-all duration-300 hover:-translate-y-1 overflow-hidden">
-      {/* Header - Consistent 72px height for mobile */}
-      <div className="h-[72px] flex items-center justify-between px-4 border-b border-separator bg-gradient-to-r from-white to-[#F8F6F3]">
+      {/* Header - Consistent 72px height for mobile with WARM GRAY */}
+      <div className="h-[72px] flex items-center justify-between px-4 border-b border-separator bg-gradient-to-r from-white to-[#F8F6F2]">
         <div className="flex items-center">
           <div className="w-1 h-8 bg-brand-gold rounded-sm mr-3" />
           <div>
-            <h3 className="text-h5 font-heading text-brand-black tracking-tightest leading-none m-0">
+            <h3 className="text-h5 font-heading text-brand-black leading-none m-0" style={{letterSpacing: '0.02em'}}>
               Community Poll
             </h3>
             <p className="text-xs text-text-muted leading-none m-0 mt-1">
@@ -219,7 +219,7 @@ export default function PollCardMobile({ activePoll: initialPoll }: PollCardMobi
                           </span>
                           <span className="text-xs text-text-muted ml-2 flex-shrink-0">{percentage}%</span>
                         </div>
-                        <div className="w-full bg-surface-2 rounded-full h-2">
+                        <div className="w-full bg-[#F8F6F2] rounded-full h-2">
                           <div
                             className="bg-brand-gold h-2 rounded-full transition-all duration-1000 ease-out"
                             style={{ width: `${percentage}%` }}

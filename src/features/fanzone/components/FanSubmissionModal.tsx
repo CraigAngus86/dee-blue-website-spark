@@ -186,8 +186,8 @@ export function FanSubmissionModal({ isOpen, onClose }: FanSubmissionModalProps)
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50 flex items-center justify-center">
       <div className="relative max-w-4xl w-full max-h-[95vh] bg-white rounded-lg shadow-xl overflow-hidden">
-        {/* Header bar - Baynounah branded */}
-        <div className="absolute top-0 left-0 right-0 h-12 bg-surface-2 z-40 flex justify-between items-center px-4">
+        {/* Header bar - Baynounah branded with WARM GRAY */}
+        <div className="absolute top-0 left-0 right-0 h-12 bg-[#F8F6F2] z-40 flex justify-between items-center px-4">
           <div className="flex items-center">
             <h2 className="text-sm font-medium text-text-strong">Become Fan of the Month</h2>
           </div>
@@ -212,7 +212,7 @@ export function FanSubmissionModal({ isOpen, onClose }: FanSubmissionModalProps)
               </label>
               <div className="grid grid-cols-1 gap-3">
                 {categories.map(category => (
-                  <label key={category.value} className="flex items-start space-x-3 p-3 border border-separator rounded-lg hover:bg-surface-2 cursor-pointer">
+                  <label key={category.value} className="flex items-start space-x-3 p-3 border border-separator rounded-lg hover:bg-[#F8F6F2] cursor-pointer">
                     <input
                       type="radio"
                       name="category"
@@ -418,7 +418,7 @@ export function FanSubmissionModal({ isOpen, onClose }: FanSubmissionModalProps)
               <button
                 type="button"
                 onClick={onClose}
-                className="px-6 py-2 border border-separator text-text-muted rounded hover:bg-surface-2 transition-colors"
+                className="px-6 py-2 border border-separator text-text-muted rounded hover:bg-[#F8F6F2] transition-colors"
               >
                 Cancel
               </button>

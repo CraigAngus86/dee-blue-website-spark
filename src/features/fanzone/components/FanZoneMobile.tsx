@@ -4,7 +4,7 @@ import FanSubmissionModal from './FanSubmissionModal';
 import PhotoUploadModal from './PhotoUploadModal';
 import PollCardMobile from './PollCardMobile';
 import FanGalleryModalMobile from './FanGalleryModalMobile';
-import { Camera, Star, Search } from 'lucide-react';
+import { Camera, Star, Search, Instagram, Twitter, Facebook, Youtube } from 'lucide-react';
 
 interface FanZoneMobileProps {
   fanOfMonth?: any;
@@ -108,11 +108,11 @@ export default function FanZoneMobile({
         {/* Fan of the Month - UPDATED with consistent header */}
         <div className="bg-white rounded-xl border border-separator shadow-sm hover:shadow-md overflow-hidden transition-all duration-300 hover:-translate-y-1">
           {/* FIXED: Consistent Card Header with gold accent - 72px for mobile */}
-          <div className="h-[72px] flex items-center justify-between px-4 border-b border-separator bg-gradient-to-r from-white to-[#F8F6F3]">
+          <div className="h-[72px] flex items-center justify-between px-4 border-b border-separator bg-gradient-to-r from-white to-[#F8F6F2]">
             <div className="flex items-center">
               <div className="w-1 h-8 bg-brand-gold rounded-sm mr-3" />
               <div>
-                <h3 className="text-h5 font-heading text-brand-black tracking-tightest leading-none m-0">
+                <h3 className="text-h5 font-heading text-brand-black leading-none m-0" style={{letterSpacing: '0.02em'}}>
                   Fan of the Month
                 </h3>
                 <p className="text-xs text-text-muted leading-none m-0 mt-1">
@@ -182,11 +182,11 @@ export default function FanZoneMobile({
 
         {/* Fan Gallery Section - UPDATED header consistency */}
         <div>
-          {/* Gallery Header - Consistent with desktop pattern */}
+          {/* Gallery Header - Fixed typography and letter-spacing */}
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-start">
               <div className="w-1 h-6 bg-brand-gold mr-3 mt-1 rounded-sm"></div>
-              <h3 className="text-h5 font-heading text-brand-black tracking-tightest">Fan Gallery</h3>
+              <h3 className="text-h5 font-heading text-brand-black" style={{letterSpacing: '0.02em'}}>Fan Gallery</h3>
             </div>
             <button 
               onClick={handleUploadPhotoClick}
@@ -235,7 +235,7 @@ export default function FanZoneMobile({
               Array.from({ length: 4 }, (_, i) => (
                 <div 
                   key={i}
-                  className="relative aspect-[5/4] bg-gradient-to-br from-white to-[#F8F6F3] rounded-lg flex items-center justify-center text-text-muted shadow-sm border border-separator"
+                  className="relative aspect-[5/4] bg-gradient-to-br from-white to-[#F8F6F2] rounded-lg flex items-center justify-center text-text-muted shadow-sm border border-separator"
                 >
                   <Camera className="w-6 h-6 opacity-30" />
                 </div>
@@ -250,9 +250,9 @@ export default function FanZoneMobile({
           </div>
         </div>
 
-        {/* Social Media Section - Enhanced consistency */}
+        {/* Social Media Section - COMPLETELY RESTRUCTURED */}
         <div className="relative overflow-hidden rounded-xl border-2 border-separator hover:border-brand-gold shadow-sm transition-all duration-300 group" 
-             style={{background: 'linear-gradient(135deg, #FFFFFF 0%, #F8F6F3 100%)'}}>
+             style={{background: 'linear-gradient(135deg, #FFFFFF 0%, #F8F6F2 100%)'}}>
           
           {/* Subtle pattern overlay */}
           <div className="absolute inset-0 opacity-[0.02]">
@@ -261,35 +261,54 @@ export default function FanZoneMobile({
             }} />
           </div>
           
-          <div className="relative p-4">
-            <div className="flex items-center justify-between mb-3">
-              <div>
-                <h4 className="text-base font-heading text-brand-black tracking-tightest">
-                  Join Our Community
-                </h4>
-                <p className="text-xs text-text-muted mt-0.5">
-                  Be part of the Baynounah family
-                </p>
-              </div>
-              
-              {/* Live indicator */}
-              <div className="flex items-center gap-1">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-gold opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-gold"></span>
-                </span>
-                <span className="text-[10px] font-medium text-text-muted">
-                  LIVE
-                </span>
-              </div>
+          <div className="relative p-6 text-center">
+            {/* Title - centered, consistent size */}
+            <h4 className="text-h5 font-heading text-brand-black mb-4" style={{letterSpacing: '0.02em'}}>
+              Join Our Community
+            </h4>
+            
+            {/* Social Icons - centered row */}
+            <div className="flex justify-center gap-4 mb-4">
+              <a 
+                href="https://instagram.com/baynounahsc" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-10 h-10 bg-brand-black rounded-full flex items-center justify-center hover:bg-brand-gold transition-colors group/icon"
+              >
+                <Instagram className="w-5 h-5 text-white group-hover/icon:text-brand-black" />
+              </a>
+              <a 
+                href="https://twitter.com/baynounahsc" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-10 h-10 bg-brand-black rounded-full flex items-center justify-center hover:bg-brand-gold transition-colors group/icon"
+              >
+                <Twitter className="w-5 h-5 text-white group-hover/icon:text-brand-black" />
+              </a>
+              <a 
+                href="https://facebook.com/baynounahsc" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-10 h-10 bg-brand-black rounded-full flex items-center justify-center hover:bg-brand-gold transition-colors group/icon"
+              >
+                <Facebook className="w-5 h-5 text-white group-hover/icon:text-brand-black" />
+              </a>
+              <a 
+                href="https://youtube.com/baynounahsc" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-10 h-10 bg-brand-black rounded-full flex items-center justify-center hover:bg-brand-gold transition-colors group/icon"
+              >
+                <Youtube className="w-5 h-5 text-white group-hover/icon:text-brand-black" />
+              </a>
             </div>
             
-            {/* Hashtags */}
+            {/* Hashtags - centered */}
             <div className="flex gap-2 justify-center">
-              <span className="px-2 py-1 bg-black text-white text-[10px] font-medium rounded-full shadow-sm">
+              <span className="px-3 py-1 bg-black text-white text-[10px] font-medium rounded-full shadow-sm">
                 #BaynounahSC
               </span>
-              <span className="px-2 py-1 bg-brand-gold text-black text-[10px] font-medium rounded-full shadow-sm">
+              <span className="px-3 py-1 bg-brand-gold text-black text-[10px] font-medium rounded-full shadow-sm">
                 #BePartOfTheJourney
               </span>
             </div>
@@ -317,5 +336,3 @@ export default function FanZoneMobile({
     </div>
   );
 }
-
-  //

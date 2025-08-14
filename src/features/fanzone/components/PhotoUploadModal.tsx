@@ -153,8 +153,8 @@ export function PhotoUploadModal({ isOpen, onClose }: PhotoUploadModalProps) {
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50 flex items-center justify-center">
       <div className="relative max-w-4xl w-full max-h-[95vh] bg-white rounded-lg shadow-xl overflow-hidden">
-        {/* Header bar - Baynounah branded */}
-        <div className="absolute top-0 left-0 right-0 h-12 bg-surface-2 z-40 flex justify-between items-center px-4">
+        {/* Header bar - Baynounah branded with WARM GRAY */}
+        <div className="absolute top-0 left-0 right-0 h-12 bg-[#F8F6F2] z-40 flex justify-between items-center px-4">
           <div className="flex items-center">
             <h2 className="text-sm font-medium text-text-strong">Share Your Matchday Photo</h2>
           </div>
@@ -172,8 +172,8 @@ export function PhotoUploadModal({ isOpen, onClose }: PhotoUploadModalProps) {
         <div className="overflow-y-auto max-h-[95vh] pt-12">
           <form onSubmit={handleSubmit} className="p-6">
             
-            {/* Photo Guidelines */}
-            <div className="mb-6 p-4 bg-surface-2 rounded-lg border border-separator">
+            {/* Photo Guidelines with WARM GRAY */}
+            <div className="mb-6 p-4 bg-[#F8F6F2] rounded-lg border border-separator">
               <h3 className="text-sm font-medium text-text-strong mb-2">Photo Guidelines:</h3>
               <ul className="text-sm text-text-muted space-y-1">
                 <li>• High resolution preferred</li>
@@ -316,7 +316,7 @@ export function PhotoUploadModal({ isOpen, onClose }: PhotoUploadModalProps) {
               <button
                 type="button"
                 onClick={onClose}
-                className="px-6 py-2 border border-separator text-text-muted rounded hover:bg-surface-2 transition-colors"
+                className="px-6 py-2 border border-separator text-text-muted rounded hover:bg-[#F8F6F2] transition-colors"
               >
                 Cancel
               </button>
