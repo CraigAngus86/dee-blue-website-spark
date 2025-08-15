@@ -20,17 +20,18 @@ export default function AcademyPathwaySection() {
           }
         });
       },
-      { threshold: 0.2 }
+      { threshold: 0.1 } // Reduced threshold for mobile
     );
 
     if (sectionRef.current) {
       observer.observe(sectionRef.current);
     }
 
-    // Auto-rotate age groups
+    // Auto-rotate age groups - but slower on mobile
+    const isMobile = window.innerWidth < 768;
     const interval = setInterval(() => {
       setActiveAgeGroup(prev => (prev + 1) % 5);
-    }, 3000);
+    }, isMobile ? 5000 : 3000); // Slower rotation on mobile
 
     return () => {
       observer.disconnect();
@@ -39,6 +40,10 @@ export default function AcademyPathwaySection() {
   }, [isVisible]);
 
   const animateCounters = () => {
+    // Simplified animation for mobile
+    const isMobile = window.innerWidth < 768;
+    const speed = isMobile ? 50 : 30;
+    
     // Players counter
     const playersInterval = setInterval(() => {
       setPlayersCount(prev => {
@@ -48,7 +53,7 @@ export default function AcademyPathwaySection() {
         }
         return prev + 10;
       });
-    }, 30);
+    }, speed);
 
     // Locations counter
     setTimeout(() => {
@@ -175,8 +180,8 @@ export default function AcademyPathwaySection() {
     <section ref={sectionRef} className="relative overflow-hidden">
       {/* Section 1: Academy Overview */}
       <div className="section section--white relative">
-        {/* Animated background pattern */}
-        <div className="absolute inset-0 opacity-5 pointer-events-none">
+        {/* Simplified background pattern for mobile */}
+        <div className="absolute inset-0 opacity-5 pointer-events-none hidden md:block">
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
             <div className="w-[600px] h-[600px] border-4 border-brand-gold rounded-full animate-pulse-slow" />
             <div className="absolute inset-12 border-4 border-brand-gold rounded-full animate-pulse-slow animation-delay-200" />
@@ -187,7 +192,7 @@ export default function AcademyPathwaySection() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           {/* Section Header */}
           <div className="text-center mb-16">
-            <h2 className={`font-heading text-5xl md:text-6xl tracking-[0.02em] text-brand-black mb-6 transition-all duration-1000 ${
+            <h2 className={`font-heading text-4xl md:text-5xl lg:text-6xl tracking-[0.02em] text-brand-black mb-6 transition-all duration-1000 ${
               isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
             }`}>
               Academy <span className="text-brand-gold">Pathway</span>
@@ -199,7 +204,7 @@ export default function AcademyPathwaySection() {
               <div className="h-px bg-gradient-to-r from-transparent via-brand-gold to-transparent w-32 animate-expand" />
             </div>
             
-            <p className={`font-body text-lg text-text-muted max-w-4xl mx-auto leading-relaxed transition-all duration-1000 delay-200 ${
+            <p className={`font-body text-base md:text-lg text-text-muted max-w-4xl mx-auto leading-relaxed transition-all duration-1000 delay-200 ${
               isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
             }`}>
               Developing the next generation of UAE football talent through professional coaching,
@@ -207,8 +212,8 @@ export default function AcademyPathwaySection() {
             </p>
           </div>
 
-          {/* Academy Stats Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
+          {/* Academy Stats Grid - Mobile optimized */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-16">
             {academyStats.map((stat, index) => (
               <div
                 key={index}
@@ -217,9 +222,9 @@ export default function AcademyPathwaySection() {
                 }`}
                 style={{ transitionDelay: `${stat.delay}ms` }}
               >
-                <div className={`relative bg-gradient-to-br ${stat.color} backdrop-blur-sm rounded-xl p-6 text-center shadow-lg hover:shadow-2xl transition-all duration-500 group-hover:-translate-y-2 overflow-hidden`}>
-                  {/* Floating particles */}
-                  <div className="absolute inset-0 pointer-events-none">
+                <div className={`relative bg-gradient-to-br ${stat.color} backdrop-blur-sm rounded-xl p-4 md:p-6 text-center shadow-lg hover:shadow-2xl transition-all duration-500 md:group-hover:-translate-y-2 overflow-hidden`}>
+                  {/* Simplified mobile effects */}
+                  <div className="absolute inset-0 pointer-events-none hidden md:block">
                     {[...Array(2)].map((_, i) => (
                       <div
                         key={i}
@@ -234,24 +239,23 @@ export default function AcademyPathwaySection() {
                   </div>
 
                   {/* Icon */}
-                  <div className="relative w-14 h-14 bg-white/80 rounded-full flex items-center justify-center mx-auto mb-4 transform group-hover:rotate-12 group-hover:scale-110 transition-all duration-500">
-                    <div className="text-brand-black">{stat.icon}</div>
-                    <div className="absolute inset-0 rounded-full bg-brand-gold/20 scale-0 group-hover:scale-150 opacity-0 group-hover:opacity-100 transition-all duration-700" />
+                  <div className="relative w-12 h-12 md:w-14 md:h-14 bg-white/80 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4 transform md:group-hover:rotate-12 md:group-hover:scale-110 transition-all duration-500">
+                    <div className="text-brand-black scale-75 md:scale-100">{stat.icon}</div>
                   </div>
 
                   {/* Number */}
-                  <div className="font-heading text-4xl text-brand-black mb-2">
+                  <div className="font-heading text-2xl md:text-4xl text-brand-black mb-2">
                     {typeof stat.number === 'number' ? (
-                      <span className="inline-block transform group-hover:scale-110 transition-transform duration-300">
+                      <span className="inline-block md:group-hover:scale-110 transition-transform duration-300">
                         {stat.number}{stat.suffix}
                       </span>
                     ) : (
-                      <span className="text-3xl">{stat.number}</span>
+                      <span className="text-xl md:text-3xl">{stat.number}</span>
                     )}
                   </div>
 
-                  <div className="font-body font-semibold text-brand-black mb-2">{stat.label}</div>
-                  <div className="font-body text-xs text-text-muted leading-relaxed">{stat.description}</div>
+                  <div className="font-body font-semibold text-sm md:text-base text-brand-black mb-1 md:mb-2">{stat.label}</div>
+                  <div className="font-body text-xs text-text-muted leading-relaxed hidden md:block">{stat.description}</div>
                 </div>
               </div>
             ))}
@@ -263,56 +267,71 @@ export default function AcademyPathwaySection() {
       <div className="section section--warm relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h3 className="font-heading text-h3 tracking-[0.02em] text-brand-black mb-4">
+            <h3 className="font-heading text-3xl md:text-h3 tracking-[0.02em] text-brand-black mb-4">
               Development <span className="text-brand-gold">Journey</span>
             </h3>
-            <p className="font-body text-text-muted max-w-2xl mx-auto">
+            <p className="font-body text-sm md:text-base text-text-muted max-w-2xl mx-auto">
               Five stages of excellence, from foundation skills to professional preparation
             </p>
           </div>
 
-          {/* Age Groups Interactive Display */}
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-16">
+          {/* Age Groups - Mobile scroll on small screens */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-16 overflow-x-auto md:overflow-visible">
             {ageGroups.map((group, index) => (
               <div
                 key={index}
                 onClick={() => setActiveAgeGroup(index)}
-                className={`group cursor-pointer transform transition-all duration-500 ${
+                className={`group cursor-pointer transform transition-all duration-500 min-w-[280px] sm:min-w-0 ${
                   isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-                } ${activeAgeGroup === index ? 'scale-105' : ''}`}
+                } ${activeAgeGroup === index ? 'md:scale-105' : ''}`}
                 style={{ transitionDelay: `${600 + index * 100}ms` }}
               >
-                <div className={`relative bg-gradient-to-br ${group.color} rounded-xl p-6 text-center shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden h-full ${
+                <div className={`relative bg-gradient-to-br ${group.color} rounded-xl p-4 md:p-6 text-center shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden h-full ${
                   activeAgeGroup === index ? 'ring-2 ring-brand-gold' : ''
                 }`}>
-                  {/* Active pulse effect */}
+                  {/* Active pulse effect - desktop only */}
                   {activeAgeGroup === index && (
-                    <div className="absolute inset-0 bg-brand-gold/5 animate-pulse" />
+                    <div className="absolute inset-0 bg-brand-gold/5 animate-pulse hidden md:block" />
                   )}
 
                   {/* Icon */}
-                  <div className="text-4xl mb-3 transform group-hover:scale-110 transition-transform duration-300">
+                  <div className="text-3xl md:text-4xl mb-3 transform md:group-hover:scale-110 transition-transform duration-300">
                     {group.icon}
                   </div>
 
                   {/* Age Range */}
-                  <div className="font-heading text-2xl text-brand-gold mb-2">
+                  <div className="font-heading text-xl md:text-2xl text-brand-gold mb-2">
                     {group.age}
                   </div>
 
                   {/* Title */}
-                  <h4 className="font-heading text-lg text-brand-black mb-2">
+                  <h4 className="font-heading text-base md:text-lg text-brand-black mb-2">
                     {group.title}
                   </h4>
 
-                  {/* Description */}
+                  {/* Description - Always visible on mobile */}
                   <p className="font-body text-xs text-text-muted mb-4">
                     {group.description}
                   </p>
 
-                  {/* Features (shown when active) */}
+                  {/* Features - Show on mobile too but simplified */}
+                  {(activeAgeGroup === index || window.innerWidth < 768) && (
+                    <div className="space-y-1 mt-4 pt-4 border-t border-brand-gold/20 md:hidden">
+                      {group.features.slice(0, 2).map((feature, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-center justify-center text-xs"
+                        >
+                          <ArrowRight className="w-3 h-3 text-brand-gold mr-1" />
+                          <span className="text-text-strong">{feature}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Desktop features */}
                   {activeAgeGroup === index && (
-                    <div className="space-y-1 mt-4 pt-4 border-t border-brand-gold/20">
+                    <div className="space-y-1 mt-4 pt-4 border-t border-brand-gold/20 hidden md:block">
                       {group.features.map((feature, idx) => (
                         <div
                           key={idx}
@@ -333,19 +352,19 @@ export default function AcademyPathwaySection() {
             ))}
           </div>
 
-          {/* Professional Pathway */}
-          <div className="relative bg-gradient-to-r from-brand-black via-brand-black/95 to-brand-black rounded-2xl p-12 overflow-hidden">
-            {/* Animated background */}
-            <div className="absolute inset-0 opacity-20">
+          {/* Professional Pathway - Mobile optimized */}
+          <div className="relative bg-gradient-to-r from-brand-black via-brand-black/95 to-brand-black rounded-2xl p-6 md:p-12 overflow-hidden">
+            {/* Simplified animated background for mobile */}
+            <div className="absolute inset-0 opacity-20 hidden md:block">
               <div className="absolute inset-0 bg-gradient-to-r from-brand-gold via-accent-light to-brand-gold animate-gradient-shift" />
             </div>
 
             <div className="relative z-10">
-              <h3 className="font-heading text-h3 text-brand-gold text-center mb-10 tracking-[0.02em]">
+              <h3 className="font-heading text-2xl md:text-h3 text-brand-gold text-center mb-8 md:mb-10 tracking-[0.02em]">
                 Professional Pathway
               </h3>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
                 {professionalPathway.map((stage, index) => (
                   <div
                     key={index}
@@ -356,23 +375,23 @@ export default function AcademyPathwaySection() {
                   >
                     <div className="text-center">
                       {/* Icon with gradient background */}
-                      <div className={`relative w-20 h-20 bg-gradient-to-br ${stage.gradient} rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                        <div className="text-brand-black">{stage.icon}</div>
-                        {/* Pulse ring on hover */}
-                        <div className="absolute inset-0 rounded-full bg-brand-gold/20 scale-0 group-hover:scale-150 opacity-0 group-hover:opacity-100 transition-all duration-700" />
+                      <div className={`relative w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br ${stage.gradient} rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg md:group-hover:scale-110 transition-transform duration-300`}>
+                        <div className="text-brand-black scale-75 md:scale-100">{stage.icon}</div>
+                        {/* Pulse ring on hover - desktop only */}
+                        <div className="absolute inset-0 rounded-full bg-brand-gold/20 scale-0 md:group-hover:scale-150 opacity-0 md:group-hover:opacity-100 transition-all duration-700" />
                       </div>
 
                       {/* Stage title */}
-                      <h4 className="font-heading text-xl text-white mb-3">
+                      <h4 className="font-heading text-lg md:text-xl text-white mb-3">
                         {stage.stage}
                       </h4>
 
                       {/* Description */}
-                      <p className="font-body text-sm text-white/80 leading-relaxed">
+                      <p className="font-body text-xs md:text-sm text-white/80 leading-relaxed">
                         {stage.description}
                       </p>
 
-                      {/* Connection line (except last) */}
+                      {/* Connection line (desktop only) */}
                       {index < professionalPathway.length - 1 && (
                         <div className="hidden md:block absolute top-10 left-[60%] w-full h-px bg-gradient-to-r from-brand-gold/50 to-transparent" />
                       )}
@@ -387,25 +406,25 @@ export default function AcademyPathwaySection() {
 
       {/* Section 3: Join Our Academy CTA */}
       <div className="section section--white relative overflow-hidden">
-        {/* Background decoration */}
-        <div className="absolute inset-0 pointer-events-none">
+        {/* Background decoration - simplified for mobile */}
+        <div className="absolute inset-0 pointer-events-none hidden md:block">
           <div className="absolute top-0 left-0 w-64 h-64 bg-brand-gold/5 rounded-full blur-3xl" />
           <div className="absolute bottom-0 right-0 w-64 h-64 bg-heritage-green/5 rounded-full blur-3xl" />
         </div>
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center">
-            <h3 className="font-heading text-4xl tracking-[0.02em] text-brand-black mb-6">
+            <h3 className="font-heading text-3xl md:text-4xl tracking-[0.02em] text-brand-black mb-6">
               Join Our <span className="text-brand-gold">Journey</span>
             </h3>
             
-            <p className="font-body text-lg text-text-muted mb-10 max-w-2xl mx-auto">
+            <p className="font-body text-base md:text-lg text-text-muted mb-10 max-w-2xl mx-auto">
               Be part of the Baynounah family and help shape the future of UAE football.
               Whether you're 4 or 18, your football journey starts here.
             </p>
 
-            {/* Key Benefits */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+            {/* Key Benefits - Mobile optimized */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-12">
               {[
                 { icon: "⚽", text: "Professional Coaching" },
                 { icon: "🎯", text: "Clear Pathway" },
@@ -416,17 +435,17 @@ export default function AcademyPathwaySection() {
                   key={index}
                   className="flex flex-col items-center transform hover:scale-105 transition-transform duration-300"
                 >
-                  <div className="text-3xl mb-2">{benefit.icon}</div>
-                  <span className="font-body text-sm text-text-strong">{benefit.text}</span>
+                  <div className="text-2xl md:text-3xl mb-2">{benefit.icon}</div>
+                  <span className="font-body text-xs md:text-sm text-text-strong">{benefit.text}</span>
                 </div>
               ))}
             </div>
 
-            {/* CTA Buttons */}
+            {/* CTA Buttons - Stack on mobile */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
                 href="mailto:craig.angus@baynounahsc.ae?subject=Academy%20Trial%20Request"
-                className="group inline-flex items-center justify-center bg-brand-gold text-brand-black hover:bg-accent-dark px-8 py-4 rounded-lg font-body font-semibold text-lg transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1"
+                className="group inline-flex items-center justify-center bg-brand-gold text-brand-black hover:bg-accent-dark px-6 md:px-8 py-3 md:py-4 rounded-lg font-body font-semibold text-base md:text-lg transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1"
               >
                 <span>Book a Trial</span>
                 <ChevronRight className="w-5 h-5 ml-2 transform group-hover:translate-x-2 transition-transform duration-300" />
@@ -434,7 +453,7 @@ export default function AcademyPathwaySection() {
               
               <a
                 href="mailto:craig.angus@baynounahsc.ae?subject=Academy%20Information%20Request"
-                className="group inline-flex items-center justify-center bg-white text-brand-black border-2 border-brand-gold hover:bg-brand-gold px-8 py-4 rounded-lg font-body font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                className="group inline-flex items-center justify-center bg-white text-brand-black border-2 border-brand-gold hover:bg-brand-gold px-6 md:px-8 py-3 md:py-4 rounded-lg font-body font-semibold text-base md:text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
               >
                 <span>Get Information</span>
                 <Target className="w-5 h-5 ml-2 transform group-hover:rotate-12 transition-transform duration-300" />
@@ -446,7 +465,7 @@ export default function AcademyPathwaySection() {
               <p className="font-body text-sm text-text-muted mb-2">Academy Enquiries</p>
               <a 
                 href="mailto:craig.angus@baynounahsc.ae" 
-                className="font-body text-lg text-brand-gold hover:text-accent-dark transition-colors duration-300"
+                className="font-body text-base md:text-lg text-brand-gold hover:text-accent-dark transition-colors duration-300"
               >
                 academy@baynounahsc.ae
               </a>
