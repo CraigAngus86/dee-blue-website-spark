@@ -18,7 +18,7 @@ export function CommercialHero({
 
   const baseUrl = "https://res.cloudinary.com/dlkpaw2a0/image/upload";
   const transformation = "c_fill,g_auto:face,ar_21:9,q_auto,f_auto";
-  const versionAndId = "v1755184294/1085676060_fieoei.png";
+  const versionAndId = "v1755184294/abudhabiskyline_md5kef.png";
   const imageUrl = `${baseUrl}/${transformation}/${versionAndId}`;
 
   return (

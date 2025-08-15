@@ -107,7 +107,7 @@
 }
 
 /* -----------------------------
-   Animations
+   Core Animations (Original)
    ----------------------------- */
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
@@ -115,12 +115,173 @@
 @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
 @keyframes slideOutRight { from { transform: translateX(0); } to { transform: translateX(100%); } }
 
-/* Utility classes for animations */
+/* -----------------------------
+   Missing Animations (Added)
+   ----------------------------- */
+/* Pulse variations */
+@keyframes pulse-slow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Float effect */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+/* Expand effect */
+@keyframes expand {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+/* Word reveal */
+@keyframes word-reveal {
+  from { 
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Gradient shift */
+@keyframes gradient-shift {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Glitch effect */
+@keyframes glitch {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-2px); }
+  40% { transform: translateX(2px); }
+  60% { transform: translateX(-1px); }
+  80% { transform: translateX(1px); }
+}
+
+/* Digital flicker */
+@keyframes digital-flicker {
+  0%, 100% { opacity: 1; }
+  10%, 30%, 50%, 70%, 90% { opacity: 0.5; }
+  20%, 40%, 60%, 80% { opacity: 1; }
+}
+
+/* Data stream */
+@keyframes data-stream {
+  0% { transform: translateX(-100%); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateX(100%); opacity: 0; }
+}
+
+/* Matrix move */
+@keyframes matrix-move {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(50px, 50px); }
+}
+
+/* Spin (for loaders) */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Ping (notification effect) */
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+/* Bounce */
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(-25%);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+/* -----------------------------
+   Animation Utility Classes
+   ----------------------------- */
 .animate-fade-in { animation: fadeIn var(--animation-standard) ease-out forwards; }
 .animate-slide-up { animation: slideUp var(--animation-standard) ease-out forwards; }
 .animate-scale-in { animation: scaleIn var(--animation-standard) ease-out forwards; }
 .animate-slide-in-right { animation: slideInRight var(--animation-standard) ease-out forwards; }
 .animate-slide-out-right { animation: slideOutRight var(--animation-standard) ease-out forwards; }
+
+/* New animation utilities */
+.animate-pulse-slow { animation: pulse-slow 3s ease-in-out infinite; }
+.animate-float { animation: float 3s ease-in-out infinite; }
+.animate-expand { animation: expand 1s ease-out forwards; }
+.animate-word-reveal { animation: word-reveal 0.6s ease-out forwards; }
+.animate-gradient-shift { animation: gradient-shift 10s linear infinite; }
+.animate-glitch { animation: glitch 0.3s ease-in-out; }
+.animate-digital-flicker { animation: digital-flicker 2s linear infinite; }
+.animate-data-stream { animation: data-stream 3s linear infinite; }
+.animate-spin { animation: spin 1s linear infinite; }
+.animate-ping { animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite; }
+.animate-bounce { animation: bounce 1s infinite; }
+
+/* Animation delay utilities */
+.animation-delay-200 { animation-delay: 200ms; }
+.animation-delay-400 { animation-delay: 400ms; }
+.animation-delay-600 { animation-delay: 600ms; }
+.animation-delay-800 { animation-delay: 800ms; }
+.animation-delay-1000 { animation-delay: 1000ms; }
+
+/* Tailwind's default pulse (if needed) */
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .5; }
+}
+
+/* Performance optimization for mobile */
+@media (max-width: 768px) {
+  /* Reduce animation complexity on mobile */
+  .animate-float,
+  .animate-gradient-shift,
+  .animate-data-stream,
+  .matrix-move {
+    animation: none !important;
+  }
+  
+  /* Simplify transforms on mobile */
+  .animate-pulse-slow {
+    animation: pulse 3s ease-in-out infinite;
+  }
+  
+  /* Disable heavy effects on mobile */
+  .animate-glitch,
+  .animate-digital-flicker {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
 
 /* -----------------------------
    Base element styles
@@ -159,7 +320,7 @@ p  { @apply mb-4 leading-relaxed; }
 small, .caption { font-size: 14px; color: rgb(var(--dark-gray)); }
 .tagline { font-size: 20px; font-weight: 500; }
 
-/* Heaters script (ensure it’s loaded via next/font or @font-face) */
+/* Heaters script (ensure it's loaded via next/font or @font-face) */
 .heaters { font-family: 'Heaters', cursive; font-size: 32px; color: rgb(var(--brand-gold)); }
 
 /* -----------------------------
