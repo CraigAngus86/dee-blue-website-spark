@@ -28,7 +28,7 @@ export default function AcademyPathwaySection() {
     }
 
     // Auto-rotate age groups - but slower on mobile
-    const isMobile = window.innerWidth < 768;
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
     const interval = setInterval(() => {
       setActiveAgeGroup(prev => (prev + 1) % 5);
     }, isMobile ? 5000 : 3000); // Slower rotation on mobile
@@ -41,7 +41,7 @@ export default function AcademyPathwaySection() {
 
   const animateCounters = () => {
     // Simplified animation for mobile
-    const isMobile = window.innerWidth < 768;
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
     const speed = isMobile ? 50 : 30;
     
     // Players counter
@@ -315,19 +315,17 @@ export default function AcademyPathwaySection() {
                   </p>
 
                   {/* Features - Show on mobile too but simplified */}
-                  {(activeAgeGroup === index || window.innerWidth < 768) && (
-                    <div className="space-y-1 mt-4 pt-4 border-t border-brand-gold/20 md:hidden">
-                      {group.features.slice(0, 2).map((feature, idx) => (
-                        <div
-                          key={idx}
-                          className="flex items-center justify-center text-xs"
-                        >
-                          <ArrowRight className="w-3 h-3 text-brand-gold mr-1" />
-                          <span className="text-text-strong">{feature}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                  <div className="space-y-1 mt-4 pt-4 border-t border-brand-gold/20 md:hidden">
+                    {group.features.slice(0, 2).map((feature, idx) => (
+                      <div
+                        key={idx}
+                        className="flex items-center justify-center text-xs"
+                      >
+                        <ArrowRight className="w-3 h-3 text-brand-gold mr-1" />
+                        <span className="text-text-strong">{feature}</span>
+                      </div>
+                    ))}
+                  </div>
 
                   {/* Desktop features */}
                   {activeAgeGroup === index && (

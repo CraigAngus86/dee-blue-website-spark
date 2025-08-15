@@ -29,7 +29,7 @@ export function DigitalGrowthStory({ onPartnershipClick }: DigitalGrowthStoryPro
   }, [isVisible]);
 
   const animateGrowth = () => {
-    const isMobile = window.innerWidth < 768;
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
     let current = 0;
     const target = 100;
     const increment = isMobile ? 5 : 2; // Faster on mobile to reduce computation
