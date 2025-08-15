@@ -14,7 +14,6 @@ const Header = ({ sponsors = [] }: HeaderProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname() || "/";
 
-  // Refs for focus management
   const menuRef = useRef<HTMLDivElement | null>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
 
@@ -24,10 +23,16 @@ const Header = ({ sponsors = [] }: HeaderProps) => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Close menu on route change
   useEffect(() => setIsMenuOpen(false), [pathname]);
 
-  // Focus trap when mobile menu is open
+  // Body scroll lock
+  useEffect(() => {
+    if (isMenuOpen) document.body.style.overflow = "hidden";
+    else document.body.style.overflow = "";
+    return () => { document.body.style.overflow = ""; };
+  }, [isMenuOpen]);
+
+  // Focus trap
   useEffect(() => {
     if (!isMenuOpen || !menuRef.current) return;
 
@@ -74,7 +79,7 @@ const Header = ({ sponsors = [] }: HeaderProps) => {
     { name: "Match Centre", href: "/matches" },
     { name: "Club & Academy", href: "/academy" },
     { name: "Commercial", href: "/commercial" },
-];
+  ];
 
   const sortedSponsors = useMemo(() => {
     return [...sponsors].sort((a, b) => {
@@ -102,10 +107,39 @@ const Header = ({ sponsors = [] }: HeaderProps) => {
       </a>
 
       <div className="relative">
-        {/* Sponsor bar (brand gradient) */}
+        {/* === ABSOLUTE LEFT RAIL (spans both bars) === */}
+        <div
+          className="absolute inset-y-0 left-4 z-20 w-20 md:w-56 lg:w-72 xl:w-80 flex items-center"
+          aria-label="Club identity"
+        >
+          <Link
+            href="/"
+            className="group flex items-center rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))]"
+          >
+            <Image
+              src={buildSponsorLogoUrl("Baynounah_SC_Logo_idok3c", "mainLogo")}
+              alt="Baynounah Sports Club"
+              width={64}
+              height={64}
+              sizes="64px"
+              className="h-12 w-12 md:h-14 md:w-14 object-contain transition-transform duration-200 group-hover:scale-105"
+              priority
+            />
+            {/* Hide name on mobile; show short on md; full from lg */}
+            <span className="ml-3 hidden md:inline lg:hidden text-2xl leading-none font-heading text-[rgb(var(--brand-gold))]">
+              Baynounah SC
+            </span>
+            <span className="ml-3 hidden lg:inline text-3xl leading-none font-heading text-[rgb(var(--brand-gold))]">
+              Baynounah Sports Club
+            </span>
+          </Link>
+        </div>
+
+        {/* === SPONSOR BAR === */}
         <div className="bg-gradient-to-r from-[rgb(var(--brand-black))] from-55% via-[rgb(var(--brand-gold))] via-70% to-[rgb(var(--brand-gold))] h-[30px]">
-          <div className="container mx-auto px-2 h-full">
-            <div className="flex items-center justify-end h-full">
+          <div className="container mx-auto px-4 lg:px-8 xl:px-16 h-full">
+            {/* Reserve space for left rail so logos never collide */}
+            <div className="flex items-center justify-end h-full pl-20 md:pl-56 lg:pl-72 xl:pl-80">
               <div className="hidden md:flex items-center gap-2">
                 {sortedSponsors.map((s) => (
                   <Link
@@ -154,23 +188,35 @@ const Header = ({ sponsors = [] }: HeaderProps) => {
           </div>
         </div>
 
-        {/* Main header bar */}
-        <div className={`bg-[rgb(var(--brand-black))] text-white ${isScrolled ? "h-[34px]" : "h-[38px]"} transition-[height] duration-300`}>
-          <div className="container mx-auto h-full">
-            <div className="hidden md:flex items-center h-full w-full">
-              {/* left spacer for absolute logo */}
-              <div className="w-52 md:w-56 xl:w-64" aria-hidden="true" />
-
+        {/* === MAIN HEADER BAR === */}
+        <div
+          className={`bg-[rgb(var(--brand-black))] text-white transition-[padding,min-height] duration-300 ${
+            isScrolled ? "py-0" : "py-1"
+          }`}
+        >
+          <div className="container mx-auto px-4 lg:px-8 xl:px-16">
+            {/* relative so the mobile burger can be absolutely pinned to the right */}
+            <div className="relative flex items-center justify-between min-h-[44px] pl-20 md:pl-56 lg:pl-72 xl:pl-80">
               {/* Nav */}
-              <nav role="navigation" aria-label="Main Navigation" className="flex items-center justify-between flex-1 px-4 lg:px-8 xl:px-16">
-                {navigation.map((item) => {
+              <nav
+                role="navigation"
+                aria-label="Main Navigation"
+                className="hidden md:flex items-center gap-3 lg:gap-6"
+              >
+                {[
+                  { name: "News", href: "/news" },
+                  { name: "Team & Management", href: "/team" },
+                  { name: "Match Centre", href: "/matches" },
+                  { name: "Club & Academy", href: "/academy" },
+                  { name: "Commercial", href: "/commercial" },
+                ].map((item) => {
                   const active = isActive(item.href);
                   return (
                     <Link
                       key={item.name}
                       href={item.href}
                       aria-current={active ? "page" : undefined}
-                      className={`font-body text-base whitespace-nowrap px-1 py-1 rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))] transition-all duration-200 ${
+                      className={`font-body text-sm lg:text-base whitespace-nowrap px-1.5 py-1 rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))] transition-all duration-200 ${
                         active
                           ? "text-white font-semibold border-b-2 border-[rgb(var(--brand-gold))]"
                           : "text-[rgb(var(--brand-gold))] hover:text-white hover:scale-105 font-medium"
@@ -183,11 +229,11 @@ const Header = ({ sponsors = [] }: HeaderProps) => {
                 })}
               </nav>
 
-              {/* CTA */}
-              <div className="flex">
+              {/* Desktop CTA (right edge aligns with sponsor logos via matched container padding) */}
+              <div className="hidden lg:flex">
                 <Link
                   href="#"
-                  className="font-body text-sm whitespace-nowrap rounded-md flex items-center px-4 py-1.45 shadow transition-all duration-200
+                  className="font-body text-sm whitespace-nowrap rounded-md flex items-center px-4 py-1.5 shadow transition-all duration-200
                              bg-[rgb(var(--brand-gold))] text-[rgb(var(--brand-black))] border-2 border-[rgb(var(--brand-gold))]
                              hover:bg-[rgb(var(--brand-black))] hover:text-[rgb(var(--brand-gold))] hover:border-[rgb(var(--brand-black))]"
                 >
@@ -195,14 +241,12 @@ const Header = ({ sponsors = [] }: HeaderProps) => {
                   <ArrowRight size={16} className="ml-2" aria-hidden="true" />
                 </Link>
               </div>
-            </div>
 
-            {/* Mobile trigger */}
-            <div className="flex md:hidden items-center justify-end h-full w-full px-4">
+              {/* Mobile burger pinned to screen right */}
               <button
                 ref={triggerRef}
                 onClick={toggleMenu}
-                className="text-white p-2 rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))] z-30"
+                className="md:hidden absolute right-4 top-1/2 -translate-y-1/2 text-white p-2 rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))] z-30"
                 aria-label={isMenuOpen ? "Close menu" : "Open menu"}
                 aria-expanded={isMenuOpen}
                 aria-controls="mobile-nav"
@@ -211,27 +255,6 @@ const Header = ({ sponsors = [] }: HeaderProps) => {
               </button>
             </div>
           </div>
-        </div>
-
-        {/* Logo block */}
-        <div className="absolute top-0 left-4 z-20 h-full flex items-center">
-          <Link
-            href="/"
-            className="group flex items-center rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))]"
-          >
-            <Image
-              src={buildSponsorLogoUrl("Baynounah_SC_Logo_idok3c", "mainLogo")}
-              alt="Baynounah Sports Club"
-              width={64}
-              height={64}
-              sizes="64px"
-              className="h-16 w-16 object-contain transition-transform duration-200 group-hover:scale-105"
-              priority
-            />
-            <span className="hidden sm:block ml-4 text-2xl md:text-3xl leading-none font-heading text-[rgb(var(--brand-gold))]">
-              Baynounah Sports Club
-            </span>
-          </Link>
         </div>
 
         {/* Mobile menu (focus-trapped) */}
@@ -245,7 +268,13 @@ const Header = ({ sponsors = [] }: HeaderProps) => {
             className="absolute left-0 right-0 top-full bg-[rgb(var(--brand-black))] z-40 md:hidden shadow-md"
           >
             <nav className="flex flex-col p-4" role="navigation" aria-label="Mobile Navigation Links">
-              {navigation.map((item) => {
+              {[
+                { name: "News", href: "/news" },
+                { name: "Team & Management", href: "/team" },
+                { name: "Match Centre", href: "/matches" },
+                { name: "Club & Academy", href: "/academy" },
+                { name: "Commercial", href: "/commercial" },
+              ].map((item) => {
                 const active = isActive(item.href);
                 return (
                   <Link
@@ -264,6 +293,7 @@ const Header = ({ sponsors = [] }: HeaderProps) => {
                   </Link>
                 );
               })}
+
               <Link
                 href="#"
                 className="mt-4 font-body text-base rounded-md flex items-center justify-center px-4 py-3 shadow transition-all
