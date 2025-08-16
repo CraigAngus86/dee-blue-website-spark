@@ -103,9 +103,9 @@ export default function AcademyPathwaySection() {
     },
     {
       icon: <Trophy className="w-8 h-8" />,
-      number: "Clear",
+      number: "Pathway",
       suffix: "",
-      label: "Pathway to First Team",
+      label: "To First Team",
       description: "Academy to professional journey",
       color: "from-brand-gold/30 to-accent-dark/20",
       delay: 450

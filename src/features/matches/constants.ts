@@ -9,9 +9,9 @@ export const seasons = [
 // Competitions (using correct short_names from the database)
 export const competitions = [
   { value: 'all', label: 'All Competitions' }, // DEFAULT
-  { value: 'UAE Second Division', label: 'UAE Second Division' },
   { value: 'Friendly', label: 'Friendly' },
-  { value: 'UAE FA Cup', label: 'UAE FA Cup' }
+  { value: 'UAE FA Cup', label: 'UAE FA Cup' },
+  { value: 'UAE Second Division', label: 'UAE Second Division' }
 ];
 
 // Months (calendar order)

@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useLayoutEffect, useState } from "react";
 
 interface ClubAcademyHeroProps {
   title?: string;
@@ -11,50 +11,29 @@ export default function ClubAcademyHero({
   subtitle = "More Than a Club",
 }: ClubAcademyHeroProps) {
   const [isVisible, setIsVisible] = useState(false);
-  useEffect(() => setIsVisible(true), []);
+  useLayoutEffect(() => setIsVisible(true), []);
 
-  // Cloudinary hero image
+  // Align transform profile with TeamHero (subject focus, 16:9, DPR-aware, higher quality)
   const baseUrl = "https://res.cloudinary.com/dlkpaw2a0/image/upload";
-  const transformation = "c_fill,g_auto:face,ar_21:9,q_auto,f_auto";
-  const versionAndId = "v1755184294/academy_hero_idqrxt.png";
+  const transformation = "c_fill,g_auto:subject,ar_16:9,w_1280,dpr_auto,q_auto:good,f_auto";
+  const versionAndId = "v1755343228/AbuDhabi4_jqmuuu.jpg";
   const imageUrl = `${baseUrl}/${transformation}/${versionAndId}`;
 
   return (
     <div className="relative h-[50vh] min-h-[400px] w-full bg-brand-black overflow-hidden">
-      {/* Background image with gentle parallax */}
+      {/* Background — fade-only (no scale transform) */}
       <div
-        className={`absolute inset-0 bg-cover bg-center transition-all duration-1000 ${
-          isVisible ? "scale-105 opacity-60" : "scale-110 opacity-0"
+        className={`absolute inset-0 bg-cover bg-center transition-opacity duration-700 ${
+          isVisible ? "opacity-60" : "opacity-0"
         }`}
-        style={{
-          backgroundImage: `url(${imageUrl})`,
-          transform: isVisible ? "scale(1.05)" : "scale(1.1)",
-        }}
+        style={{ backgroundImage: `url(${imageUrl})` }}
       />
 
-      {/* Adjusted left-to-right gradient */}
+      {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-r from-brand-black via-brand-black/60 to-brand-black/10 z-10" />
 
-      {/* Subtle geometric gold pattern */}
-      <div className="absolute inset-0 z-20 pointer-events-none">
-        <svg className="absolute w-full h-full opacity-10" viewBox="0 0 100 100" preserveAspectRatio="none">
-          <pattern id="gold-pattern-club" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-            <polygon
-              points="10,2 18,10 10,18 2,10"
-              fill="none"
-              stroke="rgb(var(--brand-gold))"
-              strokeWidth="0.5"
-              opacity="0.5"
-            >
-              <animate attributeName="opacity" values="0.5;1;0.5" dur="3s" repeatCount="indefinite" />
-            </polygon>
-          </pattern>
-          <rect width="100" height="100" fill="url(#gold-pattern-club)" />
-        </svg>
-      </div>
-
-      {/* Floating particles */}
-      <div className="absolute inset-0 z-20 pointer-events-none">
+      {/* Floating particles (kept) */}
+      <div className="absolute inset-0 z-15 pointer-events-none">
         {[...Array(5)].map((_, i) => (
           <div
             key={i}
@@ -69,18 +48,23 @@ export default function ClubAcademyHero({
       </div>
 
       {/* Content */}
-      <div className="relative z-30 h-full flex flex-col justify-center items-center text-center px-4 max-w-5xl mx-auto">
+      <div className="relative z-20 h-full flex flex-col justify-center items-center text-center px-4 max-w-5xl mx-auto">
         <h1
-          className={`font-heading text-5xl md:text-7xl lg:text-8xl text-white leading-tight mb-4 transition-all duration-1000 ${
+          className={`font-heading text-5xl md:text-7xl lg:text-8xl text-white leading-tight mb-4 transition-all duration-1000 transform-gpu will-change-transform ${
             isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
           }`}
         >
           <span className="inline-flex flex-wrap items-baseline justify-center">
             {title.split(" ").map((word, i, arr) => (
-              <React.Fragment key={i}>
+              <React.Fragment key={`${word}-${i}`}>
                 <span
                   className="inline-block animate-word-reveal px-1 md:px-1.5"
-                  style={{ animationDelay: `${i * 0.2}s` }}
+                  style={{
+                    animationDelay: `${i * 0.2}s`,
+                    animationFillMode: "both",
+                    backfaceVisibility: "hidden",
+                    WebkitBackfaceVisibility: "hidden",
+                  }}
                 >
                   {word}
                 </span>
@@ -117,17 +101,27 @@ export default function ClubAcademyHero({
           </div>
         </div>
 
-        {/* Heritage accent */}
+        {/* Heritage accent — align structure with TeamHero */}
         <div
-          className={`mt-8 flex items-center space-x-4 transition-all duration-1000 delay-1000 ${
+          className={`mt-8 flex items-center lg:space-x-4 transition-all duration-1000 delay-1000 ${
             isVisible ? "scale-100 opacity-100" : "scale-0 opacity-0"
           }`}
         >
-          <div className="h-px bg-gradient-to-r from-transparent via-brand-gold to-transparent w-16 animate-expand" />
-          <div className="text-brand-gold font-body text-sm tracking-wider">
-            HERITAGE • EXCELLENCE • COMMUNITY
+          <div
+            className="h-px w-16 md:w-20 shrink-0 bg-gradient-to-r from-transparent via-brand-gold to-transparent"
+            aria-hidden
+          />
+          <div className="text-brand-gold font-body text-sm tracking-wider flex flex-col items-center text-center space-y-1 lg:flex-row lg:space-y-0 lg:space-x-2 lg:whitespace-nowrap">
+            <span>HERITAGE</span>
+            <span className="hidden lg:inline" aria-hidden>•</span>
+            <span>EXCELLENCE</span>
+            <span className="hidden lg:inline" aria-hidden>•</span>
+            <span>COMMUNITY</span>
           </div>
-          <div className="h-px bg-gradient-to-r from-transparent via-brand-gold to-transparent w-16 animate-expand" />
+          <div
+            className="h-px w-16 md:w-20 shrink-0 bg-gradient-to-r from-transparent via-brand-gold to-transparent"
+            aria-hidden
+          />
         </div>
       </div>
     </div>

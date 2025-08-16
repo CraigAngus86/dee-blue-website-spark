@@ -111,7 +111,7 @@ const Footer = () => {
             </h3>
 
             <address className="not-italic space-y-1.5">
-              {/* Address → Google Maps */}
+              {/* Address → Google Maps (Arabic removed) */}
               <div className="flex items-start text-xs justify-center md:justify-end">
                 <MapPin
                   size={14}
@@ -124,7 +124,7 @@ const Footer = () => {
                   rel="noopener noreferrer"
                   className="text-white/80 hover:text-[rgb(var(--brand-gold))] focus-visible:text-[rgb(var(--brand-gold))] font-body rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))]"
                 >
-                  <span dir="rtl" lang="ar">13 شارع الصَفِيح</span> – Al Manhal – W15 02 – Abu Dhabi
+                  Al Manhal – W15 02 – Abu Dhabi
                 </a>
               </div>
 
@@ -164,7 +164,7 @@ const Footer = () => {
                 </a>
               </div>
 
-              {/* Email */}
+              {/* Email (updated) */}
               <div className="flex items-center text-xs justify-center md:justify-end">
                 <Mail
                   size={14}
@@ -172,10 +172,10 @@ const Footer = () => {
                   aria-hidden="true"
                 />
                 <a
-                  href="mailto:support@baynounahsc.ae"
+                  href="mailto:craig.angus@baynounahsc.ae"
                   className="text-white/80 hover:text-[rgb(var(--brand-gold))] focus-visible:text-[rgb(var(--brand-gold))] font-body rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))]"
                 >
-                  support@baynounahsc.ae
+                  craig.angus@baynounahsc.ae
                 </a>
               </div>
             </address>
