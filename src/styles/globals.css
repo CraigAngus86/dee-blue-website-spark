@@ -42,12 +42,6 @@
     /* Warm grey for section alternation (new, use this) */
     --warm-gray: 248 246 242;    /* #F8F6F2 */
 
-    /* Status colors (for forms and feedback) */
-    --success: 16 185 129;       /* #10B981 */
-    --warning: 245 158 11;       /* #F59E0B */
-    --error: 239 68 68;          /* #EF4444 */
-    --info: 59 130 246;          /* #3B82F6 */
-
     /* Semantic */
     --surface-1: 255 255 255; /* cards / page surface */
     --surface-2: 244 247 251; /* raised / alt surface */
@@ -56,12 +50,6 @@
     --link: 0 0 0;            /* default link (black) */
     --link-hover: 252 199 67; /* gold hover */
     --separator: 226 232 240; /* dividers/borders */
-
-    /* Font family variables (for Tailwind integration) */
-    --font-heading: 'Bebas Neue', sans-serif;
-    --font-body: 'Open Sans', sans-serif;
-    --font-montserrat: 'Montserrat', sans-serif;
-    --font-inter: 'Inter', sans-serif;
 
     /* Motion */
     --animation-quick: 200ms;
@@ -128,7 +116,7 @@
 @keyframes slideOutRight { from { transform: translateX(0); } to { transform: translateX(100%); } }
 
 /* -----------------------------
-   Additional Animations (Extended)
+   Missing Animations (Added)
    ----------------------------- */
 /* Pulse variations */
 @keyframes pulse-slow {
@@ -140,13 +128,6 @@
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(-20px); }
-}
-
-/* Float with delay variant */
-@keyframes float-delayed {
-  0%, 20% { transform: translateY(0px); }
-  60% { transform: translateY(-20px); }
-  100% { transform: translateY(0px); }
 }
 
 /* Expand effect */
@@ -229,41 +210,6 @@
   }
 }
 
-/* Rotation animations (NEW - for commercial pages) */
-@keyframes rotate-slow {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-@keyframes rotate-slow-reverse {
-  from { transform: rotate(360deg); }
-  to { transform: rotate(0deg); }
-}
-
-/* Fade and slide combined (NEW - for commercial pages) */
-@keyframes fade-in-up {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Background slide effect (NEW - for commercial pages) */
-@keyframes slide {
-  from { transform: translateX(0); }
-  to { transform: translateX(100%); }
-}
-
-/* Tailwind's default pulse (if needed) */
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: .5; }
-}
-
 /* -----------------------------
    Animation Utility Classes
    ----------------------------- */
@@ -273,11 +219,9 @@
 .animate-slide-in-right { animation: slideInRight var(--animation-standard) ease-out forwards; }
 .animate-slide-out-right { animation: slideOutRight var(--animation-standard) ease-out forwards; }
 
-/* Extended animation utilities */
-.animate-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+/* New animation utilities */
 .animate-pulse-slow { animation: pulse-slow 3s ease-in-out infinite; }
 .animate-float { animation: float 3s ease-in-out infinite; }
-.animate-float-delayed { animation: float-delayed 4s ease-in-out infinite; }
 .animate-expand { animation: expand 1s ease-out forwards; }
 .animate-word-reveal { animation: word-reveal 0.6s ease-out forwards; }
 .animate-gradient-shift { animation: gradient-shift 10s linear infinite; }
@@ -288,29 +232,28 @@
 .animate-ping { animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite; }
 .animate-bounce { animation: bounce 1s infinite; }
 
-/* NEW animation utilities for commercial pages */
-.animate-rotate-slow { animation: rotate-slow 30s linear infinite; }
-.animate-rotate-slow-reverse { animation: rotate-slow-reverse 30s linear infinite; }
-.animate-fade-in-up { animation: fade-in-up 0.6s ease-out forwards; }
-
 /* Animation delay utilities */
 .animation-delay-200 { animation-delay: 200ms; }
 .animation-delay-400 { animation-delay: 400ms; }
 .animation-delay-600 { animation-delay: 600ms; }
 .animation-delay-800 { animation-delay: 800ms; }
 .animation-delay-1000 { animation-delay: 1000ms; }
-.animation-delay-1200 { animation-delay: 1200ms; }
-.animation-delay-1500 { animation-delay: 1500ms; }
+
+/* Tailwind's default pulse (if needed) */
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .5; }
+}
 
 /* Performance optimization for mobile */
 @media (max-width: 768px) {
   /* Reduce animation complexity on mobile */
   .animate-float,
-  .animate-float-delayed,
   .animate-gradient-shift,
   .animate-data-stream,
-  .animate-rotate-slow,
-  .animate-rotate-slow-reverse,
   .matrix-move {
     animation: none !important;
   }
@@ -453,10 +396,6 @@ small, .caption { font-size: 14px; color: rgb(var(--dark-gray)); }
 /* Scrollbar (hidden but functional) */
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 .scrollbar-hide::-webkit-scrollbar { display: none; }
-
-/* 3D Transform support (NEW - for commercial pages) */
-.perspective-1000 { perspective: 1000px; }
-.transform-style-3d { transform-style: preserve-3d; }
 
 /* -----------------------------
    Mapbox (neutral + brand) — tokenized
