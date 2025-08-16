@@ -146,18 +146,101 @@ export default {
         "slide-out-right": "slideOutRight 0.3s ease-out",
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        // Additional animations for commercial pages
+        "rotate-slow": "rotate-slow 30s linear infinite",
+        "rotate-slow-reverse": "rotate-slow-reverse 30s linear infinite",
+        "fade-in-up": "fade-in-up 0.6s ease-out forwards",
+        "float": "float 3s ease-in-out infinite",
+        "float-delayed": "float-delayed 4s ease-in-out infinite",
+        "pulse-slow": "pulse-slow 3s ease-in-out infinite",
       },
 
       keyframes: {
-        "accordion-down": { from: { height: "0" }, to: { height: "var(--radix-accordion-content-height)" } },
-        "accordion-up": { from: { height: "var(--radix-accordion-content-height)" }, to: { height: "0" } },
-        fadeIn: { from: { opacity: "0" }, to: { opacity: "1" } },
-        slideUp: { from: { transform: "translateY(20px)", opacity: "0" }, to: { transform: "translateY(0)", opacity: "1" } },
-        scaleIn: { from: { transform: "scale(0.95)", opacity: "0" }, to: { transform: "scale(1)", opacity: "1" } },
-        slideInRight: { from: { transform: "translateX(100%)" }, to: { transform: "translateX(0)" } },
-        slideOutRight: { from: { transform: "translateX(0)" }, to: { transform: "translateX(100%)" } },
+        "accordion-down": { 
+          from: { height: "0" }, 
+          to: { height: "var(--radix-accordion-content-height)" } 
+        },
+        "accordion-up": { 
+          from: { height: "var(--radix-accordion-content-height)" }, 
+          to: { height: "0" } 
+        },
+        fadeIn: { 
+          from: { opacity: "0" }, 
+          to: { opacity: "1" } 
+        },
+        slideUp: { 
+          from: { transform: "translateY(20px)", opacity: "0" }, 
+          to: { transform: "translateY(0)", opacity: "1" } 
+        },
+        scaleIn: { 
+          from: { transform: "scale(0.95)", opacity: "0" }, 
+          to: { transform: "scale(1)", opacity: "1" } 
+        },
+        slideInRight: { 
+          from: { transform: "translateX(100%)" }, 
+          to: { transform: "translateX(0)" } 
+        },
+        slideOutRight: { 
+          from: { transform: "translateX(0)" }, 
+          to: { transform: "translateX(100%)" } 
+        },
+        // Additional keyframes for commercial pages
+        "rotate-slow": {
+          from: { transform: "rotate(0deg)" },
+          to: { transform: "rotate(360deg)" }
+        },
+        "rotate-slow-reverse": {
+          from: { transform: "rotate(360deg)" },
+          to: { transform: "rotate(0deg)" }
+        },
+        "fade-in-up": {
+          from: { opacity: "0", transform: "translateY(20px)" },
+          to: { opacity: "1", transform: "translateY(0)" }
+        },
+        "float": {
+          "0%, 100%": { transform: "translateY(0px)" },
+          "50%": { transform: "translateY(-20px)" }
+        },
+        "float-delayed": {
+          "0%, 20%": { transform: "translateY(0px)" },
+          "60%": { transform: "translateY(-20px)" },
+          "100%": { transform: "translateY(0px)" }
+        },
+        "pulse-slow": {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.5" }
+        },
+      },
+
+      // Custom utilities for 3D transforms (NEW)
+      perspective: {
+        '1000': '1000px',
+        '1200': '1200px',
+        '1500': '1500px',
+      },
+
+      // Additional transition timings (NEW)
+      transitionDuration: {
+        '1500': '1500ms',
+        '2000': '2000ms',
+        '3000': '3000ms',
+      },
+
+      // Additional z-index values for complex layering (NEW)
+      zIndex: {
+        '60': '60',
+        '70': '70',
+        '80': '80',
+        '90': '90',
+        '100': '100',
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    // Consider adding these plugins if needed:
+    // require('@tailwindcss/forms'),      // Better form styling
+    // require('@tailwindcss/typography'), // Better prose styling
+    // require('@tailwindcss/aspect-ratio'), // Aspect ratio utilities
+  ],
 } satisfies Config;
