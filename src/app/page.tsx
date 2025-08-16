@@ -119,9 +119,9 @@ async function getRandomPlayers() {
   }
 }
 
-// Mobile "See all News" link (secondary button style)
+// Mobile "See all News" link (secondary button style) — trimmed padding
 const MobileNewsLink = () => (
-  <div className="block md:hidden bg-[rgb(var(--white))] py-6">
+  <div className="block md:hidden bg-[rgb(var(--white))] pt-3 pb-4">
     <div className="container mx-auto px-4 text-center">
       <a
         href="/news"
@@ -208,15 +208,15 @@ export default async function HomePage() {
       {/* Hero */}
       <HomeHeroSection articles={heroItems} />
 
-      {/* Mobile CTA to News */}
+      {/* Mobile CTA to News (reduced padding) */}
       <MobileNewsLink />
 
-      {/* News cards (desktop) */}
-      <Section background="transparent" spacing="md" className="section--white">
-        <div className="hidden md:block">
+      {/* News cards (desktop) — Section is NOT rendered on mobile to avoid extra vertical padding */}
+      <div className="hidden md:block">
+        <Section background="transparent" spacing="md" className="section--white">
           <OverlappingNewsCards articles={cardsItems} />
-        </div>
-      </Section>
+        </Section>
+      </div>
 
       <GradientSeparator className="py-6" />
 

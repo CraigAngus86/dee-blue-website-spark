@@ -18,10 +18,10 @@ const CLOUDINARY_TRANSFORMS = {
 
 // Static stats - Update these as needed
 const SOCIAL_STATS = {
-  platformFollowers: "23.7K", // Combined total across all platforms
-  totalPosts: "4,892",        // Total posts across history
-  pollResponses: "1,247",     // Total poll participation
-  lastUpdated: "Aug 12, 2025" // Today's date
+  platformFollowers: "26.8K",
+  totalPostsLifetime: "1,214",
+  newsArticles: "3",
+  lastUpdated: "Aug 16, 2025",
 } as const;
 
 // Real Baynounah social media URLs
@@ -246,9 +246,10 @@ function FanZoneDesktop({
               : Array.from({ length: 4 }, (_, i) => (
                   <div
                     key={i}
-                    className="relative aspect-[5/4] bg-gradient-to-br from-white to-[#F8F6F3] rounded-xl border border-separator shadow-sm hover:shadow-md overflow-hidden transition-all duration-300 hover:translate-y-[-2px] flex items-center justify-center text-dark-gray"
+                    className="relative aspect-[5/4] bg-gradient-to-br from-white to-[#F8F6F3] rounded-xl border border-separator shadow-sm hover:shadow-md overflow-hidden transition-all duration-300 hover:translate-y-[-2px] flex flex-col items-center justify-center text-dark-gray"
                   >
                     <Camera className="w-8 h-8 opacity-30" />
+                    <span className="mt-2 text-xs font-medium text-dark-gray">Coming Soon</span>
                   </div>
                 ))}
           </div>
@@ -298,15 +299,15 @@ function FanZoneDesktop({
               </div>
               <div className="text-center p-3 bg-white/80 backdrop-blur-sm rounded-lg border border-separator group-hover:border-brand-gold/30 transition-colors">
                 <div className="text-h5 font-heading text-brand-gold">
-                  {SOCIAL_STATS.totalPosts}
+                  {SOCIAL_STATS.totalPostsLifetime}
                 </div>
-                <div className="text-xs text-dark-gray">Total Posts</div>
+                <div className="text-xs text-dark-gray">Total Posts (lifetime)</div>
               </div>
               <div className="text-center p-3 bg-white/80 backdrop-blur-sm rounded-lg border border-separator group-hover:border-brand-gold/30 transition-colors">
                 <div className="text-h5 font-heading text-brand-gold">
-                  {SOCIAL_STATS.pollResponses}
+                  {SOCIAL_STATS.newsArticles}
                 </div>
-                <div className="text-xs text-dark-gray">Poll Responses</div>
+                <div className="text-xs text-dark-gray">News Articles</div>
               </div>
             </div>
             

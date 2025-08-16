@@ -25,26 +25,14 @@ export default function FanZoneMobile({
   const [selectedPhotoUrl, setSelectedPhotoUrl] = useState<string | null>(null);
 
   // Modal handlers
-  const handleSubmitStoryClick = () => {
-    setFanSubmissionModalOpen(true);
-  };
-
-  const handleUploadPhotoClick = () => {
-    setPhotoUploadModalOpen(true);
-  };
-
-  const handleCloseFanSubmissionModal = () => {
-    setFanSubmissionModalOpen(false);
-  };
-
-  const handleClosePhotoUploadModal = () => {
-    setPhotoUploadModalOpen(false);
-  };
+  const handleSubmitStoryClick = () => setFanSubmissionModalOpen(true);
+  const handleUploadPhotoClick = () => setPhotoUploadModalOpen(true);
+  const handleCloseFanSubmissionModal = () => setFanSubmissionModalOpen(false);
+  const handleClosePhotoUploadModal = () => setPhotoUploadModalOpen(false);
 
   // Gallery modal handlers
   const handleGalleryPhotoClick = (photo: any) => {
     setSelectedPhoto(photo);
-    // Use the same buildCloudinaryUrl approach for modal
     if (photo.photo?.public_id) {
       const modalUrl = buildCloudinaryUrl(photo.photo.public_id, 'gallery');
       setSelectedPhotoUrl(modalUrl);
@@ -58,7 +46,7 @@ export default function FanZoneMobile({
     setSelectedPhotoUrl(null);
   };
 
-  // Helper functions
+  // Helpers
   const getStoryExcerpt = (story: string, maxWords = 40) => {
     if (!story) return '';
     const words = story.split(' ');
@@ -74,9 +62,7 @@ export default function FanZoneMobile({
   // Cloudinary URL builder
   const buildCloudinaryUrl = (publicId: string, type: 'gallery' | 'fanOfMonth' | 'fanPhoto' = 'gallery') => {
     const baseUrl = 'https://res.cloudinary.com/dlkpaw2a0/image/upload/';
-    
     let transformation = '';
-    
     switch (type) {
       case 'gallery':
         transformation = 'g_auto:faces,c_fill,ar_5:4,q_auto:good,f_auto,e_sharpen,w_500,h_400';
@@ -88,7 +74,6 @@ export default function FanZoneMobile({
         transformation = 'g_auto:faces,c_fill,ar_3:4,q_auto:good,f_auto,w_96,h_128';
         break;
     }
-    
     return `${baseUrl}${transformation}/${publicId}`;
   };
 
@@ -104,10 +89,8 @@ export default function FanZoneMobile({
       </div>
 
       <div className="space-y-6">
-        
-        {/* Fan of the Month - UPDATED with consistent header */}
+        {/* Fan of the Month */}
         <div className="bg-white rounded-xl border border-separator shadow-sm hover:shadow-md overflow-hidden transition-all duration-300 hover:-translate-y-1">
-          {/* FIXED: Consistent Card Header with gold accent - 72px for mobile */}
           <div className="h-[72px] flex items-center justify-between px-4 border-b border-separator bg-gradient-to-r from-white to-[#F8F6F2]">
             <div className="flex items-center">
               <div className="w-1 h-8 bg-brand-gold rounded-sm mr-3" />
@@ -127,12 +110,12 @@ export default function FanZoneMobile({
               Submit
             </button>
           </div>
-          
+
           {fanOfMonth ? (
             <div className="relative">
               <div className="relative h-[280px] overflow-hidden">
                 {fanOfMonth.photos?.[0]?.public_id ? (
-                  <img 
+                  <img
                     src={buildCloudinaryUrl(fanOfMonth.photos[0].public_id, 'fanOfMonth')}
                     alt={`${fanOfMonth.fanName}`}
                     className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
@@ -141,10 +124,9 @@ export default function FanZoneMobile({
                   <div className="w-full h-full bg-gradient-to-br from-light-gray to-medium-gray" />
                 )}
               </div>
-              
-              {/* Enhanced gradient overlay */}
+
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-              
+
               <div className="absolute bottom-0 left-0 right-0 p-4 text-white z-10">
                 <h4 className="text-xl font-bold mb-2 drop-shadow-lg">{fanOfMonth.fanName}</h4>
                 <div className="flex items-center gap-2 mb-2">
@@ -177,16 +159,23 @@ export default function FanZoneMobile({
           )}
         </div>
 
-        {/* Mobile Poll Card - Already updated in PollCardMobile */}
+        {/* Mobile Poll Card */}
         <PollCardMobile activePoll={activePoll} />
 
-        {/* Fan Gallery Section - UPDATED header consistency */}
+        {/* Fan Gallery Section */}
         <div>
-          {/* Gallery Header - Fixed typography and letter-spacing */}
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-start">
-              <div className="w-1 h-6 bg-brand-gold mr-3 mt-1 rounded-sm"></div>
-              <h3 className="text-h5 font-heading text-brand-black" style={{letterSpacing: '0.02em'}}>Fan Gallery</h3>
+          {/* Header copied EXACTLY from Fan of the Month */}
+          <div className="h-[72px] flex items-center justify-between px-4 border-b border-separator bg-gradient-to-r from-white to-[#F8F6F2]">
+            <div className="flex items-center">
+              <div className="w-1 h-8 bg-brand-gold rounded-sm mr-3" />
+              <div>
+                <h3 className="text-h5 font-heading text-brand-black leading-none m-0" style={{letterSpacing: '0.02em'}}>
+                  Fan Gallery
+                </h3>
+                <p className="text-xs text-text-muted leading-none m-0 mt-1">
+                  Showcase your Baynounah Moments
+                </p>
+              </div>
             </div>
             <button 
               onClick={handleUploadPhotoClick}
@@ -196,8 +185,8 @@ export default function FanZoneMobile({
               Upload
             </button>
           </div>
-          
-          <div className="grid grid-cols-2 gap-3 mb-4">
+
+          <div className="grid grid-cols-2 gap-3 mt-4 mb-4 px-0">
             {galleryPhotos.length > 0 ? (
               galleryPhotos.slice(0, 4).map((photo, index) => (
                 <div 
@@ -235,14 +224,15 @@ export default function FanZoneMobile({
               Array.from({ length: 4 }, (_, i) => (
                 <div 
                   key={i}
-                  className="relative aspect-[5/4] bg-gradient-to-br from-white to-[#F8F6F2] rounded-lg flex items-center justify-center text-text-muted shadow-sm border border-separator"
+                  className="relative aspect-[5/4] bg-gradient-to-br from-white to-[#F8F6F2] rounded-lg flex flex-col items-center justify-center text-text-muted shadow-sm border border-separator"
                 >
                   <Camera className="w-6 h-6 opacity-30" />
+                  <span className="mt-2 text-[11px] font-medium text-text-muted">Coming Soon</span>
                 </div>
               ))
             )}
           </div>
-          
+
           <div className="text-center">
             <p className="text-text-muted text-xs mb-3">
               Share your match day photos and be featured
@@ -250,83 +240,47 @@ export default function FanZoneMobile({
           </div>
         </div>
 
-        {/* Social Media Section - COMPLETELY RESTRUCTURED */}
+        {/* Social Media Section */}
         <div className="relative overflow-hidden rounded-xl border-2 border-separator hover:border-brand-gold shadow-sm transition-all duration-300 group" 
              style={{background: 'linear-gradient(135deg, #FFFFFF 0%, #F8F6F2 100%)'}}>
-          
-          {/* Subtle pattern overlay */}
           <div className="absolute inset-0 opacity-[0.02]">
             <div className="absolute inset-0" style={{
               backgroundImage: `repeating-linear-gradient(45deg, transparent, transparent 35px, #FCC743 35px, #FCC743 36px)`,
             }} />
           </div>
-          
           <div className="relative p-6 text-center">
-            {/* Title - centered, consistent size */}
             <h4 className="text-h5 font-heading text-brand-black mb-4" style={{letterSpacing: '0.02em'}}>
               Join Our Community
             </h4>
-            
-            {/* Social Icons - centered row */}
             <div className="flex justify-center gap-4 mb-4">
-              <a 
-                href="https://instagram.com/baynounahsc" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="w-10 h-10 bg-brand-black rounded-full flex items-center justify-center hover:bg-brand-gold transition-colors group/icon"
-              >
+              <a href="https://instagram.com/baynounahsc" target="_blank" rel="noopener noreferrer"
+                 className="w-10 h-10 bg-brand-black rounded-full flex items-center justify-center hover:bg-brand-gold transition-colors group/icon">
                 <Instagram className="w-5 h-5 text-white group-hover/icon:text-brand-black" />
               </a>
-              <a 
-                href="https://twitter.com/baynounahsc" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="w-10 h-10 bg-brand-black rounded-full flex items-center justify-center hover:bg-brand-gold transition-colors group/icon"
-              >
+              <a href="https://twitter.com/baynounahsc" target="_blank" rel="noopener noreferrer"
+                 className="w-10 h-10 bg-brand-black rounded-full flex items-center justify-center hover:bg-brand-gold transition-colors group/icon">
                 <Twitter className="w-5 h-5 text-white group-hover/icon:text-brand-black" />
               </a>
-              <a 
-                href="https://facebook.com/baynounahsc" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="w-10 h-10 bg-brand-black rounded-full flex items-center justify-center hover:bg-brand-gold transition-colors group/icon"
-              >
+              <a href="https://facebook.com/baynounahsc" target="_blank" rel="noopener noreferrer"
+                 className="w-10 h-10 bg-brand-black rounded-full flex items-center justify-center hover:bg-brand-gold transition-colors group/icon">
                 <Facebook className="w-5 h-5 text-white group-hover/icon:text-brand-black" />
               </a>
-              <a 
-                href="https://youtube.com/baynounahsc" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="w-10 h-10 bg-brand-black rounded-full flex items-center justify-center hover:bg-brand-gold transition-colors group/icon"
-              >
+              <a href="https://youtube.com/baynounahsc" target="_blank" rel="noopener noreferrer"
+                 className="w-10 h-10 bg-brand-black rounded-full flex items-center justify-center hover:bg-brand-gold transition-colors group/icon">
                 <Youtube className="w-5 h-5 text-white group-hover/icon:text-brand-black" />
               </a>
             </div>
-            
-            {/* Hashtags - centered */}
             <div className="flex gap-2 justify-center">
-              <span className="px-3 py-1 bg-black text-white text-[10px] font-medium rounded-full shadow-sm">
-                #BaynounahSC
-              </span>
-              <span className="px-3 py-1 bg-brand-gold text-black text-[10px] font-medium rounded-full shadow-sm">
-                #BePartOfTheJourney
-              </span>
+              <span className="px-3 py-1 bg-black text-white text-[10px] font-medium rounded-full shadow-sm">#BaynounahSC</span>
+              <span className="px-3 py-1 bg-brand-gold text-black text-[10px] font-medium rounded-full shadow-sm">#BePartOfTheJourney</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Modals */}
-      <FanSubmissionModal 
-        isOpen={fanSubmissionModalOpen}
-        onClose={handleCloseFanSubmissionModal}
-      />
-
-      <PhotoUploadModal 
-        isOpen={photoUploadModalOpen}
-        onClose={handleClosePhotoUploadModal}
-      />
-
+      <FanSubmissionModal isOpen={fanSubmissionModalOpen} onClose={handleCloseFanSubmissionModal} />
+      <PhotoUploadModal isOpen={photoUploadModalOpen} onClose={handleClosePhotoUploadModal} />
       <FanGalleryModalMobile
         photo={selectedPhoto}
         photoUrl={selectedPhotoUrl}

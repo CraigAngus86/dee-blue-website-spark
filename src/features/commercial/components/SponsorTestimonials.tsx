@@ -1,9 +1,9 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import { ChevronRight, Sparkles } from "lucide-react";
+import { Sparkles, MessageCircle } from "lucide-react";
 
 interface SponsorTestimonialsProps {
-  onPartnershipClick: () => void;
+  onPartnershipClick?: () => void; // now optional, not used
 }
 
 export function SponsorTestimonials({ onPartnershipClick }: SponsorTestimonialsProps) {
@@ -64,43 +64,25 @@ export function SponsorTestimonials({ onPartnershipClick }: SponsorTestimonialsP
               objectives and budget and we’ll come back with a concise, per-season SOW.
             </p>
 
-            {/* Next step */}
-            <div className="mt-8 text-center">
-              <span className="inline-block uppercase tracking-wide text-xs md:text-sm font-semibold text-brand-gold/90">
-                Next step
-              </span>
-            </div>
-
-            {/* Primary CTA */}
-            <div className="mt-3 flex items-center justify-center">
-              <button
-                onClick={onPartnershipClick}
-                className="group inline-flex items-center gap-2 rounded-full px-6 py-3 bg-brand-gold text-brand-black font-body font-semibold text-base md:text-lg shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all"
-                aria-label="Book a 20-minute intro"
-              >
-                Book a 20-minute Call
-                <ChevronRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-              </button>
-            </div>
-
-            {/* Contacts */}
-            <p className="mt-4 font-body text-sm md:text-base text-text-muted text-center">
-              Or contact us now:{" "}
+            {/* CTAs (match Academy page pattern) */}
+            <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
               <a
                 href="mailto:craig.angus@baynounahsc.ae"
-                className="text-brand-black underline decoration-brand-gold/60 underline-offset-4 hover:text-brand-gold transition-colors"
+                className="group inline-flex items-center justify-center bg-brand-gold text-brand-black hover:bg-accent-dark px-6 md:px-8 py-3 md:py-4 rounded-lg font-body font-semibold text-base md:text-lg transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1"
               >
-                craig.angus@baynounahsc.ae
-              </a>{" "}
-              <span className="mx-2 text-brand-gold/60">·</span>
+                <span>Get in touch</span>
+              </a>
+
               <a
                 href="https://wa.me/971566975370"
-                className="text-brand-black underline decoration-brand-gold/60 underline-offset-4 hover:text-brand-gold transition-colors"
-                aria-label="WhatsApp +971 56 697 5370"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center justify-center bg-white text-brand-black border-2 border-brand-gold hover:bg-brand-gold px-6 md:px-8 py-3 md:py-4 rounded-lg font-body font-semibold text-base md:text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
               >
-                WhatsApp +971 56 697 5370
+                <MessageCircle className="w-5 h-5 mr-2" />
+                <span>WhatsApp Us</span>
               </a>
-            </p>
+            </div>
           </div>
         </div>
 
