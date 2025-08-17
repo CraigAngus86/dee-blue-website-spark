@@ -58,32 +58,29 @@ export async function getActivePoll(): Promise<SimplePoll | null> {
   }
 }
 
-function getBrowserFingerprint(): string {
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d')!;
-  ctx.textBaseline = 'top';
-  ctx.font = '14px Arial';
-  ctx.fillText('Banks o Dee Poll', 2, 2);
-  
-  const fingerprint = [
-    navigator.userAgent,
-    navigator.language,
-    screen.width + 'x' + screen.height,
-    new Date().getTimezoneOffset(),
-    canvas.toDataURL()
-  ].join('|');
-  
-  return btoa(fingerprint).substring(0, 32);
-}
-
+// ✅ UPDATED: Session-based voter identification
 function getVoterHash(): string {
-  return getBrowserFingerprint();
+  // Check if we're in a browser environment
+  if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
+    // Fallback for server-side rendering
+    return 'ssr-fallback-' + Math.random().toString(36).substring(2);
+  }
+
+  // Get or create session ID
+  let sessionId = localStorage.getItem('baynounah_poll_session');
+  
+  if (!sessionId) {
+    // Generate unique session ID
+    sessionId = 'poll_' + Date.now() + '_' + Math.random().toString(36).substring(2);
+    localStorage.setItem('baynounah_poll_session', sessionId);
+  }
+  
+  return sessionId;
 }
 
 export async function checkIfUserVoted(pollId: string): Promise<{hasVoted: boolean, optionId: string | null}> {
   try {
     const voterHash = getVoterHash();
-    
     const { data, error } = await supabase
       .from('poll_votes')
       .select('option_id')
@@ -130,8 +127,8 @@ export async function submitVote(pollId: string, optionId: string): Promise<void
 }
 
 export async function createPoll(
-  sanityPollId: string, 
-  question: string, 
+  sanityPollId: string,
+  question: string,
   options: string[],
   category?: string,
   endDate?: string
