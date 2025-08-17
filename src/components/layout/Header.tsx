@@ -78,7 +78,7 @@ const Header = ({ sponsors = [] }: HeaderProps) => {
     { name: "Team & Management", href: "/team" },
     { name: "Match Centre", href: "/matches" },
     { name: "Club & Academy", href: "/academy" },
-    { name: "Commercial", href: "/commercial" },
+    { name: "Partnerships", href: "/commercial" },
   ];
 
   const sortedSponsors = useMemo(() => {
@@ -208,7 +208,7 @@ const Header = ({ sponsors = [] }: HeaderProps) => {
                   { name: "Team & Management", href: "/team" },
                   { name: "Match Centre", href: "/matches" },
                   { name: "Club & Academy", href: "/academy" },
-                  { name: "Commercial", href: "/commercial" },
+                  { name: "Partnerships", href: "/commercial" },
                 ].map((item) => {
                   const active = isActive(item.href);
                   return (
@@ -273,7 +273,7 @@ const Header = ({ sponsors = [] }: HeaderProps) => {
                 { name: "Team & Management", href: "/team" },
                 { name: "Match Centre", href: "/matches" },
                 { name: "Club & Academy", href: "/academy" },
-                { name: "Commercial", href: "/commercial" },
+                { name: "Partnerships", href: "/commercial" },
               ].map((item) => {
                 const active = isActive(item.href);
                 return (
