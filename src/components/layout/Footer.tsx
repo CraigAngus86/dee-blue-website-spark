@@ -136,10 +136,10 @@ const Footer = () => {
                   aria-hidden="true"
                 />
                 <a
-                  href="tel:+971566975370"
+                  href="tel:+971523420010"
                   className="text-white/80 hover:text-[rgb(var(--brand-gold))] focus-visible:text-[rgb(var(--brand-gold))] font-body rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))]"
                 >
-                  +971 566 975 370
+                  +971 523 420 010
                 </a>
               </div>
 
@@ -154,7 +154,7 @@ const Footer = () => {
                   </svg>
                 </span>
                 <a
-                  href="https://wa.me/971566975370"
+                  href="https://wa.me/971523420010"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Chat on WhatsApp"
@@ -172,10 +172,10 @@ const Footer = () => {
                   aria-hidden="true"
                 />
                 <a
-                  href="mailto:craig.angus@baynounahsc.ae"
+                  href="mailto:website@baynounahsc.ae"
                   className="text-white/80 hover:text-[rgb(var(--brand-gold))] focus-visible:text-[rgb(var(--brand-gold))] font-body rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand-gold))]"
                 >
-                  craig.angus@baynounahsc.ae
+                  website@baynounahsc.ae
                 </a>
               </div>
             </address>

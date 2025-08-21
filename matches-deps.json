@@ -1,0 +1,138 @@
+{
+  "../../components/ui/cloudinary/CloudinaryImage.tsx": [
+    "../../lib/cloudinary/imageTransforms.ts",
+    "../../lib/utils.ts"
+  ],
+  "../../features/galleries/components/GalleryThumbnailGrid.tsx": [
+    "../../features/galleries/hooks/useGallery.ts",
+    "../../features/galleries/types/index.ts"
+  ],
+  "../../features/galleries/components/GalleryViewer.tsx": [
+    "../../features/galleries/hooks/useGallery.ts",
+    "../../features/galleries/types/index.ts"
+  ],
+  "../../features/galleries/components/MatchGalleryModal.tsx": [
+    "../../features/galleries/components/GalleryThumbnailGrid.tsx",
+    "../../features/galleries/components/GalleryViewer.tsx",
+    "../../features/galleries/hooks/useGallery.ts"
+  ],
+  "../../features/galleries/hooks/useGallery.ts": [
+    "../../features/galleries/types/index.ts"
+  ],
+  "../../features/galleries/index.ts": [
+    "../../features/galleries/components/GalleryThumbnailGrid.tsx",
+    "../../features/galleries/components/GalleryViewer.tsx",
+    "../../features/galleries/components/MatchGalleryModal.tsx",
+    "../../features/galleries/hooks/useGallery.ts",
+    "../../features/galleries/types/index.ts"
+  ],
+  "../../features/galleries/types/index.ts": [],
+  "../../features/matches/components/FixtureCard.tsx": [
+    "../../features/matches/components/TeamLogo.tsx"
+  ],
+  "../../features/matches/components/MatchCentreContainer.tsx": [
+    "../../features/matches/components/filters/CompetitionFilter.tsx",
+    "../../features/matches/components/filters/MonthFilter.tsx",
+    "../../features/matches/components/filters/SeasonFilter.tsx",
+    "../../features/matches/components/panels/FixturesPanel.tsx",
+    "../../features/matches/components/panels/ResultsPanel.tsx",
+    "../../features/matches/components/panels/TablePanel.tsx",
+    "../../features/matches/components/tabs/TabNavigation.tsx",
+    "../../features/matches/constants.ts"
+  ],
+  "../../features/matches/components/ResultCard.tsx": [
+    "../../features/matches/components/TeamLogo.tsx"
+  ],
+  "../../features/matches/components/TeamLogo.tsx": [],
+  "../../features/matches/components/common/TeamLogo.tsx": [],
+  "../../features/matches/components/filters/CompetitionFilter.tsx": [
+    "../../features/matches/components/filters/FilterDropdown.tsx",
+    "../../features/matches/constants.ts"
+  ],
+  "../../features/matches/components/filters/FilterDropdown.tsx": [
+    "../../lib/utils.ts"
+  ],
+  "../../features/matches/components/filters/MonthFilter.tsx": [
+    "../../features/matches/components/filters/FilterDropdown.tsx",
+    "../../features/matches/constants.ts"
+  ],
+  "../../features/matches/components/filters/SeasonFilter.tsx": [
+    "../../features/matches/components/filters/FilterDropdown.tsx",
+    "../../features/matches/constants.ts"
+  ],
+  "../../features/matches/components/layout/MatchCentreHero.tsx": [],
+  "../../features/matches/components/mobile/MobileFixtureCard.tsx": [
+    "../../features/matches/components/common/TeamLogo.tsx"
+  ],
+  "../../features/matches/components/mobile/MobileResultCard.tsx": [
+    "../../features/matches/components/common/TeamLogo.tsx"
+  ],
+  "../../features/matches/components/mobile/MobileTableCard.tsx": [
+    "../../features/matches/components/common/TeamLogo.tsx"
+  ],
+  "../../features/matches/components/panels/FixturesPanel.tsx": [
+    "../../features/matches/components/FixtureCard.tsx",
+    "../../features/matches/components/mobile/MobileFixtureCard.tsx",
+    "../../features/matches/constants.ts",
+    "../../lib/supabase/client.ts"
+  ],
+  "../../features/matches/components/panels/ResultsPanel.tsx": [
+    "../../features/galleries/index.ts",
+    "../../features/matches/components/ResultCard.tsx",
+    "../../features/matches/components/mobile/MobileResultCard.tsx",
+    "../../features/matches/constants.ts",
+    "../../features/news/components/index.ts",
+    "../../lib/sanity/client.ts",
+    "../../lib/supabase/client.ts"
+  ],
+  "../../features/matches/components/panels/TablePanel.tsx": [
+    "../../features/matches/components/TeamLogo.tsx",
+    "../../features/matches/components/mobile/MobileTableCard.tsx",
+    "../../features/matches/constants.ts",
+    "../../lib/supabase/client.ts"
+  ],
+  "../../features/matches/components/tabs/TabNavigation.tsx": [
+    "../../lib/utils.ts"
+  ],
+  "../../features/matches/constants.ts": [],
+  "../../features/news/components/NewsModal.tsx": [
+    "../../features/news/components/portable-text/PortableTextComponents.tsx",
+    "../../features/news/types/index.ts",
+    "../../lib/cloudinary/imageTransforms.ts"
+  ],
+  "../../features/news/components/cards/NewsCard.tsx": [
+    "../../components/ui/cloudinary/CloudinaryImage.tsx",
+    "../../features/news/types/index.ts",
+    "../../lib/utils.ts"
+  ],
+  "../../features/news/components/cards/NewsPageCard.tsx": [
+    "../../features/news/types/index.ts",
+    "../../lib/cloudinary/imageTransforms.ts",
+    "../../lib/utils.ts"
+  ],
+  "../../features/news/components/index.ts": [
+    "../../features/news/components/NewsModal.tsx",
+    "../../features/news/components/cards/NewsCard.tsx",
+    "../../features/news/components/cards/NewsPageCard.tsx",
+    "../../features/news/components/sections/NewsGrid.tsx"
+  ],
+  "../../features/news/components/portable-text/PortableTextComponents.tsx": [],
+  "../../features/news/components/sections/NewsGrid.tsx": [
+    "../../features/galleries/index.ts",
+    "../../features/news/components/index.ts",
+    "../../features/news/types/index.ts",
+    "../../lib/utils.ts"
+  ],
+  "../../features/news/types/index.ts": [],
+  "../../lib/cloudinary/imageTransforms.ts": [],
+  "../../lib/env.ts": [],
+  "../../lib/sanity/client.ts": [],
+  "../../lib/supabase/client.ts": [
+    "../../lib/env.ts"
+  ],
+  "../../lib/utils.ts": [],
+  "page.tsx": [
+    "../../features/matches/components/MatchCentreContainer.tsx",
+    "../../features/matches/components/layout/MatchCentreHero.tsx"
+  ]
+}

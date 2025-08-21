@@ -1,0 +1,71 @@
+{
+  "../../components/ui/cloudinary/CloudinaryImage.tsx": [
+    "../../lib/cloudinary/imageTransforms.ts",
+    "../../lib/utils.ts"
+  ],
+  "../../features/galleries/components/GalleryThumbnailGrid.tsx": [
+    "../../features/galleries/hooks/useGallery.ts",
+    "../../features/galleries/types/index.ts"
+  ],
+  "../../features/galleries/components/GalleryViewer.tsx": [
+    "../../features/galleries/hooks/useGallery.ts",
+    "../../features/galleries/types/index.ts"
+  ],
+  "../../features/galleries/components/MatchGalleryModal.tsx": [
+    "../../features/galleries/components/GalleryThumbnailGrid.tsx",
+    "../../features/galleries/components/GalleryViewer.tsx",
+    "../../features/galleries/hooks/useGallery.ts"
+  ],
+  "../../features/galleries/hooks/useGallery.ts": [
+    "../../features/galleries/types/index.ts"
+  ],
+  "../../features/galleries/index.ts": [
+    "../../features/galleries/components/GalleryThumbnailGrid.tsx",
+    "../../features/galleries/components/GalleryViewer.tsx",
+    "../../features/galleries/components/MatchGalleryModal.tsx",
+    "../../features/galleries/hooks/useGallery.ts",
+    "../../features/galleries/types/index.ts"
+  ],
+  "../../features/galleries/types/index.ts": [],
+  "../../features/news/components/NewsHero.tsx": [],
+  "../../features/news/components/NewsModal.tsx": [
+    "../../features/news/components/portable-text/PortableTextComponents.tsx",
+    "../../features/news/types/index.ts",
+    "../../lib/cloudinary/imageTransforms.ts"
+  ],
+  "../../features/news/components/cards/NewsCard.tsx": [
+    "../../components/ui/cloudinary/CloudinaryImage.tsx",
+    "../../features/news/types/index.ts",
+    "../../lib/utils.ts"
+  ],
+  "../../features/news/components/cards/NewsPageCard.tsx": [
+    "../../features/news/types/index.ts",
+    "../../lib/cloudinary/imageTransforms.ts",
+    "../../lib/utils.ts"
+  ],
+  "../../features/news/components/index.ts": [
+    "../../features/news/components/NewsModal.tsx",
+    "../../features/news/components/cards/NewsCard.tsx",
+    "../../features/news/components/cards/NewsPageCard.tsx",
+    "../../features/news/components/sections/NewsGrid.tsx"
+  ],
+  "../../features/news/components/portable-text/PortableTextComponents.tsx": [],
+  "../../features/news/components/sections/NewsGrid.tsx": [
+    "../../features/galleries/index.ts",
+    "../../features/news/components/index.ts",
+    "../../features/news/types/index.ts",
+    "../../lib/utils.ts"
+  ],
+  "../../features/news/types/index.ts": [],
+  "../../lib/cloudinary/imageTransforms.ts": [],
+  "../../lib/env.ts": [],
+  "../../lib/sanity/sanityClient.ts": [
+    "../../lib/env.ts"
+  ],
+  "../../lib/utils.ts": [],
+  "page.tsx": [
+    "../../features/news/components/NewsHero.tsx",
+    "../../features/news/components/index.ts",
+    "../../lib/sanity/sanityClient.ts"
+  ]
+}

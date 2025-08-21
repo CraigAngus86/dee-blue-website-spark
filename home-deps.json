@@ -1,0 +1,235 @@
+{
+  "../components/ui/Reveal.tsx": [
+    "../lib/utils.ts"
+  ],
+  "../components/ui/button.tsx": [
+    "../lib/utils.ts"
+  ],
+  "../components/ui/carousel.tsx": [
+    "../components/ui/button.tsx",
+    "../lib/utils.ts"
+  ],
+  "../components/ui/cloudinary/CloudinaryImage.tsx": [
+    "../lib/cloudinary/imageTransforms.ts",
+    "../lib/utils.ts"
+  ],
+  "../components/ui/layout/Section.tsx": [
+    "../lib/utils.ts"
+  ],
+  "../components/ui/sections/MatchCenter.tsx": [
+    "../components/ui/sections/SectionHeader.tsx",
+    "../features/galleries/index.ts",
+    "../features/matches/components/home/MatchCarousel.tsx",
+    "../features/matches/components/mobile/MobileMatchSection.tsx",
+    "../features/matches/hooks/useLeagueTable.ts",
+    "../features/news/components/index.ts"
+  ],
+  "../components/ui/sections/SectionHeader.tsx": [
+    "../lib/utils.ts"
+  ],
+  "../components/ui/separators/GradientSeparator.tsx": [
+    "../lib/utils.ts"
+  ],
+  "../features/fanzone/components/FanGalleryModalMobile.tsx": [],
+  "../features/fanzone/components/FanSubmissionModal.tsx": [],
+  "../features/fanzone/components/FanZoneMobile.tsx": [
+    "../features/fanzone/components/FanGalleryModalMobile.tsx",
+    "../features/fanzone/components/FanSubmissionModal.tsx",
+    "../features/fanzone/components/PhotoUploadModal.tsx",
+    "../features/fanzone/components/PollCardMobile.tsx"
+  ],
+  "../features/fanzone/components/FanZoneSection.tsx": [
+    "../components/ui/sections/SectionHeader.tsx",
+    "../features/fanzone/components/FanSubmissionModal.tsx",
+    "../features/fanzone/components/FanZoneMobile.tsx",
+    "../features/fanzone/components/PhotoUploadModal.tsx",
+    "../features/fanzone/components/PollCard.tsx"
+  ],
+  "../features/fanzone/components/PhotoUploadModal.tsx": [],
+  "../features/fanzone/components/PollCard.tsx": [
+    "../lib/supabase/polls.ts"
+  ],
+  "../features/fanzone/components/PollCardMobile.tsx": [
+    "../lib/supabase/polls.ts"
+  ],
+  "../features/fanzone/index.ts": [
+    "../features/fanzone/components/FanZoneSection.tsx"
+  ],
+  "../features/galleries/components/GalleryThumbnailGrid.tsx": [
+    "../features/galleries/hooks/useGallery.ts",
+    "../features/galleries/types/index.ts"
+  ],
+  "../features/galleries/components/GalleryViewer.tsx": [
+    "../features/galleries/hooks/useGallery.ts",
+    "../features/galleries/types/index.ts"
+  ],
+  "../features/galleries/components/MatchGalleryModal.tsx": [
+    "../features/galleries/components/GalleryThumbnailGrid.tsx",
+    "../features/galleries/components/GalleryViewer.tsx",
+    "../features/galleries/hooks/useGallery.ts"
+  ],
+  "../features/galleries/hooks/useGallery.ts": [
+    "../features/galleries/types/index.ts"
+  ],
+  "../features/galleries/index.ts": [
+    "../features/galleries/components/GalleryThumbnailGrid.tsx",
+    "../features/galleries/components/GalleryViewer.tsx",
+    "../features/galleries/components/MatchGalleryModal.tsx",
+    "../features/galleries/hooks/useGallery.ts",
+    "../features/galleries/types/index.ts"
+  ],
+  "../features/galleries/types/index.ts": [],
+  "../features/home/components/HeroImage.tsx": [
+    "../components/ui/cloudinary/CloudinaryImage.tsx"
+  ],
+  "../features/home/components/HomeHeroSection.tsx": [
+    "../components/ui/Reveal.tsx",
+    "../features/galleries/index.ts",
+    "../features/home/components/HeroImage.tsx",
+    "../features/news/components/index.ts",
+    "../features/news/types/index.ts"
+  ],
+  "../features/home/components/OverlappingNewsCards.tsx": [
+    "../features/galleries/index.ts",
+    "../features/news/components/index.ts",
+    "../features/news/types/index.ts",
+    "../lib/utils.ts"
+  ],
+  "../features/home/components/index.ts": [
+    "../features/home/components/HomeHeroSection.tsx",
+    "../features/home/components/OverlappingNewsCards.tsx"
+  ],
+  "../features/home/hooks/index.ts": [
+    "../features/home/hooks/useHomeNewsData.ts"
+  ],
+  "../features/home/hooks/useHomeNewsData.ts": [
+    "../features/news/types/index.ts"
+  ],
+  "../features/home/index.ts": [
+    "../features/home/components/index.ts",
+    "../features/home/hooks/index.ts"
+  ],
+  "../features/matches/components/common/LeaguePositionSummary.tsx": [
+    "../components/ui/sections/SectionHeader.tsx"
+  ],
+  "../features/matches/components/common/MatchCard.tsx": [
+    "../features/matches/components/common/TeamLogo.tsx"
+  ],
+  "../features/matches/components/common/TeamLogo.tsx": [],
+  "../features/matches/components/home/MatchCarousel.tsx": [
+    "../components/ui/sections/SectionHeader.tsx",
+    "../features/matches/components/common/LeaguePositionSummary.tsx",
+    "../features/matches/components/common/MatchCard.tsx"
+  ],
+  "../features/matches/components/mobile/MobileLeagueTable.tsx": [
+    "../features/matches/components/common/TeamLogo.tsx"
+  ],
+  "../features/matches/components/mobile/MobileMatchCard.tsx": [
+    "../features/matches/components/common/TeamLogo.tsx"
+  ],
+  "../features/matches/components/mobile/MobileMatchSection.tsx": [
+    "../features/matches/components/mobile/MobileLeagueTable.tsx",
+    "../features/matches/components/mobile/MobileMatchCard.tsx"
+  ],
+  "../features/matches/hooks/useHomeMatchData.ts": [
+    "../lib/supabase/client.ts"
+  ],
+  "../features/matches/hooks/useLeagueTable.ts": [
+    "../features/matches/types/index.ts",
+    "../lib/supabase/client.ts"
+  ],
+  "../features/matches/types/index.ts": [],
+  "../features/news/components/NewsModal.tsx": [
+    "../features/news/components/portable-text/PortableTextComponents.tsx",
+    "../features/news/types/index.ts",
+    "../lib/cloudinary/imageTransforms.ts"
+  ],
+  "../features/news/components/cards/NewsCard.tsx": [
+    "../components/ui/cloudinary/CloudinaryImage.tsx",
+    "../features/news/types/index.ts",
+    "../lib/utils.ts"
+  ],
+  "../features/news/components/cards/NewsPageCard.tsx": [
+    "../features/news/types/index.ts",
+    "../lib/cloudinary/imageTransforms.ts",
+    "../lib/utils.ts"
+  ],
+  "../features/news/components/index.ts": [
+    "../features/news/components/NewsModal.tsx",
+    "../features/news/components/cards/NewsCard.tsx",
+    "../features/news/components/cards/NewsPageCard.tsx",
+    "../features/news/components/sections/NewsGrid.tsx"
+  ],
+  "../features/news/components/portable-text/PortableTextComponents.tsx": [],
+  "../features/news/components/sections/NewsGrid.tsx": [
+    "../features/galleries/index.ts",
+    "../features/news/components/index.ts",
+    "../features/news/types/index.ts",
+    "../lib/utils.ts"
+  ],
+  "../features/news/types/index.ts": [],
+  "../features/sponsors/components/SponsorsSection.tsx": [
+    "../components/ui/sections/SectionHeader.tsx",
+    "../features/sponsors/utils/cloudinaryTransforms.ts",
+    "../features/sponsors/utils/sanityQueries.ts"
+  ],
+  "../features/sponsors/index.ts": [
+    "../features/sponsors/components/SponsorsSection.tsx",
+    "../features/sponsors/utils/cloudinaryTransforms.ts",
+    "../features/sponsors/utils/sanityQueries.ts"
+  ],
+  "../features/sponsors/utils/cloudinaryTransforms.ts": [],
+  "../features/sponsors/utils/sanityQueries.ts": [
+    "../lib/sanity/sanityClient.ts"
+  ],
+  "../features/team/components/PlayerBadge.tsx": [],
+  "../features/team/components/PlayerCard.tsx": [
+    "../features/team/components/PlayerBadge.tsx",
+    "../features/team/components/PlayerImage.tsx",
+    "../features/team/types/index.ts"
+  ],
+  "../features/team/components/PlayerImage.tsx": [
+    "../lib/cloudinary/imageTransforms.ts"
+  ],
+  "../features/team/components/PlayersSection.tsx": [
+    "../components/ui/carousel.tsx",
+    "../components/ui/sections/SectionHeader.tsx",
+    "../features/team/components/PlayerCard.tsx",
+    "../features/team/types/index.ts"
+  ],
+  "../features/team/services/getTeamData.ts": [
+    "../features/team/types/index.ts",
+    "../lib/sanity/client.ts"
+  ],
+  "../features/team/services/playerSelection.ts": [
+    "../features/team/types/index.ts"
+  ],
+  "../features/team/types/index.ts": [],
+  "../lib/cloudinary/imageTransforms.ts": [],
+  "../lib/env.ts": [],
+  "../lib/sanity/client.ts": [],
+  "../lib/sanity/sanityClient.ts": [
+    "../lib/env.ts"
+  ],
+  "../lib/supabase/client.ts": [
+    "../lib/env.ts"
+  ],
+  "../lib/supabase/polls.ts": [
+    "../lib/supabase/client.ts"
+  ],
+  "../lib/utils.ts": [],
+  "page.tsx": [
+    "../components/ui/layout/Section.tsx",
+    "../components/ui/sections/MatchCenter.tsx",
+    "../components/ui/separators/GradientSeparator.tsx",
+    "../features/fanzone/index.ts",
+    "../features/home/index.ts",
+    "../features/matches/hooks/useHomeMatchData.ts",
+    "../features/sponsors/index.ts",
+    "../features/team/components/PlayersSection.tsx",
+    "../features/team/services/getTeamData.ts",
+    "../features/team/services/playerSelection.ts",
+    "../lib/sanity/sanityClient.ts",
+    "../lib/supabase/polls.ts"
+  ]
+}

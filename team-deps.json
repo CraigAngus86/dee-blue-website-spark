@@ -1,0 +1,61 @@
+{
+  "../../features/team/components/PersonCard.tsx": [
+    "../../features/team/components/PlayerImage.tsx",
+    "../../features/team/types/index.ts",
+    "../../lib/utils.ts"
+  ],
+  "../../features/team/components/PersonDetailsModal.tsx": [
+    "../../features/team/components/PlayerImage.tsx",
+    "../../features/team/types/index.ts"
+  ],
+  "../../features/team/components/PlayerImage.tsx": [
+    "../../lib/cloudinary/imageTransforms.ts"
+  ],
+  "../../features/team/components/TeamFilter.tsx": [
+    "../../features/team/types/index.ts"
+  ],
+  "../../features/team/components/TeamHero.tsx": [],
+  "../../features/team/components/TeamPage.tsx": [
+    "../../features/team/components/PersonDetailsModal.tsx",
+    "../../features/team/components/TeamFilter.tsx",
+    "../../features/team/components/TeamHero.tsx",
+    "../../features/team/components/TeamSearchBar.tsx",
+    "../../features/team/components/TeamSection.tsx",
+    "../../features/team/hooks/useTeamData.ts",
+    "../../features/team/index.ts",
+    "../../features/team/services/getTeamData.ts",
+    "../../lib/utils.ts"
+  ],
+  "../../features/team/components/TeamSearchBar.tsx": [],
+  "../../features/team/components/TeamSection.tsx": [
+    "../../features/team/components/PersonCard.tsx",
+    "../../features/team/types/index.ts"
+  ],
+  "../../features/team/hooks/useTeamData.ts": [
+    "../../features/team/services/getTeamData.ts",
+    "../../features/team/types/index.ts"
+  ],
+  "../../features/team/index.ts": [
+    "../../features/team/components/PersonCard.tsx",
+    "../../features/team/components/PersonDetailsModal.tsx",
+    "../../features/team/components/TeamFilter.tsx",
+    "../../features/team/components/TeamPage.tsx",
+    "../../features/team/components/TeamSearchBar.tsx",
+    "../../features/team/components/TeamSection.tsx",
+    "../../features/team/hooks/useTeamData.ts",
+    "../../features/team/services/getTeamData.ts",
+    "../../features/team/types/index.ts"
+  ],
+  "../../features/team/services/getTeamData.ts": [
+    "../../features/team/types/index.ts",
+    "../../lib/sanity/client.ts"
+  ],
+  "../../features/team/types/index.ts": [],
+  "../../lib/cloudinary/imageTransforms.ts": [],
+  "../../lib/sanity/client.ts": [],
+  "../../lib/utils.ts": [],
+  "page.tsx": [
+    "../../features/team/index.ts",
+    "../../features/team/services/getTeamData.ts"
+  ]
+}

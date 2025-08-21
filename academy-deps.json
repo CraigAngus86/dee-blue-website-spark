@@ -1,0 +1,14 @@
+{
+  "../../features/academy/components/AcademyPartnership.tsx": [],
+  "../../features/academy/components/ClubAcademyHero.tsx": [],
+  "../../features/academy/components/FirstTeamSection.tsx": [],
+  "../../features/academy/components/HeritageValues.tsx": [],
+  "../../features/academy/components/ValuesSection.tsx": [],
+  "page.tsx": [
+    "../../features/academy/components/AcademyPartnership.tsx",
+    "../../features/academy/components/ClubAcademyHero.tsx",
+    "../../features/academy/components/FirstTeamSection.tsx",
+    "../../features/academy/components/HeritageValues.tsx",
+    "../../features/academy/components/ValuesSection.tsx"
+  ]
+}
