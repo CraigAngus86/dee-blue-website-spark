@@ -127,7 +127,13 @@ export default function SponsorsSection({ sponsors }: SponsorsSectionProps) {
       {/* Official Partners */}
       {hasPartners && (
         <section aria-label="Official Partners" className="mb-4 flex justify-center">
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-6 gap-4 md:gap-5 max-w-4xl">
+          <div className={`gap-4 md:gap-5 max-w-4xl ${
+            partner.length === 1 
+              ? "flex justify-center"
+              : partner.length === 2
+              ? "grid grid-cols-2 place-items-center"
+              : "grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-6 place-items-center"
+          }`}>
             {partner.map((s) => (
               <CardWrap key={s._id} href={s.website || undefined} title={s.name}>
                 <div className="w-20 h-20 md:w-24 md:h-24 flex items-center justify-center">
