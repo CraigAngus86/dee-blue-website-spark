@@ -8,37 +8,57 @@ export async function GET(
   try {
     const { galleryId } = params;
 
-    // Pull the gallery and dereference the photos
+    // Pull gallery and dereference photos directly
     const query = `*[_type == "matchGallery" && _id == $galleryId][0]{
       _id,
       title,
       matchDate,
-      coverImage, 
-      // dereference each photo asset so we get URLs etc.
-      photos[]{
-        caption,
-        category,
-        playerIds,
-        // if your schema has an "image" field use this:
-        "public_id": image.asset->public_id,
-        "url": image.asset->url,
-        "secure_url": image.asset->secure_url,
-        "format": image.asset->format,
-        _type
-      },
+      coverImage,
       photographer,
       publishedAt,
-      supabaseMatchId
+      supabaseMatchId,
+      // dereference photos to include Cloudinary fields
+      photos[]{
+        _type,
+        public_id,
+        url,
+        secure_url,
+        format,
+        caption,
+        category,
+        playerIds
+      }
     }`;
 
     const gallery = await sanityClient.fetch(query, { galleryId });
 
     if (!gallery) {
-      return NextResponse.json({ error: 'Gallery not found' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Gallery not found' },
+        { status: 404 }
+      );
     }
 
-    // We can return the photos as-is now because they’re already projected with URLs
-    return NextResponse.json(gallery);
+    // Transform so each photo has an `image` key (what your frontend expects)
+    const transformedGallery = {
+      ...gallery,
+      photos: (gallery.photos || [])
+        .filter((img: any) => img && img.public_id)
+        .map((img: any) => ({
+          image: {
+            public_id: img.public_id,
+            url: img.url,
+            secure_url: img.secure_url,
+            format: img.format,
+            _type: img._type,
+          },
+          caption: img.caption || undefined,
+          category: img.category || undefined,
+          playerIds: img.playerIds || undefined,
+        })),
+    };
+
+    return NextResponse.json(transformedGallery);
   } catch (error) {
     console.error('Error fetching gallery:', error);
     return NextResponse.json(
