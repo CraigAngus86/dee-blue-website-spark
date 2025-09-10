@@ -8,51 +8,41 @@ export async function GET(
   try {
     const { galleryId } = params;
 
-    const query = `*[_type == "matchGallery" && _id == $galleryId][0] {
+    // Pull the gallery and dereference the photos
+    const query = `*[_type == "matchGallery" && _id == $galleryId][0]{
       _id,
       title,
       matchDate,
-      coverImage,
-      photos,
+      coverImage, 
+      // dereference each photo asset so we get URLs etc.
+      photos[]{
+        caption,
+        category,
+        playerIds,
+        // if your schema has an "image" field use this:
+        "public_id": image.asset->public_id,
+        "url": image.asset->url,
+        "secure_url": image.asset->secure_url,
+        "format": image.asset->format,
+        _type
+      },
       photographer,
       publishedAt,
       supabaseMatchId
     }`;
-    
+
     const gallery = await sanityClient.fetch(query, { galleryId });
-    
+
     if (!gallery) {
-      return NextResponse.json(
-        { error: 'Gallery not found' }, 
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Gallery not found' }, { status: 404 });
     }
 
-    // Transform to match expected GalleryPhoto structure
-    const transformedGallery = {
-      ...gallery,
-      photos: (gallery.photos || [])
-        .filter((img: any) => img && img.public_id) // Filter out null/invalid images
-        .map((img: any) => ({
-          image: {
-            public_id: img.public_id,
-            url: img.url,
-            secure_url: img.secure_url,
-            format: img.format,
-            _type: img._type
-          },
-          // Provide safe defaults for missing Sanity fields
-          caption: undefined,
-          category: undefined,
-          playerIds: undefined
-        }))
-    };
-
-    return NextResponse.json(transformedGallery);
+    // We can return the photos as-is now because they’re already projected with URLs
+    return NextResponse.json(gallery);
   } catch (error) {
     console.error('Error fetching gallery:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch gallery' }, 
+      { error: 'Failed to fetch gallery' },
       { status: 500 }
     );
   }
