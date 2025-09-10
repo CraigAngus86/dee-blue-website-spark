@@ -19,7 +19,6 @@ import { getTeamData } from "@/features/team/services/getTeamData";
 import { selectRandomPlayersByPosition } from "@/features/team/services/playerSelection";
 import { getActivePoll } from "@/lib/supabase/polls";
 
-// Revalidate frequently for fresh homepage content
 export const revalidate = 10;
 
 export const metadata: Metadata = {
@@ -29,7 +28,7 @@ export const metadata: Metadata = {
 };
 
 // Fetch all news articles for homepage ordered by date
-async function getNewsArticles(limit = 11) {
+async function getNewsArticles(limit = 20) {
   const query = `*[_type == "newsArticle" && !(_id in path("drafts.**"))] | order(publishedAt desc)[0...${limit}] {
     _id,
     title,
@@ -51,13 +50,11 @@ async function getNewsArticles(limit = 11) {
 }
 
 // Fetch match galleries
-async function getMatchGalleries() {
-  const query = `*[_type == "matchGallery" && !(_id in path("drafts.**"))] | order(matchDate desc) {
+async function getMatchGalleries(limit = 20) {
+  const query = `*[_type == "matchGallery" && !(_id in path("drafts.**"))] | order(publishedAt desc)[0...${limit}] {
     _id,
     title,
-    matchDate,
-    homeTeam,
-    awayTeam,
+    publishedAt,
     coverImage,
     photos,
     photographer
@@ -119,7 +116,7 @@ async function getRandomPlayers() {
   }
 }
 
-// Mobile "See all News" link (secondary button style) — trimmed padding
+// Mobile "See all News" link
 const MobileNewsLink = () => (
   <div className="block md:hidden bg-[rgb(var(--white))] pt-3 pb-4">
     <div className="container mx-auto px-4 text-center">
@@ -137,7 +134,7 @@ const MobileNewsLink = () => (
 export default async function HomePage() {
   // Fetch news + galleries in parallel
   const [newsArticles, matchGalleries] = await Promise.all([
-    getNewsArticles(20),
+    getNewsArticles(),
     getMatchGalleries(),
   ]);
 
@@ -147,28 +144,41 @@ export default async function HomePage() {
       ...article,
       id: article._id,
       contentType: "article" as const,
+      publishedAt: article.publishedAt,
     })),
     ...matchGalleries.map((gallery) => ({
       id: gallery._id,
       _id: gallery._id,
       title: gallery.title,
       slug: gallery._id,
-      publishedAt: gallery.matchDate,
+      contentType: "gallery" as const,
       mainImage: gallery.coverImage,
       excerpt: `Match Day photos now available for ${gallery.title}!`,
       category: "matchGallery",
-      contentType: "gallery" as const,
       body: [],
       author: gallery.photographer || "Club Photographer",
+      publishedAt: gallery.publishedAt, // ✅ use publishedAt instead of matchDate
     })),
   ];
 
-  // Sort by date (newest first)
-  const sortedContent = [...allContent].sort((a, b) => {
+  // Sort everything by date (newest first)
+  const sortedContent = allContent.sort((a, b) => {
     const dateA = a.publishedAt ? new Date(a.publishedAt).getTime() : 0;
     const dateB = b.publishedAt ? new Date(b.publishedAt).getTime() : 0;
     return dateB - dateA;
   });
+
+  // Hero + card slices
+  const heroItems = sortedContent.slice(0, 5);
+  const cardsItems = sortedContent.slice(3, 9);
+
+  // Neutral card shadow variables
+  const cardShadowStyle = {
+    "--card-shadow":
+      "0 10px 25px -5px rgba(0,0,0,0.10), 0 8px 10px -6px rgba(0,0,0,0.06)",
+    "--card-hover-shadow":
+      "0 20px 25px -5px rgba(0,0,0,0.15), 0 10px 10px -5px rgba(0,0,0,0.10)",
+  } as CSSProperties;
 
   // Fetch other data in parallel
   const [
@@ -191,27 +201,15 @@ export default async function HomePage() {
     getActivePoll(),
   ]);
 
-  // Mixed content for hero/cards
-  const heroItems = sortedContent.slice(0, 5);
-  const cardsItems = sortedContent.slice(3, 9);
-
-  // Neutral card shadow variables
-  const cardShadowStyle = {
-    "--card-shadow":
-      "0 10px 25px -5px rgba(0,0,0,0.10), 0 8px 10px -6px rgba(0,0,0,0.06)",
-    "--card-hover-shadow":
-      "0 20px 25px -5px rgba(0,0,0,0.15), 0 10px 10px -5px rgba(0,0,0,0.10)",
-  } as CSSProperties;
-
   return (
     <div className="min-h-screen flex flex-col" style={cardShadowStyle}>
       {/* Hero */}
       <HomeHeroSection articles={heroItems} />
 
-      {/* Mobile CTA to News (reduced padding) */}
+      {/* Mobile CTA to News */}
       <MobileNewsLink />
 
-      {/* News cards (desktop) — Section is NOT rendered on mobile to avoid extra vertical padding */}
+      {/* News cards (desktop) */}
       <div className="hidden md:block">
         <Section background="transparent" spacing="md" className="section--white">
           <OverlappingNewsCards articles={cardsItems} />

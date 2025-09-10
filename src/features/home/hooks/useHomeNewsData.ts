@@ -1,48 +1,49 @@
 import { useMemo } from 'react';
-import { NewsArticle } from '@/features/news/types';
 
-export function useHomeNewsData(allNews: NewsArticle[]) {
+export interface HeroItemBase {
+  id: string;
+  title: string;
+  slug?: string;
+  mainImage?: any;
+  publishedAt: string;
+  isFeature?: boolean;
+  contentType: 'news' | 'gallery';
+  [key: string]: any;
+}
+
+export interface HomeHeroData {
+  featuredItems: HeroItemBase[];
+  regularItems: HeroItemBase[];
+}
+
+export function useHomeHeroData(allItems: HeroItemBase[]): HomeHeroData {
   return useMemo(() => {
-    if (!allNews || allNews.length === 0) {
-      return {
-        featuredArticles: [],
-        regularArticles: []
-      };
+    if (!allItems || allItems.length === 0) {
+      return { featuredItems: [], regularItems: [] };
     }
 
-    // First, sort all news by date
-    const sortedNews = [...allNews].sort((a, b) => {
-      const dateA = new Date(a.publishedAt || '').getTime();
-      const dateB = new Date(b.publishedAt || '').getTime();
+    // Sort everything by publishedAt descending
+    const sortedItems = [...allItems].sort((a, b) => {
+      const dateA = new Date(a.publishedAt).getTime();
+      const dateB = new Date(b.publishedAt).getTime();
       return dateB - dateA;
     });
-    
-    // Find featured articles (either with featured or isFeature flag)
-    const featuredArticles = sortedNews
-      .filter(article => article.isFeature)
-      .slice(0, 3); // Take max 3 featured articles
-    
-    // If we don't have 3 featured articles, add the most recent ones 
-    if (featuredArticles.length < 3) {
-      const featuredIds = new Set(featuredArticles.map(article => article.id));
-      const additionalArticles = sortedNews
-        .filter(article => !featuredIds.has(article.id))
-        .slice(0, 3 - featuredArticles.length);
-      
-      featuredArticles.push(...additionalArticles);
+
+    // Featured: items explicitly marked as featured (up to 3)
+    const featuredItems = sortedItems.filter(item => item.isFeature).slice(0, 3);
+
+    // Fill up to 3 if less than 3
+    if (featuredItems.length < 3) {
+      const featuredIds = new Set(featuredItems.map(i => i.id));
+      const additionalItems = sortedItems
+        .filter(item => !featuredIds.has(item.id))
+        .slice(0, 3 - featuredItems.length);
+      featuredItems.push(...additionalItems);
     }
-    
-    // Get IDs of all articles in the hero section
-    const heroArticleIds = new Set(featuredArticles.map(article => article.id));
-    
-    // Get regular articles (not in hero) for the cards section
-    const regularArticles = sortedNews
-      .filter(article => !heroArticleIds.has(article.id))
-      .slice(0, 6); // Take max 6 articles for the grid
-    
-    return {
-      featuredArticles,
-      regularArticles
-    };
-  }, [allNews]);
+
+    const featuredIds = new Set(featuredItems.map(i => i.id));
+    const regularItems = sortedItems.filter(item => !featuredIds.has(item.id));
+
+    return { featuredItems, regularItems };
+  }, [allItems]);
 }

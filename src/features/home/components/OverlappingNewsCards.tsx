@@ -111,7 +111,7 @@ const OverlappingNewsCards: React.FC<OverlappingNewsCardsProps> = ({
         className={cn(
           "container mx-auto px-4 relative z-30",
           // increased negative margins to pull cards further into the hero
-          "-mt-32 sm:-mt-40 md:-mt-56 lg:-mt-64",
+          "-mt-32 sm:-mt-40 md:-mt-52 lg:-mt-45",
           className
         )}
       >

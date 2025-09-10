@@ -9,7 +9,7 @@ import HeroImage from "./HeroImage";
 import Reveal from "@/components/ui/Reveal";
 
 interface HomeHeroSectionProps {
-  articles: (NewsArticle & { contentType?: string })[];
+  articles: (NewsArticle & { contentType?: string })[]; // includes galleries
 }
 
 interface HomeHeroSectionState {
@@ -17,7 +17,7 @@ interface HomeHeroSectionState {
   previousIndex: number;
   isTransitioning: boolean;
   selectedArticle: NewsArticle | null;
-  selectedGalleryId: string | null;
+  selectedGallery: NewsArticle | null; // full object for gallery
   isLoading: boolean;
   isMobile: boolean;
   touchStart: number;
@@ -36,7 +36,7 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
       previousIndex: 0,
       isTransitioning: false,
       selectedArticle: null,
-      selectedGalleryId: null,
+      selectedGallery: null,
       isLoading: false,
       isMobile: false,
       touchStart: 0,
@@ -55,6 +55,15 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
     if (this.rotationTimer) clearInterval(this.rotationTimer);
     if (this.interactionTimeout) clearTimeout(this.interactionTimeout);
     window.removeEventListener("resize", this.updateMobileState);
+  }
+
+  componentDidUpdate(prevProps: HomeHeroSectionProps, prevState: HomeHeroSectionState) {
+    // Lock scrolling when gallery modal is open
+    if (this.state.selectedGallery && !prevState.selectedGallery) {
+      document.body.style.overflow = "hidden";
+    } else if (!this.state.selectedGallery && prevState.selectedGallery) {
+      document.body.style.overflow = "";
+    }
   }
 
   startAutoRotation = () => {
@@ -109,7 +118,12 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
 
   getVisibleArticles = () => {
     const count = this.getVisibleArticlesCount();
-    return this.props.articles.slice(0, count);
+    const sorted = [...this.props.articles].sort((a, b) => {
+      const dateA = new Date(a.publishedAt || 0).getTime();
+      const dateB = new Date(b.publishedAt || 0).getTime();
+      return dateB - dateA;
+    });
+    return sorted.slice(0, count);
   };
 
   goToSlide(index: number) {
@@ -125,7 +139,15 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
     try {
       this.setState({ isLoading: true });
       if (content.contentType === "gallery") {
-        this.setState({ selectedGalleryId: content.id });
+        if (Array.isArray(content.body) && content.body.length > 0) {
+          this.setState({ selectedGallery: content });
+        } else {
+          const response = await fetch(`/api/sanity-test/news?slug=${encodeURIComponent((content as any).slug)}`);
+          if (!response.ok) throw new Error("Failed to fetch gallery");
+          const data = await response.json();
+          if (data.success && data.data) this.setState({ selectedGallery: data.data });
+          else this.setState({ selectedGallery: content });
+        }
       } else {
         if (Array.isArray(content.body) && content.body.length > 0) {
           this.setState({ selectedArticle: content });
@@ -139,7 +161,7 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
       }
     } catch (e) {
       console.error("Error handling content click:", e);
-      if (content.contentType === "gallery") this.setState({ selectedGalleryId: content.id });
+      if (content.contentType === "gallery") this.setState({ selectedGallery: content });
       else this.setState({ selectedArticle: content });
     } finally {
       this.setState({ isLoading: false });
@@ -147,10 +169,7 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
   };
 
   render() {
-    const { articles } = this.props;
-    const { currentIndex, selectedArticle, selectedGalleryId, isLoading, isMobile } = this.state;
-
-    if (!articles || articles.length === 0) return null;
+    const { currentIndex, selectedArticle, selectedGallery, isLoading, isMobile } = this.state;
 
     const visibleArticles = this.getVisibleArticles();
     const content = visibleArticles[currentIndex];
@@ -159,169 +178,143 @@ class HomeHeroSection extends React.Component<HomeHeroSectionProps, HomeHeroSect
     const formattedDate = content.publishedAt ? format(new Date(content.publishedAt), "d MMMM yyyy") : "";
 
     return (
-      <div
-        className="relative z-20 w-full aspect-[4/3] md:aspect-[16/9] lg:aspect-[21/9] overflow-hidden bg-[rgb(var(--brand-black))]"
-        onTouchStart={this.handleTouchStart}
-        onTouchMove={this.handleTouchMove}
-        onTouchEnd={this.handleTouchEnd}
-      >
-        {/* Background images */}
-        {visibleArticles.map((slideContent, i) => (
-          <div
-            key={slideContent.id}
-            className={`absolute inset-0 transition-opacity duration-500 ${i === currentIndex ? "opacity-100 z-0" : "opacity-0 z-0"}`}
-            aria-hidden={i !== currentIndex}
-          >
-            {slideContent.mainImage && (
-              <HeroImage image={slideContent.mainImage} title={slideContent.title} category={slideContent.category} />
-            )}
-          </div>
-        ))}
-
-        {/* Overlays */}
-        <div className="absolute inset-0 pointer-events-none z-10">
-          {/* Mobile: stronger */}
-          <div
-            className="absolute inset-0 md:hidden"
-            style={{
-              backgroundImage: `
-                linear-gradient(
-                  to top,
-                  rgba(0,0,0,0.82) 0%,
-                  rgba(0,0,0,0.56) 40%,
-                  rgba(0,0,0,0.24) 72%,
-                  rgba(0,0,0,0.00) 96%
-                ),
-                radial-gradient(
-                  85% 65% at 70% 85%,
-                  rgb(var(--brand-gold) / 0.10) 0%,
-                  rgb(var(--brand-gold) / 0.00) 70%
-                )
-              `,
-              backgroundBlendMode: "multiply, overlay",
-            }}
-          />
-          {/* Desktop: softer */}
-          <div
-            className="absolute inset-0 hidden md:block"
-            style={{
-              backgroundImage: `
-                linear-gradient(
-                  to top,
-                  rgba(0,0,0,0.82) 15%,
-                  rgba(0,0,0,0.42) 50%,
-                  rgba(0,0,0,0.18) 60%,
-                  rgba(0,0,0,0.00) 90%
-                ),
-                radial-gradient(
-                  80% 60% at 70% 85%,
-                  rgb(var(--brand-gold) / 0.08) 0%,
-                  rgb(var(--brand-gold) / 0.00) 70%
-                )
-              `,
-              backgroundBlendMode: "multiply, overlay",
-            }}
-          />
-        </div>
-
-        {/* Clickable overlay for content */}
+      <>
         <div
-          className="absolute inset-0 z-20 cursor-pointer"
-          onClick={() => this.handleContentClick(content)}
-          aria-label={`View ${content.contentType === "gallery" ? "gallery" : "article"}: ${content.title}`}
+          className="relative z-20 w-full aspect-[4/3] md:aspect-[16/9] lg:aspect-[21/9] overflow-hidden bg-[rgb(var(--brand-black))]"
+          onTouchStart={this.handleTouchStart}
+          onTouchMove={this.handleTouchMove}
+          onTouchEnd={this.handleTouchEnd}
         >
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <Reveal delayMs={120}>
-              <div className="mt-40 w-full text-center px-4">
-                <div className="max-w-6xl mx-auto">
-                  {/* Title — Bebas 400 with 0.02em tracking via utility */}
-                  <h1
-                    className="mb-4 text-[rgb(var(--white))] leading-[1.0] [text-wrap:balance] tracking-[0.02em]
-                               [font-size:clamp(1.7rem,6vw,2.6rem)]
-                               md:[font-size:clamp(2.2rem,4.5vw,4rem)]
-                               xl:[font-size:clamp(2.6rem,5.5vw,7.5rem)]
-                               2xl:[font-size:clamp(2.6rem,5vw,8.25rem)]"
-                  >
-                    {content.title}
-                  </h1>
+          {/* Background images and overlays unchanged */}
+          {visibleArticles.map((slideContent, i) => (
+            <div
+              key={slideContent.id}
+              className={`absolute inset-0 transition-opacity duration-500 ${i === currentIndex ? "opacity-100 z-0" : "opacity-0 z-0"}`}
+              aria-hidden={i !== currentIndex}
+            >
+              {slideContent.mainImage && (
+                <HeroImage image={slideContent.mainImage} title={slideContent.title} category={slideContent.category} />
+              )}
+            </div>
+          ))}
 
-                  {/* Gold rule */}
-                  <div className="w-24 h-[3px] bg-[rgb(var(--brand-gold))] mx-auto mb-4" />
-
-                  {/* Meta / CTA */}
-                  <div className="flex items-center justify-center text-sm text-[rgb(var(--white))]/85 mb-4">
-                    <span>{formattedDate}</span>
-                    <span className="mx-2">|</span>
-                    <span className="flex items-center hover:text-[rgb(var(--white))] transition-colors">
-                      {content.contentType === "gallery" ? "View Photos" : "Read More"}
-                      <span className="inline-flex items-center justify-center w-5 h-5 ml-1.5 rounded-full bg-[rgb(var(--white))]/20 hover:bg-[rgb(var(--white))]/30 transition-colors">
-                        <ArrowRight className="w-3 h-3" />
-                      </span>
-                    </span>
-                  </div>
-
-                  {/* Dots */}
-                  {visibleArticles.length > 1 && (
-                    <div className="flex flex-col items-center space-y-2">
-                      <div className="flex justify-center space-x-2">
-                        {visibleArticles.map((_, i) => (
-                          <button
-                            key={i}
-                            className={`w-2.5 h-2.5 rounded-full transition-all mx-1 ${
-                              i === currentIndex
-                                ? "bg-[rgb(var(--white))] scale-125"
-                                : "bg-[rgb(var(--white))]/40 hover:bg-[rgb(var(--white))]/60"
-                            }`}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              this.goToSlide(i);
-                              this.pauseAutoRotation();
-                            }}
-                            aria-label={`Go to slide ${i + 1}`}
-                          />
-                        ))}
-                      </div>
-                      {isMobile && <p className="text-xs text-[rgb(var(--white))]/70 font-medium">Swipe to navigate</p>}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </Reveal>
+          <div className="absolute inset-0 pointer-events-none z-10">
+            <div
+              className="absolute inset-0 md:hidden"
+              style={{
+                backgroundImage: `
+                  linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.56) 40%, rgba(0,0,0,0.24) 72%, rgba(0,0,0,0.00) 96%),
+                  radial-gradient(85% 65% at 70% 85%, rgb(var(--brand-gold) / 0.10) 0%, rgb(var(--brand-gold) / 0.00) 70%)
+                `,
+                backgroundBlendMode: "multiply, overlay",
+              }}
+            />
+            <div
+              className="absolute inset-0 hidden md:block"
+              style={{
+                backgroundImage: `
+                  linear-gradient(to top, rgba(0,0,0,0.82) 15%, rgba(0,0,0,0.42) 50%, rgba(0,0,0,0.18) 60%, rgba(0,0,0,0.00) 90%),
+                  radial-gradient(80% 60% at 70% 85%, rgb(var(--brand-gold) / 0.08) 0%, rgb(var(--brand-gold) / 0.00) 70%)
+                `,
+                backgroundBlendMode: "multiply, overlay",
+              }}
+            />
           </div>
-        </div>
 
-        {/* Loading indicator */}
-        {isLoading && (
-          <div className="fixed inset-0 bg-[rgb(var(--brand-black))]/50 flex items-center justify-center z-50">
-            <div className="bg-[rgb(var(--white))] p-4 rounded-lg shadow-lg text-[rgb(var(--brand-black))]">
-              <div className="flex items-center space-x-2">
-                <svg
-                  className="animate-spin h-5 w-5 text-[rgb(var(--brand-black))]"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 714 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  />
-                </svg>
-                <span>Loading {content?.contentType === "gallery" ? "gallery" : "article"}...</span>
-              </div>
+          {/* Clickable overlay unchanged */}
+          <div
+            className="absolute inset-0 z-20 cursor-pointer"
+            onClick={() => this.handleContentClick(content)}
+            aria-label={`View ${content.contentType === "gallery" ? "gallery" : "article"}: ${content.title}`}
+          >
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <Reveal delayMs={120}>
+                <div className="mt-40 w-full text-center px-4">
+                  <div className="max-w-6xl mx-auto">
+                    <h1
+                      className="mb-4 text-[rgb(var(--white))] leading-[1.0] [text-wrap:balance] tracking-[0.02em]
+                                 [font-size:clamp(1.7rem,6vw,2.6rem)]
+                                 md:[font-size:clamp(2.2rem,4.5vw,4rem)]
+                                 xl:[font-size:clamp(2.6rem,5.5vw,7.5rem)]
+                                 2xl:[font-size:clamp(2.6rem,5vw,8.25rem)]"
+                    >
+                      {content.title}
+                    </h1>
+
+                    <div className="w-24 h-[3px] bg-[rgb(var(--brand-gold))] mx-auto mb-4" />
+
+                    <div className="flex items-center justify-center text-sm text-[rgb(var(--white))]/85 mb-4">
+                      <span>{formattedDate}</span>
+                      <span className="mx-2">|</span>
+                      <span className="flex items-center hover:text-[rgb(var(--white))] transition-colors">
+                        {content.contentType === "gallery" ? "View Photos" : "Read More"}
+                        <span className="inline-flex items-center justify-center w-5 h-5 ml-1.5 rounded-full bg-[rgb(var(--white))]/20 hover:bg-[rgb(var(--white))]/30 transition-colors">
+                          <ArrowRight className="w-3 h-3" />
+                        </span>
+                      </span>
+                    </div>
+
+                    {visibleArticles.length > 1 && (
+                      <div className="flex flex-col items-center space-y-2">
+                        <div className="flex justify-center space-x-2">
+                          {visibleArticles.map((_, i) => (
+                            <button
+                              key={i}
+                              className={`w-2.5 h-2.5 rounded-full transition-all mx-1 ${
+                                i === currentIndex
+                                  ? "bg-[rgb(var(--white))] scale-125"
+                                  : "bg-[rgb(var(--white))]/40 hover:bg-[rgb(var(--white))]/60"
+                              }`}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                this.goToSlide(i);
+                                this.pauseAutoRotation();
+                              }}
+                              aria-label={`Go to slide ${i + 1}`}
+                            />
+                          ))}
+                        </div>
+                        {isMobile && <p className="text-xs text-[rgb(var(--white))]/70 font-medium">Swipe to navigate</p>}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </Reveal>
             </div>
           </div>
-        )}
 
-        {/* Modals */}
+          {isLoading && (
+            <div className="fixed inset-0 bg-[rgb(var(--brand-black))]/50 flex items-center justify-center z-50">
+              <div className="bg-[rgb(var(--white))] p-4 rounded-lg shadow-lg text-[rgb(var(--brand-black))]">
+                <div className="flex items-center space-x-2">
+                  <svg
+                    className="animate-spin h-5 w-5 text-[rgb(var(--brand-black))]"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 714 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
+                  </svg>
+                  <span>Loading {content?.contentType === "gallery" ? "gallery" : "article"}...</span>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Modals rendered outside hero div, scroll locked */}
         {selectedArticle && (
           <NewsModal article={selectedArticle} isOpen={!!selectedArticle} onClose={() => this.setState({ selectedArticle: null })} />
         )}
-        {selectedGalleryId && (
-          <MatchGalleryModal galleryId={selectedGalleryId} isOpen={!!selectedGalleryId} onClose={() => this.setState({ selectedGalleryId: null })} />
+        {selectedGallery && (
+          <MatchGalleryModal galleryId={selectedGallery.id} isOpen={!!selectedGallery} onClose={() => this.setState({ selectedGallery: null })} />
         )}
-      </div>
+      </>
     );
   }
 }
